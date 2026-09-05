@@ -1,7 +1,7 @@
 [project]
 name = "epl-forecast"
 version = "0.1.0"
-description = "Reproducible experiments in Premier League forecasting"
+description = "Live probabilistic Premier League forecasts and season simulation"
 requires-python = ">=3.12"
 dependencies = [
     "numpy>=2.5.2",
@@ -30,4 +30,3 @@ dev = [
     "pytest>=9.1.1",
     "ruff>=0.16.6",
 ]
-

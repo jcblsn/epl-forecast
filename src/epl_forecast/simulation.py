@@ -1,6 +1,7 @@
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime
 from itertools import combinations
+from zoneinfo import ZoneInfo
 
 import numpy as np
 
@@ -112,7 +113,11 @@ def rank_table(
 
 
 def validate_schedule(
-    teams: list[str], played: list[Match], remaining: list[Fixture], as_of: date
+    teams: list[str],
+    played: list[Match],
+    remaining: list[Fixture],
+    as_of: date,
+    results_observed_at: datetime | None = None,
 ) -> None:
     if len(teams) != 20 or len(set(teams)) != 20:
         raise ValueError("Premier League simulation requires 20 distinct season participants")
@@ -127,8 +132,17 @@ def validate_schedule(
         raise ValueError(
             "Simulation requires every ordered opponent pair exactly once (380 matches)"
         )
-    if any(match.available_on > as_of for match in played):
-        raise ValueError("Played results must be available at the simulation cutoff")
+    if results_observed_at is None:
+        if any(match.available_on > as_of for match in played):
+            raise ValueError("Played results must be available at the simulation cutoff")
+    else:
+        if (
+            results_observed_at.tzinfo is None
+            or results_observed_at.astimezone(ZoneInfo("Europe/London")).date() != as_of
+        ):
+            raise ValueError("Observed results must come from the model cutoff's calendar day")
+        if any(match.fixture.match_date > as_of for match in played):
+            raise ValueError("Played results postdate their snapshot observation")
     if any(fixture.match_date < as_of for fixture in remaining):
         raise ValueError("Remaining fixtures predate the simulation cutoff")
 
@@ -143,11 +157,12 @@ def simulate_season(
     seed: int,
     adjustments: list[dict] | None = None,
     europe: EuropeScenario | None = None,
+    results_observed_at: datetime | None = None,
 ) -> dict:
     if type(simulations) is not int or simulations < 1:
         raise ValueError("simulations must be a positive integer")
     teams = sorted(teams)
-    validate_schedule(teams, played, remaining, as_of)
+    validate_schedule(teams, played, remaining, as_of, results_observed_at)
     if model.as_of != as_of:
         raise ValueError("Model fit cutoff must equal the season simulation cutoff")
     adjustments = adjustments or []
@@ -272,6 +287,7 @@ def simulate_season(
     return {
         "season_id": season,
         "as_of": str(as_of),
+        "results_observed_at": results_observed_at.isoformat() if results_observed_at else None,
         "simulations": simulations,
         "seed": seed,
         "played_matches": len(played),
@@ -283,7 +299,13 @@ def simulate_season(
         "unresolved_decisive_tie_rate": unresolved_count / simulations,
         "assumptions": [
             "Fixed fitted team strengths; independent match outcomes conditional on fitted state.",
-            "No future result labels used. Historical fixture dates are retrospectively recorded.",
+            (
+                "Captured full-time results are fixed, including today; fitting excludes today. "
+                "Unscheduled dates are placeholders used only for fixed-strength simulation."
+                if results_observed_at
+                else "No future result labels used. "
+                "Historical fixture dates are retrospectively recorded."
+            ),
             "Nondecisive shared positions split mass across occupied ranks for reporting.",
             "Unresolved decisive ties assume equal playoff chances; playoff model not estimated.",
             "Points adjustments include only supplied sanctions known at the cutoff.",

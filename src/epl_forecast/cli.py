@@ -2,11 +2,12 @@ import argparse
 import json
 import sys
 import tomllib
-from datetime import date, timedelta
+from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
 from epl_forecast.artifacts import new_run_directory, provenance, results_markdown
 from epl_forecast.data.crosscheck import crosscheck_openfootball
+from epl_forecast.data.live import LONDON, capture_snapshot, load_live_season
 from epl_forecast.data.normalize import load_processed, normalize_snapshot, write_csv
 from epl_forecast.data.rules import historical_adjustments
 from epl_forecast.data.sources import (
@@ -16,6 +17,7 @@ from epl_forecast.data.sources import (
     restore_snapshot,
 )
 from epl_forecast.evaluation import market_predictions, rolling_predictions, summarize
+from epl_forecast.live_forecast import check_freshness, export_forecast
 from epl_forecast.models import make_model
 from epl_forecast.schema import Fixture, fixture_id
 from epl_forecast.simulation import EuropeScenario, simulate_season
@@ -212,6 +214,70 @@ def predict_command(args) -> None:
         print(json.dumps(output, indent=2, allow_nan=False))
 
 
+def forecast_command(args) -> None:
+    live = load_live_season(args.snapshot)
+    check_freshness(live, args.max_snapshot_age_hours)
+    config = load_config(args.config)
+    history, _, manifest = load_processed(args.data)
+    history = [
+        match
+        for match in history
+        if (match.fixture.competition_id, match.fixture.season_id)
+        != ("eng-premier-league", live.season_id)
+    ] + live.played
+    as_of = live.observed_at.astimezone(LONDON).date()
+    model, spec, training = fitted_model(history, config, args.model, as_of)
+    if spec["kind"] != "attack_defense_poisson":
+        raise ValueError("The live strength export currently requires an attack/defense model")
+    europe = (
+        EuropeScenario(**json.loads(args.europe_scenario.read_text()))
+        if args.europe_scenario
+        else None
+    )
+    adjustments = (
+        json.loads(args.adjustments.read_text())
+        if args.adjustments
+        else historical_adjustments(live.season_id, as_of)
+    )
+    output = args.output or Path("runs/forecasts") / datetime.now(UTC).strftime(
+        "%Y-%m-%dT%H%M%S.%fZ"
+    )
+    result = export_forecast(
+        live,
+        model,
+        training,
+        {
+            **provenance(config, manifest),
+            "model": spec,
+            "snapshot": str(args.snapshot),
+            "live_snapshot": live.manifest,
+            "seed": args.seed,
+            "simulations": args.simulations,
+            "max_goals": args.max_goals,
+            "europe_scenario": None if europe is None else vars(europe),
+            "adjustments": adjustments,
+        },
+        output,
+        args.simulations,
+        args.seed,
+        args.max_goals,
+        adjustments,
+        europe,
+    )
+    print(
+        f"Archived {len(result['matches'])} match forecasts and "
+        f"{len(result['team_strengths'])} team strengths to {output}"
+    )
+    if result["simulation"]:
+        print(
+            f"Fixed {len(live.played)} captured full-time results; "
+            f"simulated {len(live.remaining)} fixtures {args.simulations:,} times"
+        )
+    else:
+        print(result["simulation_unavailable_reason"])
+    print(f"Open {output / 'index.html'}")
+
+
 def audit_command(args) -> None:
     _, _, manifest = load_processed(args.data)
     coverage = json.loads((args.data / "coverage.json").read_text())["seasons"]
@@ -257,10 +323,13 @@ def audit_command(args) -> None:
 
 def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(
-        description="Reproducible Premier League forecasting experiments"
+        description="Premier League probabilistic forecasts and season simulation"
     )
     commands = root.add_subparsers(dest="command", required=True)
     data = commands.add_parser("data").add_subparsers(dest="action", required=True)
+    snapshot = data.add_parser("snapshot", help="Archive current FPL and Football-Data responses")
+    snapshot.add_argument("--root", type=Path, default=Path("snapshots"))
+    snapshot.add_argument("--season-start", type=int, required=True)
     for name in ("fetch", "restore", "normalize"):
         command = data.add_parser(name)
         command.add_argument("--root", type=Path, default=Path("data"))
@@ -280,6 +349,19 @@ def parser() -> argparse.ArgumentParser:
         "--snapshot", type=Path, default=Path("configs/crosscheck_snapshot.json")
     )
     crosscheck.add_argument("--output", type=Path, default=Path("docs/crosscheck.json"))
+    forecast = commands.add_parser("forecast", help="Archive a current-season M2 forecast")
+    forecast.add_argument("--snapshot", type=Path, required=True)
+    forecast.add_argument("--config", type=Path, default=Path("configs/baselines.toml"))
+    forecast.add_argument("--data", type=Path, default=Path("data/processed"))
+    forecast.add_argument("--output", type=Path)
+    forecast.add_argument("--model", default="M2-attack-defense-v1")
+    forecast.add_argument("--simulations", type=int, default=10000)
+    forecast.add_argument("--seed", type=int, default=20260905)
+    forecast.add_argument("--max-goals", type=int, default=10)
+    forecast.add_argument("--max-snapshot-age-hours", type=float, default=24)
+    forecast.add_argument("--europe-scenario", type=Path)
+    forecast.add_argument("--adjustments", type=Path)
+    forecast.set_defaults(func=forecast_command)
     for name in ("evaluate", "simulate", "predict"):
         command = commands.add_parser(name)
         command.add_argument("--config", type=Path, default=Path("configs/baselines.toml"))
@@ -315,6 +397,15 @@ def main() -> None:
     try:
         if args.command != "data":
             args.func(args)
+        elif args.action == "snapshot":
+            directory = capture_snapshot(args.root, args.season_start)
+            manifest = json.loads((directory / "manifest.json").read_text())
+            print(f"Archived {len(manifest['files'])} sources to {directory}")
+            if manifest["errors"]:
+                raise SourceAccessError(
+                    f"{len(manifest['errors'])} sources failed; "
+                    "successful responses remain archived"
+                )
         elif args.action == "fetch":
             snapshot = fetch_snapshot(
                 args.root, args.snapshot, args.start_season, args.end_season, args.divisions
