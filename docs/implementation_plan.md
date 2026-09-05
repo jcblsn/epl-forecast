@@ -1,69 +1,45 @@
 # Implementation plan
 
-The first deliverable is the six-part milestone in `design_preliminary.md`, with
-working commands and saved evidence. Later phases remain experiments, not promises
-that complex models will improve predictions.
+Build a current Premier League forecasting product and improve its predictive
+information. The historical data, model interface, chronological harness and
+season simulator are established. Their initial evidence remains in
+[E001](experiments/E001.md) and [E002](experiments/E002.md).
 
-Status on 2026-09-05: the first milestone is implemented and reproduced from a
-fresh data directory. [E001](experiments/E001.md) records the results, comparison
-decision and verification evidence. Phase 0 and the initial evaluation harness
-are complete. [E002](experiments/E002.md) adds and evaluates an Elo/ordered-logit
-benchmark; it does not meet the gate for replacing M2. Both experiments are
-checkpointed in Git, and completed future milestones should be committed at
-similar intervals. Dynamic models,
-distribution experiments and richer information layers remain in the
-[research queue](next_experiments.md).
+## Current work
 
-1. Finish the data audit. Acquire immutable raw CSVs, pin URLs/checksums/retrieval
-   times, normalize canonical identities, and generate field and schedule audits.
-2. Establish the forecasting contract. Training receives completed matches before
-   the forecast date; prediction receives only fixture information. Enforce the
-   same daily information cutoff for every model.
-3. Build rolling-origin evaluation, per-match predictions, log loss, multiclass
-   Brier score (sum across three classes), classwise calibration, and score log
-   likelihood where available. Report market benchmarks on explicitly matched rows.
-4. Compare trivial and team-level benchmarks after inspecting the full audit.
-   Freeze model/config versions, retain per-season results and paired uncertainty,
-   and distinguish development comparison from a final untouched season.
-5. Simulate a historical PL remainder from a fixed cutoff, redacting future results.
-   Verify schedule completeness, standings arithmetic, tie handling, reproducible
-   random draws, points/goal-difference distributions and probability sums.
-6. Publish reproducible commands, experiment results and limitations. Add a tested
-   next-experiment queue based on the observed data and errors.
+As of 2026-09-05:
 
-## Decisions to settle explicitly
+1. Archive live sources: implemented with `data snapshot`. Five public responses
+   have been captured, with raw bytes and observation times.
+2. Generate the current 2026/27 forecast: implemented with `forecast`. Export
+   strengths, match probabilities, score matrices and season distributions as
+   JSON/CSV/HTML. Preserve every forecast and distinguish its model cutoff from
+   the actual capture and archival timestamps.
+3. Tune M2: completed the 30-setting rolling search with selection from earlier
+   seasons. Defaults already sit in the best region; [retain them](experiments/m2_tuning.md).
+4. Use Championship history for promotion continuity, then test lagged shots,
+   scoring distributions and dynamic team-strength uncertainty.
 
-- Missing kickoff times: use daily batches and next-day result availability.
-- Identity: reviewed source aliases; match IDs use competition, season and ordered
-  opponents, remaining stable if a fixture is postponed.
-- Sources: public Football-Data CSVs currently support this milestone without keys.
-  Optional authenticated sources must be probed before they become dependencies.
-- Reproducibility: a lockfile pins each raw blob; processing and evaluation work
-  offline. Restoring a changed upstream blob fails instead of silently changing data.
-- Modeling: simple Python modules, NumPy/SciPy as needed, a small CLI, no frontend.
-- Simulation: a score model must provide unbounded sampling and observed-score
-  likelihood; any display grid truncation must expose its omitted mass.
-- European places: top-four/top-five probabilities alone are not qualification
-  forecasts. Support explicit season/scenario assumptions about cup winners and
-  European performance slots, and label conditional outputs.
-- Ties: use PL points, goal difference and goals scored; head-to-head rules apply
-  when deciding title, relegation or qualification. Exact unresolved ties need
-  explicit treatment, not alphabetical sorting.
-- Historical rules and deductions: keep them separate from forecast fitting. Do
-  not insert a later sanction into an earlier simulated table.
+The detailed order is in the [research queue](next_experiments.md). Live capture
+continues while model work proceeds. No background scheduler is installed yet.
 
-## Verification gates
+## Contracts worth keeping
 
-Data: determinism, raw corruption detection, season counts, malformed scores,
-unknown aliases, duplicate fixture rejection, and explicit missing optional fields.
+- Canonical team IDs and stable ordered fixture IDs, even after rescheduling.
+- Raw retention and basic provenance; explicit source failures and score conflicts.
+- Prior-date results for fitting, with no same-day leakage. Captured full-time
+  results may be fixed in the live table without entering that day's fitted model.
+- Valid probabilities, complete score PMFs or disclosed display tails, and
+  unbounded score sampling.
+- All 380 ordered fixtures, fixed played scores, points/goal conservation and
+  honest European qualification assumptions.
+- Archived forecasts are forward evidence only when completed before kickoff.
+  Replaying an old snapshot cannot manufacture a historical pre-match archive.
 
-Forecasting: future-score mutation invariance, same-day isolation, cold starts,
-probability normalization, analytical score likelihood, and identical seeds/configs.
+## Verification effort
 
-Simulation: played matches stay fixed; each remaining ordered pair is sampled once;
-points and goals balance; head-to-head and tied positions are handled; final
-probabilities conserve title and relegation slots; deductions obey their known date.
-
-Acceptance: a fresh data directory can restore the pinned data; two offline
-normalizations agree byte-for-byte; a chronological comparison of at least two
-simple models runs; an actual PL season simulation completes; tests and Ruff pass.
+Run Ruff and relevant tests for changes. Keep leakage, probability, identity,
+cutoff and simulation arithmetic tests. Check deterministic normalization when
+its implementation changes; use full fresh-directory reproduction occasionally
+or for releases. Reserve expensive statistical analysis for comparisons that
+warrant it. Most negative exploratory ideas need a short note and a table.

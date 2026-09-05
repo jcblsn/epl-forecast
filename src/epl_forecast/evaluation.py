@@ -235,17 +235,20 @@ def summarize(predictions: list[dict], markets: list[dict], config: dict) -> dic
                 [r for r in model_rows if r["match_id"] in ids], config["calibration_bins"]
             )
             matched.append({"market_subset": market_id, "model_id": model_id, **score})
+    bootstrap_samples = config.get("bootstrap_samples", 0)
+    if type(bootstrap_samples) is not int or bootstrap_samples < 0:
+        raise ValueError("bootstrap_samples must be a nonnegative integer")
     comparisons = [
         paired_comparison(groups[a], groups[b], config["bootstrap_samples"], config["seed"])
         for a, b in combinations(groups, 2)
+        if bootstrap_samples
     ]
     for model_rows in groups.values():
         for market_rows in market_groups.values():
-            comparisons.append(
-                paired_comparison(
-                    model_rows, market_rows, config["bootstrap_samples"], config["seed"]
+            if bootstrap_samples:
+                comparisons.append(
+                    paired_comparison(model_rows, market_rows, bootstrap_samples, config["seed"])
                 )
-            )
     return {
         "overall": overall,
         "by_season": seasons,

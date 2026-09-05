@@ -1,96 +1,113 @@
 # Open Premier League forecast
 
-A Python framework for reproducible Premier League forecasting experiments. The
-first milestone ingests 16 seasons of Premier League and Championship results,
-compares three chronological benchmarks, and simulates a season remainder.
+An open, real-time probabilistic Premier League forecasting and season-simulation
+model using free data. The aim is the strongest practical model we can build,
+with current, interpretable forecasts. Reproducible experiments help improve and
+validate the model; the forecasts are the product.
 
-The provisional baseline is a regularized team attack/defense Poisson model. It
-improves on league-only benchmarks in the initial backtest and remains behind the
-market comparison. A subsequent [Elo comparison](docs/experiments/E002.md) did not
-meet the rule for replacing it. See [the initial experiment report](docs/experiments/E001.md),
-[data inventory](docs/data_inventory.md), and [original design](docs/design_preliminary.md).
+The project now archives live FPL and Football-Data responses and produces a
+2026/27 forecast as JSON, CSV and a static HTML page. Refreshes are manual for now.
+The score model is M2, a regularized attack/defense Poisson model; M0, M1 and M3
+remain useful benchmarks. Historical results cover 16 PL and Championship seasons.
 
-## Reproduce experiments
+## Capture and forecast
 
 Run from the repository root with [uv](https://docs.astral.sh/uv/):
 
 ```sh
 uv sync --locked
-uv run python scripts/reproduce.py --output runs/reproduction
+uv run epl-forecast data snapshot --season-start 2026
 ```
 
-This restores the pinned public downloads, checks two independent normalizations,
-compares the 2024/25 results against OpenFootball, evaluates development/validation/
-holdout splits, and runs 10,000 season simulations. Use a new output directory for
-each run. It takes a few minutes; no API key is needed. Cached data allows all
-forecasting and simulation work to run offline.
+This creates `snapshots/<UTC timestamp>/` containing FPL players/availability,
+fixtures/results, Football-Data latest fixtures/odds, and current PL and
+Championship result files. Raw bytes, retrieval times and hashes are retained.
+Successful responses survive a partial source failure. No API key is needed.
 
-To reproduce the retrospective Elo comparison with the same simulation reference:
+Pass the printed snapshot directory to the forecast command:
 
 ```sh
-uv run python scripts/reproduce.py --config configs/elo.toml --output runs/elo-reproduction
+uv run epl-forecast forecast --snapshot snapshots/<UTC timestamp>
 ```
 
-The original E001 implementation is preserved in commit `6277385`. New source
-changes produce a new code fingerprint; the E001 evidence retains its original
-fingerprint. All E002 periods were already inspected in E001, including the period
-named `holdout`, and are explicitly labeled retrospective.
+Open the printed `runs/forecasts/<UTC timestamp>/index.html`. Each run archives:
 
-Raw data stays in the ignored `data/raw/` directory. Each file is identified by its
-SHA-256 hash. The committed [snapshot](configs/data_snapshot.json) records URLs,
-original retrieval times and hashes. A changed upstream file causes restoration
-to fail rather than silently altering an experiment. Keep the original raw cache
-if you need long-term reproduction after a source correction.
+- current attack/defense strengths and each team's next-match probabilities;
+- all remaining H/D/A probabilities and exact-score matrices with tail mass;
+- expected final points, position distributions, title, top-four/five and relegation chances;
+- the captured schedule, source provenance and actual forecast archival time.
 
-## Individual commands
+Completed scores, including today's provisional full-time FPL results, stay fixed
+in the season projection. Model fitting retains the conservative rule of using
+results before the snapshot's London calendar date. A game in progress suspends
+the season projection while upcoming-match forecasts remain available.
+
+Top-four/five chances describe positions. To add conditional European qualification,
+pass `--europe-scenario configs/europe_scenario.example.json`, which supplies
+hypothetical cup winners and league UCL places. Strengths are held fixed during
+simulation; parameter uncertainty, injuries and transfers are not yet modeled.
+See [live operation and limitations](docs/live.md).
+
+## Improve the model
+
+Use historical rolling CV for exploration and archived pre-kickoff forecasts as
+the forward test. All historical seasons, including 2025/26, can inform model
+development. Keep hyperparameter selection inside chronology when reporting a
+selected strategy's performance. Inspect per-season scores and complementary
+errors; candidates need no frozen protocol or minimum-gain threshold.
+
+The modest M2 search uses 30 half-life/ridge combinations. The 2015/16–2017/18
+seasons initialize parameter selection; each 2018/19–2025/26 fold selects using
+only earlier seasons and refits strengths daily:
+
+```sh
+uv run python scripts/tune_m2.py --output runs/m2-tuning
+```
+
+It retains per-match predictions, per-season metrics, market comparisons and the
+chronological selection results. Bootstrap uncertainty is optional for exploratory
+work. The [first search](docs/experiments/m2_tuning.md) found the current settings
+already in the best region. Championship promotion continuity and lagged shots follow in the
+[research queue](docs/next_experiments.md).
+
+## Historical experiments
+
+The existing normalized cache is required for forecasts. On a new checkout:
 
 ```sh
 uv run epl-forecast data restore
 uv run epl-forecast data normalize
-uv run epl-forecast data audit
-uv run epl-forecast data cross-check
-
-uv run epl-forecast evaluate --split development --output runs/development
-uv run epl-forecast evaluate --split validation --output runs/validation
-uv run epl-forecast evaluate --split holdout --output runs/holdout
-
-uv run epl-forecast predict --season 2024-2025 --date 2024-08-17 \
-  --home arsenal --away wolverhampton-wanderers --output runs/match.json
-
-uv run epl-forecast simulate --season 2024-2025 --as-of 2025-01-01 \
-  --simulations 10000 --seed 20260905 --output runs/season
 ```
 
-Use canonical IDs from [the team registry](src/epl_forecast/data/teams.csv).
-`--as-of` means the start of that date. Results from that date are excluded even
-if kickoff times exist. For match forecasts, `--as-of` defaults to `--date`.
+Historical raw files are pinned in [data_snapshot.json](configs/data_snapshot.json).
+If an upstream file changes, restoration fails explicitly; preserve the original
+raw cache for long-term reproduction. Live captures use separate timestamped
+snapshots and never replace the historical pin.
 
-Model versions, splits, training-window length and starting parameters live in
-[baselines.toml](configs/baselines.toml) and [elo.toml](configs/elo.toml).
-`--model` selects a model ID. The frequency and Elo models provide only H/D/A
-probabilities; the Poisson models also provide score likelihoods, an explicitly
-truncated display grid, and unbounded score sampling.
-
-Evaluation writes per-match predictions, per-season metrics, calibration bins,
-matched market comparisons and block-bootstrap loss differences. `run.json`
-records configuration, processed-data hashes, package versions and a source-code
-fingerprint. Full generated output stays in `runs/`; compact reference results
-are in [docs/experiments](docs/experiments/).
-
-The simulation command replays a historical season using its recorded fixtures.
-It produces points, goal-difference and position distributions, title/relegation
-chances, and top-four/top-five chances. For conditional European qualification:
+The original [E001](docs/experiments/E001.md) and [E002](docs/experiments/E002.md)
+reports remain records of the work already done. Their gates and split names are
+historical conventions, not requirements for new exploration. For occasional
+full reproduction:
 
 ```sh
-uv run epl-forecast simulate --season 2024-2025 --as-of 2025-01-01 \
-  --europe-scenario configs/europe_scenario.example.json --output runs/season-scenario
+uv run python scripts/reproduce.py --output runs/reproduction
+uv run python scripts/reproduce.py --config configs/elo.toml --output runs/elo-reproduction
 ```
 
-The example is a hypothetical scenario, not a prediction of cup winners. The
-supported allocation assumes no extra English UEFA titleholders or eligibility
-exclusions. See [simulation rules and limitations](docs/modeling.md).
+Other historical commands remain available:
 
-## Working on the project
+```sh
+uv run epl-forecast evaluate --split development --output runs/development
+uv run epl-forecast simulate --season 2024-2025 --as-of 2025-01-01 \
+  --simulations 10000 --output runs/season
+uv run epl-forecast predict --season 2024-2025 --date 2024-08-17 \
+  --home arsenal --away wolverhampton-wanderers --output runs/match.json
+```
+
+Historical `--as-of` means the start of the date, excluding that day's results.
+Use canonical IDs from [the team registry](src/epl_forecast/data/teams.csv).
+
+## Development
 
 ```sh
 uv run ruff format --check
@@ -98,23 +115,15 @@ uv run ruff check
 uv run pytest
 ```
 
-Tests use synthetic data and need no network. The project uses ordinary modules:
-`data/` acquires and normalizes sources, `models/` implements forecasting,
-`evaluation.py` scores chronological predictions, and `simulation.py` resolves
-season outcomes. There is no frontend or betting automation.
+Tests use synthetic data and need no network. Keep leakage, identity, probability,
+score-distribution and simulation arithmetic checks. Repeat byte-for-byte
+normalization when normalization changes; reserve fresh-directory reproduction
+for occasional checks and releases.
+
+The project uses ordinary Python, NumPy and SciPy. It has no hosted frontend,
+scheduler or betting automation. Raw snapshots and generated forecasts are local,
+Git-ignored artifacts; back them up if retaining the live record matters.
 
 When testing a rebuilt wheel at the same version, use `uv run --no-cache
---no-project --with ./dist/epl_forecast-0.1.0-py3-none-any.whl ...`. Otherwise uv
-can reuse an older installed wheel even after a package refresh.
-
-To audit additional seasons, create a separate snapshot and data root:
-
-```sh
-uv run epl-forecast data fetch --start-season 2010 --end-season 2026 \
-  --root data/new-audit --snapshot configs/new_snapshot.json
-```
-
-Incomplete results can be normalized and audited, but a season simulation
-requires all 380 ordered fixtures. A verified live fixture adapter is future work.
-Authentication is checked before retrying a restricted source; 401/403 responses
-fail immediately. The initial data source needs no credentials.
+--no-project --with ./dist/epl_forecast-0.1.0-py3-none-any.whl ...` to avoid a stale
+cached installation.

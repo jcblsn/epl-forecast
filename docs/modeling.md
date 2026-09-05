@@ -61,7 +61,7 @@ absolute calibration errors. Empty bins have null means. ECE is a descriptive
 diagnostic, not a proper scoring rule; a low-resolution league-frequency forecast
 can have excellent aggregate calibration and weak predictive accuracy.
 
-Paired loss differences resample 28-day blocks, kept within season boundaries and
+When requested, paired loss differences resample 28-day blocks, kept within season boundaries and
 pooled across seasons, using 2,000 bootstrap replicates. The intervals reflect
 sampling sensitivity, not all model/parameter uncertainty or a guarantee of future
 performance. One season provides few independent blocks. Every comparison uses
@@ -72,11 +72,14 @@ proportional margin removal, not a calibrated market model. Individual collectio
 times are missing and closing quotes have a later information horizon than our
 start-of-day forecasts. No market prices enter structural-model fitting.
 
-The three chronological splits are development 2015/16–2022/23, validation
+The original three chronological splits are development 2015/16–2022/23, validation
 2023/24–2024/25 and holdout 2025/26. The baseline selection file was written after
-validation and before the holdout evaluation. That holdout is now consumed: future
-experiments cannot call it an untouched test set. Use nested chronological
-development comparisons and reserve new future observations for a new final test.
+validation and before the holdout evaluation. All these historical periods now
+contribute development evidence. Use rolling seasonal CV for new ideas, selecting
+hyperparameters from earlier seasons when evaluating a tuned strategy. The small
+M2 search in `scripts/tune_m2.py` uses this rule. Bootstrap analysis is optional
+(`bootstrap_samples = 0` or omitted skips it); exploratory work has no minimum-gain
+or confidence-interval gate. Archived live forecasts are the forward test.
 
 ## Season simulation
 
@@ -92,7 +95,7 @@ head-to-head points and away goals only for ties affecting the title, relegation
 or the supplied European allocation. The
 [head-to-head rule began in 2019/20](https://www.premierleague.com/en/news/1262217);
 the [2025/26 handbook, section C](https://resources.premierleague.pulselive.com/premierleague/document/2025/07/24/99839920-d274-42aa-a2ac-e5612b4f6c61/PL_Handbook_25-26_Digital_24.07.pdf)
-defines the current sequence. Nondecisive ties remain shared and their probability
+defines the implemented sequence. Nondecisive ties remain shared and their probability
 mass is split across occupied ranks for reporting. If a decisive tie remains,
 assume equal playoff chances and report its incidence. This is an explicit
 approximation, including multi-team ties whose playoff arrangements are unspecified.
@@ -114,7 +117,15 @@ titleholders or eligibility exclusions. The
 [Premier League's qualification explanation](https://www.premierleague.com/en/european-qualification-explained)
 shows why league ranks alone cannot determine every European place.
 
-The initial CLI does not ingest a live full-season schedule. Its retrospective
-fixture dates cannot support claims about what scheduling information was known
-historically. A later live adapter must validate freshness, all remaining pairs,
-fixture status, source permissions and any required credentials first.
+The `forecast` command uses a captured FPL full-season schedule. It checks season,
+identities, all 380 pairs and completion statuses, cross-checks available current
+Football-Data results, and retains the observation time. Fitting excludes the
+snapshot's London date; the live table fixes all scores already full-time in the
+snapshot, including that date. The optional `results_observed_at` simulation input
+supports this separation; historical simulation retains its next-day cutoff.
+
+Undated/postponed fixtures keep their raw kickoff information in exports and use
+a placeholder date only inside the fixed-strength model. In-progress or overdue
+fixtures suspend the season projection while other predictions remain available.
+These forecasts do not constitute an in-play model. See [live operations](live.md)
+for freshness, archival behavior and the initial 2026/27 forecast.

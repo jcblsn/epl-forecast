@@ -39,6 +39,21 @@ settings in `configs/baselines.toml`. These are experiment parameters, not findi
 | [FBref / Sports Reference](https://www.sports-reference.com/blog/2026/01/fbref-stathead-data-update/) | Publisher announced removal of advanced football data in January 2026. | Direct announcement returned 403 here; announcement text was available in the publisher's [category archive](https://www.sports-reference.com/blog/category/statgeekery/). [Bot policy](https://www.sports-reference.com/bot-traffic.html) also constrains automated access. | Do not build an xG dependency on previously available FBref fields. |
 | [football-data.org](https://www.football-data.org/pricing) | Separate service with fixtures, tables and delayed scores on a free tier; deeper history is listed on paid plans. | The unauthenticated PL match endpoint returned 403. An account/API token is required to validate its match coverage. | No credentials needed for the historical milestone. Revisit only if a live fixture requirement warrants it. |
 
+## Live collection
+
+The September 5, 2026 capture added FPL
+[players/availability](https://fantasy.premierleague.com/api/bootstrap-static/) and
+[fixtures/results](https://fantasy.premierleague.com/api/fixtures/), plus
+[Football-Data latest fixtures/odds](https://football-data.co.uk/fixtures.csv) and
+current E0/E1 season files. All five downloaded without authentication. The FPL
+2026/27 schedule had 380 fixtures and 28 full-time results, including eight marked
+provisional; the PL CSV had 20 results, all agreeing with FPL. Raw snapshots retain
+observation times and complete payloads even for fields not yet modeled.
+
+The current season CSV also contains `HxG`/`AxG` columns. Their definitions and
+historical coverage have not been audited; their presence does not establish a
+usable longitudinal xG source. See [live collection and forecasts](live.md).
+
 ## Historical consistency and leakage
 
 The sampled files' core result columns are stable. Header width changes from 68–71
