@@ -1,0 +1,39 @@
+experiment_id = "E002-elo-ordered-logit-v1"
+competition_id = "eng-premier-league"
+evaluation_status = "retrospective"
+evaluation_note = "All periods were inspected in E001; the holdout name is a historical interval label, not an untouched test set."
+train_window_days = 1095
+min_train_matches = 700
+calibration_bins = 10
+bootstrap_samples = 2000
+seed = 20260905
+development_start = "2015-08-01"
+development_end = "2023-07-01"
+validation_start = "2023-08-01"
+validation_end = "2025-07-01"
+holdout_start = "2025-08-01"
+holdout_end = "2026-07-01"
+
+[[models]]
+id = "M0-frequency-v1"
+kind = "league_frequency"
+description = "Unchanged E001 outcome-frequency control"
+[models.parameters]
+alpha = 1.0
+
+[[models]]
+id = "M2-attack-defense-v1"
+kind = "attack_defense_poisson"
+description = "Unchanged E001 provisional reference"
+[models.parameters]
+half_life_days = 365.0
+ridge = 5.0
+
+[[models]]
+id = "M3-elo-ordered-logit-v1"
+kind = "elo_ordered_logit"
+description = "Elo updates with a fitted ordered-logit H/D/A layer"
+[models.parameters]
+k_factor = 20.0
+home_advantage = 60.0
+calibration_ridge = 1.0
