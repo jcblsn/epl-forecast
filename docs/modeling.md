@@ -2,7 +2,7 @@
 
 ## Models and experiment settings
 
-All three models fit independently before each prediction date using only results
+All models fit independently before each prediction date using only results
 from earlier dates within the configured 1,095-day window. No team identities from
 later fixtures are used to build a model's training vocabulary.
 
@@ -11,6 +11,7 @@ later fixtures are used to build a model's training vocabulary.
 | M0-frequency-v1 | Historical H/D/A counts with one prior count per outcome. | Past PL outcomes. |
 | M1-league-poisson-v1 | Independent goals with league home/away rates; one virtual 1–1 match prevents degenerate rates. | Past PL scores, exponentially weighted with 365-day half-life. |
 | M2-attack-defense-v1 | Ridge-regularized team attack and defense, league scoring level and home advantage. | Same score history and time weights as M1. |
+| M3-elo-ordered-logit-v1 | Elo updates followed by a regularized ordered-logit outcome layer. | Past PL outcomes, with chronological pre-update calibration features. |
 
 For M2, with attack `a`, defensive strength `d`, intercept `b` and home advantage `h`:
 
@@ -34,6 +35,16 @@ not establish that a correction or a decay setting will improve this dataset.
 H/D/A probabilities use the full Skellam goal-difference distribution. Observed
 score likelihoods use full Poisson log PMFs. Display grids report omitted tail
 mass and are not renormalized. Simulation samples unbounded goal counts directly.
+
+M3 starts ratings at zero for each training-window replay, adds a fixed 60-point
+home advantage to the Elo expectation and uses K = 20. Same-day matches receive
+batch updates after all their pre-match features have been recorded. The draw
+layer fits an intercept, nonnegative slope and positive threshold to historical
+pre-update rating differences, with a ridge penalty of 1. Unseen clubs have the
+zero initial rating. It has no seasonal resets, division offset or goal-margin
+update and supplies no score distribution. The [E002 protocol and report](experiments/E002.md)
+give its exact formulas, initialization, decision rule and retrospective results.
+M2 remains the provisional reference after this comparison.
 
 ## Evaluation
 

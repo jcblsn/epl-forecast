@@ -1,13 +1,15 @@
-# Next experiments after E001
+# Next experiments after E002
 
 The first milestone works. M2 is a provisional baseline, not the end of model
-selection. Keep the first experiment's frozen results and record rejections as
-well as gains. The 2025/26 holdout is now consumed.
+selection. [E002](experiments/E002.md) implemented the first Elo/draw comparison;
+the candidate did not meet its promotion gate and remains a benchmark. Keep each
+experiment's frozen results and record rejections as well as gains. The 2025/26
+holdout is now consumed, and all E002 evaluations were labeled retrospective.
 
 | Priority | Question | Candidate experiment | Gate |
 | --- | --- | --- | --- |
-| 1 | Does a different team-strength formulation improve outcome forecasts? | Add a modest Elo/draw model through the existing interface. Compare to M2 on the same chronological rows. | Version the draw mechanism, update order, seasonal resets and promotion prior; choose settings inside historical training/validation folds. |
-| 2 | Are score probabilities and draw frequencies systematically wrong? | Compare independent Poisson with Dixon–Coles; inspect low-score residuals and calibration by season. | Full valid score PMF, unbounded sampling or an explicit certified tail bound, observed-score NLL and H/D/A scores. No automatic acceptance of a lower in-sample fit error. |
+| 1 | Are score probabilities and draw frequencies systematically wrong? | Compare independent Poisson with Dixon–Coles; inspect low-score residuals and calibration by season. | Full valid score PMF, unbounded sampling or an explicit certified tail bound, observed-score NLL and H/D/A scores. No automatic acceptance of a lower in-sample fit error. |
+| 2 | Does Elo calibration transfer from its replay warm-up to final ratings? | Prespecify a chronological calibration or burn-in ablation of M3; then assess K and home advantage only in earlier folds. | E002 underpredicts aggregate draws. Separate this diagnostic from proof of a cause; version update order, seasonal resets and promotion priors, and keep tuning inside historical folds. |
 | 3 | How much recency is useful? | Compare a small prespecified set of time-decay settings; then a simple dynamic attack/defense process if the gain warrants it. | Rolling outer evaluation with all tuning confined to earlier dates. Include compute cost and uncertainty, not just the best point estimate. |
 | 4 | Can Championship continuity improve promoted-team starts? | Add a division-aware prior or an estimated cross-division strength offset, with explicit season transitions. | Existing canonical IDs support joining the leagues. Do not pool their raw goal rates as if the opponents were equally strong; evaluate promoted teams separately. |
 | 5 | Do lagged shots improve prediction? | Add past-match shot/shot-on-target aggregates from the already cached data. | PL fields are complete in this audit; feature availability must use prior dates only, with source-definition changes documented. |

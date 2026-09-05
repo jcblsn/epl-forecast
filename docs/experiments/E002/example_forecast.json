@@ -1,0 +1,89 @@
+{
+  "as_of": "2024-08-17",
+  "match_date": "2024-08-17",
+  "match_id": "eng-premier-league:2024-2025:arsenal:wolverhampton-wanderers",
+  "model": {
+    "description": "Elo updates with a fitted ordered-logit H/D/A layer",
+    "id": "M3-elo-ordered-logit-v1",
+    "kind": "elo_ordered_logit",
+    "parameters": {
+      "calibration_ridge": 1.0,
+      "home_advantage": 60.0,
+      "k_factor": 20.0
+    }
+  },
+  "p_away": 0.050276943090235025,
+  "p_draw": 0.08604563495839503,
+  "p_home": 0.86367742195137,
+  "provenance": {
+    "code_sha256": "38e54bcedf59c36c5ce0197b2e77fb50e7e376d0e1e6be9c174f9e248f0c0513",
+    "config": {
+      "bootstrap_samples": 2000,
+      "calibration_bins": 10,
+      "competition_id": "eng-premier-league",
+      "development_end": "2023-07-01",
+      "development_start": "2015-08-01",
+      "evaluation_note": "All periods were inspected in E001; the holdout name is a historical interval label, not an untouched test set.",
+      "evaluation_status": "retrospective",
+      "experiment_id": "E002-elo-ordered-logit-v1",
+      "holdout_end": "2026-07-01",
+      "holdout_start": "2025-08-01",
+      "min_train_matches": 700,
+      "models": [
+        {
+          "description": "Unchanged E001 outcome-frequency control",
+          "id": "M0-frequency-v1",
+          "kind": "league_frequency",
+          "parameters": {
+            "alpha": 1.0
+          }
+        },
+        {
+          "description": "Unchanged E001 provisional reference",
+          "id": "M2-attack-defense-v1",
+          "kind": "attack_defense_poisson",
+          "parameters": {
+            "half_life_days": 365.0,
+            "ridge": 5.0
+          }
+        },
+        {
+          "description": "Elo updates with a fitted ordered-logit H/D/A layer",
+          "id": "M3-elo-ordered-logit-v1",
+          "kind": "elo_ordered_logit",
+          "parameters": {
+            "calibration_ridge": 1.0,
+            "home_advantage": 60.0,
+            "k_factor": 20.0
+          }
+        }
+      ],
+      "seed": 20260905,
+      "train_window_days": 1095,
+      "validation_end": "2025-07-01",
+      "validation_start": "2023-08-01"
+    },
+    "config_sha256": "ed94b8b608c0b4c90d412fc78041d6a2de0a22f1069855bd8f1b4e4e078ef0c3",
+    "data_manifest": {
+      "aliases_sha256": "de87276e650f0cef4a4c5856da40d1efdb8e609ed127dd583afe544d71bc5eb9",
+      "availability_policy": "result available the next calendar day; date batches",
+      "files": {
+        "coverage.json": "5cf8b8a2fdb99b51e7679f81701e5f16272dccca9610dc1f8e3d0c25944b54d1",
+        "matches.csv": "6db8d4c97a4805765b203bb9296b55d52ce9357c099ed970c825ad0487d789aa",
+        "odds.csv": "44f1c3d47ab9731aa3f599915b97a3134161a85c2d6f84e9a87facae2adac38c"
+      },
+      "matches": 14912,
+      "normalizer_version": "0.1.0",
+      "odds_quotes": 36346,
+      "schema_version": 1,
+      "snapshot_sha256": "d7a8e8cf5521d2daf9c47263f3a6c0712019b14f4437a725c69f3e6d663dcb0a"
+    },
+    "dependencies": {
+      "numpy": "2.5.2",
+      "scipy": "1.18.1"
+    },
+    "package_version": "0.1.0",
+    "python": "3.12.7"
+  },
+  "training_matches": 1131
+}

@@ -1,0 +1,152 @@
+[
+  {
+    "blocks": 86,
+    "candidate": "M2-attack-defense-v1",
+    "ci_lower": -0.1081106838892986,
+    "ci_upper": -0.0793009159368359,
+    "delta_log_loss": -0.0935384556025201,
+    "matches": 3040,
+    "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+    "reference": "M0-frequency-v1"
+  },
+  {
+    "blocks": 86,
+    "candidate": "M3-elo-ordered-logit-v1",
+    "ci_lower": -0.10452099864230284,
+    "ci_upper": -0.07133818041416616,
+    "delta_log_loss": -0.08771881953376959,
+    "matches": 3040,
+    "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+    "reference": "M0-frequency-v1"
+  },
+  {
+    "blocks": 86,
+    "candidate": "M3-elo-ordered-logit-v1",
+    "ci_lower": -9.285985445921286e-05,
+    "ci_upper": 0.01205260616196535,
+    "delta_log_loss": 0.005819636068750498,
+    "matches": 3040,
+    "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+    "reference": "M2-attack-defense-v1"
+  },
+  {
+    "blocks": 86,
+    "candidate": "market:bet365_preclosing",
+    "ci_lower": -0.12289822429820019,
+    "ci_upper": -0.09122427830156196,
+    "delta_log_loss": -0.10732967076500272,
+    "matches": 3040,
+    "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+    "reference": "M0-frequency-v1"
+  },
+  {
+    "blocks": 44,
+    "candidate": "market:betbrain_average_preclosing",
+    "ci_lower": -0.14088258935534584,
+    "ci_upper": -0.09250208670530623,
+    "delta_log_loss": -0.11709705362848771,
+    "matches": 1520,
+    "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+    "reference": "M0-frequency-v1"
+  },
+  {
+    "blocks": 42,
+    "candidate": "market:market_average_closing",
+    "ci_lower": -0.11966623187156546,
+    "ci_upper": -0.08541837619387721,
+    "delta_log_loss": -0.10186143907661785,
+    "matches": 1520,
+    "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+    "reference": "M0-frequency-v1"
+  },
+  {
+    "blocks": 42,
+    "candidate": "market:market_average_preclosing",
+    "ci_lower": -0.11721152399541421,
+    "ci_upper": -0.08266182301837972,
+    "delta_log_loss": -0.09920443979376355,
+    "matches": 1520,
+    "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+    "reference": "M0-frequency-v1"
+  },
+  {
+    "blocks": 86,
+    "candidate": "market:bet365_preclosing",
+    "ci_lower": -0.019836305565558664,
+    "ci_upper": -0.007702235545797174,
+    "delta_log_loss": -0.013791215162482629,
+    "matches": 3040,
+    "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+    "reference": "M2-attack-defense-v1"
+  },
+  {
+    "blocks": 44,
+    "candidate": "market:betbrain_average_preclosing",
+    "ci_lower": -0.021980795009082545,
+    "ci_upper": -0.0050302977090324425,
+    "delta_log_loss": -0.01394415950957009,
+    "matches": 1520,
+    "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+    "reference": "M2-attack-defense-v1"
+  },
+  {
+    "blocks": 42,
+    "candidate": "market:market_average_closing",
+    "ci_lower": -0.027444458341188107,
+    "ci_upper": -0.008344831467764094,
+    "delta_log_loss": -0.017937421990495295,
+    "matches": 1520,
+    "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+    "reference": "M2-attack-defense-v1"
+  },
+  {
+    "blocks": 42,
+    "candidate": "market:market_average_preclosing",
+    "ci_lower": -0.024232955358310895,
+    "ci_upper": -0.006616571288956149,
+    "delta_log_loss": -0.01528042270764098,
+    "matches": 1520,
+    "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+    "reference": "M2-attack-defense-v1"
+  },
+  {
+    "blocks": 86,
+    "candidate": "market:bet365_preclosing",
+    "ci_lower": -0.02688168721444061,
+    "ci_upper": -0.012006335529349453,
+    "delta_log_loss": -0.01961085123123313,
+    "matches": 3040,
+    "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+    "reference": "M3-elo-ordered-logit-v1"
+  },
+  {
+    "blocks": 44,
+    "candidate": "market:betbrain_average_preclosing",
+    "ci_lower": -0.030985938661645417,
+    "ci_upper": -0.00774878703387346,
+    "delta_log_loss": -0.01949819479460437,
+    "matches": 1520,
+    "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+    "reference": "M3-elo-ordered-logit-v1"
+  },
+  {
+    "blocks": 42,
+    "candidate": "market:market_average_closing",
+    "ci_lower": -0.03453750349830169,
+    "ci_upper": -0.013717730125654241,
+    "delta_log_loss": -0.02402265884296202,
+    "matches": 1520,
+    "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+    "reference": "M3-elo-ordered-logit-v1"
+  },
+  {
+    "blocks": 42,
+    "candidate": "market:market_average_preclosing",
+    "ci_lower": -0.031480934020031284,
+    "ci_upper": -0.01124335463830034,
+    "delta_log_loss": -0.021365659560107705,
+    "matches": 1520,
+    "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+    "reference": "M3-elo-ordered-logit-v1"
+  }
+]

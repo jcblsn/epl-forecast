@@ -1,0 +1,58 @@
+{
+  "E001_commit_matches_original_code_fingerprint": true,
+  "E001_control_rows_identical": {
+    "development": 6080,
+    "holdout": 760,
+    "validation": 1520
+  },
+  "E001_simulation_identical_sha256": "23910299b8a4f42df3230930fd415db1b50ddb3a4bd1babab6f58926f648fb86",
+  "code_sha256": "38e54bcedf59c36c5ce0197b2e77fb50e7e376d0e1e6be9c174f9e248f0c0513",
+  "completed_splits": [
+    "development",
+    "validation",
+    "holdout"
+  ],
+  "config_file_sha256": "bee473621ffcf651939c056a5e0c13a6183e795c7ae2b84c745ca0b2d7af0b0c",
+  "crosscheck_passed": true,
+  "evaluation_status": "retrospective",
+  "implementation_commit": "1be7f91c36144c7eff61a950bfffa2390161fdc8",
+  "normalized_files_identical": {
+    "coverage.json": "5cf8b8a2fdb99b51e7679f81701e5f16272dccca9610dc1f8e3d0c25944b54d1",
+    "manifest.json": "f772de4e6a9f1931162245e37ccc46d566f1b865ff26c739e3feb44c34967c17",
+    "matches.csv": "6db8d4c97a4805765b203bb9296b55d52ce9357c099ed970c825ad0487d789aa",
+    "odds.csv": "44f1c3d47ab9731aa3f599915b97a3134161a85c2d6f84e9a87facae2adac38c"
+  },
+  "protocol_commit": "5452df5201ac813bcba1342038f2ecce6c0d81ab",
+  "relegation_probability_sum": 3.0,
+  "remaining_fixtures": 192,
+  "repeated_files_identical": {
+    "development": {
+      "market_predictions.csv": "9cff4643942fc56e7de587096f36492eb9bf07fb5519412d43b5cccbe0094bba",
+      "predictions.csv": "9759feb8003eb2b664ec4fba4d79519c989df30776f92015330d1ada9f8a904e",
+      "run.json": "e9d938d329e46ad2f25ad6ea1bf98e703d49cf8e4d0c46845da07b8e97696751",
+      "summary.json": "bd6b23403f73ec924acea268ddb3b91a2705db3ad7c0f789c6ac82d49f27ecf4"
+    },
+    "holdout": {
+      "market_predictions.csv": "f9a7dd131fdd4614e87b72473881f3b4bca613ed19c4216c6f19885e7dca6a57",
+      "predictions.csv": "b7e3432139f32e2bd15a33c6cd78ab02df28b7a9ffb6c02a7795bf8e77bc4970",
+      "run.json": "fd58ee7dacfb0486b136fc0387907ea854bbfd5fef13b3e00c78fb367f7b55fd",
+      "summary.json": "2cce64842c820ecbd4d63d1ab2cd832ecb8fa880ae4b64d737b3cd02c3bde4e5"
+    },
+    "validation": {
+      "market_predictions.csv": "409f07cc5b3055fcef605d94e689b366709278723936fa408a5ce2863d650ad0",
+      "predictions.csv": "aa44e0270dd8068d3592966c93dbdca2a2ddde2e6d4b0aec36ec247da7f83d7d",
+      "run.json": "4453322f6e547f1aa093c2616d232bee7a80625c73b16785e4579e8dea2831e4",
+      "summary.json": "267ac17ea8bcb8c8dcfdbc9826eb248262e3aecbfbd5ce2e9e4cfc3c309f4979"
+    }
+  },
+  "reproduction_command": "uv run python scripts/reproduce.py --config configs/elo.toml --output runs/E002-reproduction",
+  "reproduction_script_sha256": "af8e9fa7bf41414bd9601cdce0ab11afd0fdc0cf1b9eac1e7350d18a74b5a4fd",
+  "ruff_check_and_format_passed": true,
+  "simulation_draws": 10000,
+  "standalone_elo_prediction_matches_evaluation": true,
+  "tests_passed": 54,
+  "title_probability_sum": 1.0,
+  "uv_lock_check_passed": true,
+  "wheel_build_and_isolated_model_import_passed": true,
+  "wheel_sha256": "38fad98d49f532583bb6f2ed5540dc923c02af371ebe434fae922e662c27a1ed"
+}

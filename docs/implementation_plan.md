@@ -7,7 +7,10 @@ that complex models will improve predictions.
 Status on 2026-09-05: the first milestone is implemented and reproduced from a
 fresh data directory. [E001](experiments/E001.md) records the results, comparison
 decision and verification evidence. Phase 0 and the initial evaluation harness
-are complete; the stronger-baseline research phase has begun. Dynamic models,
+are complete. [E002](experiments/E002.md) adds and evaluates an Elo/ordered-logit
+benchmark; it does not meet the gate for replacing M2. Both experiments are
+checkpointed in Git, and completed future milestones should be committed at
+similar intervals. Dynamic models,
 distribution experiments and richer information layers remain in the
 [research queue](next_experiments.md).
 

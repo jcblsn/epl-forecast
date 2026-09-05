@@ -13,9 +13,12 @@ def run(*arguments: str) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Reproduce the initial forecasting milestone")
+    parser = argparse.ArgumentParser(
+        description="Reproduce a forecasting experiment and simulation"
+    )
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--data-root", type=Path, default=Path("data"))
+    parser.add_argument("--config", type=Path, default=Path("configs/baselines.toml"))
     args = parser.parse_args()
     new_run_directory(args.output)
     processed = args.output / "processed"
@@ -31,10 +34,22 @@ def main() -> None:
     run("data", "audit", "--data", processed, "--output", args.output / "data_audit.csv")
     run("data", "cross-check", "--data", processed, "--output", args.output / "crosscheck.json")
     for split in ("development", "validation", "holdout"):
-        run("evaluate", "--data", processed, "--split", split, "--output", args.output / split)
+        run(
+            "evaluate",
+            "--config",
+            args.config,
+            "--data",
+            processed,
+            "--split",
+            split,
+            "--output",
+            args.output / split,
+        )
     simulation_dir = args.output / "simulation"
     run(
         "simulate",
+        "--config",
+        args.config,
         "--data",
         processed,
         "--season",
@@ -48,6 +63,8 @@ def main() -> None:
     )
     run(
         "predict",
+        "--config",
+        args.config,
         "--data",
         processed,
         "--season",
@@ -69,6 +86,7 @@ def main() -> None:
     write_json(
         args.output / "verification.json",
         {
+            "config_file_sha256": file_hash(args.config),
             "normalized_files_identical": hashes,
             "title_probability_sum": title_sum,
             "relegation_probability_sum": relegation_sum,

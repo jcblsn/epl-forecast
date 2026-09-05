@@ -6,10 +6,11 @@ compares three chronological benchmarks, and simulates a season remainder.
 
 The provisional baseline is a regularized team attack/defense Poisson model. It
 improves on league-only benchmarks in the initial backtest and remains behind the
-market comparison. See [the experiment report](docs/experiments/E001.md),
+market comparison. A subsequent [Elo comparison](docs/experiments/E002.md) did not
+meet the rule for replacing it. See [the initial experiment report](docs/experiments/E001.md),
 [data inventory](docs/data_inventory.md), and [original design](docs/design_preliminary.md).
 
-## Reproduce everything
+## Reproduce experiments
 
 Run from the repository root with [uv](https://docs.astral.sh/uv/):
 
@@ -23,6 +24,17 @@ compares the 2024/25 results against OpenFootball, evaluates development/validat
 holdout splits, and runs 10,000 season simulations. Use a new output directory for
 each run. It takes a few minutes; no API key is needed. Cached data allows all
 forecasting and simulation work to run offline.
+
+To reproduce the retrospective Elo comparison with the same simulation reference:
+
+```sh
+uv run python scripts/reproduce.py --config configs/elo.toml --output runs/elo-reproduction
+```
+
+The original E001 implementation is preserved in commit `6277385`. New source
+changes produce a new code fingerprint; the E001 evidence retains its original
+fingerprint. All E002 periods were already inspected in E001, including the period
+named `holdout`, and are explicitly labeled retrospective.
 
 Raw data stays in the ignored `data/raw/` directory. Each file is identified by its
 SHA-256 hash. The committed [snapshot](configs/data_snapshot.json) records URLs,
@@ -54,9 +66,10 @@ Use canonical IDs from [the team registry](src/epl_forecast/data/teams.csv).
 if kickoff times exist. For match forecasts, `--as-of` defaults to `--date`.
 
 Model versions, splits, training-window length and starting parameters live in
-[baselines.toml](configs/baselines.toml). `--model` selects a model ID. The frequency
-model provides only H/D/A probabilities; the Poisson models also provide score
-likelihoods, an explicitly truncated display grid, and unbounded score sampling.
+[baselines.toml](configs/baselines.toml) and [elo.toml](configs/elo.toml).
+`--model` selects a model ID. The frequency and Elo models provide only H/D/A
+probabilities; the Poisson models also provide score likelihoods, an explicitly
+truncated display grid, and unbounded score sampling.
 
 Evaluation writes per-match predictions, per-season metrics, calibration bins,
 matched market comparisons and block-bootstrap loss differences. `run.json`
@@ -89,6 +102,10 @@ Tests use synthetic data and need no network. The project uses ordinary modules:
 `data/` acquires and normalizes sources, `models/` implements forecasting,
 `evaluation.py` scores chronological predictions, and `simulation.py` resolves
 season outcomes. There is no frontend or betting automation.
+
+When testing a rebuilt wheel at the same version, use `uv run --no-cache
+--no-project --with ./dist/epl_forecast-0.1.0-py3-none-any.whl ...`. Otherwise uv
+can reuse an older installed wheel even after a package refresh.
 
 To audit additional seasons, create a separate snapshot and data root:
 

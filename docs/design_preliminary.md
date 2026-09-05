@@ -14,8 +14,9 @@ Implementation update (2026-09-05): the initial milestone now has a data audit,
 versioned benchmarks, chronological evaluation and a historical season simulator.
 See [data inventory](data_inventory.md), [normalized schema](match_schema.md),
 [implementation plan](implementation_plan.md), [model conventions](modeling.md),
-and [initial results](experiments/E001.md). These documents record decisions and
-evidence; the later research phases below remain open.
+and [initial results](experiments/E001.md). The subsequent [Elo comparison](experiments/E002.md)
+did not meet its gate for replacing the Poisson reference. These documents record
+decisions and evidence; the later research phases below remain open.
 
 Do not make important modeling decisions before inspecting the available data.
 

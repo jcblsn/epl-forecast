@@ -1,0 +1,36 @@
+{
+  "candidate": "M3-elo-ordered-logit-v1",
+  "candidate_passes_gate": false,
+  "config_file_sha256": "bee473621ffcf651939c056a5e0c13a6183e795c7ae2b84c745ca0b2d7af0b0c",
+  "decision": "Retain M2 as the provisional reference and M3 as a comparison model.",
+  "evaluation_status": "retrospective",
+  "experiment_id": "E002-elo-ordered-logit-v1",
+  "gates": {
+    "development_log_loss_improves": false,
+    "validation_brier_does_not_regress": false,
+    "validation_log_loss_gain_at_least_0_005": false,
+    "validation_paired_ci_entirely_below_zero": false
+  },
+  "later_period_used_for_selection": false,
+  "paired_development": {
+    "blocks": 86,
+    "candidate": "M3-elo-ordered-logit-v1",
+    "ci_lower": -9.285985445921286e-05,
+    "ci_upper": 0.01205260616196535,
+    "delta_log_loss": 0.005819636068750498,
+    "matches": 3040,
+    "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+    "reference": "M2-attack-defense-v1"
+  },
+  "paired_validation": {
+    "blocks": 22,
+    "candidate": "M3-elo-ordered-logit-v1",
+    "ci_lower": -0.0019896206974976275,
+    "ci_upper": 0.0155101744116337,
+    "delta_log_loss": 0.006872297178733936,
+    "matches": 760,
+    "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+    "reference": "M2-attack-defense-v1"
+  },
+  "reference": "M2-attack-defense-v1"
+}
