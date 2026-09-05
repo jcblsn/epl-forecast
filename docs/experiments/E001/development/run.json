@@ -1,0 +1,70 @@
+{
+  "code_sha256": "9ae04e36e866be72db894dd896a7b6cd19b69431cf60701b905839ee24465f33",
+  "config": {
+    "bootstrap_samples": 2000,
+    "calibration_bins": 10,
+    "competition_id": "eng-premier-league",
+    "development_end": "2023-07-01",
+    "development_start": "2015-08-01",
+    "experiment_id": "E001-initial-baselines-v1",
+    "holdout_end": "2026-07-01",
+    "holdout_start": "2025-08-01",
+    "min_train_matches": 700,
+    "models": [
+      {
+        "description": "Rolling league H/D/A frequencies with Dirichlet smoothing",
+        "id": "M0-frequency-v1",
+        "kind": "league_frequency",
+        "parameters": {
+          "alpha": 1.0
+        }
+      },
+      {
+        "description": "Time-weighted league home/away goal rates",
+        "id": "M1-league-poisson-v1",
+        "kind": "league_poisson",
+        "parameters": {
+          "half_life_days": 365.0
+        }
+      },
+      {
+        "description": "Regularized, time-weighted team attack/defense Poisson",
+        "id": "M2-attack-defense-v1",
+        "kind": "attack_defense_poisson",
+        "parameters": {
+          "half_life_days": 365.0,
+          "ridge": 5.0
+        }
+      }
+    ],
+    "seed": 20260905,
+    "train_window_days": 1095,
+    "validation_end": "2025-07-01",
+    "validation_start": "2023-08-01"
+  },
+  "config_sha256": "4bf5eebc7492e6c712afee911db5f22d0a08b5787285b3b7adb79b59e63dad4a",
+  "data_manifest": {
+    "aliases_sha256": "de87276e650f0cef4a4c5856da40d1efdb8e609ed127dd583afe544d71bc5eb9",
+    "availability_policy": "result available the next calendar day; date batches",
+    "files": {
+      "coverage.json": "5cf8b8a2fdb99b51e7679f81701e5f16272dccca9610dc1f8e3d0c25944b54d1",
+      "matches.csv": "6db8d4c97a4805765b203bb9296b55d52ce9357c099ed970c825ad0487d789aa",
+      "odds.csv": "44f1c3d47ab9731aa3f599915b97a3134161a85c2d6f84e9a87facae2adac38c"
+    },
+    "matches": 14912,
+    "normalizer_version": "0.1.0",
+    "odds_quotes": 36346,
+    "schema_version": 1,
+    "snapshot_sha256": "d7a8e8cf5521d2daf9c47263f3a6c0712019b14f4437a725c69f3e6d663dcb0a"
+  },
+  "dependencies": {
+    "numpy": "2.5.2",
+    "scipy": "1.18.1"
+  },
+  "end": "2023-07-01",
+  "information_cutoff": "start of match date; no same-day results",
+  "package_version": "0.1.0",
+  "python": "3.12.7",
+  "split": "development",
+  "start": "2015-08-01"
+}

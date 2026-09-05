@@ -1,0 +1,67 @@
+{
+  "config_sha256": "3c1dba86eecdc86cdcb64014569d3f3db1522eb2e17ec43b3fcf7b03cd901758",
+  "development_matches": 3040,
+  "development_metrics": [
+    {
+      "brier": 0.644367362771625,
+      "classwise_ece": 0.006066919376332976,
+      "log_loss": 1.0652979847367328,
+      "matches": 3040,
+      "model_id": "M0-frequency-v1",
+      "score_matches": 0,
+      "score_nll": null
+    },
+    {
+      "brier": 0.6440767988578507,
+      "classwise_ece": 0.012783694058611907,
+      "log_loss": 1.0650987815556119,
+      "matches": 3040,
+      "model_id": "M1-league-poisson-v1",
+      "score_matches": 3040,
+      "score_nll": 3.0660726359677506
+    },
+    {
+      "brier": 0.576883669044388,
+      "classwise_ece": 0.01461865390119214,
+      "log_loss": 0.9717595291342127,
+      "matches": 3040,
+      "model_id": "M2-attack-defense-v1",
+      "score_matches": 3040,
+      "score_nll": 2.9261481459305716
+    }
+  ],
+  "experiment_id": "E001-initial-baselines-v1",
+  "holdout_used_for_selection": false,
+  "selected_model": "M2-attack-defense-v1",
+  "selection_basis": "Lowest structural-model validation log loss; also improved development loss and score likelihood. Fixed initial hyperparameters; no tuning sweep.",
+  "validation_matches": 760,
+  "validation_metrics": [
+    {
+      "brier": 0.6472158731120733,
+      "classwise_ece": 0.010336731002981677,
+      "log_loss": 1.068695715129236,
+      "matches": 760,
+      "model_id": "M0-frequency-v1",
+      "score_matches": 0,
+      "score_nll": null
+    },
+    {
+      "brier": 0.6466499779069343,
+      "classwise_ece": 0.010966712719821229,
+      "log_loss": 1.068057684821105,
+      "matches": 760,
+      "model_id": "M1-league-poisson-v1",
+      "score_matches": 760,
+      "score_nll": 3.156493107069836
+    },
+    {
+      "brier": 0.5678236746710554,
+      "classwise_ece": 0.018699711810025575,
+      "log_loss": 0.9573445471192727,
+      "matches": 760,
+      "model_id": "M2-attack-defense-v1",
+      "score_matches": 760,
+      "score_nll": 3.027001561931487
+    }
+  ]
+}

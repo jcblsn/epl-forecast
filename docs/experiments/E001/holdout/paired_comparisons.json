@@ -1,0 +1,122 @@
+[
+  {
+    "blocks": 11,
+    "candidate": "M1-league-poisson-v1",
+    "ci_lower": -0.0048802353368433745,
+    "ci_upper": 0.004347980706729564,
+    "delta_log_loss": -0.0006746663933749493,
+    "matches": 380,
+    "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+    "reference": "M0-frequency-v1"
+  },
+  {
+    "blocks": 11,
+    "candidate": "M2-attack-defense-v1",
+    "ci_lower": -0.07935429953690158,
+    "ci_upper": -0.029393369179481935,
+    "delta_log_loss": -0.057213826606465866,
+    "matches": 380,
+    "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+    "reference": "M0-frequency-v1"
+  },
+  {
+    "blocks": 11,
+    "candidate": "M2-attack-defense-v1",
+    "ci_lower": -0.07758671454233693,
+    "ci_upper": -0.028747826462863512,
+    "delta_log_loss": -0.05653916021309091,
+    "matches": 380,
+    "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+    "reference": "M1-league-poisson-v1"
+  },
+  {
+    "blocks": 11,
+    "candidate": "market:bet365_preclosing",
+    "ci_lower": -0.08750867615352012,
+    "ci_upper": -0.038728585357847956,
+    "delta_log_loss": -0.06515962369966799,
+    "matches": 380,
+    "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+    "reference": "M0-frequency-v1"
+  },
+  {
+    "blocks": 11,
+    "candidate": "market:market_average_closing",
+    "ci_lower": -0.09277679441654822,
+    "ci_upper": -0.048260457063056955,
+    "delta_log_loss": -0.07194018462457842,
+    "matches": 380,
+    "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+    "reference": "M0-frequency-v1"
+  },
+  {
+    "blocks": 11,
+    "candidate": "market:market_average_preclosing",
+    "ci_lower": -0.08997020747970674,
+    "ci_upper": -0.04315807580442769,
+    "delta_log_loss": -0.06845467432686153,
+    "matches": 380,
+    "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+    "reference": "M0-frequency-v1"
+  },
+  {
+    "blocks": 11,
+    "candidate": "market:bet365_preclosing",
+    "ci_lower": -0.08568332813448667,
+    "ci_upper": -0.03939427717250031,
+    "delta_log_loss": -0.06448495730629304,
+    "matches": 380,
+    "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+    "reference": "M1-league-poisson-v1"
+  },
+  {
+    "blocks": 11,
+    "candidate": "market:market_average_closing",
+    "ci_lower": -0.09043480782414026,
+    "ci_upper": -0.048227066278673174,
+    "delta_log_loss": -0.07126551823120347,
+    "matches": 380,
+    "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+    "reference": "M1-league-poisson-v1"
+  },
+  {
+    "blocks": 11,
+    "candidate": "market:market_average_preclosing",
+    "ci_lower": -0.08794121150425831,
+    "ci_upper": -0.04419840990802143,
+    "delta_log_loss": -0.06778000793348658,
+    "matches": 380,
+    "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+    "reference": "M1-league-poisson-v1"
+  },
+  {
+    "blocks": 11,
+    "candidate": "market:bet365_preclosing",
+    "ci_lower": -0.022162568139946878,
+    "ci_upper": 0.006608885013859809,
+    "delta_log_loss": -0.007945797093202138,
+    "matches": 380,
+    "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+    "reference": "M2-attack-defense-v1"
+  },
+  {
+    "blocks": 11,
+    "candidate": "market:market_average_closing",
+    "ci_lower": -0.0286381637109178,
+    "ci_upper": -0.00048756900668298927,
+    "delta_log_loss": -0.014726358018112562,
+    "matches": 380,
+    "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+    "reference": "M2-attack-defense-v1"
+  },
+  {
+    "blocks": 11,
+    "candidate": "market:market_average_preclosing",
+    "ci_lower": -0.024822168904915273,
+    "ci_upper": 0.002703474812560511,
+    "delta_log_loss": -0.011240847720395663,
+    "matches": 380,
+    "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+    "reference": "M2-attack-defense-v1"
+  }
+]

@@ -1,0 +1,35 @@
+experiment_id = "E001-initial-baselines-v1"
+competition_id = "eng-premier-league"
+train_window_days = 1095
+min_train_matches = 700
+calibration_bins = 10
+bootstrap_samples = 2000
+seed = 20260905
+development_start = "2015-08-01"
+development_end = "2023-07-01"
+validation_start = "2023-08-01"
+validation_end = "2025-07-01"
+holdout_start = "2025-08-01"
+holdout_end = "2026-07-01"
+
+[[models]]
+id = "M0-frequency-v1"
+kind = "league_frequency"
+description = "Rolling league H/D/A frequencies with Dirichlet smoothing"
+[models.parameters]
+alpha = 1.0
+
+[[models]]
+id = "M1-league-poisson-v1"
+kind = "league_poisson"
+description = "Time-weighted league home/away goal rates"
+[models.parameters]
+half_life_days = 365.0
+
+[[models]]
+id = "M2-attack-defense-v1"
+kind = "attack_defense_poisson"
+description = "Regularized, time-weighted team attack/defense Poisson"
+[models.parameters]
+half_life_days = 365.0
+ridge = 5.0

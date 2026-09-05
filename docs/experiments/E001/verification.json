@@ -1,0 +1,44 @@
+{
+  "all_position_points_and_goal_difference_distributions_normalized": true,
+  "completed_splits": [
+    "development",
+    "validation",
+    "holdout"
+  ],
+  "crosscheck_passed": true,
+  "initial_and_fresh_run_identical": {
+    "development": {
+      "market_predictions.csv": "9cff4643942fc56e7de587096f36492eb9bf07fb5519412d43b5cccbe0094bba",
+      "predictions.csv": "2e67ee2b5497f819822b96af325d5157387ae841290834d168e9a5d4efda2ae3",
+      "summary.json": "ec3db40685021dda284ad9dfe52aa069c5a1fa01eda240ff57ac989a31e9cdd6"
+    },
+    "holdout": {
+      "market_predictions.csv": "f9a7dd131fdd4614e87b72473881f3b4bca613ed19c4216c6f19885e7dca6a57",
+      "predictions.csv": "61448fe052492be58d086d43cd0092e313e9709572c84a8e68583e96ca93eab5",
+      "summary.json": "d670a211dec77e0067b78f508e5c1a393cfdf3f068997566277257f79aa813d2"
+    },
+    "validation": {
+      "market_predictions.csv": "409f07cc5b3055fcef605d94e689b366709278723936fa408a5ce2863d650ad0",
+      "predictions.csv": "1b02377b708400e42ee0fc26d5f4b2241d00f24cd5c491470647983cd388aa0b",
+      "summary.json": "937871f2b4779083bbfd3efa5ebdc07e30c0d2dbbe62a49eeeaf879baf399c8c"
+    }
+  },
+  "normalized_files_identical": {
+    "coverage.json": "5cf8b8a2fdb99b51e7679f81701e5f16272dccca9610dc1f8e3d0c25944b54d1",
+    "manifest.json": "f772de4e6a9f1931162245e37ccc46d566f1b865ff26c739e3feb44c34967c17",
+    "matches.csv": "6db8d4c97a4805765b203bb9296b55d52ce9357c099ed970c825ad0487d789aa",
+    "odds.csv": "44f1c3d47ab9731aa3f599915b97a3134161a85c2d6f84e9a87facae2adac38c"
+  },
+  "relegation_probability_sum": 3.0,
+  "remaining_fixtures": 192,
+  "reproduction_command": "uv run python scripts/reproduce.py --output runs/reproduction-verified --data-root runs/fresh-data",
+  "sanctioned_final_table_spot_check": {
+    "everton_points": 40.0,
+    "nottingham_forest_points": 32.0,
+    "season": "2023-2024"
+  },
+  "simulation_draws": 10000,
+  "simulation_sha256": "23910299b8a4f42df3230930fd415db1b50ddb3a4bd1babab6f58926f648fb86",
+  "title_probability_sum": 1.0,
+  "wheel_build_and_cli_install_passed": true
+}

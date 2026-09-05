@@ -1,0 +1,17 @@
+{
+  "all_agree": true,
+  "compared_matches": 380,
+  "comparison": "Football-Data vs pinned OpenFootball public archive",
+  "date_mismatches": [],
+  "matches_sha256": "6db8d4c97a4805765b203bb9296b55d52ce9357c099ed970c825ad0487d789aa",
+  "missing_from_openfootball": [],
+  "missing_from_primary": [],
+  "score_mismatches": [],
+  "season_id": "2024-2025",
+  "source": {
+    "path": "data/raw/research/openfootball_2024_2025/c3d18f552d83382cd4b6b21127adbbfe38e7f8618ddc979fb5404f2df07d0a75.json",
+    "retrieved_at": "2026-09-05T17:19:05.659229+00:00",
+    "sha256": "c3d18f552d83382cd4b6b21127adbbfe38e7f8618ddc979fb5404f2df07d0a75",
+    "url": "https://raw.githubusercontent.com/openfootball/football.json/6a225eabc8be1f7e354faa55befe790fea93332d/2024-25/en.1.json"
+  }
+}
