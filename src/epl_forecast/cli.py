@@ -66,6 +66,10 @@ def evaluate_command(args) -> None:
     predictions = rolling_predictions(matches, config, start, end, progress=True)
     markets = market_predictions(predictions, odds)
     summary = summarize(predictions, markets, config)
+    evaluation_context = {
+        key: config[key] for key in ("evaluation_status", "evaluation_note") if key in config
+    }
+    summary.update(evaluation_context)
     save_rows(args.output / "predictions.csv", predictions)
     save_rows(args.output / "market_predictions.csv", markets)
     for key in ("overall", "by_season", "calibration", "market_matched"):
@@ -76,6 +80,7 @@ def evaluate_command(args) -> None:
         args.output / "run.json",
         {
             **provenance(config, manifest),
+            **evaluation_context,
             "split": args.split,
             "start": str(start),
             "end": str(end),

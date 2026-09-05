@@ -35,17 +35,22 @@ def new_run_directory(path: Path) -> None:
 
 
 def results_markdown(summary: dict) -> str:
-    lines = [
-        "# Chronological evaluation",
-        "",
-        "Lower is better. Brier is the sum across H/D/A; ECE is the mean of three",
-        "classwise, fixed-bin expected calibration errors. Score NLL uses the full",
-        "unbounded distribution. Market rows have their own coverage and forecast",
-        "horizon; see market_matched.csv and paired_comparisons.json.",
-        "",
-        "| Model | Matches | Log loss | Brier | ECE | Score NLL |",
-        "| --- | ---: | ---: | ---: | ---: | ---: |",
-    ]
+    lines = ["# Chronological evaluation", ""]
+    if summary.get("evaluation_status"):
+        lines.extend([f"Evaluation status: {summary['evaluation_status']}.", ""])
+    if summary.get("evaluation_note"):
+        lines.extend([summary["evaluation_note"], ""])
+    lines.extend(
+        [
+            "Lower is better. Brier is the sum across H/D/A; ECE is the mean of three",
+            "classwise, fixed-bin expected calibration errors. Score NLL uses the full",
+            "unbounded distribution. Market rows have their own coverage and forecast",
+            "horizon; see market_matched.csv and paired_comparisons.json.",
+            "",
+            "| Model | Matches | Log loss | Brier | ECE | Score NLL |",
+            "| --- | ---: | ---: | ---: | ---: | ---: |",
+        ]
+    )
     for row in summary["overall"]:
         score = "—" if row["score_nll"] is None else f"{row['score_nll']:.5f}"
         lines.append(
