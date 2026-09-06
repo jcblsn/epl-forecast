@@ -2,7 +2,7 @@
   "source_manifest": "configs/player_data_snapshot.json",
   "source_commit": "9779cdbc0c07f6c900c2d0c181ddf6bb9c800f88",
   "dataset": "data/processed/players/player_matches.csv.gz",
-  "dataset_sha256": "4b02ee09712a7e6fee093ab1e18fe13c6c27597385257dff879a4ba5ff9793b1",
+  "dataset_sha256": "96fda66da27d019673c9b5ad6ffb603df9756daea1582d4cd6b50f453e37223f",
   "normalized_rows": 253509,
   "seasons": [
     {

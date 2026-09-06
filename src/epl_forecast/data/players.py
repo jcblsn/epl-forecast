@@ -107,6 +107,7 @@ def normalize_player_matches(
             "fpl_element_id": row["element"],
             "fpl_player_code": player.get("code", ""),
             "player_name": row["name"],
+            "position": row.get("position", ""),
             "fpl_fixture_id": row["fixture"],
             "kickoff_time": kickoff.isoformat(),
             "team_id": team_ids[club],

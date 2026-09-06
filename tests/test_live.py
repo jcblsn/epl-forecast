@@ -117,6 +117,42 @@ def test_live_completion_and_same_day_fit_isolation(live_snapshot):
     assert np.array_equal(first.defense, second.defense)
 
 
+def test_snapshot_squads_use_observed_membership_and_reject_future_capture(live_snapshot):
+    from epl_forecast.data.squads import snapshot_squads
+    from epl_forecast.lineups import availability_probability
+
+    path = live_snapshot / "fpl_bootstrap.json"
+    bootstrap = json.loads(path.read_text())
+    player = {
+        "id": 1,
+        "code": 100,
+        "team": 1,
+        "web_name": "Player",
+        "element_type": 1,
+        "status": "i",
+        "chance_of_playing_next_round": 0,
+        "removed": False,
+    }
+    bootstrap["elements"] = [player, {**player, "id": 2, "code": 200, "removed": True}]
+    write_json(path, bootstrap)
+    refresh_hashes(live_snapshot)
+    squads = snapshot_squads(live_snapshot, OBSERVED)
+    candidates = [p for s in squads.values() for p in s.candidates]
+    assert len(candidates) == 1
+    candidate = candidates[0]
+    assert candidate.player_id == "fpl:100"
+    assert candidate.membership_observed_at == OBSERVED - timedelta(seconds=1)
+    assert candidate.availability.probability == 0
+    assert availability_probability(candidate, OBSERVED + timedelta(days=29)) == 1
+    with pytest.raises(ValueError, match="after cutoff"):
+        snapshot_squads(live_snapshot, OBSERVED - timedelta(seconds=2))
+    bootstrap["elements"].append({**player, "id": 3})
+    write_json(path, bootstrap)
+    refresh_hashes(live_snapshot)
+    with pytest.raises(ValueError, match="Ambiguous snapshot"):
+        snapshot_squads(live_snapshot, OBSERVED)
+
+
 def test_future_score_labels_do_not_enter_live_inputs(live_snapshot):
     first = load_live_season(live_snapshot)
     update_fixtures(live_snapshot, lambda rows: rows[-1].update(team_h_score=99, team_a_score=99))
