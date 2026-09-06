@@ -122,6 +122,21 @@ def test_promoted_prior_is_used_before_first_pl_result_and_replaces_stale_pl(bri
     assert state.mean == pytest.approx(expected.mean)
     assert state.covariance == pytest.approx(expected.covariance)
     assert model.team_summary("e3", "2020-2021")["season_pl_matches"] == 0
+    assert model.team_state("e0", "2020-2021").source == "previous PL state"
+
+
+def test_championship_results_change_the_promotion_prior(bridge_history):
+    cutoff = date(2020, 8, 1)
+    original = PromotionBridge(bridge_history, cutoff, "2020-2021").prior("e3")
+    changed = [
+        replace(m, home_goals=m.home_goals + 3)
+        if m.fixture.competition_id == CHAMPIONSHIP and m.fixture.home_team_id == "e3"
+        else m
+        for m in bridge_history
+    ]
+    updated = PromotionBridge(changed, cutoff, "2020-2021").prior("e3")
+    assert not np.allclose(updated.mean, original.mean)
+    assert not np.allclose(updated.covariance, original.covariance)
 
 
 def test_dynamic_incremental_fit_and_changed_history_replay(small_history):

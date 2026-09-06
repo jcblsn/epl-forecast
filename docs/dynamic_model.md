@@ -105,6 +105,12 @@ uv run epl-forecast simulate --config configs/dynamic.toml \
   --simulations 10000 --output runs/m4-season
 ```
 
+After evaluating the development, validation and holdout intervals, run
+`scripts/diagnose_dynamic.py --evaluations <run directories> --output <new directory>`
+to compare the individual Championship prior with its promotion-cohort ablation,
+inspect posterior mixing, and export promotion and form-response diagnostics.
+The [first result](experiments/m4_dynamic.md) leaves M2 as the default.
+
 Inspect per-season scores, promoted and early-season subsets, calibration,
 state uncertainty and adaptation. Historical results are development evidence;
 archived pre-kickoff forecasts remain the forward test.

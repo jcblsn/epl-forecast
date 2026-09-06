@@ -7,8 +7,10 @@ validate the model; the forecasts are the product.
 
 The project now archives live FPL and Football-Data responses and produces a
 2026/27 forecast as JSON, CSV and a static HTML page. Refreshes are manual for now.
-The score model is M2, a regularized attack/defense Poisson model; M0, M1 and M3
-remain useful benchmarks. Historical results cover 16 PL and Championship seasons.
+M2 remains the default reference. The M4 prototype adds dynamic attack/defense,
+Championship-informed promotion priors and approximate posterior uncertainty in
+match and season forecasts. Historical results cover 16 PL and Championship
+seasons. The [north star](docs/north_star.md) describes the intended architecture.
 
 ## Capture and forecast
 
@@ -30,6 +32,13 @@ Pass the printed snapshot directory to the forecast command:
 uv run epl-forecast forecast --snapshot snapshots/<UTC timestamp>
 ```
 
+To use M4 and propagate its posterior uncertainty into the season forecast:
+
+```sh
+uv run epl-forecast forecast --config configs/dynamic.toml \
+  --model M4-dynamic-hierarchical-v1 --snapshot snapshots/<UTC timestamp>
+```
+
 Open the printed `runs/forecasts/<UTC timestamp>/index.html`. Each run archives:
 
 - current attack/defense strengths and each team's next-match probabilities;
@@ -44,8 +53,9 @@ the season projection while upcoming-match forecasts remain available.
 
 Top-four/five chances describe positions. To add conditional European qualification,
 pass `--europe-scenario configs/europe_scenario.example.json`, which supplies
-hypothetical cup winners and league UCL places. Strengths are held fixed during
-simulation; parameter uncertainty, injuries and transfers are not yet modeled.
+hypothetical cup winners and league UCL places. M2 uses fixed fitted strengths.
+M4 samples one joint current state per season path and holds it throughout that
+path. Future state evolution, injuries and transfers are not yet modeled.
 See [live operation and limitations](docs/live.md).
 
 ## Improve the model
@@ -56,19 +66,29 @@ development. Keep hyperparameter selection inside chronology when reporting a
 selected strategy's performance. Inspect per-season scores and complementary
 errors; candidates need no frozen protocol or minimum-gain threshold.
 
-The modest M2 search uses 30 half-life/ridge combinations. The 2015/16–2017/18
-seasons initialize parameter selection; each 2018/19–2025/26 fold selects using
-only earlier seasons and refits strengths daily:
+The first [M4 comparison](docs/experiments/m4_dynamic.md) covers 4,180 matches in
+2015/16–2025/26. Aggregate outcome loss is nearly tied with M2; early-season
+performance and posterior calibration still need work. The new architecture is
+functional, but these results do not justify replacing the default model.
+
+Run rolling evaluation, then inspect promotion, uncertainty and form diagnostics:
 
 ```sh
-uv run python scripts/tune_m2.py --output runs/m2-tuning
+uv run epl-forecast evaluate --config configs/dynamic.toml \
+  --split development --output runs/m4-development
+uv run epl-forecast evaluate --config configs/dynamic.toml \
+  --split validation --output runs/m4-validation
+uv run epl-forecast evaluate --config configs/dynamic.toml \
+  --split holdout --output runs/m4-holdout
+uv run python scripts/diagnose_dynamic.py \
+  --evaluations runs/m4-development runs/m4-validation runs/m4-holdout \
+  --output runs/m4-diagnostics
 ```
 
-It retains per-match predictions, per-season metrics, market comparisons and the
-chronological selection results. Bootstrap uncertainty is optional for exploratory
-work. The [first search](docs/experiments/m2_tuning.md) found the current settings
-already in the best region. Championship promotion continuity and lagged shots follow in the
-[research queue](docs/next_experiments.md).
+See the [M4 formulation and limitations](docs/dynamic_model.md) and the
+[research queue](docs/next_experiments.md). The completed
+[M2 search](docs/experiments/m2_tuning.md) found its defaults in the best region;
+`scripts/tune_m2.py` remains available without being the next workstream.
 
 ## Historical experiments
 

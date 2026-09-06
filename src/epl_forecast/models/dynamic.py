@@ -213,7 +213,9 @@ class DynamicAttackDefense(BaseModel):
             return TeamPrior(
                 self.mean[index : index + 2].copy(),
                 self.covariance[index : index + 2, index : index + 2].copy(),
-                self.entry_priors[team, self._last_season[team]].source,
+                self.entry_priors[team, season].source
+                if (team, season) in self.entry_priors
+                else "previous PL state",
             )
         return self._entry_prior(team, season, self.as_of)
 

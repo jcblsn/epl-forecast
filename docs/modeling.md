@@ -2,9 +2,10 @@
 
 ## Models and experiment settings
 
-All models fit independently before each prediction date using only results
-from earlier dates within the configured 1,095-day window. No team identities from
-later fixtures are used to build a model's training vocabulary.
+M0–M3 refit before each prediction date using only results from earlier dates
+within the configured 1,095-day window. M4 uses expanding cross-division history
+and appends daily Gaussian filtering updates, replaying when history changes.
+No team identities from later fixtures initialize a model's training vocabulary.
 
 | Version | Description | Data used |
 | --- | --- | --- |
@@ -12,6 +13,11 @@ later fixtures are used to build a model's training vocabulary.
 | M1-league-poisson-v1 | Independent goals with league home/away rates; one virtual 1–1 match prevents degenerate rates. | Past PL scores, exponentially weighted with 365-day half-life. |
 | M2-attack-defense-v1 | Ridge-regularized team attack and defense, league scoring level and home advantage. | Same score history and time weights as M1. |
 | M3-elo-ordered-logit-v1 | Elo updates followed by a regularized ordered-logit outcome layer. | Past PL outcomes, with chronological pre-update calibration features. |
+| M4-dynamic-hierarchical-v1 | Dynamic Gaussian attack/defense, learned promotion priors, posterior-predictive Poisson mixture. | Past PL results and completed, prior-date Championship/PL promotion cohorts. |
+
+The [M4 specification](dynamic_model.md) details state evolution, the approximate
+hierarchy, Gaussian filtering and uncertainty limitations. Its
+[first evaluation](experiments/m4_dynamic.md) leaves M2 as the default reference.
 
 For M2, with attack `a`, defensive strength `d`, intercept `b` and home advantage `h`:
 
@@ -87,8 +93,10 @@ The CLI reconstructs a historical season's participants and recorded fixture
 dates. It validates all 380 ordered opponent pairs, fixes all scores available at
 the cutoff, removes future score labels, fits once at the cutoff, and samples each
 remaining fixture once per draw. It does not update team strength from simulated
-scores. Draws reflect match randomness conditional on fitted parameters; they omit
-parameter uncertainty, transfers, injuries and future managerial changes.
+scores. M2 draws reflect match randomness conditional on fitted parameters.
+M4 supplies one joint posterior state per path, shared across all remaining
+fixtures. It adds current strength uncertainty; future evolution, transfers,
+injuries and future managerial changes remain outside both simulations.
 
 Points are 3/1/0. Rank by points, goal difference and goals scored. Apply
 head-to-head points and away goals only for ties affecting the title, relegation
