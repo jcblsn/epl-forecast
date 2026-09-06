@@ -1,0 +1,90 @@
+{
+  "arguments": {
+    "data": "data/processed",
+    "draws": 32,
+    "limit": 40,
+    "output": "runs/m6-quality-2024-pilot",
+    "players": "data/processed/players/player_matches.csv.gz",
+    "season": "2024-2025",
+    "train_start": "2023-07-01"
+  },
+  "comparison": "Same expanding training window and original four Poisson M5 dynamics specs",
+  "fit": {
+    "effective_specifications": 1.845258584688995,
+    "future_states": "calendar-time club states and fixture lineup draws",
+    "historical_limitation": "retrospective minutes; publication times unknown",
+    "inference": "daily joint Laplace filters with approximate Bayesian model weights",
+    "lineup_draws": 32,
+    "player_prior": {
+      "mean": 0,
+      "population_sd": 0.6,
+      "scale_policy": "fixed strongly pooled population hierarchy"
+    },
+    "player_quality": "joint club/player covariance; scalar minutes-share effects",
+    "players": 679,
+    "promotion": "frozen M4 promoted-population prior transformed to Quality/Tilt",
+    "specifications": [
+      {
+        "dispersion": null,
+        "log_evidence": -1298.4979229312544,
+        "posterior_weight": 0.6777696751955378,
+        "prior_weight": 0.25,
+        "quality_retention": 0.85,
+        "quality_sd": 0.09,
+        "tilt_retention": 0.5,
+        "tilt_sd": 0.07
+      },
+      {
+        "dispersion": null,
+        "log_evidence": -1301.789811963904,
+        "posterior_weight": 0.025201877242040246,
+        "prior_weight": 0.25,
+        "quality_retention": 0.85,
+        "quality_sd": 0.09,
+        "tilt_retention": 0.85,
+        "tilt_sd": 0.14
+      },
+      {
+        "dispersion": null,
+        "log_evidence": -1299.360707025761,
+        "posterior_weight": 0.28600904140305006,
+        "prior_weight": 0.25,
+        "quality_retention": 0.97,
+        "quality_sd": 0.16,
+        "tilt_retention": 0.5,
+        "tilt_sd": 0.07
+      },
+      {
+        "dispersion": null,
+        "log_evidence": -1302.6170725346308,
+        "posterior_weight": 0.011019406159474592,
+        "prior_weight": 0.25,
+        "quality_retention": 0.97,
+        "quality_sd": 0.16,
+        "tilt_retention": 0.85,
+        "tilt_sd": 0.14
+      }
+    ],
+    "weight_evidence": "chronological joint daily predictive likelihood (Laplace)"
+  },
+  "historical_limitations": [
+    "Squad publication times unknown; prior-fixture retrospective proxy",
+    "Opening-season candidate gaps are reported separately",
+    "Known absences are unavailable historically; tested using timestamped live scenarios",
+    "Newcomer/transfer slice is first observed participation, not verified transfer news"
+  ],
+  "inputs": {
+    "data/processed/matches.csv": "6db8d4c97a4805765b203bb9296b55d52ce9357c099ed970c825ad0487d789aa",
+    "data/processed/players/player_matches.csv.gz": "96fda66da27d019673c9b5ad6ffb603df9756daea1582d4cd6b50f453e37223f"
+  },
+  "oracle_policy": "Actual target minutes enter predictions only, never the fitted posterior",
+  "required_slices": {
+    "early_season": 40,
+    "goalkeeper_change": 9,
+    "known_absence": 0,
+    "major_lineup_change": 6,
+    "newcomer_or_transfer": 29,
+    "promoted_team": 12,
+    "returning_player": 8
+  }
+}

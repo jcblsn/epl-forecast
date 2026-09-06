@@ -57,6 +57,13 @@ def render_forecast(forecast: dict) -> str:
             "These probabilities include current Quality/Tilt uncertainty, uncertain dynamics, "
             "future changes in strength and match tempo. Transfers and injuries are omitted."
         )
+    if forecast.get("fit_diagnostics", {}).get("player_quality"):
+        uncertainty_note = (
+            "These probabilities include joint club and player Quality uncertainty, future "
+            "club strength changes, lineup selection and captured expiring availability. "
+            "Future transfers and newly arising injuries are not modeled. Club/player "
+            "contributions and lineup uncertainty are included in the full forecast JSON."
+        )
     prior_note = (
         "Promoted clubs start from Championship-informed distributions. Strength uncertainty "
         "is available in the team strengths download."
@@ -246,6 +253,11 @@ def export_forecast(
                 "p_home": float(prediction.probabilities[0]),
                 "p_draw": float(prediction.probabilities[1]),
                 "p_away": float(prediction.probabilities[2]),
+                **(
+                    {"player_quality": model.lineup_summary(fixture)}
+                    if hasattr(model, "lineup_summary")
+                    else {}
+                ),
                 "score_distribution": {
                     "home_rate": prediction.scores.home_rate,
                     "away_rate": prediction.scores.away_rate,

@@ -82,6 +82,15 @@ class GammaPoissonMixture(PoissonMixture):
 
 class ScoreMixture:
     def __init__(self, components, weights):
+        flattened, masses = [], []
+        for component, weight in zip(components, weights, strict=True):
+            if isinstance(component, ScoreMixture):
+                flattened.extend(component.components)
+                masses.extend(weight * component.weights)
+            else:
+                flattened.append(component)
+                masses.append(weight)
+        components, weights = flattened, masses
         self.components, self.weights = components, np.asarray(weights)
         self.home_rate = float(self.weights @ [c.home_rate for c in components])
         self.away_rate = float(self.weights @ [c.away_rate for c in components])

@@ -127,3 +127,18 @@ def test_invalid_cutoffs_and_probabilities_fail():
         sample_lineups(squad(), CUTOFF - timedelta(seconds=1), np.random.default_rng(3))
     with pytest.raises(ValueError, match="sample size"):
         sample_lineups(squad(), CUTOFF, np.random.default_rng(3), 0)
+
+
+def test_carry_forward_is_probabilistic_and_cannot_discover_future_arrivals():
+    rows = [observation("1", 19, season="2023-2024", kickoff_time="2024-05-19T15:00:00Z")]
+    cutoff = datetime(2024, 8, 10, tzinfo=UTC)
+    history = PlayerHistory(rows)
+    squad = history.retrospective_squad("one", "2024-2025", cutoff, carry_forward=True)
+    assert len(squad.candidates) == 1
+    assert squad.candidates[0].membership_probability == 0.7
+    changed = PlayerHistory(rows + [observation("2", 11)])
+    assert changed.retrospective_squad("one", "2024-2025", cutoff, carry_forward=True) == squad
+    transferred = PlayerHistory(rows + [observation("1", 9, team="two")])
+    assert not transferred.retrospective_squad(
+        "one", "2024-2025", cutoff, carry_forward=True
+    ).candidates

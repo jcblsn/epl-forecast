@@ -102,3 +102,22 @@ def test_no_player_observations_preserves_parent_posterior(small_history):
     parent = QualityTiltFilter(dispersion=None).fit(small_history, cutoff)
     assert model.mean == pytest.approx(parent.mean)
     assert model.covariance == pytest.approx(parent.covariance)
+
+
+def test_m6_ensemble_support_and_nested_mixture_reporting(small_history):
+    from epl_forecast.models.player_quality import BayesianPlayerQuality
+    from epl_forecast.models.quality_tilt import BayesianQualityTilt
+
+    model = BayesianPlayerQuality(history_for(small_history), lineup_draws=8).fit(
+        small_history, date(2020, 8, 20)
+    )
+    parent = BayesianQualityTilt(independent_poisson=True)
+    assert model.specifications == parent.specifications
+    assert all(m.dispersion is None for m in model.members)
+    fixture = replace(small_history[0].fixture, match_date=date(2020, 8, 21))
+    scores = model.predict_match(fixture).scores
+    assert len(scores.components) == 32
+    grid, tail = scores.grid(20)
+    assert grid.sum() + tail == pytest.approx(1)
+    assert scores.uncertainty_components()["total_score_covariance"][0][0] > 0
+    assert model.lineup_summary(fixture)[0]["team_id"] == "a"

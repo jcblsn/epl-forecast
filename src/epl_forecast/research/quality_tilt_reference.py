@@ -61,7 +61,7 @@ def reference_model(data, infer_parameters=False):
         k = numpyro.sample("dispersion", dist.LogNormal(np.log(20.0), 1.0))
     else:
         rq, rt, sq, st, k = (
-            PARAMETERS[key]
+            data.get("parameters", PARAMETERS)[key]
             for key in (
                 "quality_retention",
                 "tilt_retention",
@@ -102,7 +102,19 @@ def reference_model(data, infer_parameters=False):
     _, trajectory = lax.scan(advance, initial, (decay, innovation_sd, innovations))
     trajectory = jnp.concatenate([initial[None, :], trajectory], axis=0)
     eta = jnp.einsum("mij,mj->mi", jnp.asarray(data["design"]), trajectory[data["day_index"]])
+    final_state = trajectory[-1]
+    if "player_design" in data:
+        beta = numpyro.sample(
+            "player_quality",
+            dist.Normal(0, data["player_sd"]).expand([data["player_design"].shape[-1]]).to_event(1),
+        )
+        eta += jnp.einsum("mip,p->mi", jnp.asarray(data["player_design"]), beta)
+        final_state = jnp.concatenate([final_state, beta])
     goals = jnp.asarray(data["goals"])
+    if k is None:
+        numpyro.factor("scores", (goals * eta - jnp.exp(eta) - gammaln(goals + 1)).sum())
+        numpyro.deterministic("final_state", final_state)
+        return
     totals = goals.sum(axis=1)
     rate_total = jnp.exp(eta).sum(axis=1)
     logp = (
@@ -114,7 +126,7 @@ def reference_model(data, infer_parameters=False):
         - k * jnp.log1p(rate_total / k)
     )
     numpyro.factor("scores", logp.sum())
-    numpyro.deterministic("final_state", trajectory[-1])
+    numpyro.deterministic("final_state", final_state)
 
 
 def sample_reference(

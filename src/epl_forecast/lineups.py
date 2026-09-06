@@ -68,7 +68,9 @@ def sample_lineups(squad: Squad, kickoff: datetime, rng, size=1):
     starts, minutes = np.zeros((size, n), dtype=bool), np.zeros((size, n))
     formations = np.zeros((size, 4), dtype=int)
     weights = np.array([p.start_weight for p in candidates])
-    availability = np.array([availability_probability(p, kickoff) for p in candidates])
+    availability = np.array(
+        [p.membership_probability * availability_probability(p, kickoff) for p in candidates]
+    )
     by_role = {
         role: np.array([i for i, p in enumerate(candidates) if p.position == role])
         for role in ROLES

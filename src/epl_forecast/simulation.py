@@ -208,6 +208,7 @@ def simulate_season(
         raise ValueError("Sampled forecast states must match the simulation cutoff and size")
     unknown_teams = set()
     known = getattr(model, "team_index", None)
+    match_frequencies = []
     for fixture in sorted(remaining, key=lambda f: (f.match_date, f.match_id)):
         if known is not None:
             unknown_teams.update(
@@ -228,6 +229,14 @@ def simulate_season(
         ):
             raise ValueError("Score samples must be nonnegative integer arrays, one per path")
         add_result(fixture, *goals)
+        match_frequencies.append(
+            {
+                "match_id": fixture.match_id,
+                "p_home": float(np.mean(goals[0] > goals[1])),
+                "p_draw": float(np.mean(goals[0] == goals[1])),
+                "p_away": float(np.mean(goals[0] < goals[1])),
+            }
+        )
     if not np.array_equal(goals_for.sum(axis=1), goals_against.sum(axis=1)):
         raise RuntimeError("Simulation goals do not balance")
     if not np.array_equal(points.sum(axis=1), 3 * 380 - draws + point_offsets.sum()):
@@ -307,6 +316,7 @@ def simulate_season(
         "seed": seed,
         "played_matches": len(played),
         "remaining_matches": len(remaining),
+        "match_frequencies": match_frequencies,
         "state_uncertainty": "posterior" if states is not None else "fixed",
         "future_state_evolution": bool(getattr(states, "evolves_future_states", False)),
         "teams": rows,

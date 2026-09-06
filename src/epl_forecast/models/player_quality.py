@@ -9,7 +9,7 @@ import numpy as np
 from epl_forecast.data.squads import PlayerHistory
 from epl_forecast.lineups import sample_lineups
 from epl_forecast.models.poisson import PoissonMixture
-from epl_forecast.models.quality_tilt import QualityTiltFilter
+from epl_forecast.models.quality_tilt import BayesianQualityTilt, QualityTiltFilter
 from epl_forecast.models.quality_tilt_scores import GammaPoissonMixture, ScoreMixture
 
 
@@ -28,6 +28,7 @@ class PlayerQualityFilter(QualityTiltFilter):
         seed=610,
         squads=None,
         kickoffs=None,
+        carry_forward=True,
         **kwargs,
     ):
         if not np.isfinite(player_sd) or player_sd <= 0:
@@ -37,10 +38,21 @@ class PlayerQualityFilter(QualityTiltFilter):
         self.player_history = history
         self.player_sd, self.lineup_draws, self.seed = player_sd, lineup_draws, seed
         self.squads, self.kickoffs = squads or {}, kickoffs or {}
+        self.carry_forward = carry_forward
         self.observations = defaultdict(list)
         for row in history.rows:
             self.observations[row["match_id"], row["team_id"]].append(row)
         super().__init__(**{"dispersion": None, **kwargs})
+
+    def __deepcopy__(self, memo):
+        instance = object.__new__(type(self))
+        memo[id(self)] = instance
+        shared = {"player_history", "observations", "_history", "_seasons"}
+        instance.__dict__ = {
+            key: value if key in shared else deepcopy(value, memo)
+            for key, value in self.__dict__.items()
+        }
+        return instance
 
     def _reset(self):
         super()._reset()
@@ -127,11 +139,16 @@ class PlayerQualityFilter(QualityTiltFilter):
                 raise ValueError("Snapshot squad season does not match fixture")
             return squad
         return self.player_history.retrospective_squad(
-            team, fixture.season_id, datetime.combine(self.as_of, time(), UTC)
+            team,
+            fixture.season_id,
+            datetime.combine(self.as_of, time(), UTC),
+            carry_forward=self.carry_forward,
         )
 
     def lineup_weights(self, fixture, team, rng, size, oracle=False):
         if oracle:
+            if not self.actual_weights(fixture, team):
+                raise ValueError("Oracle diagnostic requires actual target minutes for both teams")
             return {
                 key: np.full(size, value)
                 for key, value in self.actual_weights(fixture, team).items()
@@ -229,6 +246,65 @@ class PlayerQualityFilter(QualityTiltFilter):
                     "expected_player_quality": float(contributions.mean()),
                     "lineup_selection_quality_sd": float(contributions.std()),
                     "players": players,
+                }
+            )
+        return result
+
+
+class BayesianPlayerQuality(BayesianQualityTilt):
+    """The unchanged independent-Poisson M5 dynamics support with joint player states."""
+
+    def __init__(self, history, **kwargs):
+        super().__init__(independent_poisson=True)
+        self.members = [
+            PlayerQualityFilter(history, **{**spec, "dispersion": None}, **kwargs)
+            for spec in self.specifications
+        ]
+
+    def fit(self, matches, as_of):
+        super().fit(matches, as_of)
+        self.fit_diagnostics.update(
+            {
+                key: value
+                for key, value in self.members[0].fit_diagnostics.items()
+                if key
+                in {
+                    "player_quality",
+                    "player_prior",
+                    "players",
+                    "lineup_draws",
+                    "historical_limitation",
+                    "future_states",
+                }
+            }
+        )
+        return self
+
+    def oracle_distribution(self, fixture):
+        return ScoreMixture(
+            [m.score_distribution(fixture, oracle=True) for m in self.members], self.weights
+        )
+
+    def lineup_summary(self, fixture):
+        summaries = [m.lineup_summary(fixture) for m in self.members]
+        result = []
+        for side in range(2):
+            rows = [summary[side] for summary in summaries]
+            result.append(
+                {
+                    "team_id": rows[0]["team_id"],
+                    "club_quality": float(self.weights @ [r["club_quality"] for r in rows]),
+                    "expected_player_quality": float(
+                        self.weights @ [r["expected_player_quality"] for r in rows]
+                    ),
+                    "lineup_selection_quality_sd": float(
+                        np.sqrt(
+                            self.weights @ [r["lineup_selection_quality_sd"] ** 2 for r in rows]
+                        )
+                    ),
+                    "specifications": [
+                        {"weight": float(w), **r} for w, r in zip(self.weights, rows, strict=True)
+                    ],
                 }
             )
         return result

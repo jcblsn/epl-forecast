@@ -42,6 +42,7 @@ class Candidate:
     history: tuple[tuple[float, float | None], ...] = ()
     availability: Availability | None = None
     anonymous: bool = False
+    membership_probability: float = 1.0
 
     @property
     def start_weight(self):
@@ -64,6 +65,8 @@ class Squad:
         if len({p.player_id for p in self.candidates}) != len(self.candidates):
             raise ValueError("Duplicate squad identity")
         for player in self.candidates:
+            if not 0 <= player.membership_probability <= 1:
+                raise ValueError("Invalid membership probability")
             if player.team_id != self.team_id or player.position not in (*ROLES, "UNK"):
                 raise ValueError("Invalid candidate team or position")
             if player.membership_observed_at and player.membership_observed_at > self.cutoff:
@@ -127,7 +130,7 @@ class PlayerHistory:
             for r in rows[-5:]
         )
 
-    def retrospective_squad(self, team, season, cutoff):
+    def retrospective_squad(self, team, season, cutoff, carry_forward=False):
         if cutoff.tzinfo is None:
             raise ValueError("Squad cutoff requires timezone")
         latest, history = {}, defaultdict(list)
@@ -155,6 +158,42 @@ class PlayerHistory:
                     tuple(history[identity][-5:]),
                 )
             )
+        if carry_forward:
+            previous = f"{int(season[:4]) - 1}-{int(season[:4])}"
+            past = [
+                r for r in self.by_season.get(previous, []) if self._past(r, cutoff, strict=False)
+            ]
+            final, exposures = {}, defaultdict(list)
+            for row in past:
+                code = row.get("fpl_player_code")
+                if code:
+                    final[code] = row
+                    exposures[code].append(
+                        (
+                            float(row["minutes"]),
+                            float(row["starts"]) if row["starts"] != "" else None,
+                        )
+                    )
+            current_codes = {r.get("fpl_player_code") for r in latest.values()}
+            latest_day = max((timestamp(r["kickoff_time"]) for r in past), default=None)
+            for code, row in sorted(final.items()):
+                if code in current_codes or row["team_id"] != team:
+                    continue
+                if (latest_day - timestamp(row["kickoff_time"])).days > 45:
+                    continue
+                candidates.append(
+                    Candidate(
+                        f"fpl:{code}",
+                        row["player_season_id"],
+                        row["player_name"],
+                        team,
+                        row.get("position") or "UNK",
+                        None,
+                        "previous-season final club; unverified carry-forward membership prior",
+                        tuple(exposures[code][-5:]),
+                        membership_probability=0.7,
+                    )
+                )
         return Squad(team, season, cutoff, tuple(candidates), "retrospective prior-fixture proxy")
 
 
