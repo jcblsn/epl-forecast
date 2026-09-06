@@ -124,6 +124,9 @@ class QualityTiltFilter(DynamicAttackDefense):
     def sample_forecast_state(self, rng, size=1):
         return ForwardQualityTiltStates(self, rng, size)
 
+    def player_quality_difference(self, fixture, values, rng, unknown):
+        return 0.0
+
     def team_summary(self, team, season):
         state = self.team_state(team, season)
         return state_summary(team, state)
@@ -267,12 +270,12 @@ class ForwardQualityTiltStates:
             values = member.mean + rng.standard_normal((len(positions), len(member.mean))) @ (
                 np.linalg.cholesky(member.covariance).T
             )
-            self.groups.append([positions, snapshot, values, self.as_of, {}])
+            self.groups.append([positions, snapshot, values, self.as_of, {}, {}])
 
     def sample_scores(self, fixture, rng):
         home, away = np.empty(self.size, dtype=int), np.empty(self.size, dtype=int)
         for group in self.groups:
-            positions, model, values, day, entries = group
+            positions, model, values, day, entries, unknown = group
             model.validate_fixture(fixture)
             if fixture.match_date < day:
                 raise ValueError("Forward simulation requires chronological fixtures")
@@ -282,7 +285,9 @@ class ForwardQualityTiltStates:
                     key = team, fixture.season_id
                     if key not in entries:
                         prior = model.team_state(team, fixture.season_id)
-                        decay, variance = model.transition((day - self.as_of).days / 365.25, 4)
+                        decay, variance = QualityTiltFilter.transition(
+                            model, (day - self.as_of).days / 365.25, 4
+                        )
                         entry_mean = prior.mean * decay[2:]
                         entry_cov = prior.covariance * np.outer(decay[2:], decay[2:]) + np.diag(
                             variance[2:]
@@ -295,7 +300,7 @@ class ForwardQualityTiltStates:
                 decay, variance = model.transition(years, values.shape[1])
                 values *= decay
                 values += self.rng.standard_normal(values.shape) * np.sqrt(variance)
-                decay, variance = model.transition(years, 4)
+                decay, variance = QualityTiltFilter.transition(model, years, 4)
                 for entry in entries.values():
                     entry *= decay[2:]
                     entry += self.rng.standard_normal(entry.shape) * np.sqrt(variance[2:])
@@ -310,6 +315,7 @@ class ForwardQualityTiltStates:
 
             h, a = team_value(fixture.home_team_id), team_value(fixture.away_team_id)
             quality, tilt = h[:, 0] - a[:, 0], h[:, 1] + a[:, 1]
+            quality += model.player_quality_difference(fixture, values, rng, unknown)
             tempo = (
                 1.0
                 if model.dispersion is None

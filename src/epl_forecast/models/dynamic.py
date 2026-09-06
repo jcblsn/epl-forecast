@@ -153,6 +153,7 @@ class DynamicAttackDefense(BaseModel):
                 for match in games:
                     for team in (match.fixture.home_team_id, match.fixture.away_team_id):
                         self._ensure_team(team, match.fixture.season_id, day)
+                self._prepare_observations(games)
                 design = np.zeros((2 * len(games), len(self.mean)))
                 goals = []
                 for row, match in enumerate(games):
@@ -164,6 +165,7 @@ class DynamicAttackDefense(BaseModel):
                     home_transform, away_transform = self._team_transforms()
                     design[2 * row : 2 * row + 2, h : h + 2] = home_transform
                     design[2 * row : 2 * row + 2, a : a + 2] = away_transform
+                    self._augment_design(design[2 * row : 2 * row + 2], match)
                     goals.extend([match.home_goals, match.away_goals])
                     for team in (match.fixture.home_team_id, match.fixture.away_team_id):
                         self.appearances[team, match.fixture.season_id] += 1
@@ -182,6 +184,12 @@ class DynamicAttackDefense(BaseModel):
             "posterior": "Gaussian conditional on fixed dynamics and empirical Bayes bridge",
         }
         return self
+
+    def _prepare_observations(self, games):
+        pass
+
+    def _augment_design(self, design, match):
+        pass
 
     def _team_transforms(self):
         return np.array([[1, 0], [0, -1]]), np.array([[0, -1], [1, 0]])
