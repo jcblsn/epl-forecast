@@ -45,10 +45,34 @@ zero/nonfinite/negative xG, dates, scores, duplicate/unfinished matches and the
 exact-source correction boundary. The audit refuses to publish normalized
 modeling inputs if any completed-season fixture remains unresolved.
 
+## Centered research parent
+
+The [centered state implementation](../centered_quality_tilt_model.md) absorbs
+common Tilt into league scoring and stores n−1 free team Tilt contrasts. It
+retains the common component as transition-only mean-reverting scoring memory;
+removing that memory would change M5's future distribution. Match observations
+have exactly zero direct memory loading, and scoring level/contrasts have full
+column rank. Team entry rebases the state without changing priors or forecasts.
+
+The [reference evidence](m7/centered_reference.json) uses four chains with 600
+warmup and 800 retained draws per chain, no divergences, maximum R-hat 1.0010
+and minimum effective sample size 2,215. Transformed sampled rates differ by at
+most 1.11e-15. The centered filter preserves the original posterior approximation:
+its maximum mean discrepancy from the sampled posterior remains 0.597 reference
+standard deviations. No moment correction has been added or claimed.
+
+The full retained history contains 14,912 PL/Championship results, 41 PL team
+states and 45 promotion-bridge entries. Original versus centered mean differences
+are at most 9.08e-10, covariance differences 2.09e-12, and log-evidence difference
+5.63e-8. Seven-day-ahead rate mean/covariance differences are below 5.29e-11 and
+7.22e-14. All 10,000 paired future match score draws agree. Separate tests also
+exercise unknown next-season entrants and multiple evolving forecast dates.
+Twenty-seven centered, sampled-reference, Quality/Tilt and dynamic tests pass.
+These are equivalence checks, not evidence of calibrated season uncertainty.
+
 ## Remaining work
 
-The identifiable state implementation and sampled-reference equivalence checks,
-probabilistic joint goals/xG channel, chronological model comparisons,
+The probabilistic joint goals/xG channel, chronological model comparisons,
 high-information diagnostics, evolving season validation, player-source follow-up
 and prospective archive refresh/verification remain required. Source coverage is
 not evidence of model quality or a completed M7 parent.

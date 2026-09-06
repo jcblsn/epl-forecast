@@ -8,6 +8,8 @@ from scipy.stats import norm
 from epl_forecast.data.normalize import load_processed
 from epl_forecast.research.quality_tilt_reference import (
     PARAMETERS,
+    centered_history_comparison,
+    centered_reference_comparison,
     compare_posterior,
     prepare,
     production_posterior,
@@ -29,6 +31,9 @@ def main():
     parser.add_argument("--coverage-replicates", type=int, default=200)
     parser.add_argument("--sampled-coverage-replicates", type=int, default=8)
     parser.add_argument("--seed", type=int, default=20260906)
+    parser.add_argument(
+        "--centered", action="store_true", help="Check centered M5 equivalence only"
+    )
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
     matches, _, manifest = load_processed(args.data)
@@ -59,6 +64,11 @@ def main():
         "sampling": diagnostics,
         "comparison": compare_posterior(draws["final_state"], mean, covariance),
     }
+    if args.centered:
+        report["centered_equivalence"] = centered_reference_comparison(data, draws["final_state"])
+        report["centered_full_history"] = centered_history_comparison(matches)
+        write_json(args.output / "report.json", report)
+        return
     write_json(args.output / "report.json", report)
     print("Sampling historical posterior with uncertain dynamics and dispersion", flush=True)
     draws, diagnostics = sample_reference(data, seed=args.seed + 1, infer_parameters=True, **kwargs)

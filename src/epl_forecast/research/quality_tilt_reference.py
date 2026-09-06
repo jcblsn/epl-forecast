@@ -198,6 +198,92 @@ def compare_posterior(draws, mean, covariance):
     }
 
 
+def centered_reference_comparison(data, draws):
+    from epl_forecast.models.centered_quality_tilt import (
+        CenteredQualityTiltFilter,
+        tilt_coordinates,
+    )
+
+    parameters = data.get("parameters", PARAMETERS)
+    centered = CenteredQualityTiltFilter(**parameters).fit(data["matches"], data["cutoff"])
+    original = QualityTiltFilter(**parameters).fit(data["matches"], data["cutoff"])
+    order = [0, 1] + [
+        2 + 2 * data["teams"].index(team) + d for team in centered.team_index for d in range(2)
+    ]
+    transform, inverse = tilt_coordinates(len(centered.team_index))
+    population_draws = draws[:, order]
+    centered_draws = population_draws @ transform.T
+    design = data["design"].reshape(-1, len(order))[:, order]
+    centered_design = design @ inverse
+    mean, covariance = centered.population_moments()
+    transition, innovation = centered.transition_matrices(1.0)
+    decay, variance = original.transition(1.0, len(order))
+    return {
+        "scope": "Same sampled M5 posterior pushed through the exact centered-state map",
+        "centered_posterior": compare_posterior(centered_draws, centered.mean, centered.covariance),
+        "sampled_rate_equivalence_max_abs": float(
+            np.max(np.abs(population_draws @ design.T - centered_draws @ centered_design.T))
+        ),
+        "filter_mean_equivalence_max_abs": float(np.max(np.abs(mean - original.mean))),
+        "filter_covariance_equivalence_max_abs": float(
+            np.max(np.abs(covariance - original.covariance))
+        ),
+        "filter_log_evidence_difference": centered.log_evidence - original.log_evidence,
+        "one_year_mean_equivalence_max_abs": float(
+            np.max(np.abs(inverse @ transition @ centered.mean - decay * original.mean))
+        ),
+        "one_year_covariance_equivalence_max_abs": float(
+            np.max(
+                np.abs(
+                    inverse
+                    @ (transition @ centered.covariance @ transition.T + innovation)
+                    @ inverse.T
+                    - (original.covariance * np.outer(decay, decay) + np.diag(variance))
+                )
+            )
+        ),
+        "interpretation": "Reparameterization preserves the existing Laplace approximation bias",
+    }
+
+
+def centered_history_comparison(matches):
+    from dataclasses import replace
+
+    from epl_forecast.models.centered_quality_tilt import CenteredQualityTiltFilter
+
+    cutoff = max(m.available_on for m in matches)
+    original = QualityTiltFilter(**PARAMETERS).fit(matches, cutoff)
+    centered = CenteredQualityTiltFilter(**PARAMETERS).fit(matches, cutoff)
+    mean, covariance = centered.population_moments()
+    fixture = replace(
+        max(matches, key=lambda m: m.fixture.match_date).fixture,
+        match_date=cutoff + timedelta(days=7),
+    )
+    old_moments, new_moments = (
+        original.forecast_moments(fixture),
+        centered.forecast_moments(fixture),
+    )
+    left = original.sample_forecast_state(np.random.default_rng(73), 10000)
+    right = centered.sample_forecast_state(np.random.default_rng(73), 10000)
+    old_scores = left.sample_scores(fixture, np.random.default_rng(74))
+    new_scores = right.sample_scores(fixture, np.random.default_rng(74))
+    return {
+        "cutoff": str(cutoff),
+        "matches": len(matches),
+        "teams": len(original.team_index),
+        "promotion_entries": sum("promotion" in p.source for p in original.entry_priors.values()),
+        "mean_max_abs": float(np.max(np.abs(mean - original.mean))),
+        "covariance_max_abs": float(np.max(np.abs(covariance - original.covariance))),
+        "log_evidence_difference": centered.log_evidence - original.log_evidence,
+        "future_rate_mean_max_abs": float(np.max(np.abs(old_moments[0] - new_moments[0]))),
+        "future_rate_covariance_max_abs": float(np.max(np.abs(old_moments[1] - new_moments[1]))),
+        "paired_future_score_differences": int(
+            sum(np.count_nonzero(a != b) for a, b in zip(old_scores, new_scores, strict=True))
+        ),
+        "future_paths": 10000,
+    }
+
+
 def synthetic_data(template, rng):
     from dataclasses import replace
 
