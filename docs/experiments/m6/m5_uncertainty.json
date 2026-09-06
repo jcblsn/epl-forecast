@@ -1,0 +1,1312 @@
+{
+  "corrected_coverage": {
+    "functionals": {
+      "common_tilt": {
+        "coverage": 0.875,
+        "mean_standardized_bias": 0.10886243788083799,
+        "replicate_mean_se": 0.023444042219248146,
+        "rms_standardized_error": 1.0647722365099022
+      },
+      "league": {
+        "coverage": 0.865,
+        "mean_standardized_bias": -0.007621605283757597,
+        "replicate_mean_se": 0.024224141785131024,
+        "rms_standardized_error": 1.030374864658049
+      },
+      "league_plus_twice_common_tilt": {
+        "coverage": 0.905,
+        "mean_standardized_bias": 0.12876343929830758,
+        "replicate_mean_se": 0.02078545587374491,
+        "rms_standardized_error": 0.953542631096324
+      },
+      "match_log_scoring_rates": {
+        "coverage": 0.903,
+        "mean_standardized_bias": 0.018829157959210592,
+        "replicate_mean_se": 0.002862970535191989,
+        "rms_standardized_error": 0.9991931152207288
+      }
+    },
+    "matches": 90,
+    "mean_league_common_tilt_correlation": -0.7446668131333515,
+    "moment_corrected": true,
+    "nominal": 0.9,
+    "parameters": {
+      "dispersion": 20.0,
+      "quality_retention": 0.9,
+      "quality_sd": 0.12,
+      "tilt_retention": 0.65,
+      "tilt_sd": 0.1
+    },
+    "replicates": 200,
+    "scope": "Prior-predictive synthetic 90-match subset with original fixed parameters. Scoring-rate functionals are at the final cutoff, with both rates for each subset pairing. Replicates, not correlated team/rate intervals, determine SE."
+  },
+  "coverage": {
+    "functionals": {
+      "common_tilt": {
+        "coverage": 0.875,
+        "mean_standardized_bias": 0.22035518649069416,
+        "replicate_mean_se": 0.023444042219248146,
+        "rms_standardized_error": 1.0817697559677868
+      },
+      "league": {
+        "coverage": 0.835,
+        "mean_standardized_bias": 0.362931591196167,
+        "replicate_mean_se": 0.02631229148928473,
+        "rms_standardized_error": 1.0944344972935363
+      },
+      "league_plus_twice_common_tilt": {
+        "coverage": 0.795,
+        "mean_standardized_bias": 0.8211916683767145,
+        "replicate_mean_se": 0.02861764926136022,
+        "rms_standardized_error": 1.2551468464609117
+      },
+      "match_log_scoring_rates": {
+        "coverage": 0.8928055555555555,
+        "mean_standardized_bias": 0.20650457668777708,
+        "replicate_mean_se": 0.003170652790093821,
+        "rms_standardized_error": 1.0274131374262483
+      }
+    },
+    "matches": 90,
+    "mean_league_common_tilt_correlation": -0.747284310572949,
+    "nominal": 0.9,
+    "parameters": {
+      "dispersion": 20.0,
+      "quality_retention": 0.9,
+      "quality_sd": 0.12,
+      "tilt_retention": 0.65,
+      "tilt_sd": 0.1
+    },
+    "replicates": 200,
+    "scope": "Prior-predictive synthetic 90-match subset with original fixed parameters. Scoring-rate functionals are at the final cutoff, with both rates for each subset pairing. Replicates, not correlated team/rate intervals, determine SE."
+  },
+  "grid_support": {
+    "checkpoints": [
+      {
+        "cutoff": "2023-07-01",
+        "effective_specifications": 1.878167692792031,
+        "specifications": [
+          {
+            "dispersion": 100.0,
+            "log_evidence": -14457.001691156991,
+            "quality_retention": 0.85,
+            "quality_sd": 0.09,
+            "tilt_retention": 0.5,
+            "tilt_sd": 0.07,
+            "weight": 0.029493826010179674
+          },
+          {
+            "dispersion": null,
+            "log_evidence": -14453.875224618801,
+            "quality_retention": 0.85,
+            "quality_sd": 0.09,
+            "tilt_retention": 0.5,
+            "tilt_sd": 0.07,
+            "weight": 0.672261560575663
+          },
+          {
+            "dispersion": 300.0,
+            "log_evidence": -14454.744175016895,
+            "quality_retention": 0.85,
+            "quality_sd": 0.09,
+            "tilt_retention": 0.5,
+            "tilt_sd": 0.07,
+            "weight": 0.2819407926486802
+          },
+          {
+            "dispersion": 100.0,
+            "log_evidence": -14492.571954184812,
+            "quality_retention": 0.85,
+            "quality_sd": 0.045,
+            "tilt_retention": 0.5,
+            "tilt_sd": 0.07,
+            "weight": 1.051385930620893e-17
+          },
+          {
+            "dispersion": 100.0,
+            "log_evidence": -14458.498658164724,
+            "quality_retention": 0.85,
+            "quality_sd": 0.09,
+            "tilt_retention": 0.5,
+            "tilt_sd": 0.035,
+            "weight": 0.006600952428159879
+          },
+          {
+            "dispersion": 100.0,
+            "log_evidence": -14494.759496214383,
+            "quality_retention": 0.85,
+            "quality_sd": 0.045,
+            "tilt_retention": 0.5,
+            "tilt_sd": 0.035,
+            "weight": 1.1795727435468093e-18
+          },
+          {
+            "dispersion": 100.0,
+            "log_evidence": -14495.106276629267,
+            "quality_retention": 0.65,
+            "quality_sd": 0.09,
+            "tilt_retention": 0.5,
+            "tilt_sd": 0.07,
+            "weight": 8.33911394633637e-19
+          },
+          {
+            "dispersion": 100.0,
+            "log_evidence": -14458.113450564035,
+            "quality_retention": 0.85,
+            "quality_sd": 0.09,
+            "tilt_retention": 0.25,
+            "tilt_sd": 0.07,
+            "weight": 0.009702868336661175
+          }
+        ],
+        "training_matches": 12116
+      },
+      {
+        "cutoff": "2024-07-01",
+        "effective_specifications": 1.546266191393008,
+        "specifications": [
+          {
+            "dispersion": 100.0,
+            "log_evidence": -15623.18024027325,
+            "quality_retention": 0.85,
+            "quality_sd": 0.09,
+            "tilt_retention": 0.5,
+            "tilt_sd": 0.07,
+            "weight": 0.008829493511416691
+          },
+          {
+            "dispersion": null,
+            "log_evidence": -15618.703779339676,
+            "quality_retention": 0.85,
+            "quality_sd": 0.09,
+            "tilt_retention": 0.5,
+            "tilt_sd": 0.07,
+            "weight": 0.7763151715017831
+          },
+          {
+            "dispersion": 300.0,
+            "log_evidence": -15620.012812856181,
+            "quality_retention": 0.85,
+            "quality_sd": 0.09,
+            "tilt_retention": 0.5,
+            "tilt_sd": 0.07,
+            "weight": 0.20966794606329045
+          },
+          {
+            "dispersion": 100.0,
+            "log_evidence": -15660.865548038593,
+            "quality_retention": 0.85,
+            "quality_sd": 0.045,
+            "tilt_retention": 0.5,
+            "tilt_sd": 0.07,
+            "weight": 3.7967725448972825e-19
+          },
+          {
+            "dispersion": 100.0,
+            "log_evidence": -15624.871800872212,
+            "quality_retention": 0.85,
+            "quality_sd": 0.09,
+            "tilt_retention": 0.5,
+            "tilt_sd": 0.035,
+            "weight": 0.0016266733731615719
+          },
+          {
+            "dispersion": 100.0,
+            "log_evidence": -15663.160113379114,
+            "quality_retention": 0.85,
+            "quality_sd": 0.045,
+            "tilt_retention": 0.5,
+            "tilt_sd": 0.035,
+            "weight": 3.827344145385825e-20
+          },
+          {
+            "dispersion": 100.0,
+            "log_evidence": -15664.5226737958,
+            "quality_retention": 0.65,
+            "quality_sd": 0.09,
+            "tilt_retention": 0.5,
+            "tilt_sd": 0.07,
+            "weight": 9.798171673454566e-21
+          },
+          {
+            "dispersion": 100.0,
+            "log_evidence": -15624.088376404205,
+            "quality_retention": 0.85,
+            "quality_sd": 0.09,
+            "tilt_retention": 0.25,
+            "tilt_sd": 0.07,
+            "weight": 0.003560715550651697
+          }
+        ],
+        "training_matches": 13048
+      },
+      {
+        "cutoff": "2025-07-01",
+        "effective_specifications": 1.427853644661085,
+        "specifications": [
+          {
+            "dispersion": 100.0,
+            "log_evidence": -16750.718845600462,
+            "quality_retention": 0.85,
+            "quality_sd": 0.09,
+            "tilt_retention": 0.5,
+            "tilt_sd": 0.07,
+            "weight": 0.004467454367949421
+          },
+          {
+            "dispersion": null,
+            "log_evidence": -16745.50841705233,
+            "quality_retention": 0.85,
+            "quality_sd": 0.09,
+            "tilt_retention": 0.5,
+            "tilt_sd": 0.07,
+            "weight": 0.8183149622397242
+          },
+          {
+            "dispersion": 300.0,
+            "log_evidence": -16747.049813444417,
+            "quality_retention": 0.85,
+            "quality_sd": 0.09,
+            "tilt_retention": 0.5,
+            "tilt_sd": 0.07,
+            "weight": 0.1751864630497948
+          },
+          {
+            "dispersion": 100.0,
+            "log_evidence": -16790.178225475764,
+            "quality_retention": 0.85,
+            "quality_sd": 0.045,
+            "tilt_retention": 0.5,
+            "tilt_sd": 0.07,
+            "weight": 3.258886130952976e-20
+          },
+          {
+            "dispersion": 100.0,
+            "log_evidence": -16752.568518569136,
+            "quality_retention": 0.85,
+            "quality_sd": 0.09,
+            "tilt_retention": 0.5,
+            "tilt_sd": 0.035,
+            "weight": 0.0007026796261301846
+          },
+          {
+            "dispersion": 100.0,
+            "log_evidence": -16792.608992723486,
+            "quality_retention": 0.85,
+            "quality_sd": 0.045,
+            "tilt_retention": 0.5,
+            "tilt_sd": 0.035,
+            "weight": 2.8668197222345157e-21
+          },
+          {
+            "dispersion": 100.0,
+            "log_evidence": -16792.529334580795,
+            "quality_retention": 0.65,
+            "quality_sd": 0.09,
+            "tilt_retention": 0.5,
+            "tilt_sd": 0.07,
+            "weight": 3.1045272436953363e-21
+          },
+          {
+            "dispersion": 100.0,
+            "log_evidence": -16751.931658494505,
+            "quality_retention": 0.85,
+            "quality_sd": 0.09,
+            "tilt_retention": 0.25,
+            "tilt_sd": 0.07,
+            "weight": 0.0013284407150366197
+          }
+        ],
+        "training_matches": 13980
+      },
+      {
+        "cutoff": "2026-07-01",
+        "effective_specifications": 1.353788487324645,
+        "specifications": [
+          {
+            "dispersion": 100.0,
+            "log_evidence": -17850.255777339975,
+            "quality_retention": 0.85,
+            "quality_sd": 0.09,
+            "tilt_retention": 0.5,
+            "tilt_sd": 0.07,
+            "weight": 0.0024963829908378602
+          },
+          {
+            "dispersion": null,
+            "log_evidence": -17844.429617655995,
+            "quality_retention": 0.85,
+            "quality_sd": 0.09,
+            "tilt_retention": 0.5,
+            "tilt_sd": 0.07,
+            "weight": 0.8464088901705477
+          },
+          {
+            "dispersion": 300.0,
+            "log_evidence": -17846.165533368556,
+            "quality_retention": 0.85,
+            "quality_sd": 0.09,
+            "tilt_retention": 0.5,
+            "tilt_sd": 0.07,
+            "weight": 0.14917003831156747
+          },
+          {
+            "dispersion": 100.0,
+            "log_evidence": -17889.569654881998,
+            "quality_retention": 0.85,
+            "quality_sd": 0.045,
+            "tilt_retention": 0.5,
+            "tilt_sd": 0.07,
+            "weight": 2.1062559066400433e-20
+          },
+          {
+            "dispersion": 100.0,
+            "log_evidence": -17851.083607119945,
+            "quality_retention": 0.85,
+            "quality_sd": 0.09,
+            "tilt_retention": 0.5,
+            "tilt_sd": 0.035,
+            "weight": 0.0010909109712222238
+          },
+          {
+            "dispersion": 100.0,
+            "log_evidence": -17890.808859517856,
+            "quality_retention": 0.85,
+            "quality_sd": 0.045,
+            "tilt_retention": 0.5,
+            "tilt_sd": 0.035,
+            "weight": 6.100021993044811e-21
+          },
+          {
+            "dispersion": 100.0,
+            "log_evidence": -17892.827310756442,
+            "quality_retention": 0.65,
+            "quality_sd": 0.09,
+            "tilt_retention": 0.5,
+            "tilt_sd": 0.07,
+            "weight": 8.10455485166904e-22
+          },
+          {
+            "dispersion": 100.0,
+            "log_evidence": -17851.35240885039,
+            "quality_retention": 0.85,
+            "quality_sd": 0.09,
+            "tilt_retention": 0.25,
+            "tilt_sd": 0.07,
+            "weight": 0.0008337775574891551
+          }
+        ],
+        "training_matches": 14912
+      }
+    ],
+    "scope": "Equal prior mass on eight fixed probes beyond the original winning corner. Exploratory full-history Laplace evidence; no production support change."
+  },
+  "input_manifest": {
+    "aliases_sha256": "de87276e650f0cef4a4c5856da40d1efdb8e609ed127dd583afe544d71bc5eb9",
+    "availability_policy": "result available the next calendar day; date batches",
+    "files": {
+      "coverage.json": "5cf8b8a2fdb99b51e7679f81701e5f16272dccca9610dc1f8e3d0c25944b54d1",
+      "matches.csv": "6db8d4c97a4805765b203bb9296b55d52ce9357c099ed970c825ad0487d789aa",
+      "odds.csv": "44f1c3d47ab9731aa3f599915b97a3134161a85c2d6f84e9a87facae2adac38c"
+    },
+    "matches": 14912,
+    "normalizer_version": "0.1.0",
+    "odds_quotes": 36346,
+    "schema_version": 1,
+    "snapshot_sha256": "d7a8e8cf5521d2daf9c47263f3a6c0712019b14f4437a725c69f3e6d663dcb0a"
+  },
+  "integration": {
+    "cutoff": "2026-05-25",
+    "draws_per_daily_integral": 4096,
+    "matches": 760,
+    "scope": "Fresh population initialization on two historical seasons. Importance sampling reintegrates each daily likelihood under its unchanged production Gaussian prior. Scrambles assess integration noise. This isolates evidence integration error; it does not estimate exact full-history evidence or Gaussian filtering error.",
+    "specifications": [
+      {
+        "correction_scramble_sd": 0.005285844116861551,
+        "scrambles": [
+          {
+            "correction": -0.7893359931556214,
+            "importance_same_gaussian_priors": -2252.855131401301,
+            "laplace": -2252.0657954081453,
+            "min_ess_fraction": 0.8520769321316147
+          },
+          {
+            "correction": -0.7809709219716716,
+            "importance_same_gaussian_priors": -2252.846766330117,
+            "laplace": -2252.0657954081453,
+            "min_ess_fraction": 0.840062309513732
+          },
+          {
+            "correction": -0.7795552764171607,
+            "importance_same_gaussian_priors": -2252.8453506845626,
+            "laplace": -2252.0657954081453,
+            "min_ess_fraction": 0.851310504601357
+          }
+        ],
+        "specification": {
+          "dispersion": 100.0,
+          "quality_retention": 0.85,
+          "quality_sd": 0.09,
+          "tilt_retention": 0.5,
+          "tilt_sd": 0.07
+        }
+      },
+      {
+        "correction_scramble_sd": 0.0045839392186723575,
+        "scrambles": [
+          {
+            "correction": -0.8779063148054529,
+            "importance_same_gaussian_priors": -2251.5651465600804,
+            "laplace": -2250.687240245274,
+            "min_ess_fraction": 0.8431632912049679
+          },
+          {
+            "correction": -0.8726702939421951,
+            "importance_same_gaussian_priors": -2251.559910539217,
+            "laplace": -2250.687240245274,
+            "min_ess_fraction": 0.8244325783385203
+          },
+          {
+            "correction": -0.8687709766683074,
+            "importance_same_gaussian_priors": -2251.556011221943,
+            "laplace": -2250.687240245274,
+            "min_ess_fraction": 0.8413285017307108
+          }
+        ],
+        "specification": {
+          "dispersion": null,
+          "quality_retention": 0.85,
+          "quality_sd": 0.09,
+          "tilt_retention": 0.5,
+          "tilt_sd": 0.07
+        }
+      },
+      {
+        "correction_scramble_sd": 0.002139110187267823,
+        "scrambles": [
+          {
+            "correction": -1.1134168086014011,
+            "importance_same_gaussian_priors": -2259.521709029148,
+            "laplace": -2258.4082922205475,
+            "min_ess_fraction": 0.8520769321316147
+          },
+          {
+            "correction": -1.110072636668556,
+            "importance_same_gaussian_priors": -2259.518364857215,
+            "laplace": -2258.4082922205475,
+            "min_ess_fraction": 0.840062309513732
+          },
+          {
+            "correction": -1.109433929969572,
+            "importance_same_gaussian_priors": -2259.5177261505164,
+            "laplace": -2258.4082922205475,
+            "min_ess_fraction": 0.851310504601357
+          }
+        ],
+        "specification": {
+          "dispersion": 100.0,
+          "quality_retention": 0.85,
+          "quality_sd": 0.16,
+          "tilt_retention": 0.5,
+          "tilt_sd": 0.14
+        }
+      }
+    ]
+  },
+  "retained_runs": {
+    "runs/m5-uncertainty-correction-v1/report.json": "f799be1dffd79c9188d805db4e674e9f2103d822f71a72f57b4d10f361dce0fa",
+    "runs/m5-uncertainty-v1/report.json": "0f3d43c280037054df4d666fa76dec3261af33e91f53eeb451217e4e32dc3ff6"
+  },
+  "sampled_sensitivity": {
+    "comparisons": {
+      "laplace": {
+        "functionals": {
+          "correlation_difference_rms": 0.025317979143996843,
+          "filter_mean_first_three": [
+            0.257445277300033,
+            0.0073402349946937165,
+            0.27212574728942046
+          ],
+          "filter_sd_first_three": [
+            0.13071533175820949,
+            0.0539387351402456,
+            0.08814025929161748
+          ],
+          "max_mean_difference_in_reference_sd": 0.5967038723851549,
+          "max_sd_ratio": 1.056375955550255,
+          "mean_difference_rms": 0.05678756712770124,
+          "median_sd_ratio_filter_to_reference": 1.0002779574790865,
+          "min_sd_ratio": 0.9516295694643427,
+          "reference_mean_first_three": [
+            0.221821234086797,
+            -0.0013127785528887514,
+            0.21919567698101944
+          ],
+          "reference_sd_first_three": [
+            0.131758111143788,
+            0.05448893799155253,
+            0.08870408381435174
+          ]
+        },
+        "state": {
+          "correlation_difference_rms": 0.025199137629663387,
+          "max_mean_difference_in_reference_sd": 0.2703745743164109,
+          "max_sd_ratio": 1.0469375515023078,
+          "mean_difference_rms": 0.009321338659368206,
+          "median_sd_ratio_filter_to_reference": 0.9988285154463827,
+          "min_sd_ratio": 0.9567299895036216
+        }
+      },
+      "moment_corrected": {
+        "functionals": {
+          "correlation_difference_rms": 0.02537197693324427,
+          "filter_mean_first_three": [
+            0.20700291076154786,
+            0.0011078108935232978,
+            0.20921853254859446
+          ],
+          "filter_sd_first_three": [
+            0.13101541573198883,
+            0.05394702978775315,
+            0.08878818676212535
+          ],
+          "max_mean_difference_in_reference_sd": 0.1124767203875989,
+          "max_sd_ratio": 1.0672781476059485,
+          "mean_difference_rms": 0.012411865312037912,
+          "median_sd_ratio_filter_to_reference": 1.0074104704901228,
+          "min_sd_ratio": 0.9591699898645792,
+          "reference_mean_first_three": [
+            0.221821234086797,
+            -0.0013127785528887514,
+            0.21919567698101944
+          ],
+          "reference_sd_first_three": [
+            0.131758111143788,
+            0.05448893799155253,
+            0.08870408381435174
+          ]
+        },
+        "state": {
+          "correlation_difference_rms": 0.025347302602708253,
+          "max_mean_difference_in_reference_sd": 0.11246611837868448,
+          "max_sd_ratio": 1.0524243200687338,
+          "mean_difference_rms": 0.005167847682042299,
+          "median_sd_ratio_filter_to_reference": 1.0047459234885854,
+          "min_sd_ratio": 0.9604428079498168
+        }
+      }
+    },
+    "sampling": {
+      "chains": 4,
+      "divergences": 0,
+      "max_rhat": 1.0009758481284554,
+      "min_effective_samples": 2214.839825510176,
+      "parameters": {},
+      "samples_per_chain": 800,
+      "warmup": 600
+    },
+    "scope": "Same final-time population-initialized posterior and fixed parameters. Functional order: league, common Tilt, league + twice common Tilt, then home/away log rates for the subset pairings."
+  },
+  "season_sensitivity": {
+    "models": {
+      "laplace": {
+        "as_of": "2024-11-01",
+        "assumptions": [
+          "One dynamics specification and current joint state per path; calendar-time latent transitions and independent match tempo shocks continue through fixtures. Simulated scores do not update the sampled latent states.",
+          "No future result labels used. Historical fixture dates are retrospectively recorded.",
+          "Nondecisive shared positions split mass across occupied ranks for reporting.",
+          "Unresolved decisive ties assume equal playoff chances; playoff model not estimated.",
+          "Points adjustments include only supplied sanctions known at the cutoff.",
+          "Top-four/five probabilities are table positions, not European qualification."
+        ],
+        "europe_scenario": null,
+        "future_state_evolution": true,
+        "head_to_head_applied_rate": 0.0,
+        "next_match": {
+          "log_rate_covariance": [
+            [
+              0.13048200218345818,
+              -0.003487027465650872
+            ],
+            [
+              -0.0034870274656508687,
+              0.10965872692193052
+            ]
+          ],
+          "log_rate_mean": [
+            0.13768585661224172,
+            0.42075313218153054
+          ],
+          "match_id": "eng-premier-league:2024-2025:bournemouth:manchester-city",
+          "probabilities": [
+            0.29731392494792686,
+            0.24667010406394427,
+            0.4560159709881289
+          ]
+        },
+        "played_matches": 90,
+        "point_adjustments": [],
+        "remaining_matches": 290,
+        "results_observed_at": null,
+        "season_id": "2024-2025",
+        "seed": 20260906,
+        "simulations": 5000,
+        "state_uncertainty": "posterior",
+        "teams": [
+          {
+            "mean_goal_difference": 24.5322,
+            "mean_points": 68.1254,
+            "mean_position": 5.2280999999999995,
+            "points_quantiles_05_50_95": [
+              49.0,
+              69.0,
+              86.0
+            ],
+            "relegation_probability": 0.001,
+            "team_id": "arsenal",
+            "title_probability": 0.1018,
+            "top_five_probability": 0.6062000000000001,
+            "top_four_probability": 0.5008
+          },
+          {
+            "mean_goal_difference": 9.0074,
+            "mean_points": 60.3764,
+            "mean_position": 7.6957,
+            "points_quantiles_05_50_95": [
+              43.0,
+              60.0,
+              79.0
+            ],
+            "relegation_probability": 0.006999999999999999,
+            "team_id": "aston-villa",
+            "title_probability": 0.0352,
+            "top_five_probability": 0.3248,
+            "top_four_probability": 0.2354
+          },
+          {
+            "mean_goal_difference": 2.9192,
+            "mean_points": 53.6596,
+            "mean_position": 10.046500000000002,
+            "points_quantiles_05_50_95": [
+              36.0,
+              53.0,
+              72.0
+            ],
+            "relegation_probability": 0.030799999999999998,
+            "team_id": "bournemouth",
+            "title_probability": 0.0056,
+            "top_five_probability": 0.1482,
+            "top_four_probability": 0.0948
+          },
+          {
+            "mean_goal_difference": -7.029,
+            "mean_points": 49.8358,
+            "mean_position": 11.4704,
+            "points_quantiles_05_50_95": [
+              32.0,
+              49.0,
+              69.0
+            ],
+            "relegation_probability": 0.0634,
+            "team_id": "brentford",
+            "title_probability": 0.0058,
+            "top_five_probability": 0.1012,
+            "top_four_probability": 0.063
+          },
+          {
+            "mean_goal_difference": 13.2976,
+            "mean_points": 61.3036,
+            "mean_position": 7.390599999999999,
+            "points_quantiles_05_50_95": [
+              43.0,
+              61.0,
+              80.0
+            ],
+            "relegation_probability": 0.0066,
+            "team_id": "brighton-hove-albion",
+            "title_probability": 0.0342,
+            "top_five_probability": 0.3614,
+            "top_four_probability": 0.2666
+          },
+          {
+            "mean_goal_difference": 31.6094,
+            "mean_points": 69.6976,
+            "mean_position": 4.736000000000001,
+            "points_quantiles_05_50_95": [
+              51.0,
+              70.0,
+              87.0
+            ],
+            "relegation_probability": 0.0012000000000000001,
+            "team_id": "chelsea",
+            "title_probability": 0.1366,
+            "top_five_probability": 0.6701999999999999,
+            "top_four_probability": 0.5609
+          },
+          {
+            "mean_goal_difference": -13.696,
+            "mean_points": 40.046,
+            "mean_position": 14.8238,
+            "points_quantiles_05_50_95": [
+              24.0,
+              40.0,
+              57.0
+            ],
+            "relegation_probability": 0.25,
+            "team_id": "crystal-palace",
+            "title_probability": 0.0,
+            "top_five_probability": 0.0128,
+            "top_four_probability": 0.0074
+          },
+          {
+            "mean_goal_difference": -21.1632,
+            "mean_points": 40.8148,
+            "mean_position": 14.655000000000001,
+            "points_quantiles_05_50_95": [
+              24.0,
+              40.0,
+              59.0
+            ],
+            "relegation_probability": 0.24080000000000001,
+            "team_id": "everton",
+            "title_probability": 0.0006,
+            "top_five_probability": 0.014,
+            "top_four_probability": 0.006200000000000001
+          },
+          {
+            "mean_goal_difference": -1.9906,
+            "mean_points": 50.7902,
+            "mean_position": 11.096699999999998,
+            "points_quantiles_05_50_95": [
+              33.0,
+              51.0,
+              69.0
+            ],
+            "relegation_probability": 0.0566,
+            "team_id": "fulham",
+            "title_probability": 0.005,
+            "top_five_probability": 0.09820000000000001,
+            "top_four_probability": 0.064
+          },
+          {
+            "mean_goal_difference": -35.7446,
+            "mean_points": 31.0262,
+            "mean_position": 17.3763,
+            "points_quantiles_05_50_95": [
+              16.0,
+              30.0,
+              49.0
+            ],
+            "relegation_probability": 0.6138,
+            "team_id": "ipswich-town",
+            "title_probability": 0.0,
+            "top_five_probability": 0.0022,
+            "top_four_probability": 0.0016
+          },
+          {
+            "mean_goal_difference": -16.318,
+            "mean_points": 42.8326,
+            "mean_position": 13.8948,
+            "points_quantiles_05_50_95": [
+              25.0,
+              42.0,
+              62.0
+            ],
+            "relegation_probability": 0.193,
+            "team_id": "leicester-city",
+            "title_probability": 0.001,
+            "top_five_probability": 0.029199999999999997,
+            "top_four_probability": 0.0156
+          },
+          {
+            "mean_goal_difference": 39.5906,
+            "mean_points": 77.9038,
+            "mean_position": 2.7943999999999996,
+            "points_quantiles_05_50_95": [
+              60.0,
+              78.0,
+              94.0
+            ],
+            "relegation_probability": 0.0002,
+            "team_id": "liverpool",
+            "title_probability": 0.3878,
+            "top_five_probability": 0.8778,
+            "top_four_probability": 0.8196
+          },
+          {
+            "mean_goal_difference": 28.27,
+            "mean_points": 72.9324,
+            "mean_position": 3.9158,
+            "points_quantiles_05_50_95": [
+              55.0,
+              73.0,
+              90.0
+            ],
+            "relegation_probability": 0.0002,
+            "team_id": "manchester-city",
+            "title_probability": 0.1954,
+            "top_five_probability": 0.7629999999999999,
+            "top_four_probability": 0.6718
+          },
+          {
+            "mean_goal_difference": -8.6642,
+            "mean_points": 47.2816,
+            "mean_position": 12.3997,
+            "points_quantiles_05_50_95": [
+              30.0,
+              47.0,
+              65.0
+            ],
+            "relegation_probability": 0.0948,
+            "team_id": "manchester-united",
+            "title_probability": 0.0018,
+            "top_five_probability": 0.050699999999999995,
+            "top_four_probability": 0.028699999999999996
+          },
+          {
+            "mean_goal_difference": -1.7786,
+            "mean_points": 51.0882,
+            "mean_position": 11.006699999999999,
+            "points_quantiles_05_50_95": [
+              34.0,
+              51.0,
+              69.0
+            ],
+            "relegation_probability": 0.0416,
+            "team_id": "newcastle-united",
+            "title_probability": 0.0042,
+            "top_five_probability": 0.094,
+            "top_four_probability": 0.055999999999999994
+          },
+          {
+            "mean_goal_difference": 12.9674,
+            "mean_points": 61.121,
+            "mean_position": 7.3936,
+            "points_quantiles_05_50_95": [
+              43.0,
+              61.0,
+              79.0
+            ],
+            "relegation_probability": 0.006200000000000001,
+            "team_id": "nottingham-forest",
+            "title_probability": 0.0328,
+            "top_five_probability": 0.3559,
+            "top_four_probability": 0.2538
+          },
+          {
+            "mean_goal_difference": -43.7904,
+            "mean_points": 24.5004,
+            "mean_position": 18.7688,
+            "points_quantiles_05_50_95": [
+              11.0,
+              24.0,
+              41.0
+            ],
+            "relegation_probability": 0.8336,
+            "team_id": "southampton",
+            "title_probability": 0.0,
+            "top_five_probability": 0.0,
+            "top_four_probability": 0.0
+          },
+          {
+            "mean_goal_difference": 25.2728,
+            "mean_points": 62.4836,
+            "mean_position": 6.810300000000001,
+            "points_quantiles_05_50_95": [
+              44.0,
+              63.0,
+              80.0
+            ],
+            "relegation_probability": 0.004399999999999999,
+            "team_id": "tottenham-hotspur",
+            "title_probability": 0.0508,
+            "top_five_probability": 0.42,
+            "top_four_probability": 0.313
+          },
+          {
+            "mean_goal_difference": -8.4078,
+            "mean_points": 48.2468,
+            "mean_position": 12.0683,
+            "points_quantiles_05_50_95": [
+              31.0,
+              48.0,
+              66.0
+            ],
+            "relegation_probability": 0.0862,
+            "team_id": "west-ham-united",
+            "title_probability": 0.0014,
+            "top_five_probability": 0.06520000000000001,
+            "top_four_probability": 0.0378
+          },
+          {
+            "mean_goal_difference": -28.8842,
+            "mean_points": 34.4968,
+            "mean_position": 16.4285,
+            "points_quantiles_05_50_95": [
+              18.0,
+              34.0,
+              53.0
+            ],
+            "relegation_probability": 0.46859999999999996,
+            "team_id": "wolverhampton-wanderers",
+            "title_probability": 0.0,
+            "top_five_probability": 0.005,
+            "top_four_probability": 0.003
+          }
+        ],
+        "unresolved_decisive_tie_rate": 0.0,
+        "unseen_teams": []
+      },
+      "moment_corrected": {
+        "as_of": "2024-11-01",
+        "assumptions": [
+          "One dynamics specification and current joint state per path; calendar-time latent transitions and independent match tempo shocks continue through fixtures. Simulated scores do not update the sampled latent states.",
+          "No future result labels used. Historical fixture dates are retrospectively recorded.",
+          "Nondecisive shared positions split mass across occupied ranks for reporting.",
+          "Unresolved decisive ties assume equal playoff chances; playoff model not estimated.",
+          "Points adjustments include only supplied sanctions known at the cutoff.",
+          "Top-four/five probabilities are table positions, not European qualification."
+        ],
+        "europe_scenario": null,
+        "future_state_evolution": true,
+        "head_to_head_applied_rate": 0.0002,
+        "next_match": {
+          "log_rate_covariance": [
+            [
+              0.13187602063408127,
+              -0.003732966705243826
+            ],
+            [
+              -0.0037329667052438363,
+              0.11166380649986728
+            ]
+          ],
+          "log_rate_mean": [
+            0.06540093398224886,
+            0.36379045682199296
+          ],
+          "match_id": "eng-premier-league:2024-2025:bournemouth:manchester-city",
+          "probabilities": [
+            0.2905786665487737,
+            0.25676628714357425,
+            0.4526550463076521
+          ]
+        },
+        "played_matches": 90,
+        "point_adjustments": [],
+        "remaining_matches": 290,
+        "results_observed_at": null,
+        "season_id": "2024-2025",
+        "seed": 20260906,
+        "simulations": 5000,
+        "state_uncertainty": "posterior",
+        "teams": [
+          {
+            "mean_goal_difference": 23.85,
+            "mean_points": 67.9602,
+            "mean_position": 5.1871,
+            "points_quantiles_05_50_95": [
+              50.0,
+              68.0,
+              86.0
+            ],
+            "relegation_probability": 0.0002,
+            "team_id": "arsenal",
+            "title_probability": 0.1068,
+            "top_five_probability": 0.6113000000000001,
+            "top_four_probability": 0.5018
+          },
+          {
+            "mean_goal_difference": 8.985,
+            "mean_points": 60.227,
+            "mean_position": 7.6411,
+            "points_quantiles_05_50_95": [
+              43.0,
+              60.0,
+              78.0
+            ],
+            "relegation_probability": 0.006,
+            "team_id": "aston-villa",
+            "title_probability": 0.033,
+            "top_five_probability": 0.326,
+            "top_four_probability": 0.23520000000000002
+          },
+          {
+            "mean_goal_difference": 2.6394,
+            "mean_points": 53.4212,
+            "mean_position": 10.066600000000001,
+            "points_quantiles_05_50_95": [
+              36.0,
+              53.0,
+              71.0
+            ],
+            "relegation_probability": 0.0296,
+            "team_id": "bournemouth",
+            "title_probability": 0.0048,
+            "top_five_probability": 0.1474,
+            "top_four_probability": 0.0926
+          },
+          {
+            "mean_goal_difference": -6.8522,
+            "mean_points": 49.6896,
+            "mean_position": 11.4769,
+            "points_quantiles_05_50_95": [
+              32.0,
+              49.0,
+              69.0
+            ],
+            "relegation_probability": 0.0632,
+            "team_id": "brentford",
+            "title_probability": 0.0046,
+            "top_five_probability": 0.0998,
+            "top_four_probability": 0.05979999999999999
+          },
+          {
+            "mean_goal_difference": 12.8436,
+            "mean_points": 61.0736,
+            "mean_position": 7.3858999999999995,
+            "points_quantiles_05_50_95": [
+              43.0,
+              61.0,
+              80.0
+            ],
+            "relegation_probability": 0.0074,
+            "team_id": "brighton-hove-albion",
+            "title_probability": 0.0366,
+            "top_five_probability": 0.3563,
+            "top_four_probability": 0.2657
+          },
+          {
+            "mean_goal_difference": 30.4916,
+            "mean_points": 69.4396,
+            "mean_position": 4.7264,
+            "points_quantiles_05_50_95": [
+              51.0,
+              70.0,
+              87.0
+            ],
+            "relegation_probability": 0.0012000000000000001,
+            "team_id": "chelsea",
+            "title_probability": 0.1312,
+            "top_five_probability": 0.6702,
+            "top_four_probability": 0.5706
+          },
+          {
+            "mean_goal_difference": -13.2368,
+            "mean_points": 40.0836,
+            "mean_position": 14.8244,
+            "points_quantiles_05_50_95": [
+              25.0,
+              40.0,
+              57.05000000000018
+            ],
+            "relegation_probability": 0.2476,
+            "team_id": "crystal-palace",
+            "title_probability": 0.0,
+            "top_five_probability": 0.013999999999999999,
+            "top_four_probability": 0.0063999999999999994
+          },
+          {
+            "mean_goal_difference": -20.7742,
+            "mean_points": 40.5592,
+            "mean_position": 14.7611,
+            "points_quantiles_05_50_95": [
+              25.0,
+              40.0,
+              58.0
+            ],
+            "relegation_probability": 0.24960000000000002,
+            "team_id": "everton",
+            "title_probability": 0.0004,
+            "top_five_probability": 0.0126,
+            "top_four_probability": 0.0068000000000000005
+          },
+          {
+            "mean_goal_difference": -2.2418,
+            "mean_points": 50.567,
+            "mean_position": 11.0942,
+            "points_quantiles_05_50_95": [
+              34.0,
+              50.0,
+              68.0
+            ],
+            "relegation_probability": 0.051399999999999994,
+            "team_id": "fulham",
+            "title_probability": 0.0032,
+            "top_five_probability": 0.0964,
+            "top_four_probability": 0.0556
+          },
+          {
+            "mean_goal_difference": -34.3138,
+            "mean_points": 31.0948,
+            "mean_position": 17.4147,
+            "points_quantiles_05_50_95": [
+              16.0,
+              30.0,
+              49.0
+            ],
+            "relegation_probability": 0.6174,
+            "team_id": "ipswich-town",
+            "title_probability": 0.0,
+            "top_five_probability": 0.0026,
+            "top_four_probability": 0.0007999999999999999
+          },
+          {
+            "mean_goal_difference": -15.5046,
+            "mean_points": 42.977,
+            "mean_position": 13.8492,
+            "points_quantiles_05_50_95": [
+              27.0,
+              43.0,
+              61.0
+            ],
+            "relegation_probability": 0.184,
+            "team_id": "leicester-city",
+            "title_probability": 0.0006,
+            "top_five_probability": 0.0266,
+            "top_four_probability": 0.0144
+          },
+          {
+            "mean_goal_difference": 38.4096,
+            "mean_points": 77.5976,
+            "mean_position": 2.7808,
+            "points_quantiles_05_50_95": [
+              60.0,
+              78.0,
+              94.0
+            ],
+            "relegation_probability": 0.0,
+            "team_id": "liverpool",
+            "title_probability": 0.3798,
+            "top_five_probability": 0.8812000000000001,
+            "top_four_probability": 0.8218000000000001
+          },
+          {
+            "mean_goal_difference": 27.9334,
+            "mean_points": 73.0044,
+            "mean_position": 3.8514999999999997,
+            "points_quantiles_05_50_95": [
+              55.0,
+              73.0,
+              90.0
+            ],
+            "relegation_probability": 0.0,
+            "team_id": "manchester-city",
+            "title_probability": 0.213,
+            "top_five_probability": 0.7699999999999999,
+            "top_four_probability": 0.6790999999999999
+          },
+          {
+            "mean_goal_difference": -8.632,
+            "mean_points": 46.9194,
+            "mean_position": 12.497499999999999,
+            "points_quantiles_05_50_95": [
+              30.0,
+              47.0,
+              64.0
+            ],
+            "relegation_probability": 0.09559999999999999,
+            "team_id": "manchester-united",
+            "title_probability": 0.0022,
+            "top_five_probability": 0.045799999999999993,
+            "top_four_probability": 0.028999999999999998
+          },
+          {
+            "mean_goal_difference": -1.7414,
+            "mean_points": 51.0764,
+            "mean_position": 10.976199999999999,
+            "points_quantiles_05_50_95": [
+              34.0,
+              51.0,
+              68.0
+            ],
+            "relegation_probability": 0.0446,
+            "team_id": "newcastle-united",
+            "title_probability": 0.0044,
+            "top_five_probability": 0.094,
+            "top_four_probability": 0.053
+          },
+          {
+            "mean_goal_difference": 12.1918,
+            "mean_points": 60.7272,
+            "mean_position": 7.4366,
+            "points_quantiles_05_50_95": [
+              43.0,
+              61.0,
+              78.0
+            ],
+            "relegation_probability": 0.006999999999999999,
+            "team_id": "nottingham-forest",
+            "title_probability": 0.0288,
+            "top_five_probability": 0.3492,
+            "top_four_probability": 0.24980000000000002
+          },
+          {
+            "mean_goal_difference": -42.152,
+            "mean_points": 24.6512,
+            "mean_position": 18.7304,
+            "points_quantiles_05_50_95": [
+              11.0,
+              24.0,
+              41.0
+            ],
+            "relegation_probability": 0.8256,
+            "team_id": "southampton",
+            "title_probability": 0.0,
+            "top_five_probability": 0.0002,
+            "top_four_probability": 0.0002
+          },
+          {
+            "mean_goal_difference": 24.5282,
+            "mean_points": 62.2882,
+            "mean_position": 6.7600999999999996,
+            "points_quantiles_05_50_95": [
+              44.0,
+              63.0,
+              80.0
+            ],
+            "relegation_probability": 0.0037999999999999996,
+            "team_id": "tottenham-hotspur",
+            "title_probability": 0.0482,
+            "top_five_probability": 0.4284,
+            "top_four_probability": 0.3174
+          },
+          {
+            "mean_goal_difference": -8.0026,
+            "mean_points": 48.077,
+            "mean_position": 12.052599999999998,
+            "points_quantiles_05_50_95": [
+              31.0,
+              48.0,
+              66.0
+            ],
+            "relegation_probability": 0.0848,
+            "team_id": "west-ham-united",
+            "title_probability": 0.002,
+            "top_five_probability": 0.0648,
+            "top_four_probability": 0.038400000000000004
+          },
+          {
+            "mean_goal_difference": -28.4212,
+            "mean_points": 34.3134,
+            "mean_position": 16.4867,
+            "points_quantiles_05_50_95": [
+              18.0,
+              34.0,
+              53.0
+            ],
+            "relegation_probability": 0.481,
+            "team_id": "wolverhampton-wanderers",
+            "title_probability": 0.0004,
+            "top_five_probability": 0.0031999999999999997,
+            "top_four_probability": 0.0015999999999999999
+          }
+        ],
+        "unresolved_decisive_tie_rate": 0.0,
+        "unseen_teams": []
+      }
+    },
+    "scope": "Same fresh population prior and fixed dynamics on 2024/25 opening results. Moment correction integrates daily posteriors then projects to Gaussian; it remains an approximation and is not a sampled full trajectory reference."
+  },
+  "seed": 20260906
+}
