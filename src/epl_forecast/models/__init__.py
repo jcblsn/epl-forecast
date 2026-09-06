@@ -1,6 +1,7 @@
 """Models share the same fit/predict interface; score distributions are optional."""
 
 from epl_forecast.models.baselines import AttackDefensePoisson, LeagueFrequency, LeaguePoisson
+from epl_forecast.models.dynamic import DynamicAttackDefense
 from epl_forecast.models.elo import EloOrderedLogit
 
 MODEL_TYPES = {
@@ -8,6 +9,7 @@ MODEL_TYPES = {
     "league_poisson": LeaguePoisson,
     "attack_defense_poisson": AttackDefensePoisson,
     "elo_ordered_logit": EloOrderedLogit,
+    "dynamic_attack_defense": DynamicAttackDefense,
 }
 
 

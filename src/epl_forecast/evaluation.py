@@ -1,5 +1,5 @@
 from collections import defaultdict
-from datetime import date, timedelta
+from datetime import date
 from itertools import combinations, groupby
 
 import numpy as np
@@ -7,6 +7,7 @@ import numpy as np
 from epl_forecast.models import make_model
 from epl_forecast.models.base import Forecast
 from epl_forecast.schema import OUTCOMES, Match
+from epl_forecast.training import training_matches
 
 
 def individual_metrics(
@@ -79,27 +80,28 @@ def rolling_predictions(
         (m for m in matches if m.fixture.competition_id == config["competition_id"]),
         key=lambda m: (m.fixture.match_date, m.fixture.match_id),
     )
-    if len({m.fixture.match_id for m in history}) != len(history):
+    if len({m.fixture.match_id for m in matches}) != len(matches):
         raise ValueError("Duplicate matches in evaluation data")
     targets = [m for m in history if start <= m.fixture.match_date < end]
     if not targets:
         raise ValueError("No evaluation matches in the requested interval")
     predictions = []
     previous_season = None
+    models = {spec["id"]: make_model(spec) for spec in specs}
     for forecast_date, day_iter in groupby(targets, key=lambda m: m.fixture.match_date):
         day = list(day_iter)
-        earliest = forecast_date - timedelta(days=config["train_window_days"])
-        training = [m for m in history if earliest <= m.fixture.match_date < forecast_date]
-        if len(training) < config["min_train_matches"]:
-            raise ValueError(f"Only {len(training)} training matches before {forecast_date}")
-        known_teams = {
-            team for m in training for team in (m.fixture.home_team_id, m.fixture.away_team_id)
-        }
         if progress and day[0].fixture.season_id != previous_season:
             previous_season = day[0].fixture.season_id
-            print(f"Evaluating {previous_season} ({len(training)} training matches)", flush=True)
+            print(f"Evaluating {previous_season}", flush=True)
         for spec in specs:
-            model = make_model(spec).fit(training, as_of=forecast_date)
+            training = training_matches(matches, config, spec, forecast_date)
+            known_teams = {
+                team
+                for m in training
+                for team in (m.fixture.home_team_id, m.fixture.away_team_id)
+                if m.fixture.competition_id == config["competition_id"]
+            }
+            model = models[spec["id"]].fit(training, as_of=forecast_date)
             for match in day:
                 forecast = model.predict_match(match.fixture)
                 row = {
@@ -109,6 +111,9 @@ def rolling_predictions(
                     "match_date": str(forecast_date),
                     "forecast_as_of": str(forecast_date),
                     "train_matches": len(training),
+                    "train_primary_matches": sum(
+                        m.fixture.competition_id == config["competition_id"] for m in training
+                    ),
                     "train_date_min": str(training[0].fixture.match_date),
                     "train_date_max": str(training[-1].fixture.match_date),
                     "home_team_id": match.fixture.home_team_id,
@@ -125,6 +130,28 @@ def rolling_predictions(
                     if forecast.scores is None
                     else forecast.scores.log_probability(match.home_goals, match.away_goals),
                 }
+                if hasattr(model, "team_summary"):
+                    row.update(
+                        {
+                            "log_home_rate_mean": float(forecast.scores.log_mean[0]),
+                            "log_away_rate_mean": float(forecast.scores.log_mean[1]),
+                            "log_home_rate_variance": float(forecast.scores.log_covariance[0, 0]),
+                            "log_away_rate_variance": float(forecast.scores.log_covariance[1, 1]),
+                            "log_rate_covariance": float(forecast.scores.log_covariance[0, 1]),
+                        }
+                    )
+                    for side, team in (
+                        ("home", match.fixture.home_team_id),
+                        ("away", match.fixture.away_team_id),
+                    ):
+                        state = model.team_summary(team, match.fixture.season_id)
+                        row.update(
+                            {
+                                f"{side}_{key}": value
+                                for key, value in state.items()
+                                if key != "team_id"
+                            }
+                        )
                 predictions.append(row)
     return predictions
 

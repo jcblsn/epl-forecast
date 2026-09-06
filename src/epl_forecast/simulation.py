@@ -202,6 +202,10 @@ def simulate_season(
 
     for match in sorted(played, key=lambda m: m.fixture.match_id):
         add_result(match.fixture, match.home_goals, match.away_goals)
+    state_sampler = getattr(model, "sample_forecast_state", None)
+    states = state_sampler(rng, size=simulations) if state_sampler and remaining else None
+    if states is not None and (states.as_of != as_of or states.size != simulations):
+        raise ValueError("Sampled forecast states must match the simulation cutoff and size")
     unknown_teams = set()
     known = getattr(model, "team_index", None)
     for fixture in sorted(remaining, key=lambda f: f.match_id):
@@ -209,10 +213,21 @@ def simulate_season(
             unknown_teams.update(
                 t for t in (fixture.home_team_id, fixture.away_team_id) if t not in known
             )
-        forecast = model.predict_match(fixture)
-        if forecast.scores is None:
-            raise ValueError("Season simulation requires a score-generating model")
-        add_result(fixture, *forecast.scores.sample(rng, simulations))
+        if states is not None:
+            goals = states.sample_scores(fixture, rng)
+        else:
+            forecast = model.predict_match(fixture)
+            if forecast.scores is None:
+                raise ValueError("Season simulation requires a score-generating model")
+            goals = forecast.scores.sample(rng, simulations)
+        if any(
+            np.shape(g) != (simulations,)
+            or not np.issubdtype(np.asarray(g).dtype, np.integer)
+            or np.any(np.asarray(g) < 0)
+            for g in goals
+        ):
+            raise ValueError("Score samples must be nonnegative integer arrays, one per path")
+        add_result(fixture, *goals)
     if not np.array_equal(goals_for.sum(axis=1), goals_against.sum(axis=1)):
         raise RuntimeError("Simulation goals do not balance")
     if not np.array_equal(points.sum(axis=1), 3 * 380 - draws + point_offsets.sum()):
@@ -292,13 +307,20 @@ def simulate_season(
         "seed": seed,
         "played_matches": len(played),
         "remaining_matches": len(remaining),
+        "state_uncertainty": "posterior" if states is not None else "fixed",
         "teams": rows,
         "unseen_teams": sorted(unknown_teams),
         "point_adjustments": adjustments,
         "head_to_head_applied_rate": head_to_head_count / simulations,
         "unresolved_decisive_tie_rate": unresolved_count / simulations,
         "assumptions": [
-            "Fixed fitted team strengths; independent match outcomes conditional on fitted state.",
+            (
+                "One joint posterior state per season path, reused across fixtures. "
+                "Includes strength uncertainty and match randomness; no future state evolution."
+                if states is not None
+                else "Fixed fitted team strengths; independent match outcomes "
+                "conditional on fitted state."
+            ),
             (
                 "Captured full-time results are fixed, including today; fitting excludes today. "
                 "Unscheduled dates are placeholders used only for fixed-strength simulation."

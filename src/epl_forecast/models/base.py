@@ -34,3 +34,20 @@ class ForecastModel(Protocol):
     def fit(self, matches: list[Match], as_of: date) -> Self: ...
 
     def predict_match(self, fixture: Fixture) -> Forecast: ...
+
+
+class SampledForecastStates(Protocol):
+    """Each array index is one joint model-state draw, reused across all fixtures."""
+
+    as_of: date
+    size: int
+
+    def sample_scores(
+        self, fixture: Fixture, rng: np.random.Generator
+    ) -> tuple[np.ndarray, np.ndarray]: ...
+
+
+class ProbabilisticForecastModel(ForecastModel, Protocol):
+    def sample_forecast_state(
+        self, rng: np.random.Generator, size: int = 1
+    ) -> SampledForecastStates: ...

@@ -194,3 +194,42 @@ def test_conditional_european_slots_are_conserved(full_season):
         assert sum(
             row["conditional_europe_probabilities"][competition] for row in result["teams"]
         ) == pytest.approx(slots)
+
+
+def test_simulation_reuses_one_joint_state_per_path(full_season):
+    teams = sorted({m.fixture.home_team_id for m in full_season})
+    cutoff = date(2020, 8, 1)
+
+    class UncertainModel:
+        as_of = cutoff
+        calls = 0
+
+        def predict_match(self, fixture):
+            raise AssertionError("Posterior simulation must condition on its shared states")
+
+        def sample_forecast_state(self, rng, size=1):
+            self.calls += 1
+            strong = rng.random(size) < 0.5
+
+            class States:
+                as_of = cutoff
+
+                def sample_scores(self, fixture, rng):
+                    home, away = np.zeros(size, dtype=int), np.zeros(size, dtype=int)
+                    if fixture.home_team_id == teams[0]:
+                        home, away = strong.astype(int), (~strong).astype(int)
+                    if fixture.away_team_id == teams[0]:
+                        home, away = (~strong).astype(int), strong.astype(int)
+                    return home, away
+
+            states = States()
+            states.size = size
+            return states
+
+    model = UncertainModel()
+    result = simulate_season(model, [], [m.fixture for m in full_season], teams, cutoff, 64, 13)
+    assert model.calls == 1
+    assert result["state_uncertainty"] == "posterior"
+    assert set(result["teams"][0]["points_distribution"]) == {"0", "114"}
+    assert sum(t["title_probability"] for t in result["teams"]) == pytest.approx(1)
+    assert sum(t["relegation_probability"] for t in result["teams"]) == pytest.approx(3)

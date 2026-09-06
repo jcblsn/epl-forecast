@@ -250,3 +250,29 @@ def test_stale_and_naive_timestamps_fail(live_snapshot):
         timestamp("2020-09-02T20:00:00")
     with pytest.raises(ValueError, match="hours old"):
         check_freshness(load_live_season(live_snapshot), 24)
+
+
+def test_dynamic_live_export_includes_uncertainty_and_posterior_simulation(live_snapshot):
+    from epl_forecast.models.dynamic import DynamicAttackDefense
+
+    live = load_live_season(live_snapshot)
+    training = [m for m in live.played if m.available_on <= OBSERVED.date()]
+    model = DynamicAttackDefense().fit(training, OBSERVED.date())
+    output = live_snapshot / "dynamic-forecast"
+    result = export_forecast(
+        live,
+        model,
+        training,
+        {"model": {"id": "M4", "kind": "dynamic_attack_defense"}},
+        output,
+        80,
+        42,
+        7,
+        [],
+    )
+    assert result["state_uncertainty"] == "posterior"
+    assert result["simulation"]["state_uncertainty"] == "posterior"
+    assert all(t["attack_sd"] > 0 and t["defense_sd"] > 0 for t in result["team_strengths"])
+    assert "uncertainty in current team strength" in (output / "index.html").read_text()
+    assert "Clubs without PL history start at 1" not in (output / "index.html").read_text()
+    assert result["simulation"]["played_matches"] == 2

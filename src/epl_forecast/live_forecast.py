@@ -6,7 +6,7 @@ from pathlib import Path
 from epl_forecast.artifacts import new_run_directory
 from epl_forecast.data.live import LiveSeason, timestamp
 from epl_forecast.data.normalize import write_csv
-from epl_forecast.models.baselines import AttackDefensePoisson
+from epl_forecast.models.base import ForecastModel
 from epl_forecast.schema import Match
 from epl_forecast.simulation import EuropeScenario, simulate_season
 from epl_forecast.storage import file_hash, write_json
@@ -44,6 +44,20 @@ def current_table(live: LiveSeason, adjustments: list[dict]) -> dict[str, dict]:
 def render_forecast(forecast: dict) -> str:
     names = forecast["team_names"]
     simulation = forecast["simulation"]
+    uncertainty_note = (
+        "These probabilities include uncertainty in current team strength and match randomness. "
+        "Each simulated season holds its sampled strengths fixed; "
+        "transfers and injuries are omitted."
+        if forecast.get("state_uncertainty") == "posterior"
+        else "Team strengths are held fixed; these probabilities include match randomness and omit "
+        "uncertainty in team strength, transfers and injuries."
+    )
+    prior_note = (
+        "Promoted clubs start from Championship-informed distributions. Strength uncertainty "
+        "is available in the team strengths download."
+        if forecast.get("state_uncertainty") == "posterior"
+        else "Clubs without PL history start at 1."
+    )
     table = ""
     if simulation:
         rows = []
@@ -126,15 +140,15 @@ th:first-child,td:first-child {{text-align:left}} th {{background:#edf3ee}}
 .note {{color:#52616b;font-size:14px}} details {{margin-top:24px}}
 </style></head><body>
 <h1>Premier League {escape(forecast["season_id"])}</h1>
-<p>Probabilistic match forecasts and the expected final table.</p>
+<p>Probabilistic match forecasts and the expected final table.
+Model: {escape(forecast["model"]["id"])}.</p>
 <p class="note">Season state captured {escape(forecast["state_observed_at"])}.
 Forecast generated {escape(forecast["generated_at"])}. Times are UTC.
 Full-time scores include today's completed games; recent FPL scores may be provisional.
 Team strengths use results before {escape(forecast["model_results_cutoff"])} (London date).</p>
 <h2>Season forecast</h2>{table}
 <p class="note">Top four and top five are league positions. European qualification also
-depends on cup results and allocated places. Team strengths are held fixed; these probabilities
-include match randomness and omit uncertainty in team strength, transfers and injuries.</p>
+depends on cup results and allocated places. {escape(uncertainty_note)}</p>
 {europe}
 <h2>Next match for each team</h2>
 <div class="scroll"><table><thead><tr><th>Kickoff (UTC)</th><th>Home</th><th>Away</th>
@@ -144,7 +158,7 @@ include match randomness and omit uncertainty in team strength, transfers and in
 exact-score matrices, with their omitted tail mass, are in the JSON download.</p>
 <details><summary>Current attack and defense strengths</summary>
 <p class="note">Attack above 1 raises scoring rates; defense above 1 reduces the opponent's
-rate. Both are relative to the fitted training league. Clubs without PL history start at 1.</p>
+rate. Both use the model's league reference. {escape(prior_note)}</p>
 <div class="scroll"><table><thead><tr><th>Team</th><th>Attack</th><th>Defense</th>
 <th>Training matches</th></tr></thead><tbody>{"".join(strengths)}</tbody></table></div></details>
 <p><a href="forecast.json">Full forecast JSON</a> · <a href="matches.csv">Match CSV</a> ·
@@ -158,7 +172,7 @@ rate. Both are relative to the fitted training league. Clubs without PL history 
 
 def export_forecast(
     live: LiveSeason,
-    model: AttackDefensePoisson,
+    model: ForecastModel,
     training: list[Match],
     run: dict,
     output: Path,
@@ -226,13 +240,19 @@ def export_forecast(
     strengths = []
     for team in live.teams:
         index = model.team_index.get(team)
-        attack = float(model.attack[index]) if index is not None else 0.0
-        defense = float(model.defense[index]) if index is not None else 0.0
+        state = (
+            model.team_summary(team, live.season_id)
+            if hasattr(model, "team_summary")
+            else {
+                "team_id": team,
+                "attack_log_rate": float(model.attack[index]) if index is not None else 0.0,
+                "defense_log_rate": float(model.defense[index]) if index is not None else 0.0,
+            }
+        )
+        attack, defense = state["attack_log_rate"], state["defense_log_rate"]
         strengths.append(
             {
-                "team_id": team,
-                "attack_log_rate": attack,
-                "defense_log_rate": defense,
+                **state,
                 "attack_multiplier": math.exp(attack),
                 "defense_multiplier": math.exp(defense),
                 "training_matches": sum(
@@ -247,6 +267,8 @@ def export_forecast(
         "state_observed_at": live.observed_at.isoformat(),
         "model_results_cutoff": str(model.as_of),
         "model": run["model"],
+        "state_uncertainty": "posterior" if hasattr(model, "sample_forecast_state") else "fixed",
+        "fit_diagnostics": getattr(model, "fit_diagnostics", {}),
         "training_matches": len(training),
         "training_date_max": str(max(m.fixture.match_date for m in training)),
         "league_away_goal_rate": math.exp(float(model.intercept)),

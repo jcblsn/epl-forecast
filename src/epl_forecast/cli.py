@@ -2,7 +2,7 @@ import argparse
 import json
 import sys
 import tomllib
-from datetime import UTC, date, datetime, timedelta
+from datetime import UTC, date, datetime
 from pathlib import Path
 
 from epl_forecast.artifacts import new_run_directory, provenance, results_markdown
@@ -22,6 +22,7 @@ from epl_forecast.models import make_model
 from epl_forecast.schema import Fixture, fixture_id
 from epl_forecast.simulation import EuropeScenario, simulate_season
 from epl_forecast.storage import write_json
+from epl_forecast.training import training_matches
 
 
 def load_config(path: Path) -> dict:
@@ -42,21 +43,13 @@ def fitted_model(matches: list, config: dict, model_id: str, as_of: date):
     specs = [spec for spec in config["models"] if spec["id"] == model_id]
     if len(specs) != 1:
         raise ValueError(f"Unknown or duplicate model ID: {model_id}")
-    earliest = as_of - timedelta(days=config["train_window_days"])
-    training = [
-        m
-        for m in matches
-        if m.fixture.competition_id == config["competition_id"]
-        and earliest <= m.fixture.match_date < as_of
-    ]
-    if len(training) < config["min_train_matches"]:
-        raise ValueError(f"Only {len(training)} training matches before {as_of}")
+    training = training_matches(matches, config, specs[0], as_of)
     return make_model(specs[0]).fit(training, as_of), specs[0], training
 
 
 def save_rows(path: Path, rows: list[dict]) -> None:
     if rows:
-        write_csv(path, list(rows[0]), rows)
+        write_csv(path, list(dict.fromkeys(key for row in rows for key in row)), rows)
 
 
 def evaluate_command(args) -> None:
@@ -139,7 +132,12 @@ def simulate_command(args) -> None:
         row.update(team.get("conditional_europe_probabilities", {}))
         rows.append(row)
     save_rows(args.output / "table.csv", rows)
-    if hasattr(model, "team_index"):
+    if hasattr(model, "team_summary"):
+        save_rows(
+            args.output / "team_strengths.csv",
+            [model.team_summary(team, args.season) for team in teams],
+        )
+    elif hasattr(model, "team_index"):
         save_rows(
             args.output / "team_strengths.csv",
             [
@@ -207,6 +205,9 @@ def predict_command(args) -> None:
             "grid_home_rows_away_columns": grid.tolist(),
             "omitted_probability": tail,
         }
+    if hasattr(model, "team_summary"):
+        output["team_states"] = [model.team_summary(t, args.season) for t in (args.home, args.away)]
+        output["fit_diagnostics"] = model.fit_diagnostics
     if args.output:
         write_json(args.output, output)
         print(f"Saved {args.output}")
@@ -227,7 +228,7 @@ def forecast_command(args) -> None:
     ] + live.played
     as_of = live.observed_at.astimezone(LONDON).date()
     model, spec, training = fitted_model(history, config, args.model, as_of)
-    if spec["kind"] != "attack_defense_poisson":
+    if spec["kind"] not in {"attack_defense_poisson", "dynamic_attack_defense"}:
         raise ValueError("The live strength export currently requires an attack/defense model")
     europe = (
         EuropeScenario(**json.loads(args.europe_scenario.read_text()))
@@ -349,7 +350,7 @@ def parser() -> argparse.ArgumentParser:
         "--snapshot", type=Path, default=Path("configs/crosscheck_snapshot.json")
     )
     crosscheck.add_argument("--output", type=Path, default=Path("docs/crosscheck.json"))
-    forecast = commands.add_parser("forecast", help="Archive a current-season M2 forecast")
+    forecast = commands.add_parser("forecast", help="Archive a current-season score-model forecast")
     forecast.add_argument("--snapshot", type=Path, required=True)
     forecast.add_argument("--config", type=Path, default=Path("configs/baselines.toml"))
     forecast.add_argument("--data", type=Path, default=Path("data/processed"))
