@@ -1,0 +1,219 @@
+{
+  "axis_order": [
+    "home",
+    "draw",
+    "away"
+  ],
+  "draws": [
+    {
+      "case": "restore_captured_absence",
+      "match_id": "eng-premier-league:2026-2027:manchester-united:manchester-city",
+      "probability_change": [
+        0.00400886577371351,
+        0.0007977308654056048,
+        -0.00480659663911942
+      ],
+      "seed": 610
+    },
+    {
+      "case": "restore_captured_absence",
+      "match_id": "eng-premier-league:2026-2027:fulham:manchester-united",
+      "probability_change": [
+        -0.0019174786575139047,
+        -7.685807344287587e-05,
+        0.0019943367309570026
+      ],
+      "seed": 610
+    },
+    {
+      "case": "restore_captured_absence",
+      "match_id": "eng-premier-league:2026-2027:manchester-united:tottenham-hotspur",
+      "probability_change": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "seed": 610
+    },
+    {
+      "case": "five_player_stress",
+      "match_id": "eng-premier-league:2026-2027:manchester-united:manchester-city",
+      "probability_change": [
+        -0.031021911129354207,
+        -0.0074765475723433394,
+        0.038498458701697436
+      ],
+      "seed": 610
+    },
+    {
+      "case": "restore_captured_absence",
+      "match_id": "eng-premier-league:2026-2027:manchester-united:manchester-city",
+      "probability_change": [
+        0.0021097522873178565,
+        0.0003466991421088583,
+        -0.0024564514294260764
+      ],
+      "seed": 611
+    },
+    {
+      "case": "restore_captured_absence",
+      "match_id": "eng-premier-league:2026-2027:fulham:manchester-united",
+      "probability_change": [
+        -0.002722612532817581,
+        -6.492922128381595e-05,
+        0.0027875417541002867
+      ],
+      "seed": 611
+    },
+    {
+      "case": "restore_captured_absence",
+      "match_id": "eng-premier-league:2026-2027:manchester-united:tottenham-hotspur",
+      "probability_change": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "seed": 611
+    },
+    {
+      "case": "five_player_stress",
+      "match_id": "eng-premier-league:2026-2027:manchester-united:manchester-city",
+      "probability_change": [
+        -0.029910710953210184,
+        -0.007371712655926038,
+        0.03728242360913403
+      ],
+      "seed": 611
+    },
+    {
+      "case": "restore_captured_absence",
+      "match_id": "eng-premier-league:2026-2027:manchester-united:manchester-city",
+      "probability_change": [
+        0.0014821375128646341,
+        0.00042107370579860803,
+        -0.0019032112186629924
+      ],
+      "seed": 612
+    },
+    {
+      "case": "restore_captured_absence",
+      "match_id": "eng-premier-league:2026-2027:fulham:manchester-united",
+      "probability_change": [
+        -0.0026598949406457795,
+        -0.00014885079915738508,
+        0.0028087457398021654
+      ],
+      "seed": 612
+    },
+    {
+      "case": "restore_captured_absence",
+      "match_id": "eng-premier-league:2026-2027:manchester-united:tottenham-hotspur",
+      "probability_change": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "seed": 612
+    },
+    {
+      "case": "five_player_stress",
+      "match_id": "eng-premier-league:2026-2027:manchester-united:manchester-city",
+      "probability_change": [
+        -0.029856678815016746,
+        -0.0072457070371566845,
+        0.03710238585217518
+      ],
+      "seed": 612
+    }
+  ],
+  "draws_per_specification": 1024,
+  "restoration_reference": "Same posterior and captured squad; remove only recorded restriction",
+  "source_scenario": "runs/m6-quality-live-v1/scenario.json",
+  "source_sha256": "8a8ad8874beb6a885b30cf706205569f982d84979f6bcfbf45420e7d2ed9e5ab",
+  "stress_players": [
+    {
+      "name": "Mbeumo",
+      "player_id": "fpl:446008",
+      "posterior_mean_quality": 0.4460131547353759
+    },
+    {
+      "name": "Lammens",
+      "player_id": "fpl:465247",
+      "posterior_mean_quality": 0.2758407614414166
+    },
+    {
+      "name": "Cunha",
+      "player_id": "fpl:430871",
+      "posterior_mean_quality": 0.3272388468957429
+    },
+    {
+      "name": "Shaw",
+      "player_id": "fpl:106760",
+      "posterior_mean_quality": 0.23687756888367895
+    },
+    {
+      "name": "B.Fernandes",
+      "player_id": "fpl:141746",
+      "posterior_mean_quality": 0.23665589162611977
+    }
+  ],
+  "stress_policy": "Hypothetical simultaneous absence; players ranked by learned quality/exposure",
+  "summary": [
+    {
+      "case": "five_player_stress",
+      "integration_sd_across_seeds": [
+        0.0006577045499052617,
+        0.00011558195385881793,
+        0.000759404848269316
+      ],
+      "match_id": "eng-premier-league:2026-2027:manchester-united:manchester-city",
+      "mean_probability_change": [
+        -0.030263100299193713,
+        -0.00736465575514202,
+        0.03762775605433555
+      ]
+    },
+    {
+      "case": "restore_captured_absence",
+      "integration_sd_across_seeds": [
+        0.00044783851088472584,
+        4.54020581442934e-05,
+        0.0004641992839714325
+      ],
+      "match_id": "eng-premier-league:2026-2027:fulham:manchester-united",
+      "mean_probability_change": [
+        -0.002433328710325755,
+        -9.687936462802564e-05,
+        0.0025302080749531517
+      ]
+    },
+    {
+      "case": "restore_captured_absence",
+      "integration_sd_across_seeds": [
+        0.0013156042999001264,
+        0.00024180977614207555,
+        0.0015415849061473877
+      ],
+      "match_id": "eng-premier-league:2026-2027:manchester-united:manchester-city",
+      "mean_probability_change": [
+        0.002533585191298667,
+        0.000521834571104357,
+        -0.00305541976240283
+      ]
+    },
+    {
+      "case": "restore_captured_absence",
+      "integration_sd_across_seeds": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "match_id": "eng-premier-league:2026-2027:manchester-united:tottenham-hotspur",
+      "mean_probability_change": [
+        0.0,
+        0.0,
+        0.0
+      ]
+    }
+  ]
+}

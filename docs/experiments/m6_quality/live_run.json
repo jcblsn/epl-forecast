@@ -1,0 +1,17 @@
+{
+  "information_observed_at": "2026-09-06T17:59:25.247255+00:00",
+  "inputs": {
+    "data/processed/matches.csv": "6db8d4c97a4805765b203bb9296b55d52ce9357c099ed970c825ad0487d789aa",
+    "data/processed/players/player_matches.csv.gz": "96fda66da27d019673c9b5ad6ffb603df9756daea1582d4cd6b50f453e37223f",
+    "runs/m6-quality-player-capture/player_matches.csv.gz": "f830539c97cf555ab9108cdeaa44b5d2b022d28c6a874f35547ccb797c9d8aef",
+    "snapshots/2026-09-06T175801.066307Z/manifest.json": "4a93791c1367acc27bd195ac0c25952dbfd95d9415f8d788bfe2203136942c1e"
+  },
+  "model": {
+    "id": "M6-player-quality-v1",
+    "kind": "bayesian_player_quality"
+  },
+  "promotion_status": "research; M2 remains default",
+  "seed": 610,
+  "simulations": 2000,
+  "train_start": "2023-07-01"
+}

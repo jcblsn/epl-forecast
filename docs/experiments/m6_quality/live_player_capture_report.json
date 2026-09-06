@@ -1,0 +1,125 @@
+{
+  "audit": {
+    "field_coverage": {
+      "assists": {
+        "nonempty": 1890,
+        "nonzero": 71
+      },
+      "attempted_passes": {
+        "nonempty": 0,
+        "nonzero": 0
+      },
+      "big_chances_created": {
+        "nonempty": 0,
+        "nonzero": 0
+      },
+      "big_chances_missed": {
+        "nonempty": 0,
+        "nonzero": 0
+      },
+      "clean_sheets": {
+        "nonempty": 1890,
+        "nonzero": 190
+      },
+      "clearances_blocks_interceptions": {
+        "nonempty": 1890,
+        "nonzero": 621
+      },
+      "completed_passes": {
+        "nonempty": 0,
+        "nonzero": 0
+      },
+      "defensive_contribution": {
+        "nonempty": 1890,
+        "nonzero": 779
+      },
+      "expected_assists": {
+        "nonempty": 1890,
+        "nonzero": 616
+      },
+      "expected_goal_involvements": {
+        "nonempty": 1890,
+        "nonzero": 701
+      },
+      "expected_goals": {
+        "nonempty": 1890,
+        "nonzero": 439
+      },
+      "expected_goals_conceded": {
+        "nonempty": 1890,
+        "nonzero": 886
+      },
+      "goals_conceded": {
+        "nonempty": 1890,
+        "nonzero": 529
+      },
+      "goals_scored": {
+        "nonempty": 1890,
+        "nonzero": 73
+      },
+      "key_passes": {
+        "nonempty": 0,
+        "nonzero": 0
+      },
+      "minutes": {
+        "nonempty": 1890,
+        "nonzero": 929
+      },
+      "own_goals": {
+        "nonempty": 1890,
+        "nonzero": 5
+      },
+      "penalties_missed": {
+        "nonempty": 1890,
+        "nonzero": 1
+      },
+      "penalties_saved": {
+        "nonempty": 1890,
+        "nonzero": 0
+      },
+      "recoveries": {
+        "nonempty": 1890,
+        "nonzero": 764
+      },
+      "red_cards": {
+        "nonempty": 1890,
+        "nonzero": 1
+      },
+      "saves": {
+        "nonempty": 1890,
+        "nonzero": 54
+      },
+      "starts": {
+        "nonempty": 1890,
+        "nonzero": 660
+      },
+      "tackles": {
+        "nonempty": 1890,
+        "nonzero": 499
+      },
+      "yellow_cards": {
+        "nonempty": 1890,
+        "nonzero": 115
+      }
+    },
+    "final_club_disagrees_with_fixture": 25,
+    "fixture_sides_with_eleven_starters": 60,
+    "fixture_sides_with_starts": 60,
+    "fixtures": 30,
+    "missing_player_metadata": 0,
+    "normalized_rows": 1890,
+    "players": 654,
+    "players_observed_at_multiple_clubs": 17,
+    "rows_with_starts": 1890,
+    "rows_with_xg": 1890,
+    "season_id": "2026-27",
+    "source_rows": 1890
+  },
+  "capture": "data/raw/players/live/2026-09-06T175831.786432Z",
+  "completed_at": "2026-09-06T17:59:25.247857+00:00",
+  "dataset": "runs/m6-quality-player-capture/player_matches.csv.gz",
+  "deferred_rows_after_parent_snapshot": 0,
+  "errors": [],
+  "manifest_sha256": "b646fa908c14b0126dca17205d78134486dc90338babbf58b14ba05a97490a32",
+  "sha256": "f830539c97cf555ab9108cdeaa44b5d2b022d28c6a874f35547ccb797c9d8aef"
+}

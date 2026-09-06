@@ -25,22 +25,35 @@ oracle score distribution. Deployable candidates use prior appearances or an
 explicit timestamped squad snapshot. Historical publication times and opening
 season membership remain limitations.
 
-## Completion evidence and remaining work
+## Inference, summaries and evidence
 
-The initial unit checks cover joint identification/covariance, incremental
-replay with newly introduced clubs, cutoff isolation, a controlled expiring
-absence, reduction to the parent posterior without player observations, and
-agreement between direct probabilities and evolving sampled score frequencies.
+The ensemble retains the original four independent-Poisson M5 dynamics
+specifications and learns their chronological evidence weights with the player
+layer present. Full posterior covariance is retained; forecast projection uses
+only nonzero design columns, without dropping any contributing covariance.
 
-This foundation is not yet the completed batch. Remaining deliverables are:
+A probabilistic historical carry-forward option gives players observed at the
+previous season's final club a 0.7 membership probability until current-season
+appearance evidence replaces it. Players absent from the final 45 days of that
+season are excluded. This is a coarse membership prior, not a transfer archive;
+unobserved departures can remain in its pool. It never discovers arrivals from
+future target-season appearances. Snapshot squads take precedence in live use.
 
-- Chronological unchanged-M5, deployable-M6 and oracle-M6 comparisons.
-- Targeted lineup-change, absence, return, newcomer, promotion, early-season
-  and goalkeeper diagnostics, including direction and size of movement.
-- A manageable sampled Bayesian reference for the joint player approximation.
-- Live export of club/player decomposition and lineup uncertainty.
-- A timestamped current availability scenario with match and season deltas.
-- Prospectively archived current M6 forecasts with source and artifact hashes.
+For each future fixture, exports report club Quality projected to kickoff,
+expected player contribution and player minutes. `lineup_selection_quality_sd`
+is sqrt(E_beta[Var_lineup(w beta)]), including posterior coefficient uncertainty;
+`lineup_mean_effect_sd` isolates variation at posterior mean coefficients.
+Club/player covariance also enters the full match forecast. The season output
+retains match outcome frequencies for direct-probability comparisons.
+
+The [batch report](experiments/m6_player_quality.md) retains the full chronological
+comparison, targeted slices, sampled-reference diagnostics, current availability
+scenario and prospective archive. Oracle output is explicitly non-deployable.
+Known historical absence timestamps remain unavailable and are never invented.
+
+The reference checks one fixed dynamics specification on 60 real matches with
+fresh population club priors. It does not validate full-history promotion
+uncertainty or eliminate the inherited scoring-level approximation bias.
 
 M2 remains operational. M6 promotion requires separate chronological and
-forward evidence; completing this batch does not imply promotion.
+forward evidence; completing the vertical slice does not imply promotion.

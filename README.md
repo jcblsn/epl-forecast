@@ -100,6 +100,40 @@ player-match rows for deliberate M6 design. It distinguishes chronological
 prior-minutes features from unverified historical publication timestamps.
 See the [research queue](docs/next_experiments.md) for the remaining issues.
 
+## Player-aware M6 research forecasts
+
+M6 jointly fits club/system and player Quality, integrates uncertain minutes,
+and propagates the same player effects through season paths. It remains a
+research model; M2 is still operational. See the [M6 model](docs/player_quality_model.md)
+and [batch evidence](docs/experiments/m6_player_quality.md).
+
+```sh
+OPENBLAS_NUM_THREADS=1 uv run python scripts/evaluate_player_quality.py \
+  --season 2024-2025 --output runs/m6-evaluation
+OPENBLAS_NUM_THREADS=1 uv run python scripts/diagnose_player_quality.py \
+  --evaluation runs/m6-evaluation --output runs/m6-diagnostics
+OPENBLAS_NUM_THREADS=1 uv run --extra research python scripts/check_player_quality_posterior.py \
+  --output runs/m6-reference
+```
+
+For a current player-aware export, capture a fresh season snapshot and player
+histories, then pass those timestamped paths:
+
+```sh
+uv run epl-forecast data snapshot --season-start 2026
+uv run python scripts/capture_player_histories.py \
+  --snapshot snapshots/CAPTURE_TIMESTAMP --output runs/m6-player-capture
+OPENBLAS_NUM_THREADS=1 uv run python scripts/forecast_player_quality.py \
+  --snapshot snapshots/CAPTURE_TIMESTAMP \
+  --live-players runs/m6-player-capture/player_matches.csv.gz \
+  --output runs/m6-live
+```
+
+This archives M6 and its matched M5 parent, then compares a captured player's
+restricted availability with a restored-player counterfactual. Expiry follows
+an explicit 28-day recovery assumption, not a medical recovery prediction.
+Use `--forecast-only` to archive M6 without running the comparison scenario.
+
 ## Historical experiments
 
 The existing normalized cache is required for forecasts. On a new checkout:

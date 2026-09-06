@@ -1,0 +1,43 @@
+{
+  "archive_completed_at": "2026-09-06T18:15:08.074944+00:00",
+  "chronological_matches_per_regime": 380,
+  "expiring_current_absence": {
+    "player": "Amad",
+    "source": "FPL snapshot"
+  },
+  "five_player_stress_home_probability_change": -0.030263100299193713,
+  "forecast_archive_sha256_verified": true,
+  "inputs": {
+    "availability_scenario.json": "8a8ad8874beb6a885b30cf706205569f982d84979f6bcfbf45420e7d2ed9e5ab",
+    "diagnostics.json": "2fbfb26f10bcdc521545036ab7f908fc711ceda962525344653ce233021643c1",
+    "evaluation_run.json": "8a98dea7f0ed99b2ea455ea099a27f3d8128670acc0dbaba559005b7664ef007",
+    "live_archive.json": "f7232afb81860998e2158528984afa8b08e2b64642a8647380c263438e5f2450",
+    "live_forecast.json.gz": "ecb713feb6a710179a23ca474fa6ac26d3557a8e6e9ec2c5b4c43adfee836949",
+    "live_parent_forecast.json.gz": "a8706047f7bf097c3bda8be527a2efda6d91f1da5977039a99ff2e31e38710ca",
+    "live_player_capture_report.json": "8ff1647f55e4b6eb9016fe1da3c4905bf26d0fdac93e200bd25d7ad59209f83e",
+    "live_player_matches.csv.gz": "f830539c97cf555ab9108cdeaa44b5d2b022d28c6a874f35547ccb797c9d8aef",
+    "live_run.json": "4bd551b4b733ea66e0e365244d4699250d3eb2b1e6a0a9ab85c898084e8631cf",
+    "live_snapshot.tar.gz": "00d48fd585760348298bab110d6a30bcc94a74453f6af9337eca0d93345ca93e",
+    "opening_pilot_run.json": "ade29405d1222a34bfb16ad89016fac3cf5da827b3f39e9d10ea8e5ba0fa6da3",
+    "opening_pilot_summary.csv": "bc2e2b9e00105dade11c8fb9cedaf9a8ce6438be4fbddea5f0a2822670edb1a4",
+    "posterior_reference.json": "c557d49bf47fd8bda2cc9dd21d7b14a99b9967c35d747b5094c08089de0364ef",
+    "predictions.csv": "c7b7db6f710a3f87d279fa67af1da4635259f288769acaeacd1b43e622a07768",
+    "response.json": "fa7d16e4e02986129093e00b5f5234fb34d57e76b4d6147852ded24e9b2d370b",
+    "restored_season.json.gz": "b8cebb93a5c1b5153cbbad68615bb885e6fea6a50aea41ab5633d14e10f0da8d",
+    "summary.csv": "7b69d2bba9d085a3a270cadc48c8691c110d100bf0691064df5984d753c2bb2e"
+  },
+  "joint_player_reference": {
+    "chains": 4,
+    "divergences": 0,
+    "max_rhat": 1.000550348175537,
+    "min_effective_samples": 4249.588458244551,
+    "parameters": {},
+    "samples_per_chain": 800,
+    "warmup": 600
+  },
+  "match_path_agreement_fraction_within_three_se": 0.9971428571428571,
+  "match_path_agreement_max_se": 3.493540606594349,
+  "prospective_match_count": 350,
+  "season_paths": 2000,
+  "snapshot_and_player_input_hashes_verified": true
+}
