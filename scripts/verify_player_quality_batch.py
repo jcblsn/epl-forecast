@@ -23,9 +23,10 @@ def main():
         manifest = json.load(bundle.extractfile("manifest.json"))
         for entry in manifest["files"]:
             assert sha256(bundle.extractfile(entry["name"]).read()).hexdigest() == entry["sha256"]
-    assert file_hash(root / "live_player_matches.csv.gz") == run["inputs"][
-        "runs/m6-quality-player-capture/player_matches.csv.gz"
-    ]
+    assert (
+        file_hash(root / "live_player_matches.csv.gz")
+        == run["inputs"]["runs/m6-quality-player-capture/player_matches.csv.gz"]
+    )
     assert sha256(payload).hexdigest() == archive["files"]["forecast.json"]
     assert len(forecast["matches"]) == len(archive["forward_match_ids"]) == 350
     assert {r["match_id"] for r in forecast["matches"]} == set(archive["forward_match_ids"])
