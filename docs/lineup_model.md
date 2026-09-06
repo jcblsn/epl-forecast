@@ -60,3 +60,19 @@ score, including opening, major lineup-change and newcomer slices. Scores over
 the union include unused players and must not be mistaken for starter-only scores.
 Historical source values may contain later corrections. The layer is not yet
 connected to club/player strength inference or the forecast product.
+
+## Initial chronological evidence
+
+The [retained report](experiments/m6/lineup_coverage.json) covers all 1,140
+2023/24–2025/26 fixtures, 2,280 club-fixture sides, with 128 draws per side.
+Candidate coverage is 97.15% of actual starters overall, 79.24% in each club's
+first five fixtures, and 99.86% thereafter. Each first fixture has no prior-season
+membership carried forward: its 990 minutes are anonymous. Opening-five missing
+actual exposure averages 207.08 minutes per side, versus 1.69 later. This is a
+known roster-evidence gap, not evidence that the missing players were unavailable.
+
+Minutes MAE over the union of predicted and observed players is 22.38, and starter
+Brier score is 0.12740. Four-or-more starter changes worsen those scores to 24.07
+and 0.15160. These are initial absolute scores, not an improvement claim; a
+chronological lineup baseline comparison remains necessary. Full predictions and
+fixture-side diagnostics remain in `runs/m6-lineups-v1`, with hashes in the report.

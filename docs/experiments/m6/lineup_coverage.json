@@ -1,0 +1,77 @@
+{
+  "artifacts": {
+    "fixture_sides.csv": "ffa846e1171c36dfd5a61f8e5a5695fe465ac441129a518bd60abe699e9adf31",
+    "predictions.csv": "4ea7b2bcdbd05c269b7af91ab087a905e5b61ed45e19ec109f07bd8966b28bec"
+  },
+  "draws": 128,
+  "input": "data/processed/players/player_matches.csv.gz",
+  "scope": "Retrospective development evidence; candidate pools use earlier UTC dates. Newcomers omitted from candidate pools receive zero predicted minutes in scoring. No historical availability or registration claims; anonymous minutes explicit.",
+  "seed": 20260906,
+  "sha256": "96fda66da27d019673c9b5ad6ffb603df9756daea1582d4cd6b50f453e37223f",
+  "slices": {
+    "2023-2024": {
+      "anonymous_expected_minutes_per_side": 26.05263157894737,
+      "fixture_sides": 760,
+      "minutes_mae_player_union": 22.086554587410472,
+      "missing_actual_minutes_per_side": 28.464473684210525,
+      "starter_brier_player_union": 0.12309347179839604,
+      "starter_candidate_coverage": 0.9716507177033493
+    },
+    "2024-2025": {
+      "anonymous_expected_minutes_per_side": 26.05263157894737,
+      "fixture_sides": 760,
+      "minutes_mae_player_union": 23.17503364645133,
+      "missing_actual_minutes_per_side": 28.626315789473683,
+      "starter_brier_player_union": 0.13498700205540906,
+      "starter_candidate_coverage": 0.9715311004784689
+    },
+    "2025-2026": {
+      "anonymous_expected_minutes_per_side": 26.05263157894737,
+      "fixture_sides": 760,
+      "minutes_mae_player_union": 21.936420821015854,
+      "missing_actual_minutes_per_side": 29.053947368421053,
+      "starter_brier_player_union": 0.12474679267717222,
+      "starter_candidate_coverage": 0.9711722488038278
+    },
+    "after_first_five": {
+      "anonymous_expected_minutes_per_side": 0.0,
+      "fixture_sides": 1980,
+      "minutes_mae_player_union": 21.88334756918132,
+      "missing_actual_minutes_per_side": 1.6898989898989898,
+      "starter_brier_player_union": 0.12079898411879557,
+      "starter_candidate_coverage": 0.9985766758494031
+    },
+    "all": {
+      "anonymous_expected_minutes_per_side": 26.05263157894737,
+      "fixture_sides": 2280,
+      "minutes_mae_player_union": 22.377442210556023,
+      "missing_actual_minutes_per_side": 28.714912280701753,
+      "starter_brier_player_union": 0.12740136109052289,
+      "starter_candidate_coverage": 0.971451355661882
+    },
+    "first_five": {
+      "anonymous_expected_minutes_per_side": 198.0,
+      "fixture_sides": 300,
+      "minutes_mae_player_union": 26.057930352798053,
+      "missing_actual_minutes_per_side": 207.08,
+      "starter_brier_player_union": 0.17658216193354623,
+      "starter_candidate_coverage": 0.7924242424242425
+    },
+    "four_plus_starter_changes": {
+      "anonymous_expected_minutes_per_side": 0.0,
+      "fixture_sides": 423,
+      "minutes_mae_player_union": 24.06707630018248,
+      "missing_actual_minutes_per_side": 5.047281323877068,
+      "starter_brier_player_union": 0.15160426675838276,
+      "starter_candidate_coverage": 0.9948420373952289
+    },
+    "newcomer_starter": {
+      "anonymous_expected_minutes_per_side": 535.1351351351351,
+      "fixture_sides": 111,
+      "minutes_mae_player_union": 27.706110312899106,
+      "missing_actual_minutes_per_side": 576.1171171171171,
+      "starter_brier_player_union": 0.2476797910181194,
+      "starter_candidate_coverage": 0.41359541359541363
+    }
+  }
+}
