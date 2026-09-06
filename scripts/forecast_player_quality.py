@@ -30,6 +30,7 @@ def main():
     parser.add_argument("--simulations", type=int, default=2000)
     parser.add_argument("--draws", type=int, default=64)
     parser.add_argument("--seed", type=int, default=610)
+    parser.add_argument("--forecast-only", action="store_true")
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
     live = load_live_season(args.snapshot)
@@ -83,6 +84,8 @@ def main():
         live, model, training, run, args.output / "current", args.simulations, args.seed, 10, []
     )
     print("Archived current M6 forecast", flush=True)
+    if args.forecast_only:
+        return
     parent = BayesianQualityTilt(independent_poisson=True).fit(training, as_of)
     parent_forecast = export_forecast(
         live,

@@ -191,10 +191,14 @@ class PlayerQualityFilter(QualityTiltFilter):
         )
         scores = []
         direction = np.array([1, -1])
+        active = np.flatnonzero(np.any(player != 0, axis=0) | np.any(club != 0, axis=0))
+        club, player = club[:, active], player[:, active]
+        state_mean = snapshot.mean[active]
+        state_covariance = snapshot.covariance[np.ix_(active, active)]
         for weights, variance in zip(player, unknown_variance, strict=True):
             design = club + direction[:, None] * weights
-            mean = design @ snapshot.mean
-            covariance = design @ snapshot.covariance @ design.T
+            mean = design @ state_mean
+            covariance = design @ state_covariance @ design.T
             covariance += variance * np.outer(direction, direction)
             scores.append(
                 PoissonMixture(mean, covariance, self.quadrature_order)
@@ -239,12 +243,30 @@ class PlayerQualityFilter(QualityTiltFilter):
                     }
                 )
             state = self.team_state(team, fixture.season_id)
+            matrix = np.column_stack(list(weights.values()))
+            weight_mean = matrix.mean(axis=0)
+            weight_covariance = matrix.T @ matrix / len(matrix) - np.outer(weight_mean, weight_mean)
+            beta_covariance = np.eye(len(weights)) * self.player_sd**2
+            known = [
+                (i, self.player_index[key])
+                for i, key in enumerate(weights)
+                if key in self.player_index
+            ]
+            if known:
+                positions, indices = zip(*known, strict=True)
+                beta_covariance[np.ix_(positions, positions)] = self.covariance[
+                    np.ix_(indices, indices)
+                ]
+            selection_variance = contributions.var() + np.sum(weight_covariance * beta_covariance)
+            years = (fixture.match_date - self.as_of).days / 365.25
             result.append(
                 {
                     "team_id": team,
-                    "club_quality": float(state.mean[0]),
+                    "club_quality": float(state.mean[0] * self.quality_retention**years),
+                    "club_quality_at_cutoff": float(state.mean[0]),
                     "expected_player_quality": float(contributions.mean()),
-                    "lineup_selection_quality_sd": float(contributions.std()),
+                    "lineup_selection_quality_sd": float(np.sqrt(max(0, selection_variance))),
+                    "lineup_mean_effect_sd": float(contributions.std()),
                     "players": players,
                 }
             )

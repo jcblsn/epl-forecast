@@ -121,3 +121,16 @@ def test_m6_ensemble_support_and_nested_mixture_reporting(small_history):
     assert grid.sum() + tail == pytest.approx(1)
     assert scores.uncertainty_components()["total_score_covariance"][0][0] > 0
     assert model.lineup_summary(fixture)[0]["team_id"] == "a"
+
+
+def test_lineup_uncertainty_includes_uncertain_player_coefficients(small_history):
+    model = PlayerQualityFilter(history_for(small_history)).fit(small_history, date(2020, 8, 20))
+    model.mean[list(model.player_index.values())] = 0
+    fixture = replace(small_history[0].fixture, match_date=date(2021, 5, 20))
+    row = model.lineup_summary(fixture)[0]
+    assert row["lineup_mean_effect_sd"] == 0
+    assert row["lineup_selection_quality_sd"] > 0
+    years = (fixture.match_date - model.as_of).days / 365.25
+    assert row["club_quality"] == pytest.approx(
+        row["club_quality_at_cutoff"] * model.quality_retention**years
+    )

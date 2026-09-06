@@ -19,29 +19,50 @@ def labels(model, fixture, counts):
     tags = set()
     for team in (fixture.home_team_id, fixture.away_team_id):
         rows = model.observations[fixture.match_id, team]
-        actual = {player_identity(r) for r in rows if float(r["minutes"]) > 0}
-        starters = {player_identity(r) for r in rows if r["starts"] == "1"}
         squad = model.squad(fixture, team)
-        candidates = {p.player_id for p in squad.candidates}
-        expected = {p.player_id for p in squad.candidates if p.start_weight > 0.5}
-        if len(expected - starters) >= 4:
-            tags.add("major_lineup_change")
-        if actual - candidates:
-            tags.add("newcomer_or_transfer")
-        if any(
-            p.player_id in actual
-            and len(p.history) >= 3
-            and all(m == 0 for m, _ in p.history[-2:])
-            and any(m > 0 for m, _ in p.history[:-2])
-            for p in squad.candidates
-        ):
-            tags.add("returning_player")
-        if any(p.position == "GK" and p.player_id in expected - starters for p in squad.candidates):
-            tags.add("goalkeeper_change")
+        previous = next(
+            (
+                m
+                for m in reversed(model._history)
+                if team in (m.fixture.home_team_id, m.fixture.away_team_id)
+                and m.fixture.competition_id == "eng-premier-league"
+            ),
+            None,
+        )
+        previous_rows = (
+            model.observations[previous.fixture.match_id, team] if previous is not None else []
+        )
+        tags.update(information_tags(rows, squad, previous_rows))
         if counts[fixture.season_id, team] < 5:
             tags.add("early_season")
         if "promotion" in model.team_state(team, fixture.season_id).source:
             tags.add("promoted_team")
+    return tags
+
+
+def information_tags(rows, squad, previous_rows):
+    tags = set()
+    actual = {player_identity(r): float(r["minutes"]) for r in rows}
+    starters = {player_identity(r) for r in rows if r["starts"] == "1"}
+    previous = {player_identity(r) for r in previous_rows if r["starts"] == "1"}
+    candidates = {p.player_id for p in squad.candidates}
+    if len(previous) == len(starters) == 11 and len(previous - starters) >= 4:
+        tags.add("major_lineup_change")
+    if any(minutes >= 45 and key not in candidates for key, minutes in actual.items()):
+        tags.add("newcomer_or_transfer")
+    if any(
+        actual.get(p.player_id, 0) >= 45
+        and len(p.history) >= 3
+        and all(m == 0 for m, _ in p.history[-2:])
+        and any(m >= 45 for m, _ in p.history[:-2])
+        for p in squad.candidates
+    ):
+        tags.add("returning_player")
+    if any(
+        r["position"] == "GK" and r["starts"] == "1" and player_identity(r) not in starters
+        for r in previous_rows
+    ):
+        tags.add("goalkeeper_change")
     return tags
 
 
