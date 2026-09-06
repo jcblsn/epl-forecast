@@ -46,3 +46,34 @@ separates variance from uncertain rates, shared match tempo, and conditional
 Poisson randomness. Season archives identify forward state evolution.
 M2 remains the default. Historical diagnostics, sampled posterior validation and
 synthetic coverage are necessary before claiming that M5 uncertainty is calibrated.
+
+## Sampled reference
+
+Install the optional research extra through uv and run:
+
+```sh
+uv run --extra research python scripts/check_quality_tilt_posterior.py \
+  --output runs/m5-posterior-reference
+```
+
+The reference uses [NumPyro NUTS](https://num.pyro.ai/en/latest/getting_started.html)
+with noncentered Gaussian innovations. Its score likelihood and separate
+calendar-time processes match a production component. Each team enters at its
+first appearance with the same population prior. The default subset is the
+90 Premier League matches from August through October 2024; the posterior cutoff
+is October 28. This deliberately does not test empirical promotion priors or
+full-history accumulation of approximation error.
+
+One fit fixes process/dispersion parameters; a second infers retention, innovation
+SDs and dispersion under explicit Beta/lognormal priors. The second comparison
+averages production conditional filters over 100 sampled hyperparameter draws.
+It assesses state approximation conditional on uncertain parameters, not the
+accuracy of the production finite-grid model weights. Both fits compare the same
+final-time filtering posterior, avoiding a filtering-versus-smoothing mismatch.
+
+Four chains each use 600 warmup and 800 retained samples. Eight independent
+synthetic datasets also receive sampled reference fits; 200 receive production
+coverage checks. The generator draws known states and scores from the same
+prior and transition law. These are finite, short-subset diagnostics. The
+[results](experiments/m5_quality_tilt.md) identify both encouraging state coverage
+and a league-level shortfall; they do not certify universal calibration.

@@ -7,9 +7,9 @@ validate the model; the forecasts are the product.
 
 The project now archives live FPL and Football-Data responses and produces a
 2026/27 forecast as JSON, CSV and a static HTML page. Refreshes are manual for now.
-M2 remains the default reference. The M4 prototype adds dynamic attack/defense,
-Championship-informed promotion priors and approximate posterior uncertainty in
-match and season forecasts. Historical results cover 16 PL and Championship
+M2 remains the default reference. M5 adds explicit Quality and Tilt, approximate
+Bayesian dynamics weights, correlated overdispersed scores, and season paths
+with future state evolution. M4 remains available as the earlier prototype. Historical results cover 16 PL and Championship
 seasons. The [north star](docs/north_star.md) describes the intended architecture.
 
 ## Capture and forecast
@@ -32,16 +32,17 @@ Pass the printed snapshot directory to the forecast command:
 uv run epl-forecast forecast --snapshot snapshots/<UTC timestamp>
 ```
 
-To use M4 and propagate its posterior uncertainty into the season forecast:
+To use M5 and propagate current uncertainty and future evolution into the season forecast:
 
 ```sh
-uv run epl-forecast forecast --config configs/dynamic.toml \
-  --model M4-dynamic-hierarchical-v1 --snapshot snapshots/<UTC timestamp>
+uv run epl-forecast forecast --config configs/quality_tilt.toml \
+  --model M5-quality-tilt-v1 --snapshot snapshots/<UTC timestamp>
 ```
 
 Open the printed `runs/forecasts/<UTC timestamp>/index.html`. Each run archives:
 
-- current attack/defense strengths and each team's next-match probabilities;
+- current strengths and each team's next-match probabilities;
+- M5 Quality, Tilt, their uncertainty, and separate state/match variance contributions;
 - all remaining H/D/A probabilities and exact-score matrices with tail mass;
 - expected final points, position distributions, title, top-four/five and relegation chances;
 - the captured schedule, source provenance and actual forecast archival time.
@@ -54,8 +55,9 @@ the season projection while upcoming-match forecasts remain available.
 Top-four/five chances describe positions. To add conditional European qualification,
 pass `--europe-scenario configs/europe_scenario.example.json`, which supplies
 hypothetical cup winners and league UCL places. M2 uses fixed fitted strengths.
-M4 samples one joint current state per season path and holds it throughout that
-path. Future state evolution, injuries and transfers are not yet modeled.
+M4 holds one sampled current state throughout each path. M5 samples a dynamics
+specification and evolves Quality/Tilt through fixture dates, with independent
+match-tempo shocks. Injuries and transfers are not yet modeled.
 See [live operation and limitations](docs/live.md).
 
 ## Improve the model
@@ -66,29 +68,37 @@ development. Keep hyperparameter selection inside chronology when reporting a
 selected strategy's performance. Inspect per-season scores and complementary
 errors; candidates need no frozen protocol or minimum-gain threshold.
 
-The first [M4 comparison](docs/experiments/m4_dynamic.md) covers 4,180 matches in
-2015/16–2025/26. Aggregate outcome loss is nearly tied with M2; early-season
-performance and posterior calibration still need work. The new architecture is
-functional, but these results do not justify replacing the default model.
-
-Run rolling evaluation, then inspect promotion, uncertainty and form diagnostics:
+The [M5 batch report](docs/experiments/m5_quality_tilt.md) compares 4,180 matches
+in 2015/16–2025/26 and checks a sampled posterior on a smaller historical subset.
+M5 is near M2 on aggregate outcome loss and adds useful generative capabilities;
+it does not justify replacing M2. The finite dynamics grid concentrates heavily,
+and synthetic league-level coverage needs improvement.
 
 ```sh
-uv run epl-forecast evaluate --config configs/dynamic.toml \
-  --split development --output runs/m4-development
-uv run epl-forecast evaluate --config configs/dynamic.toml \
-  --split validation --output runs/m4-validation
-uv run epl-forecast evaluate --config configs/dynamic.toml \
-  --split holdout --output runs/m4-holdout
-uv run python scripts/diagnose_dynamic.py \
-  --evaluations runs/m4-development runs/m4-validation runs/m4-holdout \
-  --output runs/m4-diagnostics
+uv run epl-forecast evaluate --config configs/quality_tilt.toml \
+  --split development --output runs/m5-development
+uv run epl-forecast evaluate --config configs/quality_tilt.toml \
+  --split validation --output runs/m5-validation
+uv run epl-forecast evaluate --config configs/quality_tilt.toml \
+  --split holdout --output runs/m5-holdout
+uv run python scripts/diagnose_quality_tilt.py \
+  --evaluations runs/m5-development runs/m5-validation runs/m5-holdout \
+  --scores runs/m5-holdout --output runs/m5-diagnostics
 ```
 
-See the [M4 formulation and limitations](docs/dynamic_model.md) and the
-[research queue](docs/next_experiments.md). The completed
-[M2 search](docs/experiments/m2_tuning.md) found its defaults in the best region;
-`scripts/tune_m2.py` remains available without being the next workstream.
+The optional [NumPyro reference](docs/quality_tilt_model.md) checks approximate
+inference without adding MCMC to production:
+
+```sh
+uv run --extra research python scripts/check_quality_tilt_posterior.py \
+  --output runs/m5-posterior-reference
+uv run python scripts/audit_players.py
+```
+
+The [player audit](docs/player_data_audit.md) supplies 253,509 normalized
+player-match rows for deliberate M6 design. It distinguishes chronological
+prior-minutes features from unverified historical publication timestamps.
+See the [research queue](docs/next_experiments.md) for the remaining issues.
 
 ## Historical experiments
 

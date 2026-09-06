@@ -1,40 +1,31 @@
 # North star
 
-Build a real-time probabilistic model of Premier League football, comparable in
-functional ambition to PELE and adapted to club football. This is a capability
-target, not a reproduction specification. Forecasts and their explanations are
-the product; historical evaluation and archived forward forecasts guide changes.
+Build a real-time probabilistic Premier League model comparable in functional
+ambition to PELE and adapted to club football. This is a capability target, not
+a reproduction specification. Forecasts and their explanations are the product.
 
-| Stage | Capabilities |
-| --- | --- |
-| Current baseline | M2 fixed-strength attack/defense Poisson; season simulation conditional on one fitted strength vector; chronological evaluation; PL/Championship history; timestamped live snapshots and forecast archives. |
-| Near term | M4 dynamic latent attack/defense, a learned Championship-to-PL promotion prior, approximate posterior state distributions, joint score predictions, and season simulations drawing one shared team state per path. |
-| Eventual | Player-aware hierarchical priors, persistent club/system quality, Tilt/openness, richer correlated scoring, posterior and hot season simulations, and optional market assimilation. |
+M2 remains the operational reference. M5 now represents changing Quality and
+Tilt, approximate uncertainty over states and dynamics, correlated overdispersed
+scores, and coherent season trajectories. A limited sampled Bayesian reference
+and historical rolling comparisons identify its current approximation limits.
+The [M5 report](experiments/m5_quality_tilt.md) records the evidence.
 
-The central object is a distribution over changing team quality. Match evidence
-updates it; Championship and prior-season performance inform its starting point.
-Player quality should later inform priors, while shots and xG are candidate
-observations. Squad and persistent club/system contributions should eventually
-be distinguishable, so transfers, availability and lineups can change forecasts.
-Audit historical player data before building this layer; keep capturing FPL now.
+The next main gap is squad information. Distinguish persistent club/system
+quality from hierarchical player contributions and expected-lineup uncertainty.
+The [player audit](player_data_audit.md) supplies fixture-level historical data
+and identifies what cannot yet be reconstructed before an old match. Player
+and squad information should eventually inform both Quality and Tilt; shots/xG
+are candidate observations of those states.
 
-Translate latent state into a joint goal distribution, then into match and table
-probabilities. Begin with conditional independent Poisson goals to isolate the
-strength model. Later investigate finishing, goalkeeping, Tilt, overdispersion,
-low scores and scoring correlation. Dixon–Coles is a diagnostic benchmark.
+Translate uncertain states into a joint score distribution, then into match and
+table probabilities. Forward generative simulations evolve sampled latent states;
+their simulated scores do not update already-sampled hidden strengths. Simulating
+how an observer's public forecast changes after hypothetical results is a
+separate operation requiring conditional filtering.
 
-Season forecasts should integrate both match randomness and uncertainty in team
-strength. A first posterior simulation holds one sampled state throughout each
-season path. Hot simulation may later evolve that state or update it using
-simulated results. Neither player availability nor future evolution is implied
-by merely drawing the current posterior.
-
-Keep structural football forecasts separately measurable from market-assisted
-forecasts. Eventually ingest new information, update states, archive forecasts
-and explain changes through results, squad changes, market information or
-narrowing uncertainty.
-
-Choose work that either becomes part of this architecture or supplies evidence
-needed to choose it. Prefer a functioning vertical slice over polishing a local
-baseline improvement. Use defensible approximate inference before considering a
-large probabilistic-programming dependency.
+Keep structural and market-assisted forecasts separately measurable. Eventually
+ingest results and squad changes, archive forecasts and explain changes. Choose
+work that implements these capabilities or provides evidence needed to choose
+them. Preserve fast approximate production inference when reference checks support
+it. Historical evaluation and timestamped forward forecasts guide development;
+there is no arbitrary minimum improvement gate.

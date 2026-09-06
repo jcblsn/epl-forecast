@@ -7,7 +7,7 @@ season simulator are established. Their initial evidence remains in
 
 ## Current work
 
-As of 2026-09-05:
+As of 2026-09-06:
 
 1. Archive live sources: implemented with `data snapshot`. Five public responses
    have been captured, with raw bytes and observation times.
@@ -17,8 +17,12 @@ As of 2026-09-05:
    the actual capture and archival timestamps.
 3. Tune M2: completed the 30-setting rolling search with selection from earlier
    seasons. Defaults already sit in the best region; [retain them](experiments/m2_tuning.md).
-4. Use Championship history for promotion continuity, then test lagged shots,
-   scoring distributions and dynamic team-strength uncertainty.
+4. M5 implemented Quality/Tilt, separate stochastic dynamics, approximate Bayesian
+   model weights, shared-Gamma scoring and calendar-time season trajectories.
+   Historical comparisons and a sampled reference document remaining limits.
+5. Player-data feasibility audit completed with a normalized table. Design M6
+   around player contributions and uncertain lineups using audited observations;
+   freeze the Championship cohort prior while addressing the specific M5 findings.
 
 The detailed order is in the [research queue](next_experiments.md). Live capture
 continues while model work proceeds. No background scheduler is installed yet.

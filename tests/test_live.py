@@ -304,3 +304,26 @@ def test_quality_tilt_live_export_has_forward_states_and_variance_components(liv
     assert variance["match_tempo_covariance"][0][1] > 0
     assert "Quality and Tilt" in (output / "index.html").read_text()
     assert "holds its sampled strengths fixed" not in (output / "index.html").read_text()
+
+
+def test_quality_tilt_requires_dates_for_season_evolution(live_snapshot):
+    from epl_forecast.models.quality_tilt import BayesianQualityTilt
+
+    update_fixtures(live_snapshot, lambda rows: rows[-1].update(kickoff_time=None, event=None))
+    live = load_live_season(live_snapshot)
+    training = [m for m in live.played if m.available_on <= OBSERVED.date()]
+    model = BayesianQualityTilt([dict(dispersion=10)]).fit(training, OBSERVED.date())
+    result = export_forecast(
+        live,
+        model,
+        training,
+        {"model": {"id": "M5"}},
+        live_snapshot / "undated-m5",
+        10,
+        42,
+        7,
+        [],
+    )
+    assert result["simulation"] is None
+    assert "awaits fixture dates" in result["simulation_unavailable_reason"]
+    assert len(result["matches"]) == 378

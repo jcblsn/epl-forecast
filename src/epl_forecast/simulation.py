@@ -328,7 +328,8 @@ def simulate_season(
             ),
             (
                 "Captured full-time results are fixed, including today; fitting excludes today. "
-                "Unscheduled dates are placeholders used only for fixed-strength simulation."
+                "Fixture dates follow the captured schedule; fixed-state models can use "
+                "cutoff-date placeholders for unscheduled fixtures."
                 if results_observed_at
                 else "No future result labels used. "
                 "Historical fixture dates are retrospectively recorded."

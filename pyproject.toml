@@ -11,6 +11,11 @@ dependencies = [
 [project.scripts]
 epl-forecast = "epl_forecast.cli:main"
 
+[project.optional-dependencies]
+research = [
+    "numpyro>=0.21.0",
+]
+
 [build-system]
 requires = ["hatchling"]
 build-backend = "hatchling.build"

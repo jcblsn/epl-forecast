@@ -116,3 +116,38 @@ def test_separate_transitions_have_semigroup_property():
     assert av * b**2 + bv == pytest.approx(variance)
     assert total[2] != total[3]
     assert variance[2] != variance[3]
+
+
+def test_direct_component_sampling_uses_quality_tilt_coordinates(small_history):
+    model = QualityTiltFilter().fit(small_history, date(2020, 8, 20))
+    fixture = replace(small_history[0].fixture, match_date=date(2021, 4, 1))
+    rng = np.random.default_rng(717)
+    h, a = model.sample_forecast_state(rng, 80000).sample_scores(fixture, rng)
+    assert [np.mean(h > a), np.mean(h == a), np.mean(h < a)] == pytest.approx(
+        model.predict_match(fixture).probabilities, abs=0.008
+    )
+
+
+def test_exported_variance_decomposition_and_tail_diagnostics():
+    from epl_forecast.models.quality_tilt_scores import ScoreMixture, score_diagnostics
+
+    components = [
+        GammaPoissonMixture(np.log(rates), np.zeros((2, 2)), dispersion=5)
+        for rates in ([1.0, 2.0], [3.0, 1.0])
+    ]
+    scores = ScoreMixture(components, [0.25, 0.75])
+    moments = scores.uncertainty_components()
+    means = np.array([[1.0, 2.0], [3.0, 1.0]])
+    mean = np.array([0.25, 0.75]) @ means
+    centered = means - mean
+    state = (centered.T * [0.25, 0.75]) @ centered
+    tempo = (means.T * [0.25, 0.75]) @ means / 5
+    assert moments["state_rate_covariance"] == pytest.approx(state)
+    assert moments["total_score_covariance"] == pytest.approx(state + tempo + np.diag(mean))
+    grid, _ = scores.grid(60)
+    diagnostics = score_diagnostics(scores)
+    assert diagnostics["p_scoreless"] == pytest.approx(grid[0, 0])
+    assert diagnostics["p_both_score"] == pytest.approx(grid[1:, 1:].sum(), abs=1e-10)
+    assert diagnostics["p_total_goals_ge6"] == pytest.approx(
+        grid[np.indices(grid.shape).sum(axis=0) >= 6].sum(), abs=1e-10
+    )

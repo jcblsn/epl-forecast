@@ -130,6 +130,12 @@ def rolling_predictions(
                     if forecast.scores is None
                     else forecast.scores.log_probability(match.home_goals, match.away_goals),
                 }
+                if forecast.scores is not None and hasattr(forecast.scores, "home_rate"):
+                    from epl_forecast.models.quality_tilt_scores import score_diagnostics
+
+                    row.update(score_diagnostics(forecast.scores))
+                if hasattr(model, "weights") and hasattr(model, "members"):
+                    row["effective_specifications"] = float(1 / (model.weights @ model.weights))
                 if hasattr(model, "team_summary"):
                     row.update(
                         {

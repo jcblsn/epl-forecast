@@ -15,7 +15,7 @@ The manifest records per-response retrieval times, URLs, headers, sizes and hash
 A failed source is recorded and the command exits nonzero after preserving the
 successful captures. The bare Football-Data hostname worked on September 5;
 `www` returned 503. Player and odds payloads are collected now for later use; they
-do not enter M2 or M4 fitting. M4 currently uses completed historical Championship
+do not enter M2, M4 or M5 fitting. M4 currently uses completed historical Championship
 seasons for promotion priors; partial current E1 captures remain archived for later use.
 
 ## Refresh
@@ -42,7 +42,7 @@ checked too, and the page shows the observed state time.
 ## Time and result handling
 
 FPL kickoff timestamps are converted to London dates for fitting, matching the
-historical date convention. Both models see only prior-date results. The season table fixes
+historical date convention. All models see only prior-date results. The season table fixes
 all full-time results in the captured response, including same-day games. These
 are different information boundaries, recorded as `model_results_cutoff` and
 `state_observed_at`.
@@ -56,9 +56,11 @@ FPL can supply results that the CSV has not published yet.
 The adapter checks the requested season, 20 canonical teams, all 380 ordered pairs,
 unique source IDs, completion flags and observation times. Undated/postponed
 fixtures retain their identities and null/old source kickoff values in exports.
-Both current simulators hold states fixed within a path and can use a placeholder date. No
-fixture date is invented for display or forward scoring. A model with rest or
-future state evolution will need explicit schedule uncertainty.
+M2 and M4 can use a cutoff-date placeholder because their states are fixed within
+a path. M5 uses calendar-time transitions and suspends the season projection
+when any fixture lacks a date. An undated match can still have a hypothetical
+match forecast at `model_forecast_date`, explicitly separate from its null kickoff.
+Scheduled future match forecasts integrate state evolution to their kickoff date.
 
 In-progress or overdue fixtures suspend the season projection. Other match
 forecasts and raw snapshots remain available; this is not an in-play model.
@@ -95,3 +97,17 @@ probability. The [batch report](experiments/m4_dynamic.md) compares all promoted
 clubs and separates model changes from uncertainty propagation. This is a more
 plausible starting point, not evidence that the projection is accurate; historical
 early-season performance still needs improvement.
+
+## M5 live output
+
+Use `--config configs/quality_tilt.toml --model M5-quality-tilt-v1` to archive
+Quality/Tilt estimates, their standard deviations and covariance, the weighted
+dynamics specifications and future state evolution. Each match decomposes score
+variance into uncertain scoring rates, Gamma match tempo and Poisson randomness.
+JSON, CSV and the existing page expose these states. M2 remains the default.
+
+The September 6 snapshot has 28 completed matches and 352 remaining fixtures.
+The M5 batch generated 10,000 forward season paths from that captured schedule.
+See the [batch report](experiments/m5_quality_tilt.md) for the exact archive and
+verification evidence. Neither the sampled posterior nor the dynamics grid is
+claimed to be fully calibrated.

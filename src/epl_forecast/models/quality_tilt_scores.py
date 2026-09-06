@@ -135,3 +135,30 @@ class ScoreMixture:
             mask = indices == index
             home[mask], away[mask] = component.sample(rng, int(mask.sum()))
         return home, away
+
+
+def score_diagnostics(scores):
+    from scipy.stats import poisson
+
+    if isinstance(scores, ScoreMixture):
+        rows = [score_diagnostics(c) for c in scores.components]
+        return {key: float(scores.weights @ [row[key] for row in rows]) for key in rows[0]}
+    home = np.atleast_1d(getattr(scores, "home_rates", scores.home_rate))
+    away = np.atleast_1d(getattr(scores, "away_rates", scores.away_rate))
+    weights = getattr(scores, "weights", np.ones(1))
+    if isinstance(scores, GammaPoissonMixture):
+        k = scores.dispersion
+        total_tail = nbinom.sf(5, k, k / (k + home + away))
+        home_zero, away_zero = (k / (k + home)) ** k, (k / (k + away)) ** k
+        both_zero = (k / (k + home + away)) ** k
+    else:
+        total_tail = poisson.sf(5, home + away)
+        home_zero, away_zero = np.exp(-home), np.exp(-away)
+        both_zero = home_zero * away_zero
+    return {
+        "p_total_goals_ge6": float(weights @ total_tail),
+        "p_scoreless": float(weights @ both_zero),
+        "p_both_score": float(weights @ (1 - home_zero - away_zero + both_zero)),
+        "expected_home_goals": float(scores.home_rate),
+        "expected_away_goals": float(scores.away_rate),
+    }

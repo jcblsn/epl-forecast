@@ -121,6 +121,9 @@ class QualityTiltFilter(DynamicAttackDefense):
         scores = self.score_distribution(fixture)
         return Forecast(scores.outcome_probabilities(), scores)
 
+    def sample_forecast_state(self, rng, size=1):
+        return ForwardQualityTiltStates(self, rng, size)
+
     def team_summary(self, team, season):
         state = self.team_state(team, season)
         return state_summary(team, state)
@@ -183,8 +186,14 @@ class BayesianQualityTilt:
         self.as_of = None
 
     def fit(self, matches, as_of):
-        for member in self.members:
-            member.fit(matches, as_of)
+        try:
+            for member in self.members:
+                member.fit(matches, as_of)
+        except (ValueError, RuntimeError, np.linalg.LinAlgError):
+            self.as_of = None
+            for member in self.members:
+                member._reset()
+            raise
         log_weights = np.log(self.prior_weights) + [m.log_evidence for m in self.members]
         self.weights = np.exp(log_weights - logsumexp(log_weights))
         self.as_of = as_of
@@ -234,10 +243,6 @@ class BayesianQualityTilt:
         return Forecast(scores.outcome_probabilities(), scores)
 
     def sample_forecast_state(self, rng, size=1):
-        if self.as_of is None:
-            raise ValueError("Fit the model before sampling states")
-        if type(size) is not int or size < 1:
-            raise ValueError("State sample size must be a positive integer")
         return ForwardQualityTiltStates(self, rng, size)
 
 
@@ -245,10 +250,16 @@ class ForwardQualityTiltStates:
     evolves_future_states = True
 
     def __init__(self, model, rng, size):
+        if model.as_of is None:
+            raise ValueError("Fit the model before sampling states")
+        if type(size) is not int or size < 1:
+            raise ValueError("State sample size must be a positive integer")
         self.as_of, self.size, self.rng = model.as_of, size, rng
-        indices = rng.choice(len(model.members), size=size, p=model.weights)
+        members = getattr(model, "members", [model])
+        weights = getattr(model, "weights", np.ones(1))
+        indices = rng.choice(len(members), size=size, p=weights)
         self.groups = []
-        for index, member in enumerate(model.members):
+        for index, member in enumerate(members):
             positions = np.flatnonzero(indices == index)
             if not len(positions):
                 continue

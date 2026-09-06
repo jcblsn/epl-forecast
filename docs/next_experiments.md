@@ -1,38 +1,37 @@
 # Research queue
 
-The [north star](north_star.md) governs priorities. M2 remains the reference;
-M4 dynamic hierarchical attack/defense is now a functioning prototype. Keep the historical
-data, chronological evaluation, live archives, score interface and core tests.
-The [M2 search](experiments/m2_tuning.md) found little value in further tuning.
+M5 now supplies Quality/Tilt states, separate dynamics with approximate Bayesian
+weights, shared-Gamma scoring, forward state trajectories, and a sampled
+posterior reference. The [batch report](experiments/m5_quality_tilt.md) records
+what these components achieved. M2 remains the operational reference.
 
-The [first M4 evaluation](experiments/m4_dynamic.md) is nearly tied with M2
-overall and worse early in the season. Individual Championship performance adds
-little over the learned promotion population. Continue this architecture; next
-audit the entry proxy, reference scale and uncertainty approximation before
-increasing model complexity. Posterior coverage under simulated known states is
-a useful next diagnostic. Keep M2 as the operational default during that work.
+The player/squad layer is the next main modeling project. Use the
+[player audit](player_data_audit.md) to design M6 around persistent club quality,
+hierarchical player contributions and uncertain expected minutes. Start the
+full-feature pilot in 2023/24–2025/26. Fixture-time clubs and past appearances
+are available; historical injury states, complete candidate squads and exact
+publication-time replay still need evidence. FPL prices and fantasy points are
+not substitutes for player quality.
 
-| Architectural role | Next work | Evidence needed |
-| --- | --- | --- |
-| Hierarchical starting state | Implemented bridge; refine the noisy entry proxy and pooling, then retain useful individual Championship signal. | Entry performance versus incumbents, Championship signal, carryover uncertainty, and how quickly PL evidence changes the prior. |
-| Dynamic team state | Implemented sequential attack/defense; validate uncertainty and diagnose early-season adaptation. | Rolling comparisons with M2, early-season and promoted-team errors, calibration, response to changing form, and plausible state uncertainty. |
-| State to score distribution | Preserve joint score likelihoods, grids and unbounded sampling. | Initially conditional Poisson; compact Dixon–Coles or overdispersion diagnostics only when they inform the mature likelihood. |
-| State to season forecast | Implemented joint posterior draws per path. Investigate future evolution after current-state uncertainty is credible. | Coherent uncertainty across fixtures, deterministic-model compatibility and conserved table arithmetic. Hot evolution comes later. |
-| Observations and priors later | Keep FPL snapshots; audit player history, then consider squad priors and persistent club quality. Treat shots/xG as observations of state. | Point-in-time coverage, stable definitions and incremental information. No detailed player model before the audit. |
-| External information later | Keep structural and market-assisted products separate. | Matched forecast horizons and chronological evidence of incremental market information. |
-| Live operation | Continue snapshots and forecast archives; expose new model states and uncertainty through the existing commands. | Forecasts archived before kickoff and explanations of changed estimates. No new scheduler or frontend work is needed. |
+Carry two concrete M5 findings into that work:
 
-Use `idea → small implementation → rolling CV → inspect errors → iterate`.
-All historical seasons can supply development evidence. Any parameter selection
-must use earlier seasons when evaluating the selected strategy. Bridge fitting
-must likewise exclude the target season's future PL results and Championship
-records unavailable at the cutoff. Inspect per-season proper scores and
-calibration alongside useful slices; aggregate log loss is not the only decision.
+- The initial dynamics grid puts almost all historical posterior weight on one
+  low-volatility, weak-overdispersion corner. Expand or assess support and check
+  predictive-evidence approximation before interpreting the grid as comprehensive
+  hyperparameter uncertainty. Do not artificially flatten weights to hide this.
+- Synthetic Quality/Tilt interval coverage is close to nominal on the tested
+  short subset, but league-scoring coverage is low. The reference supports the
+  fast filter for now; investigate that identifiable approximation issue rather
+  than replacing production inference wholesale. The sampled reference uses
+  population initialization and does not validate promotion entry uncertainty.
 
-Archived live forecasts are the forward test. Retain per-match predictions and
-disclose market horizons. Short result tables suffice for exploration; experiment
-registries, frozen gates and extensive reproduction ceremony are unnecessary.
+Shared tempo adds a coherent correlated score law but does not improve initial
+score likelihood against the Poisson ablation. Inspect draw and tail residuals
+before adding a local score correction. Keep chronology in any subsequent
+choice of dynamics or likelihood support.
 
-Deprioritize more Elo variants, larger M2 searches, manager/news features,
-elaborate market assimilation and obscure European qualification edge cases.
-Keep honest position probabilities and conditional cup scenarios for now.
+Freeze the promoted-population prior. Individual Championship translation,
+more Elo/M2 tuning, frontend work, schedulers, manager/news effects, market
+assimilation and European qualification edge cases are not the next workstream.
+Continue live captures and forecasts. Short diagnostic tables and retained
+predictions are sufficient; no new experiment-governance process is needed.

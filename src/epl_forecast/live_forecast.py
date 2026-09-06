@@ -212,8 +212,12 @@ def export_forecast(
         for row in live.details.values()
         if row["status"] in {"in_progress", "awaiting_result"}
     ]
+    evolving = bool(getattr(model, "fit_diagnostics", {}).get("future_states"))
+    unscheduled = [
+        row["match_id"] for row in live.details.values() if row["status"] == "unscheduled"
+    ]
     simulation = None
-    if not in_progress:
+    if not in_progress and not (evolving and unscheduled):
         simulation = simulate_season(
             model,
             live.played,
@@ -238,6 +242,7 @@ def export_forecast(
         matches.append(
             {
                 **live.details[fixture.match_id],
+                "model_forecast_date": str(fixture.match_date),
                 "p_home": float(prediction.probabilities[0]),
                 "p_draw": float(prediction.probabilities[1]),
                 "p_away": float(prediction.probabilities[2]),
@@ -311,6 +316,8 @@ def export_forecast(
             "Season projection awaits full-time results for in-progress or overdue fixtures; "
             "this model does not forecast games in play."
             if in_progress
+            else "Season projection awaits fixture dates required for future state evolution."
+            if evolving and unscheduled
             else None
         ),
         "fixtures_awaiting_results": in_progress,
