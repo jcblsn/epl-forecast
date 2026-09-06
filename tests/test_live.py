@@ -153,6 +153,63 @@ def test_snapshot_squads_use_observed_membership_and_reject_future_capture(live_
         snapshot_squads(live_snapshot, OBSERVED)
 
 
+def test_player_history_capture_provenance_identity_and_fixture_club(live_snapshot, monkeypatch):
+    from epl_forecast.data import player_live
+    from epl_forecast.data.squads import PlayerHistory
+    from epl_forecast.storage import sha256_bytes
+
+    bootstrap_path = live_snapshot / "fpl_bootstrap.json"
+    bootstrap = json.loads(bootstrap_path.read_text())
+    bootstrap["elements"] = [
+        {"id": 1, "code": 101, "team": 3, "web_name": "Transferred", "element_type": 1},
+        {"id": 2, "code": 102, "team": 2, "web_name": "Opponent", "element_type": 1},
+    ]
+    write_json(bootstrap_path, bootstrap)
+    refresh_hashes(live_snapshot)
+    fixture = json.loads((live_snapshot / "fpl_fixtures.json").read_text())[0]
+
+    def fake_download(url):
+        element = int(url.rstrip("/").split("/")[-1])
+        payload = json.dumps(
+            {
+                "history": [
+                    {
+                        "element": element,
+                        "fixture": 1,
+                        "kickoff_time": fixture["kickoff_time"],
+                        "was_home": element == 1,
+                        "opponent_team": 2 if element == 1 else 1,
+                        "team_h_score": 2,
+                        "team_a_score": 0,
+                        "minutes": 90,
+                        "starts": 1,
+                    }
+                ]
+            }
+        ).encode()
+        return payload, {
+            "url": url,
+            "retrieved_at": datetime.now(UTC).isoformat(),
+            "sha256": sha256_bytes(payload),
+            "bytes": len(payload),
+        }
+
+    monkeypatch.setattr(player_live, "download", fake_download)
+    directory = player_live.capture_player_histories(live_snapshot, live_snapshot / "players")
+    rows, report = player_live.load_captured_player_histories(directory)
+    assert len(rows) == 2
+    assert report["audit"]["final_club_disagrees_with_fixture"] == 1
+    assert report["errors"] == []
+    history = PlayerHistory(rows)
+    assert history.exposure("101", OBSERVED, strict=True) == ()
+    assert history.exposure("101", timestamp(report["completed_at"]), strict=True) == ((90, 1),)
+    assert all(r["historical_observed_at"] for r in rows)
+    path = directory / "1.json"
+    path.write_bytes(path.read_bytes() + b" ")
+    with pytest.raises(ValueError, match="checksum"):
+        player_live.load_captured_player_histories(directory)
+
+
 def test_future_score_labels_do_not_enter_live_inputs(live_snapshot):
     first = load_live_season(live_snapshot)
     update_fixtures(live_snapshot, lambda rows: rows[-1].update(team_h_score=99, team_a_score=99))

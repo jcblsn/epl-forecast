@@ -76,3 +76,36 @@ Brier score is 0.12740. Four-or-more starter changes worsen those scores to 24.0
 and 0.15160. These are initial absolute scores, not an improvement claim; a
 chronological lineup baseline comparison remains necessary. Full predictions and
 fixture-side diagnostics remain in `runs/m6-lineups-v1`, with hashes in the report.
+
+## Current fixture histories
+
+Capture a fresh season snapshot, then collect each player endpoint into a new
+immutable directory. Replay normalization separately without refetching:
+
+```sh
+uv run epl-forecast data snapshot --season-start 2026
+uv run python scripts/capture_player_histories.py \
+  --snapshot snapshots/2026-09-06T145910.469163Z --output runs/m6-player-capture-v1
+uv run python scripts/capture_player_histories.py \
+  --capture data/raw/players/live/2026-09-06T145935.114093Z \
+  --output runs/m6-player-capture-replay-v1
+```
+
+The [first retained capture](experiments/m6/current_player_capture.json) collected
+all 653 endpoints between 14:59:35 and 15:00:16 UTC on September 6. Normalization
+retains 1,769 player rows over the 28 fixtures already marked completed in its
+parent snapshot, with exactly eleven starters on all 56 sides. It defers 120
+rows for fixtures the parent snapshot had not marked complete. Fixture scores,
+kickoffs, identities and checksums must agree. Twenty-five rows disagree with
+the player's current club; their club comes from the historical fixture instead.
+
+Each row carries its own endpoint response hash and actual retrieval timestamp.
+These histories cannot enter an earlier forecast cutoff. A later parent snapshot
+must not be silently substituted into the capture: its manifest hash is pinned.
+Explicit replay can supply a relocated copy with identical bytes. The normalized
+gzip has deterministic metadata. The original live snapshots remain unchanged.
+
+The first captured squad has 554 candidates after excluding removed/unavailable
+FPL records; 553 have current-season exposure histories. Coverage is against FPL,
+not an independently verified league registration list. Endpoint failures remain
+explicit in the capture manifest and normalized report.

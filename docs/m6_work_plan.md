@@ -29,3 +29,20 @@ Completion requires all of the following, with retained inputs and results:
 No default switch is justified by implementing Bayesian machinery alone. Broad
 baseline tuning, news/manager/market layers, frontend redesign and scheduling
 infrastructure remain outside this batch.
+
+## Verified progress and remaining work
+
+- Cutoff-specific squads and coherent lineup sampling are committed. The full
+  three-season lineup coverage audit is in `experiments/m6/lineup_coverage.json`.
+  Opening-week roster gaps remain explicit; lineup baseline comparison is pending.
+- The bounded M5 investigation is complete in `experiments/m6_m5_uncertainty.md`.
+  It separates grid support from evidence integration and identifies a common-rate
+  posterior-mean bias supported by a sampled reference. Moment correction remains
+  a research alternative. Existing Poisson M5 is the primary M6 parent comparison.
+- Current player fixture capture and timestamped normalization are implemented.
+  The first 653-endpoint capture is recorded in `experiments/m6/current_player_capture.json`.
+- Still required: hierarchical club/player inference and its sampled reference;
+  separate Quality and role/Tilt variants; lineup and player uncertainty through
+  match and season forecasts; an expiring absence scenario; direct/simulated match
+  agreement; identical-cutoff model comparisons with promoted/opening/change/newcomer
+  slices; and the final comparative decision report. No xG has entered modeling.
