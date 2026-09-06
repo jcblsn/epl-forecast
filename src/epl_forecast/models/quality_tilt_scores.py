@@ -125,9 +125,11 @@ class ScoreMixture:
         return tuple(self.weights @ [c.outcome_probabilities() for c in self.components])
 
     def log_probability(self, home_goals, away_goals):
+        log_weights = np.full(len(self.weights), -np.inf)
+        np.log(self.weights, out=log_weights, where=self.weights > 0)
         return float(
             logsumexp(
-                np.log(self.weights)
+                log_weights
                 + [c.log_probability(home_goals, away_goals) for c in self.components]
             )
         )

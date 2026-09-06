@@ -1,0 +1,268 @@
+{
+  "by_season": [
+    {
+      "brier": 0.547156497904164,
+      "classwise_ece": 0.027037016615429288,
+      "log_loss": 0.9293582222045591,
+      "matches": 380,
+      "model_id": "M2-attack-defense-v1",
+      "score_matches": 380,
+      "score_nll": 3.0857183931450884,
+      "season_id": "2023-2024"
+    },
+    {
+      "brier": 0.588490851437947,
+      "classwise_ece": 0.029677643413050975,
+      "log_loss": 0.9853308720339864,
+      "matches": 380,
+      "model_id": "M2-attack-defense-v1",
+      "score_matches": 380,
+      "score_nll": 2.9682847307178846,
+      "season_id": "2024-2025"
+    },
+    {
+      "brier": 0.5462650690965603,
+      "classwise_ece": 0.03100551855097355,
+      "log_loss": 0.9287517553645074,
+      "matches": 380,
+      "model_id": "M5-quality-tilt-poisson",
+      "score_matches": 380,
+      "score_nll": 3.0655443596824337,
+      "season_id": "2023-2024"
+    },
+    {
+      "brier": 0.58765090324303,
+      "classwise_ece": 0.04679723466348819,
+      "log_loss": 0.9850839379625548,
+      "matches": 380,
+      "model_id": "M5-quality-tilt-poisson",
+      "score_matches": 380,
+      "score_nll": 2.965567529172325,
+      "season_id": "2024-2025"
+    },
+    {
+      "brier": 0.5462638185478358,
+      "classwise_ece": 0.03100858018915273,
+      "log_loss": 0.9287504006265881,
+      "matches": 380,
+      "model_id": "M5-centered-poisson-control",
+      "score_matches": 380,
+      "score_nll": 3.065543073260295,
+      "season_id": "2023-2024"
+    },
+    {
+      "brier": 0.5876509500259421,
+      "classwise_ece": 0.046797242821430315,
+      "log_loss": 0.9850840219221387,
+      "matches": 380,
+      "model_id": "M5-centered-poisson-control",
+      "score_matches": 380,
+      "score_nll": 2.965567398061105,
+      "season_id": "2024-2025"
+    },
+    {
+      "brier": 0.5491438716640078,
+      "classwise_ece": 0.03840897597851597,
+      "log_loss": 0.9338571847771525,
+      "matches": 380,
+      "model_id": "M7-xg-v1",
+      "score_matches": 380,
+      "score_nll": 3.0549127968702328,
+      "season_id": "2023-2024"
+    },
+    {
+      "brier": 0.5776885080933517,
+      "classwise_ece": 0.06052269410865627,
+      "log_loss": 0.9718384796073027,
+      "matches": 380,
+      "model_id": "M7-xg-v1",
+      "score_matches": 380,
+      "score_nll": 2.966118099172308,
+      "season_id": "2024-2025"
+    },
+    {
+      "brier": 0.5331233730163929,
+      "classwise_ece": 0.03847765093724288,
+      "log_loss": 0.9092124760895899,
+      "matches": 380,
+      "model_id": "market:bet365_preclosing",
+      "score_matches": 0,
+      "score_nll": null,
+      "season_id": "2023-2024"
+    },
+    {
+      "brier": 0.5786638026588309,
+      "classwise_ece": 0.04040828444055506,
+      "log_loss": 0.9707576734366715,
+      "matches": 380,
+      "model_id": "market:bet365_preclosing",
+      "score_matches": 0,
+      "score_nll": null,
+      "season_id": "2024-2025"
+    },
+    {
+      "brier": 0.5267458308911198,
+      "classwise_ece": 0.03338474736686775,
+      "log_loss": 0.9007013128279796,
+      "matches": 380,
+      "model_id": "market:market_average_closing",
+      "score_matches": 0,
+      "score_nll": null,
+      "season_id": "2023-2024"
+    },
+    {
+      "brier": 0.5751877511794848,
+      "classwise_ece": 0.039349864869337454,
+      "log_loss": 0.9667334134817074,
+      "matches": 380,
+      "model_id": "market:market_average_closing",
+      "score_matches": 0,
+      "score_nll": null,
+      "season_id": "2024-2025"
+    },
+    {
+      "brier": 0.5331180210631138,
+      "classwise_ece": 0.0337810628700146,
+      "log_loss": 0.9092502625018826,
+      "matches": 380,
+      "model_id": "market:market_average_preclosing",
+      "score_matches": 0,
+      "score_nll": null,
+      "season_id": "2023-2024"
+    },
+    {
+      "brier": 0.5788986039373658,
+      "classwise_ece": 0.04160588916635608,
+      "log_loss": 0.9705521250110707,
+      "matches": 380,
+      "model_id": "market:market_average_preclosing",
+      "score_matches": 0,
+      "score_nll": null,
+      "season_id": "2024-2025"
+    },
+    {
+      "brier": 0.6156864232483528,
+      "classwise_ece": 0.045048244805973775,
+      "log_loss": 1.0264932306876462,
+      "matches": 380,
+      "model_id": "M2-attack-defense-v1",
+      "score_matches": 380,
+      "score_nll": 2.8935311061795788,
+      "season_id": "2025-2026"
+    },
+    {
+      "brier": 0.6215510507875104,
+      "classwise_ece": 0.03965794336837747,
+      "log_loss": 1.0336636616140982,
+      "matches": 380,
+      "model_id": "M5-quality-tilt-poisson",
+      "score_matches": 380,
+      "score_nll": 2.8923185148261013,
+      "season_id": "2025-2026"
+    },
+    {
+      "brier": 0.6215510466332764,
+      "classwise_ece": 0.039657940140915296,
+      "log_loss": 1.0336636560223762,
+      "matches": 380,
+      "model_id": "M5-centered-poisson-control",
+      "score_matches": 380,
+      "score_nll": 2.8923185016784,
+      "season_id": "2025-2026"
+    },
+    {
+      "brier": 0.6177536490835825,
+      "classwise_ece": 0.0378756621953955,
+      "log_loss": 1.0291188971308203,
+      "matches": 380,
+      "model_id": "M7-xg-v1",
+      "score_matches": 380,
+      "score_nll": 2.895471247555914,
+      "season_id": "2025-2026"
+    },
+    {
+      "brier": 0.611512207721338,
+      "classwise_ece": 0.04221355725386242,
+      "log_loss": 1.018547433594444,
+      "matches": 380,
+      "model_id": "market:bet365_preclosing",
+      "score_matches": 0,
+      "score_nll": null,
+      "season_id": "2025-2026"
+    },
+    {
+      "brier": 0.6077370146246498,
+      "classwise_ece": 0.036140045233574565,
+      "log_loss": 1.0117668726695337,
+      "matches": 380,
+      "model_id": "market:market_average_closing",
+      "score_matches": 0,
+      "score_nll": null,
+      "season_id": "2025-2026"
+    },
+    {
+      "brier": 0.6100247363528881,
+      "classwise_ece": 0.04001106089271399,
+      "log_loss": 1.0152523829672504,
+      "matches": 380,
+      "model_id": "market:market_average_preclosing",
+      "score_matches": 0,
+      "score_nll": null,
+      "season_id": "2025-2026"
+    }
+  ],
+  "inputs": {
+    "configs/xg_quality_tilt.toml": "6643e5f8752385e16be4186a09e4d60c6b2d1737b346b15545832c5b249cce6b"
+  },
+  "overall": [
+    {
+      "brier": 0.5837779241968212,
+      "classwise_ece": 0.020546772901609146,
+      "log_loss": 0.9803941083087306,
+      "matches": 1140,
+      "model_id": "M2-attack-defense-v1",
+      "score_matches": 1140,
+      "score_nll": 2.982511410014184
+    },
+    {
+      "brier": 0.5851552717356849,
+      "classwise_ece": 0.028487988042234492,
+      "log_loss": 0.982499359523701,
+      "matches": 1140,
+      "model_id": "M5-centered-poisson-control",
+      "score_matches": 1140,
+      "score_nll": 2.974476324333267
+    },
+    {
+      "brier": 0.5851556743757002,
+      "classwise_ece": 0.028487412194177844,
+      "log_loss": 0.9824997849803868,
+      "matches": 1140,
+      "model_id": "M5-quality-tilt-poisson",
+      "score_matches": 1140,
+      "score_nll": 2.974476801226954
+    },
+    {
+      "brier": 0.581528676280314,
+      "classwise_ece": 0.03597963751093132,
+      "log_loss": 0.9782715205050919,
+      "matches": 1140,
+      "model_id": "M7-xg-v1",
+      "score_matches": 1140,
+      "score_nll": 2.972167381199485
+    }
+  ],
+  "runs": {
+    "runs/m7-holdout-v1": {
+      "predictions.csv": "f80056f5f8572f16e2015f1252b15852b6e13a01ac785cc3fba40db8680bf1b2",
+      "run.json": "506956b5a5c0a0c97ed7895a5d5f7a9e80365f904d4a2488c19a286f47fd7459",
+      "summary.json": "846c28e42305d9540060857c1ef3899aa0ec7d4a9abefa0a0f80050bbad2ec04"
+    },
+    "runs/m7-validation-v1": {
+      "predictions.csv": "04afca11169fe8e846222d62d154b973d3c1862fa70945e75cba57f87abd93fc",
+      "run.json": "0d4f5477fa629101d02c7934f258583577785d4d85fcc325e2595c801bf4673e",
+      "summary.json": "6b7e0d6f272cc8f19710fca0b5d4d6db108d55c7252e55a35de9627b1cc19ca9"
+    }
+  },
+  "scope": "Historical development evidence; retrospective next-day Understat availability"
+}

@@ -1,0 +1,51 @@
+experiment_id = "M7-Understat-Quality-Tilt"
+competition_id = "eng-premier-league"
+train_window_days = 1095
+min_train_matches = 700
+calibration_bins = 10
+bootstrap_samples = 0
+seed = 20260905
+development_start = "2015-08-01"
+development_end = "2023-07-01"
+validation_start = "2023-08-01"
+validation_end = "2025-07-01"
+holdout_start = "2025-08-01"
+holdout_end = "2026-07-01"
+evaluation_status = "exploratory historical rolling comparison"
+evaluation_note = "Historical development comparison; M2 unchanged, expanding M5/M7 history, Understat next-day availability assumed rather than timestamp-proven."
+
+[[models]]
+id = "M2-attack-defense-v1"
+kind = "attack_defense_poisson"
+[models.parameters]
+half_life_days = 365.0
+ridge = 5.0
+
+[[models]]
+id = "M5-quality-tilt-poisson"
+kind = "bayesian_quality_tilt"
+train_window_days = 0
+train_competitions = ["eng-premier-league", "eng-championship"]
+[models.parameters]
+independent_poisson = true
+
+[[models]]
+id = "M5-centered-poisson-control"
+kind = "centered_quality_tilt"
+train_window_days = 0
+train_competitions = ["eng-premier-league", "eng-championship"]
+[models.parameters]
+quality_retention = 0.85
+quality_sd = 0.09
+tilt_retention = 0.5
+tilt_sd = 0.07
+independent_poisson = true
+
+[[models]]
+id = "M7-xg-v1"
+kind = "bayesian_xg_quality_tilt"
+train_window_days = 0
+train_competitions = ["eng-premier-league", "eng-championship"]
+[models.parameters]
+observations_path = "data/processed/understat/matches.json"
+observations_sha256 = "f2df8be711b56d5c5165937d6aa27bb115cf25864673ae5a2126993c04fadc08"

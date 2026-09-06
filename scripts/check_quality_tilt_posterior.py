@@ -1,4 +1,5 @@
 import argparse
+import json
 from datetime import date
 from pathlib import Path
 
@@ -34,6 +35,10 @@ def main():
     parser.add_argument(
         "--centered", action="store_true", help="Check centered M5 equivalence only"
     )
+    parser.add_argument(
+        "--xg", type=Path, help="Check fixed-parameter M7 against sampled reference"
+    )
+    parser.add_argument("--chance-probability", type=float, default=0.2)
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
     matches, _, manifest = load_processed(args.data)
@@ -45,6 +50,16 @@ def main():
             and args.start <= m.fixture.match_date < args.end
         ]
     )
+    if args.xg:
+        from epl_forecast.models.xg_quality_tilt import XG_DYNAMICS
+
+        if args.centered:
+            raise ValueError("Choose the M5 centered check or M7 sampled check")
+        records = {r["match_id"]: r for r in json.loads(args.xg.read_text())}
+        data["xg_records"] = [records[m.fixture.match_id] for m in data["matches"]]
+        data["xg"] = np.array([[r["home_xg"], r["away_xg"]] for r in data["xg_records"]])
+        data["chance_probability"] = args.chance_probability
+        data["parameters"] = XG_DYNAMICS
     report = {
         "seed": args.seed,
         "start": str(args.start),
@@ -52,7 +67,7 @@ def main():
         "matches": len(data["matches"]),
         "teams": data["teams"],
         "cutoff": str(data["cutoff"]),
-        "fixed_parameters": PARAMETERS,
+        "fixed_parameters": data.get("parameters", PARAMETERS),
         "scope": "Fresh population priors on a historical subset; no promotion bridge.",
         "data_manifest": manifest,
     }
@@ -64,6 +79,14 @@ def main():
         "sampling": diagnostics,
         "comparison": compare_posterior(draws["final_state"], mean, covariance),
     }
+    if args.xg:
+        from epl_forecast.storage import file_hash
+
+        report["xg_source"] = {"path": str(args.xg), "sha256": file_hash(args.xg)}
+        report["chance_probability"] = args.chance_probability
+        report["interpretation"] = "Conditional M7 filter check; not full-history calibration"
+        write_json(args.output / "report.json", report)
+        return
     if args.centered:
         report["centered_equivalence"] = centered_reference_comparison(data, draws["final_state"])
         report["centered_full_history"] = centered_history_comparison(matches)

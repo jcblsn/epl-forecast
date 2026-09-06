@@ -40,6 +40,11 @@ class CenteredQualityTiltFilter(QualityTiltFilter):
     reversion drives future scoring level, preserving the original M5 process.
     """
 
+    def __init__(self, independent_poisson=False, **kwargs):
+        if independent_poisson:
+            kwargs["dispersion"] = None
+        super().__init__(**kwargs)
+
     def _coordinates(self):
         return tilt_coordinates(len(self.team_index))
 

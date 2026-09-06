@@ -191,3 +191,8 @@ Git-ignored artifacts; back them up if retaining the live record matters.
 When testing a rebuilt wheel at the same version, use `uv run --no-cache
 --no-project --with ./dist/epl_forecast-0.1.0-py3-none-any.whl ...` to avoid a stale
 cached installation.
+
+M7 research adds a pinned Understat team xG channel to the centered Quality/Tilt
+parent. See [the model](docs/xg_model.md) and [batch evidence](docs/experiments/m7_xg_parent.md).
+Use `configs/xg_quality_tilt.toml` for chronological comparisons; M2 remains the
+operational benchmark. Historical xG availability is reconstructed, not prospective.

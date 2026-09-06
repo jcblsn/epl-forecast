@@ -52,6 +52,7 @@ def reference_model(data, infer_parameters=False):
     import numpyro.distributions as dist
     from jax import lax
     from jax.scipy.special import gammaln
+    from jax.scipy.special import logsumexp as jax_logsumexp
 
     if infer_parameters:
         rq = numpyro.sample("quality_retention", dist.Beta(9, 1.5))
@@ -111,6 +112,38 @@ def reference_model(data, infer_parameters=False):
         eta += jnp.einsum("mip,p->mi", jnp.asarray(data["player_design"]), beta)
         final_state = jnp.concatenate([final_state, beta])
     goals = jnp.asarray(data["goals"])
+    if "xg" in data:
+        p = data["chance_probability"]
+        xg = jnp.asarray(data["xg"])
+        x = jnp.where(xg > 0, xg, 1)
+        missed = jnp.arange(128)
+        total = goals[..., None] + missed
+        valid = total > 0
+        safe_total = jnp.maximum(total, 1)
+        terms = (
+            total * eta[..., None]
+            - gammaln(goals[..., None] + 1)
+            - gammaln(missed + 1)
+            - gammaln(safe_total)
+            + missed * jnp.log((1 - p) / p)
+            + (total - 1) * jnp.log(x[..., None])
+            - total * jnp.log(p)
+            - x[..., None] / p
+        )
+        terms = jnp.where(valid, terms, -jnp.inf)
+        normalizer = jax_logsumexp(terms, axis=-1)
+        rate = jnp.exp(eta)
+        joint = normalizer - rate / p
+        logp = jnp.where(xg == 0, -rate / p, joint)
+        logp = jnp.where(jnp.isnan(xg), goals * eta - rate - gammaln(goals + 1), logp)
+        ratio = rate * (1 - p) * x / p**2 / (128 * (goals + 127))
+        tail = jnp.where(
+            ratio < 1, jnp.exp(terms[..., -1] - normalizer) * ratio / (1 - ratio), jnp.inf
+        )
+        numpyro.deterministic("opportunity_tail_bound", jnp.max(jnp.where(xg > 0, tail, 0)))
+        numpyro.factor("scores", logp.sum())
+        numpyro.deterministic("final_state", final_state)
+        return
     if k is None:
         numpyro.factor("scores", (goals * eta - jnp.exp(eta) - gammaln(goals + 1)).sum())
         numpyro.deterministic("final_state", final_state)
@@ -168,13 +201,27 @@ def sample_reference(
             if k in PARAMETERS
         },
     }
+    if "opportunity_tail_bound" in draws:
+        report["max_opportunity_tail_bound"] = float(draws["opportunity_tail_bound"].max())
+        if report["max_opportunity_tail_bound"] > 1e-12:
+            raise RuntimeError("Sampled reference opportunity series truncation is too large")
     return draws, report
 
 
 def production_posterior(data, parameters=None):
-    model = QualityTiltFilter(**(parameters or PARAMETERS)).fit(data["matches"], data["cutoff"])
+    parameters = parameters or data.get("parameters", PARAMETERS)
+    if "xg" in data:
+        from epl_forecast.models.xg_quality_tilt import XGQualityTiltFilter
+
+        model = XGQualityTiltFilter(
+            data["xg_records"], data["chance_probability"], **parameters
+        ).fit(data["matches"], data["cutoff"])
+        mean, covariance = model.population_moments()
+    else:
+        model = QualityTiltFilter(**parameters).fit(data["matches"], data["cutoff"])
+        mean, covariance = model.mean, model.covariance
     indices = [0, 1] + [2 + 2 * model.team_index[t] + d for t in data["teams"] for d in range(2)]
-    return model.mean[indices], model.covariance[np.ix_(indices, indices)]
+    return mean[indices], covariance[np.ix_(indices, indices)]
 
 
 def compare_posterior(draws, mean, covariance):

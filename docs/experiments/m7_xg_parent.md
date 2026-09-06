@@ -70,9 +70,53 @@ exercise unknown next-season entrants and multiple evolving forecast dates.
 Twenty-seven centered, sampled-reference, Quality/Tilt and dynamic tests pass.
 These are equivalence checks, not evidence of calibrated season uncertainty.
 
+## Probabilistic xG parent and first comparison
+
+M7 now implements the [joint opportunity observation model](../xg_model.md).
+Latent opportunities jointly generate Gamma aggregate xG and Binomial goals;
+marginal goals remain Poisson. Missing xG recovers the original goal likelihood,
+zero xG has an explicit atom, and posterior opportunity moments determine state
+updates. Bayesian weights over three observation-noise specifications propagate
+into the centered state and evolving season paths. Inputs are checksum-pinned
+through `configs/xg_quality_tilt.toml`. No lineup heuristics or M2 parameters changed.
+
+The [M7 sampled reference](m7/xg_reference.json) uses the exact configured dynamics
+on the same 90-match fresh-population subset. Four chains have no divergences,
+maximum R-hat 1.0010 and minimum effective sample size 2,114. Maximum posterior
+mean discrepancy is 0.2585 sampled standard deviations; median filter/reference
+SD ratio is 0.9920. The maximum sampled likelihood series tail bound is 6.45e-91.
+This is conditional on p=0.2 and fixed dynamics, not a noise-mixture or long-history
+calibration claim.
+
+The [initial chronological summary](m7/chronological_summary.json) preserves the
+1,140-fixture comparison and input/output hashes. Over 2023/24–2024/25, M7 outcome
+loss is 0.95285 versus M5's 0.95692, and score loss is 3.01052 versus 3.01556.
+In 2025/26, outcome loss is 1.02912 versus M5's 1.03366, but score loss is slightly
+worse (2.89547 versus 2.89232). M2 has better 2025/26 outcome loss (1.02649).
+The original M5 Poisson ensemble and centered fixed control agree to reported
+precision; its existing dynamics weights already concentrate on that corner.
+These comparisons do not establish operational promotion. Slices, calibration,
+complementarity, high-information diagnostics and state interpretation follow.
+
+Reproduce with fresh output directories:
+
+```sh
+OPENBLAS_NUM_THREADS=1 uv run epl-forecast evaluate \
+  --config configs/xg_quality_tilt.toml --split validation --output runs/m7-validation-reproduction
+OPENBLAS_NUM_THREADS=1 uv run epl-forecast evaluate \
+  --config configs/xg_quality_tilt.toml --split holdout --output runs/m7-holdout-reproduction
+OPENBLAS_NUM_THREADS=1 uv run --extra research python scripts/check_quality_tilt_posterior.py \
+  --xg data/processed/understat/matches.json --output runs/m7-reference-reproduction
+```
+
+The CLI split names are retained for compatibility; all these previously inspected
+seasons are historical development evidence. The full suite passed 159 tests at
+the implementation checkpoint. Tests cover marginal normalization, joint moments,
+analytical derivatives, zero/missing xG, checksums, cutoff isolation, batch versus
+incremental filtering, sampled likelihood agreement and future-path probabilities.
+
 ## Remaining work
 
-The probabilistic joint goals/xG channel, chronological model comparisons,
-high-information diagnostics, evolving season validation, player-source follow-up
-and prospective archive refresh/verification remain required. Source coverage is
-not evidence of model quality or a completed M7 parent.
+High-information and slice/calibration/state diagnostics, full evolving-season
+validation, player-source follow-up and prospective archive refresh/verification
+remain required. The current comparisons do not complete the batch audit.

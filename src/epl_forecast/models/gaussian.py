@@ -51,14 +51,6 @@ def score_laplace_update(mean, covariance, design, goals, dispersion=None):
 
     from epl_forecast.models.quality_tilt_scores import joint_logpmf
 
-    cross = covariance @ design.T
-    projected = design @ cross
-    values, vectors = np.linalg.eigh(projected)
-    keep = values > 1e-12
-    root = vectors[:, keep] * np.sqrt(values[keep])
-    location = design @ mean
-    mode = np.zeros(root.shape[1])
-
     def likelihood(eta):
         rates = np.exp(eta)
         if dispersion is None:
@@ -84,6 +76,19 @@ def score_laplace_update(mean, covariance, design, goals, dispersion=None):
         logp = joint_logpmf(observed[:, 0], observed[:, 1], pairs[:, 0], pairs[:, 1], dispersion)
         return float(logp.sum()), gradient, curvature
 
+    return likelihood_laplace_update(mean, covariance, design, likelihood)
+
+
+def likelihood_laplace_update(mean, covariance, design, likelihood):
+    """Gaussian update for a log likelihood returning value, score and negative Hessian."""
+    cross = covariance @ design.T
+    projected = design @ cross
+    values, vectors = np.linalg.eigh(projected)
+    keep = values > 1e-12
+    root = vectors[:, keep] * np.sqrt(values[keep])
+    location = design @ mean
+    mode = np.zeros(root.shape[1])
+
     def objective(u):
         with np.errstate(over="ignore", invalid="ignore"):
             value = 0.5 * (u @ u) - likelihood(location + root @ u)[0]
@@ -93,7 +98,12 @@ def score_laplace_update(mean, covariance, design, goals, dispersion=None):
         logp, score, curvature = likelihood(location + root @ mode)
         gradient = mode - root.T @ score
         hessian = np.eye(len(mode)) + root.T @ curvature @ root
-        step = cho_solve(cho_factor(hessian), gradient)
+        try:
+            factor = cho_factor(hessian)
+        except np.linalg.LinAlgError:
+            ridge = max(0.0, -np.linalg.eigvalsh(hessian).min()) + 1.0
+            factor = cho_factor(hessian + ridge * np.eye(len(mode)))
+        step = cho_solve(factor, gradient)
         if np.max(np.abs(gradient), initial=0) < 1e-8:
             break
         scale, old = 1.0, objective(mode)
