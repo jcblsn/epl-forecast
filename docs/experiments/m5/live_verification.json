@@ -1,0 +1,43 @@
+{
+  "archive": "runs/forecasts/m5-2026-09-06-verified",
+  "archive_files_verified": {
+    "fixtures.csv": "863145ff42e4ca2e3e6a9adb2e1c4591437b4bbfac298da92064e5c5e71fdbf9",
+    "forecast.json": "9af4321619b683ca9a52b180d99725521bc2a1087139fef5453963b3d2193df7",
+    "index.html": "05773cb841ee01eada38dc870ec214c90057d5254a37eac4d684f163a037751b",
+    "matches.csv": "80f4a981ad28c297369658d8de982887036309aeb46d463e5ecf88cac3df47e2",
+    "run.json": "48425dff04c1f1038b0eb40044c0c395a88802600fee326bc3def8c6da520d6a",
+    "table.csv": "447d34fdddfc07c1cce1af699b4e2eecd091fc7233bbe042b3559eed0f78b922",
+    "team_strengths.csv": "1e7a6bc2fdf19d58fc71b2b945a8ba88ebf71c955e979f2c8f67c11e6f82a1ec"
+  },
+  "archive_sha256": "65650653d828b97e740a1dd2aff9b288d1f6577769e26886fd56cb7fdbfacb9e",
+  "archived_at": "2026-09-06T05:35:52.252654+00:00",
+  "archived_before_kickoff": 352,
+  "checks": {
+    "pytest": "100 passed (research extra enabled)",
+    "ruff_check": "all checks passed",
+    "ruff_format": "63 files already formatted"
+  },
+  "code_sha256": "199626699d83395426203b317eb13d76f947000b7c9a711d7805ac3697dfb3c5",
+  "fixed_results": 28,
+  "forward_season_paths": 10000,
+  "known_limits": [
+    "M2 remains the operational default",
+    "finite-grid dynamics weights concentrate on a boundary specification",
+    "short-subset synthetic league-level coverage is below nominal",
+    "no historical publication-time or full squad reconstruction claim"
+  ],
+  "matches": 352,
+  "player_dataset_sha256": "4b02ee09712a7e6fee093ab1e18fe13c6c27597385257dff879a4ba5ff9793b1",
+  "snapshot": "snapshots/2026-09-06T052122.516459Z",
+  "source_commit": "bcb164600d983bdbabc155b15752e357efbff217",
+  "source_worktree_clean_at_generation_and_verification": true,
+  "team_states": 20,
+  "verified": [
+    "Quality and Tilt means, SDs and covariance",
+    "H/D/A probabilities and score-grid mass with reported tails",
+    "state, tempo and Poisson variance decomposition",
+    "forward-state simulation metadata and season position probability totals",
+    "all archived file hashes match clean source fingerprint",
+    "player dataset hash, row count and 3800 fixture crosschecks"
+  ]
+}
