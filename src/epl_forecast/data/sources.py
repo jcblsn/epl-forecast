@@ -20,12 +20,16 @@ class SourceAccessError(RuntimeError):
     pass
 
 
-def download(url: str, attempts: int = 3) -> tuple[bytes, dict]:
+def download(
+    url: str, attempts: int = 3, headers: dict[str, str] | None = None
+) -> tuple[bytes, dict]:
     if attempts < 1:
         raise ValueError("attempts must be positive")
     for attempt in range(attempts):
         try:
-            request = Request(url, headers={"User-Agent": "epl-forecast/0.1 (research)"})
+            request = Request(
+                url, headers={"User-Agent": "epl-forecast/0.1 (research)", **(headers or {})}
+            )
             with urlopen(request, timeout=30) as response:
                 payload = response.read()
                 metadata = {

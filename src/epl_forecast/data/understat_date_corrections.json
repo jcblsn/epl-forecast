@@ -1,0 +1,210 @@
+[
+  {
+    "canonical_date": "2015-11-02",
+    "match_id": "eng-premier-league:2015-2016:tottenham-hotspur:aston-villa",
+    "reason": "Source midnight falls one day after canonical Football-Data fixture; retain source timestamp, use canonical date.",
+    "source_datetime": "2015-11-03 00:00:00",
+    "source_match_id": "190",
+    "source_sha256": "07198fdc6cb246d26efb98b8dbbb119fd251fa851af1b457f307be7f99a1e684"
+  },
+  {
+    "canonical_date": "2015-11-23",
+    "match_id": "eng-premier-league:2015-2016:crystal-palace:sunderland",
+    "reason": "Source midnight falls one day after canonical Football-Data fixture; retain source timestamp, use canonical date.",
+    "source_datetime": "2015-11-24 00:00:00",
+    "source_match_id": "210",
+    "source_sha256": "07198fdc6cb246d26efb98b8dbbb119fd251fa851af1b457f307be7f99a1e684"
+  },
+  {
+    "canonical_date": "2015-12-07",
+    "match_id": "eng-premier-league:2015-2016:everton:crystal-palace",
+    "reason": "Source midnight falls one day after canonical Football-Data fixture; retain source timestamp, use canonical date.",
+    "source_datetime": "2015-12-08 00:00:00",
+    "source_match_id": "230",
+    "source_sha256": "07198fdc6cb246d26efb98b8dbbb119fd251fa851af1b457f307be7f99a1e684"
+  },
+  {
+    "canonical_date": "2015-12-14",
+    "match_id": "eng-premier-league:2015-2016:leicester-city:chelsea",
+    "reason": "Source midnight falls one day after canonical Football-Data fixture; retain source timestamp, use canonical date.",
+    "source_datetime": "2015-12-15 00:00:00",
+    "source_match_id": "240",
+    "source_sha256": "07198fdc6cb246d26efb98b8dbbb119fd251fa851af1b457f307be7f99a1e684"
+  },
+  {
+    "canonical_date": "2015-12-21",
+    "match_id": "eng-premier-league:2015-2016:arsenal:manchester-city",
+    "reason": "Source midnight falls one day after canonical Football-Data fixture; retain source timestamp, use canonical date.",
+    "source_datetime": "2015-12-22 00:00:00",
+    "source_match_id": "250",
+    "source_sha256": "07198fdc6cb246d26efb98b8dbbb119fd251fa851af1b457f307be7f99a1e684"
+  },
+  {
+    "canonical_date": "2016-01-13",
+    "match_id": "eng-premier-league:2015-2016:liverpool:arsenal",
+    "reason": "Source midnight falls one day after canonical Football-Data fixture; retain source timestamp, use canonical date.",
+    "source_datetime": "2016-01-14 00:00:00",
+    "source_match_id": "289",
+    "source_sha256": "07198fdc6cb246d26efb98b8dbbb119fd251fa851af1b457f307be7f99a1e684"
+  },
+  {
+    "canonical_date": "2016-01-13",
+    "match_id": "eng-premier-league:2015-2016:tottenham-hotspur:leicester-city",
+    "reason": "Source midnight falls one day after canonical Football-Data fixture; retain source timestamp, use canonical date.",
+    "source_datetime": "2016-01-14 00:00:00",
+    "source_match_id": "290",
+    "source_sha256": "07198fdc6cb246d26efb98b8dbbb119fd251fa851af1b457f307be7f99a1e684"
+  },
+  {
+    "canonical_date": "2016-01-18",
+    "match_id": "eng-premier-league:2015-2016:swansea-city:watford",
+    "reason": "Source midnight falls one day after canonical Football-Data fixture; retain source timestamp, use canonical date.",
+    "source_datetime": "2016-01-19 00:00:00",
+    "source_match_id": "300",
+    "source_sha256": "07198fdc6cb246d26efb98b8dbbb119fd251fa851af1b457f307be7f99a1e684"
+  },
+  {
+    "canonical_date": "2016-02-02",
+    "match_id": "eng-premier-league:2015-2016:crystal-palace:bournemouth",
+    "reason": "Source midnight falls one day after canonical Football-Data fixture; retain source timestamp, use canonical date.",
+    "source_datetime": "2016-02-03 00:00:00",
+    "source_match_id": "316",
+    "source_sha256": "07198fdc6cb246d26efb98b8dbbb119fd251fa851af1b457f307be7f99a1e684"
+  },
+  {
+    "canonical_date": "2016-02-02",
+    "match_id": "eng-premier-league:2015-2016:manchester-united:stoke-city",
+    "reason": "Source midnight falls one day after canonical Football-Data fixture; retain source timestamp, use canonical date.",
+    "source_datetime": "2016-02-03 00:00:00",
+    "source_match_id": "317",
+    "source_sha256": "07198fdc6cb246d26efb98b8dbbb119fd251fa851af1b457f307be7f99a1e684"
+  },
+  {
+    "canonical_date": "2016-02-02",
+    "match_id": "eng-premier-league:2015-2016:west-bromwich-albion:swansea-city",
+    "reason": "Source midnight falls one day after canonical Football-Data fixture; retain source timestamp, use canonical date.",
+    "source_datetime": "2016-02-03 00:00:00",
+    "source_match_id": "318",
+    "source_sha256": "07198fdc6cb246d26efb98b8dbbb119fd251fa851af1b457f307be7f99a1e684"
+  },
+  {
+    "canonical_date": "2016-03-02",
+    "match_id": "eng-premier-league:2015-2016:liverpool:manchester-city",
+    "reason": "Source midnight falls one day after canonical Football-Data fixture; retain source timestamp, use canonical date.",
+    "source_datetime": "2016-03-03 00:00:00",
+    "source_match_id": "357",
+    "source_sha256": "07198fdc6cb246d26efb98b8dbbb119fd251fa851af1b457f307be7f99a1e684"
+  },
+  {
+    "canonical_date": "2016-03-02",
+    "match_id": "eng-premier-league:2015-2016:manchester-united:watford",
+    "reason": "Source midnight falls one day after canonical Football-Data fixture; retain source timestamp, use canonical date.",
+    "source_datetime": "2016-03-03 00:00:00",
+    "source_match_id": "358",
+    "source_sha256": "07198fdc6cb246d26efb98b8dbbb119fd251fa851af1b457f307be7f99a1e684"
+  },
+  {
+    "canonical_date": "2016-10-31",
+    "match_id": "eng-premier-league:2016-2017:stoke-city:swansea-city",
+    "reason": "Source midnight falls one day after canonical Football-Data fixture; retain source timestamp, use canonical date.",
+    "source_datetime": "2016-11-01 00:00:00",
+    "source_match_id": "2686",
+    "source_sha256": "016ddc38d5fa72a7c4d337d9b90724756c72619662ac544cf438846224f22c71"
+  },
+  {
+    "canonical_date": "2016-11-21",
+    "match_id": "eng-premier-league:2016-2017:west-bromwich-albion:burnley",
+    "reason": "Source midnight falls one day after canonical Football-Data fixture; retain source timestamp, use canonical date.",
+    "source_datetime": "2016-11-22 00:00:00",
+    "source_match_id": "2706",
+    "source_sha256": "016ddc38d5fa72a7c4d337d9b90724756c72619662ac544cf438846224f22c71"
+  },
+  {
+    "canonical_date": "2016-12-05",
+    "match_id": "eng-premier-league:2016-2017:middlesbrough:hull-city",
+    "reason": "Source midnight falls one day after canonical Football-Data fixture; retain source timestamp, use canonical date.",
+    "source_datetime": "2016-12-06 00:00:00",
+    "source_match_id": "3114",
+    "source_sha256": "016ddc38d5fa72a7c4d337d9b90724756c72619662ac544cf438846224f22c71"
+  },
+  {
+    "canonical_date": "2016-12-14",
+    "match_id": "eng-premier-league:2016-2017:crystal-palace:manchester-united",
+    "reason": "Source midnight falls one day after canonical Football-Data fixture; retain source timestamp, use canonical date.",
+    "source_datetime": "2016-12-15 00:00:00",
+    "source_match_id": "3130",
+    "source_sha256": "016ddc38d5fa72a7c4d337d9b90724756c72619662ac544cf438846224f22c71"
+  },
+  {
+    "canonical_date": "2016-12-14",
+    "match_id": "eng-premier-league:2016-2017:west-bromwich-albion:swansea-city",
+    "reason": "Source midnight falls one day after canonical Football-Data fixture; retain source timestamp, use canonical date.",
+    "source_datetime": "2016-12-15 00:00:00",
+    "source_match_id": "3131",
+    "source_sha256": "016ddc38d5fa72a7c4d337d9b90724756c72619662ac544cf438846224f22c71"
+  },
+  {
+    "canonical_date": "2016-12-14",
+    "match_id": "eng-premier-league:2016-2017:manchester-city:watford",
+    "reason": "Source midnight falls one day after canonical Football-Data fixture; retain source timestamp, use canonical date.",
+    "source_datetime": "2016-12-15 00:00:00",
+    "source_match_id": "3132",
+    "source_sha256": "016ddc38d5fa72a7c4d337d9b90724756c72619662ac544cf438846224f22c71"
+  },
+  {
+    "canonical_date": "2016-12-14",
+    "match_id": "eng-premier-league:2016-2017:stoke-city:southampton",
+    "reason": "Source midnight falls one day after canonical Football-Data fixture; retain source timestamp, use canonical date.",
+    "source_datetime": "2016-12-15 00:00:00",
+    "source_match_id": "3133",
+    "source_sha256": "016ddc38d5fa72a7c4d337d9b90724756c72619662ac544cf438846224f22c71"
+  },
+  {
+    "canonical_date": "2016-12-14",
+    "match_id": "eng-premier-league:2016-2017:tottenham-hotspur:hull-city",
+    "reason": "Source midnight falls one day after canonical Football-Data fixture; retain source timestamp, use canonical date.",
+    "source_datetime": "2016-12-15 00:00:00",
+    "source_match_id": "3134",
+    "source_sha256": "016ddc38d5fa72a7c4d337d9b90724756c72619662ac544cf438846224f22c71"
+  },
+  {
+    "canonical_date": "2016-12-19",
+    "match_id": "eng-premier-league:2016-2017:everton:liverpool",
+    "reason": "Source midnight falls one day after canonical Football-Data fixture; retain source timestamp, use canonical date.",
+    "source_datetime": "2016-12-20 00:00:00",
+    "source_match_id": "3144",
+    "source_sha256": "016ddc38d5fa72a7c4d337d9b90724756c72619662ac544cf438846224f22c71"
+  },
+  {
+    "canonical_date": "2016-12-30",
+    "match_id": "eng-premier-league:2016-2017:hull-city:everton",
+    "reason": "Source midnight falls one day after canonical Football-Data fixture; retain source timestamp, use canonical date.",
+    "source_datetime": "2016-12-31 00:00:00",
+    "source_match_id": "3155",
+    "source_sha256": "016ddc38d5fa72a7c4d337d9b90724756c72619662ac544cf438846224f22c71"
+  },
+  {
+    "canonical_date": "2017-01-03",
+    "match_id": "eng-premier-league:2016-2017:crystal-palace:swansea-city",
+    "reason": "Source midnight falls one day after canonical Football-Data fixture; retain source timestamp, use canonical date.",
+    "source_datetime": "2017-01-04 00:00:00",
+    "source_match_id": "3337",
+    "source_sha256": "016ddc38d5fa72a7c4d337d9b90724756c72619662ac544cf438846224f22c71"
+  },
+  {
+    "canonical_date": "2017-01-03",
+    "match_id": "eng-premier-league:2016-2017:stoke-city:watford",
+    "reason": "Source midnight falls one day after canonical Football-Data fixture; retain source timestamp, use canonical date.",
+    "source_datetime": "2017-01-04 00:00:00",
+    "source_match_id": "3338",
+    "source_sha256": "016ddc38d5fa72a7c4d337d9b90724756c72619662ac544cf438846224f22c71"
+  },
+  {
+    "canonical_date": "2017-01-04",
+    "match_id": "eng-premier-league:2016-2017:tottenham-hotspur:chelsea",
+    "reason": "Source midnight falls one day after canonical Football-Data fixture; retain source timestamp, use canonical date.",
+    "source_datetime": "2017-01-05 00:00:00",
+    "source_match_id": "3339",
+    "source_sha256": "016ddc38d5fa72a7c4d337d9b90724756c72619662ac544cf438846224f22c71"
+  }
+]

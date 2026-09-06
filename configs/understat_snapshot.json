@@ -1,0 +1,102 @@
+{
+  "files": [
+    {
+      "bytes": 93567,
+      "path": "raw/understat/2014/b2f90074055129559fc7600c54e1d5cc160f4e08c05023feaf2f833c49532407.bin",
+      "retrieved_at": "2026-09-06T20:35:53.474533+00:00",
+      "season_start": 2014,
+      "sha256": "b2f90074055129559fc7600c54e1d5cc160f4e08c05023feaf2f833c49532407",
+      "url": "https://understat.com/getLeagueData/EPL/2014"
+    },
+    {
+      "bytes": 94592,
+      "path": "raw/understat/2015/07198fdc6cb246d26efb98b8dbbb119fd251fa851af1b457f307be7f99a1e684.bin",
+      "retrieved_at": "2026-09-06T20:35:54.494394+00:00",
+      "season_start": 2015,
+      "sha256": "07198fdc6cb246d26efb98b8dbbb119fd251fa851af1b457f307be7f99a1e684",
+      "url": "https://understat.com/getLeagueData/EPL/2015"
+    },
+    {
+      "bytes": 94127,
+      "path": "raw/understat/2016/016ddc38d5fa72a7c4d337d9b90724756c72619662ac544cf438846224f22c71.bin",
+      "retrieved_at": "2026-09-06T20:35:55.696138+00:00",
+      "season_start": 2016,
+      "sha256": "016ddc38d5fa72a7c4d337d9b90724756c72619662ac544cf438846224f22c71",
+      "url": "https://understat.com/getLeagueData/EPL/2016"
+    },
+    {
+      "bytes": 92974,
+      "path": "raw/understat/2017/ae0a891065d252b2a03dec9759109b05dc1cf97c3075181d4c95cf30475cad33.bin",
+      "retrieved_at": "2026-09-06T20:35:56.763493+00:00",
+      "season_start": 2017,
+      "sha256": "ae0a891065d252b2a03dec9759109b05dc1cf97c3075181d4c95cf30475cad33",
+      "url": "https://understat.com/getLeagueData/EPL/2017"
+    },
+    {
+      "bytes": 92367,
+      "path": "raw/understat/2018/66d3e1e015536efec75b5870ab82a4b0a263819881613246707708301d6f9d85.bin",
+      "retrieved_at": "2026-09-06T20:35:57.704915+00:00",
+      "season_start": 2018,
+      "sha256": "66d3e1e015536efec75b5870ab82a4b0a263819881613246707708301d6f9d85",
+      "url": "https://understat.com/getLeagueData/EPL/2018"
+    },
+    {
+      "bytes": 93021,
+      "path": "raw/understat/2019/dd645847e176a1bc7bdc60618586f33b5a8f35e946dde9c63cf7475142727c1d.bin",
+      "retrieved_at": "2026-09-06T20:35:58.779255+00:00",
+      "season_start": 2019,
+      "sha256": "dd645847e176a1bc7bdc60618586f33b5a8f35e946dde9c63cf7475142727c1d",
+      "url": "https://understat.com/getLeagueData/EPL/2019"
+    },
+    {
+      "bytes": 93745,
+      "path": "raw/understat/2020/5d884c3cc10deb05df57df3f750666ffa514635862380d09f6bca6b799d467e1.bin",
+      "retrieved_at": "2026-09-06T20:35:59.726453+00:00",
+      "season_start": 2020,
+      "sha256": "5d884c3cc10deb05df57df3f750666ffa514635862380d09f6bca6b799d467e1",
+      "url": "https://understat.com/getLeagueData/EPL/2020"
+    },
+    {
+      "bytes": 94410,
+      "path": "raw/understat/2021/4d3679104fe168772c33879a73ddb736f063e958a050ddbb7290f9075580d34e.bin",
+      "retrieved_at": "2026-09-06T20:36:00.850431+00:00",
+      "season_start": 2021,
+      "sha256": "4d3679104fe168772c33879a73ddb736f063e958a050ddbb7290f9075580d34e",
+      "url": "https://understat.com/getLeagueData/EPL/2021"
+    },
+    {
+      "bytes": 95353,
+      "path": "raw/understat/2022/f6686352ac11557b4a3b45aa0e49f8218e1ea16334819cc62896eb4e82bd6174.bin",
+      "retrieved_at": "2026-09-06T20:36:01.803447+00:00",
+      "season_start": 2022,
+      "sha256": "f6686352ac11557b4a3b45aa0e49f8218e1ea16334819cc62896eb4e82bd6174",
+      "url": "https://understat.com/getLeagueData/EPL/2022"
+    },
+    {
+      "bytes": 96919,
+      "path": "raw/understat/2023/6d75fdcc0b6924daabaaf494f87099672811e95dee77f85c631d5cd4b4483f9a.bin",
+      "retrieved_at": "2026-09-06T20:36:02.780736+00:00",
+      "season_start": 2023,
+      "sha256": "6d75fdcc0b6924daabaaf494f87099672811e95dee77f85c631d5cd4b4483f9a",
+      "url": "https://understat.com/getLeagueData/EPL/2023"
+    },
+    {
+      "bytes": 96113,
+      "path": "raw/understat/2024/fd696ce4e2b77f066d76ef391e1f7bcc347abc3f71c6e1fbbd13c2e7cfabd524.bin",
+      "retrieved_at": "2026-09-06T20:36:03.729407+00:00",
+      "season_start": 2024,
+      "sha256": "fd696ce4e2b77f066d76ef391e1f7bcc347abc3f71c6e1fbbd13c2e7cfabd524",
+      "url": "https://understat.com/getLeagueData/EPL/2024"
+    },
+    {
+      "bytes": 94638,
+      "path": "raw/understat/2025/9bc4dfd7129fb9ca4ef69fdd98f12587b75b107001bc51d7232015d8e39c138c.bin",
+      "retrieved_at": "2026-09-06T20:36:04.876368+00:00",
+      "season_start": 2025,
+      "sha256": "9bc4dfd7129fb9ca4ef69fdd98f12587b75b107001bc51d7232015d8e39c138c",
+      "url": "https://understat.com/getLeagueData/EPL/2025"
+    }
+  ],
+  "provider": "understat",
+  "schema_version": 1
+}
