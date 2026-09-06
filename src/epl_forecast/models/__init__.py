@@ -3,8 +3,10 @@
 from epl_forecast.models.baselines import AttackDefensePoisson, LeagueFrequency, LeaguePoisson
 from epl_forecast.models.dynamic import DynamicAttackDefense
 from epl_forecast.models.elo import EloOrderedLogit
+from epl_forecast.models.quality_tilt import BayesianQualityTilt
 
 MODEL_TYPES = {
+    "bayesian_quality_tilt": BayesianQualityTilt,
     "league_frequency": LeagueFrequency,
     "league_poisson": LeaguePoisson,
     "attack_defense_poisson": AttackDefensePoisson,

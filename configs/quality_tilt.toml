@@ -1,0 +1,36 @@
+experiment_id = "M5-Bayesian-Quality-Tilt"
+competition_id = "eng-premier-league"
+train_window_days = 1095
+min_train_matches = 700
+calibration_bins = 10
+bootstrap_samples = 0
+seed = 20260905
+development_start = "2015-08-01"
+development_end = "2023-07-01"
+validation_start = "2023-08-01"
+validation_end = "2025-07-01"
+holdout_start = "2025-08-01"
+holdout_end = "2026-07-01"
+evaluation_status = "exploratory historical rolling comparison"
+evaluation_note = "M5 uses expanding history, frozen promotion cohorts and chronological dynamics weights. M2 retains its existing 1095-day PL window. These historical periods are development evidence."
+
+[[models]]
+id = "M2-attack-defense-v1"
+kind = "attack_defense_poisson"
+[models.parameters]
+half_life_days = 365.0
+ridge = 5.0
+
+[[models]]
+id = "M5-quality-tilt-v1"
+kind = "bayesian_quality_tilt"
+train_window_days = 0
+train_competitions = ["eng-premier-league", "eng-championship"]
+
+[[models]]
+id = "M5-quality-tilt-poisson"
+kind = "bayesian_quality_tilt"
+train_window_days = 0
+train_competitions = ["eng-premier-league", "eng-championship"]
+[models.parameters]
+independent_poisson = true

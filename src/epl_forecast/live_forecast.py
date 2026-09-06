@@ -52,6 +52,11 @@ def render_forecast(forecast: dict) -> str:
         else "Team strengths are held fixed; these probabilities include match randomness and omit "
         "uncertainty in team strength, transfers and injuries."
     )
+    if forecast.get("future_state_evolution"):
+        uncertainty_note = (
+            "These probabilities include current Quality/Tilt uncertainty, uncertain dynamics, "
+            "future changes in strength and match tempo. Transfers and injuries are omitted."
+        )
     prior_note = (
         "Promoted clubs start from Championship-informed distributions. Strength uncertainty "
         "is available in the team strengths download."
@@ -105,6 +110,24 @@ def render_forecast(forecast: dict) -> str:
             f"<td>{team['defense_multiplier']:.2f}</td>"
             f"<td>{team['training_matches']}</td></tr>"
         )
+    quality_table = ""
+    if forecast["team_strengths"] and "quality" in forecast["team_strengths"][0]:
+        quality_rows = []
+        for team in sorted(forecast["team_strengths"], key=lambda row: -row["quality"]):
+            quality_rows.append(
+                f"<tr><td>{escape(names[team['team_id']])}</td>"
+                f"<td>{team['quality']:.3f}</td><td>{team['quality_sd']:.3f}</td>"
+                f"<td>{team['tilt']:.3f}</td><td>{team['tilt_sd']:.3f}</td></tr>"
+            )
+        quality_table = (
+            "<h2>Quality and Tilt</h2><p>Quality measures relative strength; positive Tilt "
+            "raises both teams' expected goals. SD measures uncertainty "
+            "in each log-rate rating.</p>"
+            "<div class='scroll'><table><thead><tr><th>Team</th><th>Quality</th>"
+            "<th>Quality SD</th><th>Tilt</th><th>Tilt SD</th></tr></thead><tbody>"
+            + "".join(quality_rows)
+            + "</tbody></table></div>"
+        )
     europe = ""
     if simulation and simulation["europe_scenario"]:
         scenario = escape(simulation["europe_scenario"]["name"])
@@ -156,6 +179,7 @@ depends on cup results and allocated places. {escape(uncertainty_note)}</p>
 </tr></thead><tbody>{"".join(matches)}</tbody></table></div>
 <p class="note">Goals are expected scoring rates. All remaining match probabilities and
 exact-score matrices, with their omitted tail mass, are in the JSON download.</p>
+{quality_table}
 <details><summary>Current attack and defense strengths</summary>
 <p class="note">Attack above 1 raises scoring rates; defense above 1 reduces the opponent's
 rate. Both use the model's league reference. {escape(prior_note)}</p>
@@ -222,6 +246,11 @@ def export_forecast(
                     "away_rate": prediction.scores.away_rate,
                     "grid_home_rows_away_columns": grid.tolist(),
                     "omitted_probability": tail,
+                    **(
+                        {"uncertainty_components": prediction.scores.uncertainty_components()}
+                        if hasattr(prediction.scores, "uncertainty_components")
+                        else {}
+                    ),
                 },
             }
         )
@@ -268,6 +297,7 @@ def export_forecast(
         "model_results_cutoff": str(model.as_of),
         "model": run["model"],
         "state_uncertainty": "posterior" if hasattr(model, "sample_forecast_state") else "fixed",
+        "future_state_evolution": bool(getattr(model, "fit_diagnostics", {}).get("future_states")),
         "fit_diagnostics": getattr(model, "fit_diagnostics", {}),
         "training_matches": len(training),
         "training_date_max": str(max(m.fixture.match_date for m in training)),

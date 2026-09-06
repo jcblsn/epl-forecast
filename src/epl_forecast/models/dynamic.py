@@ -160,14 +160,14 @@ class DynamicAttackDefense(BaseModel):
                         2 + 2 * self.team_index[t]
                         for t in (match.fixture.home_team_id, match.fixture.away_team_id)
                     )
-                    design[2 * row, [0, 1, h, a + 1]] = [1, 1, 1, -1]
-                    design[2 * row + 1, [0, a, h + 1]] = [1, 1, -1]
+                    design[2 * row : 2 * row + 2, :2] = [[1, 1], [1, 0]]
+                    home_transform, away_transform = self._team_transforms()
+                    design[2 * row : 2 * row + 2, h : h + 2] = home_transform
+                    design[2 * row : 2 * row + 2, a : a + 2] = away_transform
                     goals.extend([match.home_goals, match.away_goals])
                     for team in (match.fixture.home_team_id, match.fixture.away_team_id):
                         self.appearances[team, match.fixture.season_id] += 1
-                self.mean, self.covariance = poisson_laplace_update(
-                    self.mean, self.covariance, design, np.array(goals)
-                )
+                self._update(design, np.array(goals))
                 self.updates += 1
             self._advance(as_of)
         except (ValueError, RuntimeError, np.linalg.LinAlgError):
@@ -182,6 +182,14 @@ class DynamicAttackDefense(BaseModel):
             "posterior": "Gaussian conditional on fixed dynamics and empirical Bayes bridge",
         }
         return self
+
+    def _team_transforms(self):
+        return np.array([[1, 0], [0, -1]]), np.array([[0, -1], [1, 0]])
+
+    def _update(self, design, goals):
+        self.mean, self.covariance = poisson_laplace_update(
+            self.mean, self.covariance, design, goals
+        )
 
     @property
     def intercept(self):
@@ -243,8 +251,8 @@ class DynamicAttackDefense(BaseModel):
         design[:, :2] = [[1, 1], [1, 0]]
         extra_mean, extra_covariance = np.zeros(2), np.zeros((2, 2))
         for team, transform in (
-            (fixture.home_team_id, np.array([[1, 0], [0, -1]])),
-            (fixture.away_team_id, np.array([[0, -1], [1, 0]])),
+            (fixture.home_team_id, self._team_transforms()[0]),
+            (fixture.away_team_id, self._team_transforms()[1]),
         ):
             if self._uses_fitted_state(team, fixture.season_id):
                 index = 2 + 2 * self.team_index[team]

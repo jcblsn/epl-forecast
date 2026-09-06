@@ -276,3 +276,31 @@ def test_dynamic_live_export_includes_uncertainty_and_posterior_simulation(live_
     assert "uncertainty in current team strength" in (output / "index.html").read_text()
     assert "Clubs without PL history start at 1" not in (output / "index.html").read_text()
     assert result["simulation"]["played_matches"] == 2
+
+
+def test_quality_tilt_live_export_has_forward_states_and_variance_components(live_snapshot):
+    from epl_forecast.models.quality_tilt import BayesianQualityTilt
+
+    live = load_live_season(live_snapshot)
+    training = [m for m in live.played if m.available_on <= OBSERVED.date()]
+    model = BayesianQualityTilt([dict(dispersion=10)]).fit(training, OBSERVED.date())
+    output = live_snapshot / "quality-forecast"
+    result = export_forecast(
+        live,
+        model,
+        training,
+        {"model": {"id": "M5", "kind": "bayesian_quality_tilt"}},
+        output,
+        80,
+        42,
+        7,
+        [],
+    )
+    assert result["future_state_evolution"]
+    assert result["simulation"]["future_state_evolution"]
+    assert result["simulation"]["played_matches"] == 2
+    assert all(t["quality_sd"] > 0 and t["tilt_sd"] > 0 for t in result["team_strengths"])
+    variance = result["matches"][0]["score_distribution"]["uncertainty_components"]
+    assert variance["match_tempo_covariance"][0][1] > 0
+    assert "Quality and Tilt" in (output / "index.html").read_text()
+    assert "holds its sampled strengths fixed" not in (output / "index.html").read_text()

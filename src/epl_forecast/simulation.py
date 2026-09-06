@@ -208,7 +208,7 @@ def simulate_season(
         raise ValueError("Sampled forecast states must match the simulation cutoff and size")
     unknown_teams = set()
     known = getattr(model, "team_index", None)
-    for fixture in sorted(remaining, key=lambda f: f.match_id):
+    for fixture in sorted(remaining, key=lambda f: (f.match_date, f.match_id)):
         if known is not None:
             unknown_teams.update(
                 t for t in (fixture.home_team_id, fixture.away_team_id) if t not in known
@@ -308,6 +308,7 @@ def simulate_season(
         "played_matches": len(played),
         "remaining_matches": len(remaining),
         "state_uncertainty": "posterior" if states is not None else "fixed",
+        "future_state_evolution": bool(getattr(states, "evolves_future_states", False)),
         "teams": rows,
         "unseen_teams": sorted(unknown_teams),
         "point_adjustments": adjustments,
@@ -315,7 +316,11 @@ def simulate_season(
         "unresolved_decisive_tie_rate": unresolved_count / simulations,
         "assumptions": [
             (
-                "One joint posterior state per season path, reused across fixtures. "
+                "One dynamics specification and current joint state per path; calendar-time "
+                "latent transitions and independent match tempo shocks continue through fixtures. "
+                "Simulated scores do not update the sampled latent states."
+                if getattr(states, "evolves_future_states", False)
+                else "One joint posterior state per season path, reused across fixtures. "
                 "Includes strength uncertainty and match randomness; no future state evolution."
                 if states is not None
                 else "Fixed fitted team strengths; independent match outcomes "

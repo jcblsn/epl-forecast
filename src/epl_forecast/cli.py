@@ -228,7 +228,11 @@ def forecast_command(args) -> None:
     ] + live.played
     as_of = live.observed_at.astimezone(LONDON).date()
     model, spec, training = fitted_model(history, config, args.model, as_of)
-    if spec["kind"] not in {"attack_defense_poisson", "dynamic_attack_defense"}:
+    if spec["kind"] not in {
+        "attack_defense_poisson",
+        "dynamic_attack_defense",
+        "bayesian_quality_tilt",
+    }:
         raise ValueError("The live strength export currently requires an attack/defense model")
     europe = (
         EuropeScenario(**json.loads(args.europe_scenario.read_text()))
