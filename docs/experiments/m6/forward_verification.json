@@ -1,0 +1,42 @@
+{
+  "forecasts": [
+    {
+      "archive_sha256": "ddb71afd0e66467aadf79b8c9dc4920b684c1fd1b737ac03af5a7bea8b44d5ed",
+      "archived_at": "2026-09-06T15:02:56.858521+00:00",
+      "checks": [
+        "all archive hashes agree",
+        "H/D/A probabilities sum to one",
+        "score grids plus omitted mass sum to one"
+      ],
+      "fixtures_awaiting_results": [
+        "eng-premier-league:2026-2027:everton:manchester-united"
+      ],
+      "forward_matches": 351,
+      "matches": 351,
+      "model": "M2-attack-defense-v1",
+      "path": "runs/m6-forward-m2-v1",
+      "simulation_unavailable_reason": "Season projection awaits full-time results for in-progress or overdue fixtures; this model does not forecast games in play.",
+      "snapshot_observed_at": "2026-09-06T14:59:11.420305+00:00"
+    },
+    {
+      "archive_sha256": "23e2da82e0b35712f970b4118dee9fdc65384ff7ba2a08f1e77b6db83f42ea68",
+      "archived_at": "2026-09-06T15:03:01.041852+00:00",
+      "checks": [
+        "all archive hashes agree",
+        "H/D/A probabilities sum to one",
+        "score grids plus omitted mass sum to one"
+      ],
+      "fixtures_awaiting_results": [
+        "eng-premier-league:2026-2027:everton:manchester-united"
+      ],
+      "forward_matches": 351,
+      "matches": 351,
+      "model": "M5-quality-tilt-poisson",
+      "path": "runs/m6-forward-m5-poisson-v1",
+      "simulation_unavailable_reason": "Season projection awaits full-time results for in-progress or overdue fixtures; this model does not forecast games in play.",
+      "snapshot_observed_at": "2026-09-06T14:59:11.420305+00:00"
+    }
+  ],
+  "lint": "uv run ruff check . passed",
+  "tests": "112 passed; uv run pytest -q"
+}
