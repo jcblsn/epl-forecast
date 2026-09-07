@@ -1,7 +1,7 @@
 """M8 compound-Poisson process mass followed by conditional Poisson scoring."""
 
 import numpy as np
-from scipy.special import gammaln, logsumexp, xlogy
+from scipy.special import gammaln, ive, logsumexp, xlogy
 
 
 class ProcessObservation:
@@ -44,40 +44,49 @@ class ProcessObservation:
                 logp -= zero_rate
                 gradient[i], curvature[i] = -zero_rate, zero_rate
                 continue
-            count = 128
-            while True:
-                n = np.arange(1, count + 1, dtype=float)
-                values = n * (eta[i] - np.log(q)) - gammaln(n + 1)
-                if np.isnan(x):
-                    values += (
-                        gammaln(n + g)
-                        - gammaln(n)
-                        - gammaln(g + 1)
-                        + g * np.log(q)
-                        - (n + g) * np.log1p(q)
-                    )
-                    ratio = intensity * (count + g) / (count * (count + 1) * (1 + q))
-                else:
-                    values += (
-                        (n - 1) * np.log(x)
-                        - x / q
-                        - gammaln(n)
-                        - n * np.log(q)
-                        + xlogy(g, x)
-                        - x
-                        - gammaln(g + 1)
-                    )
-                    ratio = intensity * x / (q * count * (count + 1))
+            if np.isnan(x):
+                # Nonzero scoring packets form a thinned Poisson process with geometric jumps.
+                n = np.arange(1, int(g) + 1, dtype=float)
+                intensity = r / (1 + q)
+                values = (
+                    n * (eta[i] - np.log1p(q))
+                    - gammaln(n + 1)
+                    + gammaln(g)
+                    - gammaln(n)
+                    - gammaln(g - n + 1)
+                    - n * np.log1p(q)
+                    + (g - n) * (np.log(q) - np.log1p(q))
+                )
                 normalizer = logsumexp(values)
                 weights = np.exp(values - normalizer)
-                if ratio < 1 and weights[-1] * ratio / (1 - ratio) < 1e-14:
-                    break
-                if count >= 16384:
-                    raise RuntimeError("Process likelihood series failed to converge")
-                count *= 2
-            expected = weights @ n
-            variance = weights @ (n - expected) ** 2
-            logp += normalizer - intensity
+                expected = weights @ n
+                variance = weights @ (n - expected) ** 2
+                logp += normalizer - intensity
+            else:
+                z = 2 * np.sqrt(r) * np.sqrt(x) / q
+                bessel = ive(1, z)
+                if z > 1e6:
+                    expected, variance = z / 2 + 0.25, z / 4
+                    log_bessel = -0.5 * np.log(2 * np.pi * z) - 3 / (8 * z)
+                elif z < 1e-5:
+                    u = r * x / q**2
+                    expected, variance = 1 + u / 2, u / 2
+                    log_bessel = np.log(z / 2) + np.log1p(u / 2) - z
+                else:
+                    expected = z / 2 * ive(0, z) / bessel
+                    variance = z**2 / 4 + expected - expected**2
+                    log_bessel = np.log(bessel)
+                logp += (
+                    -intensity
+                    - x / q
+                    + z
+                    + log_bessel
+                    + 0.5 * (eta[i] - np.log(x))
+                    - np.log(q)
+                    + xlogy(g, x)
+                    - x
+                    - gammaln(g + 1)
+                )
             gradient[i], curvature[i] = expected - intensity, intensity - variance
         return float(logp), gradient, np.diag(curvature)
 

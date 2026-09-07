@@ -39,7 +39,10 @@ def main():
         "--xg", type=Path, help="Check fixed-parameter M7 against sampled reference"
     )
     parser.add_argument("--chance-probability", type=float, default=0.2)
+    parser.add_argument("--process-scale", type=float, help="Check M8 at a fixed process scale")
     args = parser.parse_args()
+    if args.process_scale is not None and (args.xg is None or args.process_scale <= 0):
+        raise ValueError("M8 reference requires xG and a positive process scale")
     args.output.mkdir(parents=True, exist_ok=False)
     matches, _, manifest = load_processed(args.data)
     data = prepare(
@@ -60,6 +63,8 @@ def main():
         data["xg"] = np.array([[r["home_xg"], r["away_xg"]] for r in data["xg_records"]])
         data["chance_probability"] = args.chance_probability
         data["parameters"] = XG_DYNAMICS
+        if args.process_scale is not None:
+            data["process_scale"] = args.process_scale
     report = {
         "seed": args.seed,
         "start": str(args.start),
@@ -85,6 +90,10 @@ def main():
         report["xg_source"] = {"path": str(args.xg), "sha256": file_hash(args.xg)}
         report["chance_probability"] = args.chance_probability
         report["interpretation"] = "Conditional M7 filter check; not full-history calibration"
+        if args.process_scale is not None:
+            report.pop("chance_probability")
+            report["process_scale"] = args.process_scale
+            report["interpretation"] = "Conditional M8 filter check; not scale-mixture calibration"
         write_json(args.output / "report.json", report)
         return
     if args.centered:

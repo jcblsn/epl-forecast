@@ -112,6 +112,46 @@ def reference_model(data, infer_parameters=False):
         eta += jnp.einsum("mip,p->mi", jnp.asarray(data["player_design"]), beta)
         final_state = jnp.concatenate([final_state, beta])
     goals = jnp.asarray(data["goals"])
+    if "process_scale" in data:
+        q = data["process_scale"]
+        xg = jnp.asarray(data["xg"])
+        x = jnp.where(xg > 0, xg, 1)
+        n = jnp.arange(1, 257)
+        intensity = jnp.exp(eta) / q
+        common = n * (eta[..., None] - jnp.log(q)) - gammaln(n + 1)
+        observed_terms = (
+            common
+            + (n - 1) * jnp.log(x[..., None])
+            - x[..., None] / q
+            - gammaln(n)
+            - n * jnp.log(q)
+        )
+        missing_terms = (
+            common
+            + gammaln(n + goals[..., None])
+            - gammaln(n)
+            - gammaln(goals[..., None] + 1)
+            + goals[..., None] * jnp.log(q)
+            - (n + goals[..., None]) * jnp.log1p(q)
+        )
+        terms = jnp.where(jnp.isnan(xg)[..., None], missing_terms, observed_terms)
+        normalizer = jax_logsumexp(terms, axis=-1)
+        logp = normalizer - intensity
+        logp += jnp.where(jnp.isnan(xg), 0, goals * jnp.log(x) - x - gammaln(goals + 1))
+        logp = jnp.where(xg == 0, -intensity, logp)
+        logp = jnp.where(jnp.isnan(xg) & (goals == 0), -jnp.exp(eta) / (1 + q), logp)
+        ratio = jnp.where(
+            jnp.isnan(xg),
+            intensity * (256 + goals) / (256 * 257 * (1 + q)),
+            intensity * x / (q * 256 * 257),
+        )
+        tail = jnp.where(
+            ratio < 1, jnp.exp(terms[..., -1] - normalizer) * ratio / (1 - ratio), jnp.inf
+        )
+        numpyro.deterministic("opportunity_tail_bound", jnp.max(jnp.where(xg == 0, 0, tail)))
+        numpyro.factor("scores", logp.sum())
+        numpyro.deterministic("final_state", final_state)
+        return
     if "xg" in data:
         p = data["chance_probability"]
         xg = jnp.asarray(data["xg"])
@@ -210,7 +250,14 @@ def sample_reference(
 
 def production_posterior(data, parameters=None):
     parameters = parameters or data.get("parameters", PARAMETERS)
-    if "xg" in data:
+    if "process_scale" in data:
+        from epl_forecast.models.process_quality_tilt import ProcessQualityTiltFilter
+
+        model = ProcessQualityTiltFilter(
+            data["xg_records"], data["process_scale"], **parameters
+        ).fit(data["matches"], data["cutoff"])
+        mean, covariance = model.population_moments()
+    elif "xg" in data:
         from epl_forecast.models.xg_quality_tilt import XGQualityTiltFilter
 
         model = XGQualityTiltFilter(

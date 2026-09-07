@@ -23,7 +23,7 @@ from epl_forecast.storage import file_hash, write_json
 from epl_forecast.training import training_matches
 
 
-def historical_diagnostics(rows, matches, observations):
+def historical_diagnostics(rows, matches, observations, focus_model="M7-xg-v1"):
     groups = defaultdict(dict)
     for row in rows:
         if row["match_id"] in groups[row["model_id"]]:
@@ -82,9 +82,9 @@ def historical_diagnostics(rows, matches, observations):
                 }
             )
     pairs = []
-    m7 = groups["M7-xg-v1"]
+    m7 = groups[focus_model]
     for other in groups:
-        if other == "M7-xg-v1":
+        if other == focus_model:
             continue
         for label in sorted({x for tags in labels.values() for x in tags}):
             keys = [key for key in sorted(ids) if label in labels[key]]
@@ -105,7 +105,7 @@ def historical_diagnostics(rows, matches, observations):
             result["probability_error_correlation"] = float(
                 np.corrcoef(residuals(m7), residuals(groups[other]))[0, 1]
             )
-            pairs.append({"left": "M7-xg-v1", "right": other, "slice": label, **result})
+            pairs.append({"left": focus_model, "right": other, "slice": label, **result})
     return {
         "slices": summaries,
         "calibration": calibration,
@@ -161,6 +161,8 @@ def main():
     parser.add_argument("--config", type=Path, default=Path("configs/xg_quality_tilt.toml"))
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--skip-oracle", action="store_true")
+    parser.add_argument("--focus-model", default="M7-xg-v1")
+    parser.add_argument("--include-markets", action="store_true")
     parser.add_argument("--adaptation-replicates", type=int, default=0)
     parser.add_argument("--archives", type=Path, nargs="*", default=[])
     args = parser.parse_args()
@@ -174,7 +176,11 @@ def main():
     observations = {r["match_id"]: r for r in json.loads(path.read_text())}
     files = [root / "predictions.csv" for root in args.evaluations]
     rows = [row for file in files for row in csv.DictReader(file.open())]
-    report, labels = historical_diagnostics(rows, matches, observations)
+    if args.include_markets:
+        market_files = [root / "market_predictions.csv" for root in args.evaluations]
+        rows.extend(row for file in market_files for row in csv.DictReader(file.open()))
+        files.extend(market_files)
+    report, labels = historical_diagnostics(rows, matches, observations, args.focus_model)
     report["inputs"] = {str(p): file_hash(p) for p in [args.config, path, *files]}
     report["scope"] = "Historical development diagnostics; retrospective next-day xG assumed"
     if args.adaptation_replicates:

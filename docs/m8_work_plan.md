@@ -56,10 +56,10 @@ provider measurement error and test synthetic misspecification explicitly.
 | Work | Evidence required | Status |
 | --- | --- | --- |
 | Freeze M7; align research statuses | Existing retained artifacts; current README and research docs | Documentation aligned; final preservation audit pending |
-| Implement M8 generative model | Normalization, derivative, marginalization, cutoff and evolving-state checks | Pending |
-| Chronological comparison | Identical fixtures for M8, M7, centered goals parent, M2 and pre-closing/closing markets; loss, NLL, Brier and calibration | Pending |
+| Implement M8 generative model | Normalization, derivative, marginalization, cutoff and evolving-state checks | Implemented; 199-test regression suite passes |
+| Chronological comparison | Identical fixtures for M8, M7, centered goals parent, M2 and pre-closing/closing markets; loss, NLL, Brier and calibration | 1,140 matched fixtures retained in `experiments/m8/chronological_diagnostics.json` |
 | State and observation validity | Predictive xG/goals checks; known-state coverage, shocks, missing-xG sensitivity; sampled references in multiple regimes where reasonable | Pending |
-| Championship information audit | Pinned raw-field coverage, validity, semantics and stability by season; bridge test if usable | Pending |
+| Championship information audit | Pinned raw-field coverage, validity, semantics and stability by season; bridge test if usable | Post-2013 restricted bridge tested on nine promoted teams; evidence in batch report |
 | Player-process foundation | Identity/role mapping, provider distinction, pooled attacking formulation and oracle versus forecast-lineup evidence once team structure settles | Pending |
 | Protect prospective forecasts | Reliable minimal scheduled capture, immutable before/after information archives, M2/M5/M6/M7 and successor records | Pending |
 | Batch decision | Concise report, compact evidence, explicit retention/parking decision and limits | Pending |

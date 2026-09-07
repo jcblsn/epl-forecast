@@ -1,0 +1,2920 @@
+{
+  "scope": "Pinned historical raw fields; retrospective next-day availability only",
+  "seasons": [
+    {
+      "complete_shot_matches": 380,
+      "division": "E0",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 16.0,
+          "mean": 4.997368421052632,
+          "missing": 0,
+          "present": true,
+          "sd": 2.8307509550522254,
+          "valid": 380,
+          "zero": 6
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 24.0,
+          "mean": 11.428947368421053,
+          "missing": 0,
+          "present": true,
+          "sd": 3.4766444722898546,
+          "valid": 380,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 25.0,
+          "mean": 11.063157894736841,
+          "missing": 0,
+          "present": true,
+          "sd": 4.209789409199241,
+          "valid": 380,
+          "zero": 0
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 20.0,
+          "mean": 5.955263157894737,
+          "missing": 0,
+          "present": true,
+          "sd": 2.9523583230343204,
+          "valid": 380,
+          "zero": 4
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 17.0,
+          "mean": 6.044736842105263,
+          "missing": 0,
+          "present": true,
+          "sd": 3.1035800523386277,
+          "valid": 380,
+          "zero": 6
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 21.0,
+          "mean": 10.986842105263158,
+          "missing": 0,
+          "present": true,
+          "sd": 3.446177978468288,
+          "valid": 380,
+          "zero": 0
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 32.0,
+          "mean": 13.802631578947368,
+          "missing": 0,
+          "present": true,
+          "sd": 4.76616290786057,
+          "valid": 380,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 18.0,
+          "mean": 7.657894736842105,
+          "missing": 0,
+          "present": true,
+          "sd": 3.424188845854966,
+          "valid": 380,
+          "zero": 1
+        }
+      },
+      "matches": 380,
+      "season": "2010-2011",
+      "sha256": "8f5d37651aca8498d8041088835e3a734b79e2fcc34f66ca8516c650970810ce",
+      "source_path": "data/raw/football_data/2010-2011/E0/8f5d37651aca8498d8041088835e3a734b79e2fcc34f66ca8516c650970810ce.csv",
+      "target_exceeds_shots": 0
+    },
+    {
+      "complete_shot_matches": 552,
+      "division": "E1",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 14.0,
+          "mean": 5.057971014492754,
+          "missing": 0,
+          "present": true,
+          "sd": 2.6540046742148067,
+          "valid": 552,
+          "zero": 8
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 22.0,
+          "mean": 10.809782608695652,
+          "missing": 0,
+          "present": true,
+          "sd": 3.4312679803158805,
+          "valid": 552,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 21.0,
+          "mean": 9.958333333333334,
+          "missing": 0,
+          "present": true,
+          "sd": 3.853767605662555,
+          "valid": 552,
+          "zero": 1
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 15.0,
+          "mean": 5.286231884057971,
+          "missing": 0,
+          "present": true,
+          "sd": 2.608089200844771,
+          "valid": 552,
+          "zero": 8
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 22.0,
+          "mean": 6.273550724637682,
+          "missing": 0,
+          "present": true,
+          "sd": 2.9561082182747724,
+          "valid": 552,
+          "zero": 3
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 22.0,
+          "mean": 10.625,
+          "missing": 0,
+          "present": true,
+          "sd": 3.4660295017853464,
+          "valid": 552,
+          "zero": 0
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 31.0,
+          "mean": 12.771739130434783,
+          "missing": 0,
+          "present": true,
+          "sd": 4.382780685893685,
+          "valid": 552,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 16.0,
+          "mean": 6.625,
+          "missing": 0,
+          "present": true,
+          "sd": 2.9858892176853873,
+          "valid": 552,
+          "zero": 2
+        }
+      },
+      "matches": 552,
+      "season": "2010-2011",
+      "sha256": "6cb9a27511a14a1f0d4507ff0b32dffb7e9b74aff9427005a90e77c9d5498df8",
+      "source_path": "data/raw/football_data/2010-2011/E1/6cb9a27511a14a1f0d4507ff0b32dffb7e9b74aff9427005a90e77c9d5498df8.csv",
+      "target_exceeds_shots": 0
+    },
+    {
+      "complete_shot_matches": 380,
+      "division": "E0",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 19.0,
+          "mean": 4.88421052631579,
+          "missing": 0,
+          "present": true,
+          "sd": 2.988092712909328,
+          "valid": 380,
+          "zero": 14
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 22.0,
+          "mean": 10.284210526315789,
+          "missing": 0,
+          "present": true,
+          "sd": 3.405608865555813,
+          "valid": 380,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 26.0,
+          "mean": 11.43421052631579,
+          "missing": 0,
+          "present": true,
+          "sd": 4.803330879153136,
+          "valid": 380,
+          "zero": 1
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 18.0,
+          "mean": 6.478947368421053,
+          "missing": 0,
+          "present": true,
+          "sd": 3.3587402004430205,
+          "valid": 380,
+          "zero": 5
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 19.0,
+          "mean": 6.502631578947368,
+          "missing": 0,
+          "present": true,
+          "sd": 3.3845614535249586,
+          "valid": 380,
+          "zero": 5
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 19.0,
+          "mean": 10.078947368421053,
+          "missing": 0,
+          "present": true,
+          "sd": 3.3386223044793133,
+          "valid": 380,
+          "zero": 0
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 35.0,
+          "mean": 14.534210526315789,
+          "missing": 0,
+          "present": true,
+          "sd": 5.242677917357917,
+          "valid": 380,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 24.0,
+          "mean": 8.194736842105263,
+          "missing": 0,
+          "present": true,
+          "sd": 3.6905246644845735,
+          "valid": 380,
+          "zero": 1
+        }
+      },
+      "matches": 380,
+      "season": "2011-2012",
+      "sha256": "6cdb9963c311ca2e7d07eb429df721a2593cbd9c9fec55b9af82bca1a457b987",
+      "source_path": "data/raw/football_data/2011-2012/E0/6cdb9963c311ca2e7d07eb429df721a2593cbd9c9fec55b9af82bca1a457b987.csv",
+      "target_exceeds_shots": 0
+    },
+    {
+      "complete_shot_matches": 552,
+      "division": "E1",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 15.0,
+          "mean": 4.9981884057971016,
+          "missing": 0,
+          "present": true,
+          "sd": 2.634428611564715,
+          "valid": 552,
+          "zero": 11
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 22.0,
+          "mean": 10.076086956521738,
+          "missing": 0,
+          "present": true,
+          "sd": 3.3699450463808707,
+          "valid": 552,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 26.0,
+          "mean": 9.965579710144928,
+          "missing": 0,
+          "present": true,
+          "sd": 4.0455616256379905,
+          "valid": 552,
+          "zero": 0
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 19.0,
+          "mean": 5.1394927536231885,
+          "missing": 0,
+          "present": true,
+          "sd": 2.8259470190177516,
+          "valid": 552,
+          "zero": 10
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 18.0,
+          "mean": 6.204710144927536,
+          "missing": 0,
+          "present": true,
+          "sd": 2.9364857958157256,
+          "valid": 552,
+          "zero": 6
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 23.0,
+          "mean": 9.918478260869565,
+          "missing": 0,
+          "present": true,
+          "sd": 3.5039655386296573,
+          "valid": 552,
+          "zero": 0
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 28.0,
+          "mean": 12.197463768115941,
+          "missing": 0,
+          "present": true,
+          "sd": 4.237401713039816,
+          "valid": 552,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 19.0,
+          "mean": 6.317028985507246,
+          "missing": 0,
+          "present": true,
+          "sd": 2.9271096465998347,
+          "valid": 552,
+          "zero": 4
+        }
+      },
+      "matches": 552,
+      "season": "2011-2012",
+      "sha256": "b3084c1752f1cea6a286353dfcf435c104eb817ec424398c385068e3d7b49735",
+      "source_path": "data/raw/football_data/2011-2012/E1/b3084c1752f1cea6a286353dfcf435c104eb817ec424398c385068e3d7b49735.csv",
+      "target_exceeds_shots": 0
+    },
+    {
+      "complete_shot_matches": 380,
+      "division": "E0",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 17.0,
+          "mean": 4.83421052631579,
+          "missing": 0,
+          "present": true,
+          "sd": 2.7599367189341093,
+          "valid": 380,
+          "zero": 7
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 23.0,
+          "mean": 10.678947368421053,
+          "missing": 0,
+          "present": true,
+          "sd": 3.641439701888949,
+          "valid": 380,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 30.0,
+          "mean": 11.013157894736842,
+          "missing": 0,
+          "present": true,
+          "sd": 4.6353715034578675,
+          "valid": 380,
+          "zero": 0
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 20.0,
+          "mean": 6.278947368421052,
+          "missing": 0,
+          "present": true,
+          "sd": 3.2873087612767318,
+          "valid": 380,
+          "zero": 5
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 15.0,
+          "mean": 6.318421052631579,
+          "missing": 0,
+          "present": true,
+          "sd": 3.1163706339230317,
+          "valid": 380,
+          "zero": 5
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 23.0,
+          "mean": 10.25,
+          "missing": 0,
+          "present": true,
+          "sd": 3.2049509397673765,
+          "valid": 380,
+          "zero": 0
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 33.0,
+          "mean": 14.123684210526315,
+          "missing": 0,
+          "present": true,
+          "sd": 5.307687285563237,
+          "valid": 380,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 20.0,
+          "mean": 7.957894736842105,
+          "missing": 0,
+          "present": true,
+          "sd": 3.779907516199957,
+          "valid": 380,
+          "zero": 0
+        }
+      },
+      "matches": 380,
+      "season": "2012-2013",
+      "sha256": "1df561d34a9b79ff8cb1fccd4fd279d183e74cd871063a307ecf18f01e0d622f",
+      "source_path": "data/raw/football_data/2012-2013/E0/1df561d34a9b79ff8cb1fccd4fd279d183e74cd871063a307ecf18f01e0d622f.csv",
+      "target_exceeds_shots": 0
+    },
+    {
+      "complete_shot_matches": 552,
+      "division": "E1",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 16.0,
+          "mean": 4.932971014492754,
+          "missing": 0,
+          "present": true,
+          "sd": 2.685346686230066,
+          "valid": 552,
+          "zero": 8
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 24.0,
+          "mean": 10.521739130434783,
+          "missing": 0,
+          "present": true,
+          "sd": 3.6825428189101195,
+          "valid": 552,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 26.0,
+          "mean": 9.46195652173913,
+          "missing": 0,
+          "present": true,
+          "sd": 3.911429065117118,
+          "valid": 552,
+          "zero": 1
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 18.0,
+          "mean": 4.940217391304348,
+          "missing": 0,
+          "present": true,
+          "sd": 2.6399341140744523,
+          "valid": 552,
+          "zero": 12
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 19.0,
+          "mean": 6.233695652173913,
+          "missing": 0,
+          "present": true,
+          "sd": 3.0165165090550037,
+          "valid": 552,
+          "zero": 2
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 20.0,
+          "mean": 9.76086956521739,
+          "missing": 0,
+          "present": true,
+          "sd": 3.1486236878855975,
+          "valid": 552,
+          "zero": 0
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 26.0,
+          "mean": 11.969202898550725,
+          "missing": 0,
+          "present": true,
+          "sd": 4.341924965738992,
+          "valid": 552,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 17.0,
+          "mean": 6.255434782608695,
+          "missing": 0,
+          "present": true,
+          "sd": 2.978480699069947,
+          "valid": 552,
+          "zero": 4
+        }
+      },
+      "matches": 552,
+      "season": "2012-2013",
+      "sha256": "9662be1541813b95c259a65f1193a936bbaa5fd2d2926e9cbd862df0912aeeec",
+      "source_path": "data/raw/football_data/2012-2013/E1/9662be1541813b95c259a65f1193a936bbaa5fd2d2926e9cbd862df0912aeeec.csv",
+      "target_exceeds_shots": 0
+    },
+    {
+      "complete_shot_matches": 380,
+      "division": "E0",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 14.0,
+          "mean": 4.673684210526316,
+          "missing": 0,
+          "present": true,
+          "sd": 2.6889328944403434,
+          "valid": 380,
+          "zero": 8
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 24.0,
+          "mean": 11.036842105263158,
+          "missing": 0,
+          "present": true,
+          "sd": 3.4079953246687396,
+          "valid": 380,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 29.0,
+          "mean": 11.923684210526316,
+          "missing": 0,
+          "present": true,
+          "sd": 4.950488238044188,
+          "valid": 380,
+          "zero": 0
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 12.0,
+          "mean": 3.886842105263158,
+          "missing": 0,
+          "present": true,
+          "sd": 2.1436161101514495,
+          "valid": 380,
+          "zero": 11
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 14.0,
+          "mean": 6.097368421052631,
+          "missing": 0,
+          "present": true,
+          "sd": 2.953765379460174,
+          "valid": 380,
+          "zero": 3
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 18.0,
+          "mean": 10.494736842105263,
+          "missing": 0,
+          "present": true,
+          "sd": 3.1701691278493294,
+          "valid": 380,
+          "zero": 0
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 39.0,
+          "mean": 14.955263157894738,
+          "missing": 0,
+          "present": true,
+          "sd": 5.711539444447947,
+          "valid": 380,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 15.0,
+          "mean": 5.036842105263158,
+          "missing": 0,
+          "present": true,
+          "sd": 2.6444998584581247,
+          "valid": 380,
+          "zero": 5
+        }
+      },
+      "matches": 380,
+      "season": "2013-2014",
+      "sha256": "3cf16078fde2e0e6c6cb07ebdb20ca98d1a755c9508a18bbeb4ad6837fad2b42",
+      "source_path": "data/raw/football_data/2013-2014/E0/3cf16078fde2e0e6c6cb07ebdb20ca98d1a755c9508a18bbeb4ad6837fad2b42.csv",
+      "target_exceeds_shots": 0
+    },
+    {
+      "complete_shot_matches": 552,
+      "division": "E1",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 13.0,
+          "mean": 4.663043478260869,
+          "missing": 0,
+          "present": true,
+          "sd": 2.4881334627677076,
+          "valid": 552,
+          "zero": 6
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 23.0,
+          "mean": 11.639492753623188,
+          "missing": 0,
+          "present": true,
+          "sd": 3.482164457333758,
+          "valid": 552,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 26.0,
+          "mean": 11.577898550724637,
+          "missing": 0,
+          "present": true,
+          "sd": 4.429530834072374,
+          "valid": 552,
+          "zero": 0
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 13.0,
+          "mean": 3.7717391304347827,
+          "missing": 0,
+          "present": true,
+          "sd": 2.2121367835959815,
+          "valid": 552,
+          "zero": 14
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 21.0,
+          "mean": 5.952898550724638,
+          "missing": 0,
+          "present": true,
+          "sd": 2.9336797892152564,
+          "valid": 552,
+          "zero": 2
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 26.0,
+          "mean": 10.903985507246377,
+          "missing": 0,
+          "present": true,
+          "sd": 3.518046444036613,
+          "valid": 552,
+          "zero": 0
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 36.0,
+          "mean": 14.735507246376812,
+          "missing": 0,
+          "present": true,
+          "sd": 4.952927705775963,
+          "valid": 552,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 13.0,
+          "mean": 4.806159420289855,
+          "missing": 0,
+          "present": true,
+          "sd": 2.253925343228129,
+          "valid": 552,
+          "zero": 5
+        }
+      },
+      "matches": 552,
+      "season": "2013-2014",
+      "sha256": "928ba2c9f3c342d41ca633bdbb70f56b06f6392e8eacaffbf6d6996ddc097dfa",
+      "source_path": "data/raw/football_data/2013-2014/E1/928ba2c9f3c342d41ca633bdbb70f56b06f6392e8eacaffbf6d6996ddc097dfa.csv",
+      "target_exceeds_shots": 0
+    },
+    {
+      "complete_shot_matches": 380,
+      "division": "E0",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 13.0,
+          "mean": 4.657894736842105,
+          "missing": 0,
+          "present": true,
+          "sd": 2.567779255448011,
+          "valid": 380,
+          "zero": 12
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 22.0,
+          "mean": 11.444736842105263,
+          "missing": 0,
+          "present": true,
+          "sd": 3.52055597944872,
+          "valid": 380,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 27.0,
+          "mean": 11.286842105263158,
+          "missing": 0,
+          "present": true,
+          "sd": 4.5882384564191945,
+          "valid": 380,
+          "zero": 0
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 11.0,
+          "mean": 3.681578947368421,
+          "missing": 0,
+          "present": true,
+          "sd": 2.039395584243153,
+          "valid": 380,
+          "zero": 10
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 18.0,
+          "mean": 6.031578947368421,
+          "missing": 0,
+          "present": true,
+          "sd": 3.2222993803181748,
+          "valid": 380,
+          "zero": 8
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 23.0,
+          "mean": 11.244736842105263,
+          "missing": 0,
+          "present": true,
+          "sd": 3.3428003835754434,
+          "valid": 380,
+          "zero": 0
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 43.0,
+          "mean": 14.623684210526315,
+          "missing": 0,
+          "present": true,
+          "sd": 5.511993345162812,
+          "valid": 380,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 16.0,
+          "mean": 4.723684210526316,
+          "missing": 0,
+          "present": true,
+          "sd": 2.4931415618944364,
+          "valid": 380,
+          "zero": 5
+        }
+      },
+      "matches": 380,
+      "season": "2014-2015",
+      "sha256": "76b7858051ff6b17f46f49f26fdc70c1f29537270492606f5cc63d67fad5d149",
+      "source_path": "data/raw/football_data/2014-2015/E0/76b7858051ff6b17f46f49f26fdc70c1f29537270492606f5cc63d67fad5d149.csv",
+      "target_exceeds_shots": 0
+    },
+    {
+      "complete_shot_matches": 552,
+      "division": "E1",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 15.0,
+          "mean": 4.934782608695652,
+          "missing": 0,
+          "present": true,
+          "sd": 2.699185389026701,
+          "valid": 552,
+          "zero": 10
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 25.0,
+          "mean": 11.605072463768115,
+          "missing": 0,
+          "present": true,
+          "sd": 3.51958953601061,
+          "valid": 552,
+          "zero": 1
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 28.0,
+          "mean": 12.168478260869565,
+          "missing": 0,
+          "present": true,
+          "sd": 4.56303109311933,
+          "valid": 552,
+          "zero": 0
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 15.0,
+          "mean": 3.9655797101449277,
+          "missing": 0,
+          "present": true,
+          "sd": 2.126585518685758,
+          "valid": 552,
+          "zero": 14
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 18.0,
+          "mean": 6.030797101449275,
+          "missing": 0,
+          "present": true,
+          "sd": 3.101681535898959,
+          "valid": 552,
+          "zero": 3
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 23.0,
+          "mean": 11.023550724637682,
+          "missing": 0,
+          "present": true,
+          "sd": 3.6367423112906088,
+          "valid": 552,
+          "zero": 1
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 43.0,
+          "mean": 15.001811594202898,
+          "missing": 0,
+          "present": true,
+          "sd": 4.987120765503944,
+          "valid": 552,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 14.0,
+          "mean": 4.817028985507246,
+          "missing": 0,
+          "present": true,
+          "sd": 2.4849255403711448,
+          "valid": 552,
+          "zero": 5
+        }
+      },
+      "matches": 552,
+      "season": "2014-2015",
+      "sha256": "16022bc0994d7e7c41a7d9a12cbefdcbd066bd2fa1b31fa653b2aa9ae67ca34f",
+      "source_path": "data/raw/football_data/2014-2015/E1/16022bc0994d7e7c41a7d9a12cbefdcbd066bd2fa1b31fa653b2aa9ae67ca34f.csv",
+      "target_exceeds_shots": 0
+    },
+    {
+      "complete_shot_matches": 380,
+      "division": "E0",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 14.0,
+          "mean": 4.886842105263158,
+          "missing": 0,
+          "present": true,
+          "sd": 2.517378654644296,
+          "valid": 380,
+          "zero": 7
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 22.0,
+          "mean": 11.463157894736842,
+          "missing": 0,
+          "present": true,
+          "sd": 3.4045187504899532,
+          "valid": 380,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 26.0,
+          "mean": 11.368421052631579,
+          "missing": 0,
+          "present": true,
+          "sd": 4.485773140142059,
+          "valid": 380,
+          "zero": 0
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 12.0,
+          "mean": 3.8815789473684212,
+          "missing": 0,
+          "present": true,
+          "sd": 2.1628873566257503,
+          "valid": 380,
+          "zero": 17
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 18.0,
+          "mean": 5.947368421052632,
+          "missing": 0,
+          "present": true,
+          "sd": 3.253721500237541,
+          "valid": 380,
+          "zero": 6
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 22.0,
+          "mean": 10.057894736842105,
+          "missing": 0,
+          "present": true,
+          "sd": 3.4376882975373046,
+          "valid": 380,
+          "zero": 0
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 37.0,
+          "mean": 14.339473684210526,
+          "missing": 0,
+          "present": true,
+          "sd": 5.474632382451966,
+          "valid": 380,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 14.0,
+          "mean": 4.628947368421053,
+          "missing": 0,
+          "present": true,
+          "sd": 2.5796172599353246,
+          "valid": 380,
+          "zero": 7
+        }
+      },
+      "matches": 380,
+      "season": "2015-2016",
+      "sha256": "bd3502a18c38a1597fd9af62e2366b4015006d3528dd4d18b311bd6237bbc085",
+      "source_path": "data/raw/football_data/2015-2016/E0/bd3502a18c38a1597fd9af62e2366b4015006d3528dd4d18b311bd6237bbc085.csv",
+      "target_exceeds_shots": 0
+    },
+    {
+      "complete_shot_matches": 552,
+      "division": "E1",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 13.0,
+          "mean": 4.5,
+          "missing": 0,
+          "present": true,
+          "sd": 2.4941961616427895,
+          "valid": 552,
+          "zero": 6
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 23.0,
+          "mean": 11.53804347826087,
+          "missing": 0,
+          "present": true,
+          "sd": 3.5363539232624057,
+          "valid": 552,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 26.0,
+          "mean": 11.367753623188406,
+          "missing": 0,
+          "present": true,
+          "sd": 4.177308008774075,
+          "valid": 552,
+          "zero": 0
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 10.0,
+          "mean": 3.7409420289855073,
+          "missing": 0,
+          "present": true,
+          "sd": 1.9845210379994842,
+          "valid": 552,
+          "zero": 10
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 15.0,
+          "mean": 5.769927536231884,
+          "missing": 0,
+          "present": true,
+          "sd": 2.8385866038915353,
+          "valid": 552,
+          "zero": 4
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 22.0,
+          "mean": 10.690217391304348,
+          "missing": 0,
+          "present": true,
+          "sd": 3.3275385792232797,
+          "valid": 552,
+          "zero": 0
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 28.0,
+          "mean": 14.23913043478261,
+          "missing": 0,
+          "present": true,
+          "sd": 4.593322733774533,
+          "valid": 552,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 12.0,
+          "mean": 4.538043478260869,
+          "missing": 0,
+          "present": true,
+          "sd": 2.302015927712702,
+          "valid": 552,
+          "zero": 9
+        }
+      },
+      "matches": 552,
+      "season": "2015-2016",
+      "sha256": "3bd30151b05c5a570d222f8b02d430622d62b7822c564a33fa04a3dbf7391cf5",
+      "source_path": "data/raw/football_data/2015-2016/E1/3bd30151b05c5a570d222f8b02d430622d62b7822c564a33fa04a3dbf7391cf5.csv",
+      "target_exceeds_shots": 0
+    },
+    {
+      "complete_shot_matches": 380,
+      "division": "E0",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 15.0,
+          "mean": 4.734210526315789,
+          "missing": 0,
+          "present": true,
+          "sd": 2.6990033556061777,
+          "valid": 380,
+          "zero": 5
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 24.0,
+          "mean": 11.657894736842104,
+          "missing": 0,
+          "present": true,
+          "sd": 3.5516957831841527,
+          "valid": 380,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 29.0,
+          "mean": 11.48421052631579,
+          "missing": 0,
+          "present": true,
+          "sd": 5.012853285399626,
+          "valid": 380,
+          "zero": 0
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 15.0,
+          "mean": 3.8552631578947367,
+          "missing": 0,
+          "present": true,
+          "sd": 2.380313708694834,
+          "valid": 380,
+          "zero": 12
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 19.0,
+          "mean": 5.678947368421053,
+          "missing": 0,
+          "present": true,
+          "sd": 3.0808541104475387,
+          "valid": 380,
+          "zero": 5
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 24.0,
+          "mean": 11.063157894736841,
+          "missing": 0,
+          "present": true,
+          "sd": 3.4642855307014098,
+          "valid": 380,
+          "zero": 0
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 37.0,
+          "mean": 14.013157894736842,
+          "missing": 0,
+          "present": true,
+          "sd": 5.870294131097314,
+          "valid": 380,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 17.0,
+          "mean": 4.813157894736842,
+          "missing": 0,
+          "present": true,
+          "sd": 2.813376979308111,
+          "valid": 380,
+          "zero": 4
+        }
+      },
+      "matches": 380,
+      "season": "2016-2017",
+      "sha256": "9625a7652b5f98fbd3e2e4d378c851fc246693f3343e34a72428d5b6e864d3e0",
+      "source_path": "data/raw/football_data/2016-2017/E0/9625a7652b5f98fbd3e2e4d378c851fc246693f3343e34a72428d5b6e864d3e0.csv",
+      "target_exceeds_shots": 0
+    },
+    {
+      "complete_shot_matches": 552,
+      "division": "E1",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 13.0,
+          "mean": 4.608695652173913,
+          "missing": 0,
+          "present": true,
+          "sd": 2.4808974025269874,
+          "valid": 552,
+          "zero": 11
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 25.0,
+          "mean": 11.996376811594203,
+          "missing": 0,
+          "present": true,
+          "sd": 3.5309174695613605,
+          "valid": 552,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 35.0,
+          "mean": 11.583333333333334,
+          "missing": 0,
+          "present": true,
+          "sd": 4.630977662036408,
+          "valid": 552,
+          "zero": 0
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 12.0,
+          "mean": 3.777173913043478,
+          "missing": 0,
+          "present": true,
+          "sd": 2.131370413447524,
+          "valid": 552,
+          "zero": 11
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 19.0,
+          "mean": 5.77536231884058,
+          "missing": 0,
+          "present": true,
+          "sd": 2.9531808347336437,
+          "valid": 552,
+          "zero": 7
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 23.0,
+          "mean": 11.53804347826087,
+          "missing": 0,
+          "present": true,
+          "sd": 3.5240378188711707,
+          "valid": 552,
+          "zero": 0
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 31.0,
+          "mean": 13.998188405797102,
+          "missing": 0,
+          "present": true,
+          "sd": 4.690994724014848,
+          "valid": 552,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 13.0,
+          "mean": 4.588768115942029,
+          "missing": 0,
+          "present": true,
+          "sd": 2.3917318184021634,
+          "valid": 552,
+          "zero": 9
+        }
+      },
+      "matches": 552,
+      "season": "2016-2017",
+      "sha256": "78c37fc070b9937d72dbc351fac746605f6346b36176f02d4828de57aa135f98",
+      "source_path": "data/raw/football_data/2016-2017/E1/78c37fc070b9937d72dbc351fac746605f6346b36176f02d4828de57aa135f98.csv",
+      "target_exceeds_shots": 0
+    },
+    {
+      "complete_shot_matches": 380,
+      "division": "E0",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 13.0,
+          "mean": 4.5473684210526315,
+          "missing": 0,
+          "present": true,
+          "sd": 2.7616487106632577,
+          "valid": 380,
+          "zero": 12
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 26.0,
+          "mean": 10.48421052631579,
+          "missing": 0,
+          "present": true,
+          "sd": 3.3296535552192115,
+          "valid": 380,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 30.0,
+          "mean": 10.857894736842105,
+          "missing": 0,
+          "present": true,
+          "sd": 4.849939314810106,
+          "valid": 380,
+          "zero": 1
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 14.0,
+          "mean": 3.7657894736842104,
+          "missing": 0,
+          "present": true,
+          "sd": 2.3113878623925306,
+          "valid": 380,
+          "zero": 16
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 18.0,
+          "mean": 5.744736842105263,
+          "missing": 0,
+          "present": true,
+          "sd": 2.9948374324055385,
+          "valid": 380,
+          "zero": 4
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 19.0,
+          "mean": 10.218421052631578,
+          "missing": 0,
+          "present": true,
+          "sd": 3.252072639762776,
+          "valid": 380,
+          "zero": 0
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 35.0,
+          "mean": 13.589473684210526,
+          "missing": 0,
+          "present": true,
+          "sd": 5.766043497731224,
+          "valid": 380,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 15.0,
+          "mean": 4.628947368421053,
+          "missing": 0,
+          "present": true,
+          "sd": 2.707048100474491,
+          "valid": 380,
+          "zero": 10
+        }
+      },
+      "matches": 380,
+      "season": "2017-2018",
+      "sha256": "4f3389365ef3f7ac966764ed8ba67cf3b79f5aebed18dd224099c4b2c98bc67b",
+      "source_path": "data/raw/football_data/2017-2018/E0/4f3389365ef3f7ac966764ed8ba67cf3b79f5aebed18dd224099c4b2c98bc67b.csv",
+      "target_exceeds_shots": 0
+    },
+    {
+      "complete_shot_matches": 552,
+      "division": "E1",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 16.0,
+          "mean": 4.65036231884058,
+          "missing": 0,
+          "present": true,
+          "sd": 2.5881278302716244,
+          "valid": 552,
+          "zero": 12
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 24.0,
+          "mean": 12.27536231884058,
+          "missing": 0,
+          "present": true,
+          "sd": 3.6131164354295913,
+          "valid": 552,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 28.0,
+          "mean": 11.322463768115941,
+          "missing": 0,
+          "present": true,
+          "sd": 4.540199161116206,
+          "valid": 552,
+          "zero": 0
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 12.0,
+          "mean": 3.5942028985507246,
+          "missing": 0,
+          "present": true,
+          "sd": 2.120082310267797,
+          "valid": 552,
+          "zero": 28
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 15.0,
+          "mean": 5.641304347826087,
+          "missing": 0,
+          "present": true,
+          "sd": 2.700972134730344,
+          "valid": 552,
+          "zero": 3
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 23.0,
+          "mean": 11.918478260869565,
+          "missing": 0,
+          "present": true,
+          "sd": 3.482183306901109,
+          "valid": 552,
+          "zero": 0
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 31.0,
+          "mean": 13.77536231884058,
+          "missing": 0,
+          "present": true,
+          "sd": 4.740770004022965,
+          "valid": 552,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 15.0,
+          "mean": 4.492753623188406,
+          "missing": 0,
+          "present": true,
+          "sd": 2.400924872553553,
+          "valid": 552,
+          "zero": 13
+        }
+      },
+      "matches": 552,
+      "season": "2017-2018",
+      "sha256": "04d07d578d818bdcd6b95d43e79f10a6a26be01b45be6190b09ebdeaeba0a7ce",
+      "source_path": "data/raw/football_data/2017-2018/E1/04d07d578d818bdcd6b95d43e79f10a6a26be01b45be6190b09ebdeaeba0a7ce.csv",
+      "target_exceeds_shots": 0
+    },
+    {
+      "complete_shot_matches": 380,
+      "division": "E0",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 14.0,
+          "mean": 4.552631578947368,
+          "missing": 0,
+          "present": true,
+          "sd": 2.7270320132165726,
+          "valid": 380,
+          "zero": 15
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 21.0,
+          "mean": 10.305263157894737,
+          "missing": 0,
+          "present": true,
+          "sd": 3.499093669751539,
+          "valid": 380,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 25.0,
+          "mean": 11.144736842105264,
+          "missing": 0,
+          "present": true,
+          "sd": 4.647874294455876,
+          "valid": 380,
+          "zero": 0
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 12.0,
+          "mean": 3.9289473684210527,
+          "missing": 0,
+          "present": true,
+          "sd": 2.2809748486968924,
+          "valid": 380,
+          "zero": 15
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 16.0,
+          "mean": 5.705263157894737,
+          "missing": 0,
+          "present": true,
+          "sd": 2.9678050872675383,
+          "valid": 380,
+          "zero": 3
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 23.0,
+          "mean": 10.152631578947368,
+          "missing": 0,
+          "present": true,
+          "sd": 3.289195777734419,
+          "valid": 380,
+          "zero": 1
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 36.0,
+          "mean": 14.134210526315789,
+          "missing": 0,
+          "present": true,
+          "sd": 5.847661535123496,
+          "valid": 380,
+          "zero": 1
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 14.0,
+          "mean": 4.778947368421052,
+          "missing": 0,
+          "present": true,
+          "sd": 2.6741607532218445,
+          "valid": 380,
+          "zero": 10
+        }
+      },
+      "matches": 380,
+      "season": "2018-2019",
+      "sha256": "7c096b3c2ecd54c6993d22eeea73450c2bde11e3457238b226b8f43c62dfc35e",
+      "source_path": "data/raw/football_data/2018-2019/E0/7c096b3c2ecd54c6993d22eeea73450c2bde11e3457238b226b8f43c62dfc35e.csv",
+      "target_exceeds_shots": 0
+    },
+    {
+      "complete_shot_matches": 551,
+      "division": "E1",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 16.0,
+          "mean": 4.778584392014519,
+          "missing": 1,
+          "present": true,
+          "sd": 2.6594308084116736,
+          "valid": 551,
+          "zero": 6
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 25.0,
+          "mean": 12.522686025408348,
+          "missing": 1,
+          "present": true,
+          "sd": 3.5646648673449626,
+          "valid": 551,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 29.0,
+          "mean": 11.453720508166969,
+          "missing": 1,
+          "present": true,
+          "sd": 4.268350980895666,
+          "valid": 551,
+          "zero": 0
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 12.0,
+          "mean": 3.803992740471869,
+          "missing": 1,
+          "present": true,
+          "sd": 2.05143976530024,
+          "valid": 551,
+          "zero": 15
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 15.0,
+          "mean": 5.716878402903811,
+          "missing": 1,
+          "present": true,
+          "sd": 2.820663007505693,
+          "valid": 551,
+          "zero": 4
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 23.0,
+          "mean": 11.736842105263158,
+          "missing": 1,
+          "present": true,
+          "sd": 3.4773944877372074,
+          "valid": 551,
+          "zero": 0
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 31.0,
+          "mean": 14.043557168784028,
+          "missing": 1,
+          "present": true,
+          "sd": 4.798092979452587,
+          "valid": 551,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 13.0,
+          "mean": 4.577132486388384,
+          "missing": 1,
+          "present": true,
+          "sd": 2.4100786069552282,
+          "valid": 551,
+          "zero": 6
+        }
+      },
+      "matches": 552,
+      "season": "2018-2019",
+      "sha256": "112eedf787e26e00aac1442ef86e7fee5d4a43f86552ff2dac31ceb95a849487",
+      "source_path": "data/raw/football_data/2018-2019/E1/112eedf787e26e00aac1442ef86e7fee5d4a43f86552ff2dac31ceb95a849487.csv",
+      "target_exceeds_shots": 0
+    },
+    {
+      "complete_shot_matches": 380,
+      "division": "E0",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 16.0,
+          "mean": 4.931578947368421,
+          "missing": 0,
+          "present": true,
+          "sd": 2.831319690733587,
+          "valid": 380,
+          "zero": 12
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 24.0,
+          "mean": 10.98157894736842,
+          "missing": 0,
+          "present": true,
+          "sd": 3.708763112240344,
+          "valid": 380,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 26.0,
+          "mean": 11.4,
+          "missing": 0,
+          "present": true,
+          "sd": 5.248358139256004,
+          "valid": 380,
+          "zero": 0
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 15.0,
+          "mean": 3.9947368421052634,
+          "missing": 0,
+          "present": true,
+          "sd": 2.485743282720488,
+          "valid": 380,
+          "zero": 17
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 17.0,
+          "mean": 5.773684210526316,
+          "missing": 0,
+          "present": true,
+          "sd": 3.212859376624072,
+          "valid": 380,
+          "zero": 6
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 23.0,
+          "mean": 10.48421052631579,
+          "missing": 0,
+          "present": true,
+          "sd": 3.5780416810691493,
+          "valid": 380,
+          "zero": 1
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 31.0,
+          "mean": 13.323684210526316,
+          "missing": 0,
+          "present": true,
+          "sd": 5.410804697937671,
+          "valid": 380,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 13.0,
+          "mean": 4.5552631578947365,
+          "missing": 0,
+          "present": true,
+          "sd": 2.517224596175325,
+          "valid": 380,
+          "zero": 10
+        }
+      },
+      "matches": 380,
+      "season": "2019-2020",
+      "sha256": "100037618b94f94057400bb02bf6bac4ef74ddaa58cde4b38370839c39caee61",
+      "source_path": "data/raw/football_data/2019-2020/E0/100037618b94f94057400bb02bf6bac4ef74ddaa58cde4b38370839c39caee61.csv",
+      "target_exceeds_shots": 0
+    },
+    {
+      "complete_shot_matches": 552,
+      "division": "E1",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 14.0,
+          "mean": 4.742753623188406,
+          "missing": 0,
+          "present": true,
+          "sd": 2.6544572217681375,
+          "valid": 552,
+          "zero": 16
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 25.0,
+          "mean": 12.731884057971014,
+          "missing": 0,
+          "present": true,
+          "sd": 3.6880925808754004,
+          "valid": 552,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 29.0,
+          "mean": 11.190217391304348,
+          "missing": 0,
+          "present": true,
+          "sd": 4.3532902711196595,
+          "valid": 552,
+          "zero": 0
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 12.0,
+          "mean": 3.568840579710145,
+          "missing": 0,
+          "present": true,
+          "sd": 2.102183155213511,
+          "valid": 552,
+          "zero": 22
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 15.0,
+          "mean": 5.76268115942029,
+          "missing": 0,
+          "present": true,
+          "sd": 2.7583572720678644,
+          "valid": 552,
+          "zero": 4
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 25.0,
+          "mean": 11.789855072463768,
+          "missing": 0,
+          "present": true,
+          "sd": 3.437227772726839,
+          "valid": 552,
+          "zero": 0
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 32.0,
+          "mean": 13.166666666666666,
+          "missing": 0,
+          "present": true,
+          "sd": 4.636548774796055,
+          "valid": 552,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 12.0,
+          "mean": 4.282608695652174,
+          "missing": 0,
+          "present": true,
+          "sd": 2.222216971218329,
+          "valid": 552,
+          "zero": 8
+        }
+      },
+      "matches": 552,
+      "season": "2019-2020",
+      "sha256": "f31450c623c0b74b89692584a85924cc652d33ec89757acf4b2dda5e26261d57",
+      "source_path": "data/raw/football_data/2019-2020/E1/f31450c623c0b74b89692584a85924cc652d33ec89757acf4b2dda5e26261d57.csv",
+      "target_exceeds_shots": 0
+    },
+    {
+      "complete_shot_matches": 380,
+      "division": "E0",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 13.0,
+          "mean": 4.631578947368421,
+          "missing": 0,
+          "present": true,
+          "sd": 2.6638027095388015,
+          "valid": 380,
+          "zero": 9
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 21.0,
+          "mean": 10.55,
+          "missing": 0,
+          "present": true,
+          "sd": 3.4701926231990727,
+          "valid": 380,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 28.0,
+          "mean": 11.363157894736842,
+          "missing": 0,
+          "present": true,
+          "sd": 4.87417583060981,
+          "valid": 380,
+          "zero": 0
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 14.0,
+          "mean": 4.08421052631579,
+          "missing": 0,
+          "present": true,
+          "sd": 2.255580951631504,
+          "valid": 380,
+          "zero": 8
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 16.0,
+          "mean": 5.557894736842106,
+          "missing": 0,
+          "present": true,
+          "sd": 3.035633253882551,
+          "valid": 380,
+          "zero": 7
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 23.0,
+          "mean": 11.223684210526315,
+          "missing": 0,
+          "present": true,
+          "sd": 3.4335752588478012,
+          "valid": 380,
+          "zero": 0
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 29.0,
+          "mean": 12.81578947368421,
+          "missing": 0,
+          "present": true,
+          "sd": 5.4832532753826415,
+          "valid": 380,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 14.0,
+          "mean": 4.544736842105263,
+          "missing": 0,
+          "present": true,
+          "sd": 2.590589992587652,
+          "valid": 380,
+          "zero": 10
+        }
+      },
+      "matches": 380,
+      "season": "2020-2021",
+      "sha256": "5afe63f69401457b8354eaacee24f9a3e520b3c3af6329564a9783e20d789c62",
+      "source_path": "data/raw/football_data/2020-2021/E0/5afe63f69401457b8354eaacee24f9a3e520b3c3af6329564a9783e20d789c62.csv",
+      "target_exceeds_shots": 0
+    },
+    {
+      "complete_shot_matches": 552,
+      "division": "E1",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 13.0,
+          "mean": 4.518115942028985,
+          "missing": 0,
+          "present": true,
+          "sd": 2.437560419384851,
+          "valid": 552,
+          "zero": 14
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 25.0,
+          "mean": 12.226449275362318,
+          "missing": 0,
+          "present": true,
+          "sd": 3.5719047207874306,
+          "valid": 552,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 26.0,
+          "mean": 10.68659420289855,
+          "missing": 0,
+          "present": true,
+          "sd": 4.415220052351981,
+          "valid": 552,
+          "zero": 0
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 10.0,
+          "mean": 3.3170289855072466,
+          "missing": 0,
+          "present": true,
+          "sd": 1.9521077087103103,
+          "valid": 552,
+          "zero": 24
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 16.0,
+          "mean": 4.8894927536231885,
+          "missing": 0,
+          "present": true,
+          "sd": 2.496468178425177,
+          "valid": 552,
+          "zero": 12
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 26.0,
+          "mean": 12.65036231884058,
+          "missing": 0,
+          "present": true,
+          "sd": 3.5272027570037583,
+          "valid": 552,
+          "zero": 0
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 27.0,
+          "mean": 11.695652173913043,
+          "missing": 0,
+          "present": true,
+          "sd": 4.406202307834689,
+          "valid": 552,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 16.0,
+          "mean": 3.885869565217391,
+          "missing": 0,
+          "present": true,
+          "sd": 2.328855608824833,
+          "valid": 552,
+          "zero": 16
+        }
+      },
+      "matches": 552,
+      "season": "2020-2021",
+      "sha256": "cf93295e310c60e5b97ae7466d772f8ec6a908ad401e38fceb7e8617369d5073",
+      "source_path": "data/raw/football_data/2020-2021/E1/cf93295e310c60e5b97ae7466d772f8ec6a908ad401e38fceb7e8617369d5073.csv",
+      "target_exceeds_shots": 0
+    },
+    {
+      "complete_shot_matches": 380,
+      "division": "E0",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 13.0,
+          "mean": 4.821052631578947,
+          "missing": 0,
+          "present": true,
+          "sd": 2.7317969692933706,
+          "valid": 380,
+          "zero": 12
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 25.0,
+          "mean": 10.157894736842104,
+          "missing": 0,
+          "present": true,
+          "sd": 3.713604546227529,
+          "valid": 380,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 31.0,
+          "mean": 11.736842105263158,
+          "missing": 0,
+          "present": true,
+          "sd": 5.3414181564859415,
+          "valid": 380,
+          "zero": 0
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 14.0,
+          "mean": 4.1421052631578945,
+          "missing": 0,
+          "present": true,
+          "sd": 2.5865676890374045,
+          "valid": 380,
+          "zero": 12
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 15.0,
+          "mean": 5.602631578947369,
+          "missing": 0,
+          "present": true,
+          "sd": 3.0257653961744917,
+          "valid": 380,
+          "zero": 4
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 22.0,
+          "mean": 10.055263157894737,
+          "missing": 0,
+          "present": true,
+          "sd": 3.4396448231896404,
+          "valid": 380,
+          "zero": 0
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 31.0,
+          "mean": 13.847368421052632,
+          "missing": 0,
+          "present": true,
+          "sd": 5.654329353974112,
+          "valid": 380,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 15.0,
+          "mean": 4.678947368421053,
+          "missing": 0,
+          "present": true,
+          "sd": 2.5969777875077917,
+          "valid": 380,
+          "zero": 9
+        }
+      },
+      "matches": 380,
+      "season": "2021-2022",
+      "sha256": "335afcbabeb2939fa10ab39ba3e8215072d0b577cb8d0705c1e44c56e934e703",
+      "source_path": "data/raw/football_data/2021-2022/E0/335afcbabeb2939fa10ab39ba3e8215072d0b577cb8d0705c1e44c56e934e703.csv",
+      "target_exceeds_shots": 1
+    },
+    {
+      "complete_shot_matches": 552,
+      "division": "E1",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 15.0,
+          "mean": 4.545289855072464,
+          "missing": 0,
+          "present": true,
+          "sd": 2.566812914719817,
+          "valid": 552,
+          "zero": 12
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 26.0,
+          "mean": 10.78804347826087,
+          "missing": 0,
+          "present": true,
+          "sd": 3.49435390530223,
+          "valid": 552,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 27.0,
+          "mean": 10.68840579710145,
+          "missing": 0,
+          "present": true,
+          "sd": 4.403639345757396,
+          "valid": 552,
+          "zero": 1
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 13.0,
+          "mean": 3.592391304347826,
+          "missing": 0,
+          "present": true,
+          "sd": 2.1716587043180446,
+          "valid": 552,
+          "zero": 20
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 17.0,
+          "mean": 5.208333333333333,
+          "missing": 0,
+          "present": true,
+          "sd": 2.721040424238156,
+          "valid": 552,
+          "zero": 14
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 22.0,
+          "mean": 10.646739130434783,
+          "missing": 0,
+          "present": true,
+          "sd": 3.5732789843591855,
+          "valid": 552,
+          "zero": 0
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 28.0,
+          "mean": 12.40036231884058,
+          "missing": 0,
+          "present": true,
+          "sd": 4.670777161138702,
+          "valid": 552,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 17.0,
+          "mean": 4.300724637681159,
+          "missing": 0,
+          "present": true,
+          "sd": 2.362938369016381,
+          "valid": 552,
+          "zero": 7
+        }
+      },
+      "matches": 552,
+      "season": "2021-2022",
+      "sha256": "a181451be4801b9f838daf5f6aaf21e9f09d36042be9e6c15388e71001e772ea",
+      "source_path": "data/raw/football_data/2021-2022/E1/a181451be4801b9f838daf5f6aaf21e9f09d36042be9e6c15388e71001e772ea.csv",
+      "target_exceeds_shots": 0
+    },
+    {
+      "complete_shot_matches": 380,
+      "division": "E0",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 19.0,
+          "mean": 4.471052631578948,
+          "missing": 0,
+          "present": true,
+          "sd": 2.813820019562921,
+          "valid": 380,
+          "zero": 7
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 24.0,
+          "mean": 10.93157894736842,
+          "missing": 0,
+          "present": true,
+          "sd": 3.458863919293207,
+          "valid": 380,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 30.0,
+          "mean": 11.310526315789474,
+          "missing": 0,
+          "present": true,
+          "sd": 4.934667347274267,
+          "valid": 380,
+          "zero": 0
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 11.0,
+          "mean": 3.8947368421052633,
+          "missing": 0,
+          "present": true,
+          "sd": 2.2276902563229797,
+          "valid": 380,
+          "zero": 16
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 17.0,
+          "mean": 5.636842105263158,
+          "missing": 0,
+          "present": true,
+          "sd": 3.069323691375296,
+          "valid": 380,
+          "zero": 6
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 23.0,
+          "mean": 10.597368421052632,
+          "missing": 0,
+          "present": true,
+          "sd": 3.2836907061627487,
+          "valid": 380,
+          "zero": 0
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 33.0,
+          "mean": 13.952631578947368,
+          "missing": 0,
+          "present": true,
+          "sd": 5.596791225529202,
+          "valid": 380,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 15.0,
+          "mean": 4.907894736842105,
+          "missing": 0,
+          "present": true,
+          "sd": 2.4919746533883913,
+          "valid": 380,
+          "zero": 6
+        }
+      },
+      "matches": 380,
+      "season": "2022-2023",
+      "sha256": "8442792d3b614c94ea3cf381bd2736805889cc1713169035368fff19c3d02380",
+      "source_path": "data/raw/football_data/2022-2023/E0/8442792d3b614c94ea3cf381bd2736805889cc1713169035368fff19c3d02380.csv",
+      "target_exceeds_shots": 0
+    },
+    {
+      "complete_shot_matches": 552,
+      "division": "E1",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 13.0,
+          "mean": 4.51268115942029,
+          "missing": 0,
+          "present": true,
+          "sd": 2.45536650939165,
+          "valid": 552,
+          "zero": 12
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 21.0,
+          "mean": 10.768115942028986,
+          "missing": 0,
+          "present": true,
+          "sd": 3.278254782859327,
+          "valid": 552,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 26.0,
+          "mean": 10.340579710144928,
+          "missing": 0,
+          "present": true,
+          "sd": 4.274539345994827,
+          "valid": 552,
+          "zero": 0
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 13.0,
+          "mean": 3.4456521739130435,
+          "missing": 0,
+          "present": true,
+          "sd": 2.0262630544856544,
+          "valid": 552,
+          "zero": 23
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 16.0,
+          "mean": 5.496376811594203,
+          "missing": 0,
+          "present": true,
+          "sd": 2.8647004401221796,
+          "valid": 552,
+          "zero": 4
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 24.0,
+          "mean": 10.469202898550725,
+          "missing": 0,
+          "present": true,
+          "sd": 3.4863804496915707,
+          "valid": 552,
+          "zero": 0
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 36.0,
+          "mean": 12.84963768115942,
+          "missing": 0,
+          "present": true,
+          "sd": 4.683558957289447,
+          "valid": 552,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 12.0,
+          "mean": 4.115942028985507,
+          "missing": 0,
+          "present": true,
+          "sd": 2.2451960431110867,
+          "valid": 552,
+          "zero": 19
+        }
+      },
+      "matches": 552,
+      "season": "2022-2023",
+      "sha256": "cd38ab0586ea8cb4d573c363ff70749117f116da5b2741e5b0ea37da05860b1b",
+      "source_path": "data/raw/football_data/2022-2023/E1/cd38ab0586ea8cb4d573c363ff70749117f116da5b2741e5b0ea37da05860b1b.csv",
+      "target_exceeds_shots": 0
+    },
+    {
+      "complete_shot_matches": 380,
+      "division": "E0",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 15.0,
+          "mean": 4.713157894736842,
+          "missing": 0,
+          "present": true,
+          "sd": 2.9026912242762415,
+          "valid": 380,
+          "zero": 12
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 22.0,
+          "mean": 11.347368421052632,
+          "missing": 0,
+          "present": true,
+          "sd": 3.6699875836664524,
+          "valid": 380,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 30.0,
+          "mean": 12.18157894736842,
+          "missing": 0,
+          "present": true,
+          "sd": 5.46049714640275,
+          "valid": 380,
+          "zero": 0
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 15.0,
+          "mean": 4.431578947368421,
+          "missing": 0,
+          "present": true,
+          "sd": 2.5231668972019534,
+          "valid": 380,
+          "zero": 3
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 17.0,
+          "mean": 6.123684210526315,
+          "missing": 0,
+          "present": true,
+          "sd": 3.2172180046976444,
+          "valid": 380,
+          "zero": 6
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 20.0,
+          "mean": 10.744736842105263,
+          "missing": 0,
+          "present": true,
+          "sd": 3.4527790003828462,
+          "valid": 380,
+          "zero": 0
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 36.0,
+          "mean": 15.402631578947368,
+          "missing": 0,
+          "present": true,
+          "sd": 6.253714131875017,
+          "valid": 380,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 15.0,
+          "mean": 5.436842105263158,
+          "missing": 0,
+          "present": true,
+          "sd": 2.881649842915429,
+          "valid": 380,
+          "zero": 3
+        }
+      },
+      "matches": 380,
+      "season": "2023-2024",
+      "sha256": "b2e057b0ed959f198b0f63d2391c01239f3608e6de5db68edab3f88e04d07ff3",
+      "source_path": "data/raw/football_data/2023-2024/E0/b2e057b0ed959f198b0f63d2391c01239f3608e6de5db68edab3f88e04d07ff3.csv",
+      "target_exceeds_shots": 0
+    },
+    {
+      "complete_shot_matches": 552,
+      "division": "E1",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 16.0,
+          "mean": 4.728260869565218,
+          "missing": 0,
+          "present": true,
+          "sd": 2.779075258834476,
+          "valid": 552,
+          "zero": 23
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 22.0,
+          "mean": 11.17572463768116,
+          "missing": 0,
+          "present": true,
+          "sd": 3.604032240136554,
+          "valid": 552,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 26.0,
+          "mean": 11.280797101449275,
+          "missing": 0,
+          "present": true,
+          "sd": 4.613204985061308,
+          "valid": 552,
+          "zero": 0
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 11.0,
+          "mean": 3.847826086956522,
+          "missing": 0,
+          "present": true,
+          "sd": 2.1732970141660894,
+          "valid": 552,
+          "zero": 13
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 19.0,
+          "mean": 5.922101449275362,
+          "missing": 0,
+          "present": true,
+          "sd": 3.0501990794849196,
+          "valid": 552,
+          "zero": 8
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 25.0,
+          "mean": 10.75,
+          "missing": 0,
+          "present": true,
+          "sd": 3.4749361374592613,
+          "valid": 552,
+          "zero": 0
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 31.0,
+          "mean": 13.795289855072463,
+          "missing": 0,
+          "present": true,
+          "sd": 5.048293540356704,
+          "valid": 552,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 12.0,
+          "mean": 4.5978260869565215,
+          "missing": 0,
+          "present": true,
+          "sd": 2.3408461058970502,
+          "valid": 552,
+          "zero": 12
+        }
+      },
+      "matches": 552,
+      "season": "2023-2024",
+      "sha256": "5737f6cc95c95092b28317f41d3123e2fb09345434efc1c84bbdf15830849ab3",
+      "source_path": "data/raw/football_data/2023-2024/E1/5737f6cc95c95092b28317f41d3123e2fb09345434efc1c84bbdf15830849ab3.csv",
+      "target_exceeds_shots": 0
+    },
+    {
+      "complete_shot_matches": 380,
+      "division": "E0",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 18.0,
+          "mean": 4.871052631578947,
+          "missing": 0,
+          "present": true,
+          "sd": 3.0273670942827042,
+          "valid": 380,
+          "zero": 14
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 21.0,
+          "mean": 11.276315789473685,
+          "missing": 0,
+          "present": true,
+          "sd": 3.5086310278726507,
+          "valid": 380,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 37.0,
+          "mean": 12.16578947368421,
+          "missing": 0,
+          "present": true,
+          "sd": 5.402863583605187,
+          "valid": 380,
+          "zero": 0
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 13.0,
+          "mean": 4.265789473684211,
+          "missing": 0,
+          "present": true,
+          "sd": 2.3385528943962752,
+          "valid": 380,
+          "zero": 13
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 17.0,
+          "mean": 5.426315789473684,
+          "missing": 0,
+          "present": true,
+          "sd": 3.1792654075833235,
+          "valid": 380,
+          "zero": 10
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 21.0,
+          "mean": 10.789473684210526,
+          "missing": 0,
+          "present": true,
+          "sd": 3.635047923645879,
+          "valid": 380,
+          "zero": 0
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 36.0,
+          "mean": 13.75263157894737,
+          "missing": 0,
+          "present": true,
+          "sd": 5.580687414840637,
+          "valid": 380,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 16.0,
+          "mean": 4.83421052631579,
+          "missing": 0,
+          "present": true,
+          "sd": 2.48498398975987,
+          "valid": 380,
+          "zero": 8
+        }
+      },
+      "matches": 380,
+      "season": "2024-2025",
+      "sha256": "d0c8ce4a96d886cf60cf101f570f4a3893844226f91c7bd769eb568c49edbfa4",
+      "source_path": "data/raw/football_data/2024-2025/E0/d0c8ce4a96d886cf60cf101f570f4a3893844226f91c7bd769eb568c49edbfa4.csv",
+      "target_exceeds_shots": 0
+    },
+    {
+      "complete_shot_matches": 552,
+      "division": "E1",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 15.0,
+          "mean": 4.346014492753623,
+          "missing": 0,
+          "present": true,
+          "sd": 2.4446448542800803,
+          "valid": 552,
+          "zero": 12
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 22.0,
+          "mean": 11.782608695652174,
+          "missing": 0,
+          "present": true,
+          "sd": 3.6180688468040847,
+          "valid": 552,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 28.0,
+          "mean": 10.184782608695652,
+          "missing": 0,
+          "present": true,
+          "sd": 4.2832569582190985,
+          "valid": 552,
+          "zero": 1
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 12.0,
+          "mean": 3.346014492753623,
+          "missing": 0,
+          "present": true,
+          "sd": 2.0031276413688786,
+          "valid": 552,
+          "zero": 28
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 18.0,
+          "mean": 5.840579710144928,
+          "missing": 0,
+          "present": true,
+          "sd": 3.0774928079163284,
+          "valid": 552,
+          "zero": 4
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 22.0,
+          "mean": 11.016304347826088,
+          "missing": 0,
+          "present": true,
+          "sd": 3.2361335348218385,
+          "valid": 552,
+          "zero": 0
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 31.0,
+          "mean": 13.469202898550725,
+          "missing": 0,
+          "present": true,
+          "sd": 4.995192697911359,
+          "valid": 552,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 12.0,
+          "mean": 4.371376811594203,
+          "missing": 0,
+          "present": true,
+          "sd": 2.355562240041361,
+          "valid": 552,
+          "zero": 10
+        }
+      },
+      "matches": 552,
+      "season": "2024-2025",
+      "sha256": "f34c340446c916374be66bdc2fb25b87ee7f2662712ca009653d03ac705535f9",
+      "source_path": "data/raw/football_data/2024-2025/E1/f34c340446c916374be66bdc2fb25b87ee7f2662712ca009653d03ac705535f9.csv",
+      "target_exceeds_shots": 1
+    },
+    {
+      "complete_shot_matches": 380,
+      "division": "E0",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 15.0,
+          "mean": 4.602631578947369,
+          "missing": 0,
+          "present": true,
+          "sd": 2.7448503786377927,
+          "valid": 380,
+          "zero": 7
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 21.0,
+          "mean": 10.989473684210527,
+          "missing": 0,
+          "present": true,
+          "sd": 3.3927003275363674,
+          "valid": 380,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 30.0,
+          "mean": 11.157894736842104,
+          "missing": 0,
+          "present": true,
+          "sd": 4.567196052108269,
+          "valid": 380,
+          "zero": 0
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 11.0,
+          "mean": 3.8710526315789475,
+          "missing": 0,
+          "present": true,
+          "sd": 2.1093036883913836,
+          "valid": 380,
+          "zero": 10
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 14.0,
+          "mean": 5.394736842105263,
+          "missing": 0,
+          "present": true,
+          "sd": 2.7255079071249373,
+          "valid": 380,
+          "zero": 4
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 20.0,
+          "mean": 10.652631578947368,
+          "missing": 0,
+          "present": true,
+          "sd": 3.2110612151473883,
+          "valid": 380,
+          "zero": 0
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 35.0,
+          "mean": 13.839473684210526,
+          "missing": 0,
+          "present": true,
+          "sd": 4.942620201859921,
+          "valid": 380,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 11.0,
+          "mean": 4.502631578947368,
+          "missing": 0,
+          "present": true,
+          "sd": 2.2413561263928052,
+          "valid": 380,
+          "zero": 7
+        }
+      },
+      "matches": 380,
+      "season": "2025-2026",
+      "sha256": "3e3a8352f9ada6789c508d6ca184424421fed56a30400904a4a327c583407e62",
+      "source_path": "data/raw/football_data/2025-2026/E0/3e3a8352f9ada6789c508d6ca184424421fed56a30400904a4a327c583407e62.csv",
+      "target_exceeds_shots": 0
+    },
+    {
+      "complete_shot_matches": 552,
+      "division": "E1",
+      "fields": {
+        "AC": {
+          "invalid": 0,
+          "maximum": 15.0,
+          "mean": 4.581521739130435,
+          "missing": 0,
+          "present": true,
+          "sd": 2.5560143345671826,
+          "valid": 552,
+          "zero": 9
+        },
+        "AF": {
+          "invalid": 0,
+          "maximum": 22.0,
+          "mean": 11.181159420289855,
+          "missing": 0,
+          "present": true,
+          "sd": 3.4614554768281263,
+          "valid": 552,
+          "zero": 0
+        },
+        "AS": {
+          "invalid": 0,
+          "maximum": 29.0,
+          "mean": 11.184782608695652,
+          "missing": 0,
+          "present": true,
+          "sd": 4.452883810308028,
+          "valid": 552,
+          "zero": 0
+        },
+        "AST": {
+          "invalid": 0,
+          "maximum": 12.0,
+          "mean": 3.675724637681159,
+          "missing": 0,
+          "present": true,
+          "sd": 2.172353758417773,
+          "valid": 552,
+          "zero": 22
+        },
+        "HC": {
+          "invalid": 0,
+          "maximum": 17.0,
+          "mean": 5.771739130434782,
+          "missing": 0,
+          "present": true,
+          "sd": 3.039367047246696,
+          "valid": 552,
+          "zero": 5
+        },
+        "HF": {
+          "invalid": 0,
+          "maximum": 20.0,
+          "mean": 10.295289855072463,
+          "missing": 0,
+          "present": true,
+          "sd": 3.3004357841441787,
+          "valid": 552,
+          "zero": 0
+        },
+        "HS": {
+          "invalid": 0,
+          "maximum": 34.0,
+          "mean": 14.059782608695652,
+          "missing": 0,
+          "present": true,
+          "sd": 5.215123488108338,
+          "valid": 552,
+          "zero": 0
+        },
+        "HST": {
+          "invalid": 0,
+          "maximum": 13.0,
+          "mean": 4.469202898550725,
+          "missing": 0,
+          "present": true,
+          "sd": 2.314680796722571,
+          "valid": 552,
+          "zero": 6
+        }
+      },
+      "matches": 552,
+      "season": "2025-2026",
+      "sha256": "98954c319950f19158624b17a154ef1c56eb7b8d169ef317f28f06d11d0b9a74",
+      "source_path": "data/raw/football_data/2025-2026/E1/98954c319950f19158624b17a154ef1c56eb7b8d169ef317f28f06d11d0b9a74.csv",
+      "target_exceeds_shots": 0
+    }
+  ],
+  "semantics_limit": "Counts have stable field labels; provider coding consistency is not established by coverage alone",
+  "semantics_source": "https://football-data.co.uk/notes.txt",
+  "snapshot_sha256": "d7a8e8cf5521d2daf9c47263f3a6c0712019b14f4437a725c69f3e6d663dcb0a"
+}

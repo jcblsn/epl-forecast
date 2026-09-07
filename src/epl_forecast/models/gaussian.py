@@ -2,6 +2,10 @@ import numpy as np
 from scipy.linalg import cho_factor, cho_solve
 
 
+class LikelihoodDomainError(RuntimeError):
+    """A numerical likelihood evaluation cannot resolve this parameter proposal."""
+
+
 def poisson_laplace_update(
     mean: np.ndarray, covariance: np.ndarray, design: np.ndarray, goals: np.ndarray
 ) -> tuple[np.ndarray, np.ndarray]:
@@ -90,8 +94,11 @@ def likelihood_laplace_update(mean, covariance, design, likelihood):
     mode = np.zeros(root.shape[1])
 
     def objective(u):
-        with np.errstate(over="ignore", invalid="ignore"):
-            value = 0.5 * (u @ u) - likelihood(location + root @ u)[0]
+        try:
+            with np.errstate(over="ignore", invalid="ignore"):
+                value = 0.5 * (u @ u) - likelihood(location + root @ u)[0]
+        except LikelihoodDomainError:
+            return np.inf
         return value if np.isfinite(value) else np.inf
 
     for _ in range(60):
@@ -107,7 +114,8 @@ def likelihood_laplace_update(mean, covariance, design, likelihood):
         if np.max(np.abs(gradient), initial=0) < 1e-8:
             break
         scale, old = 1.0, objective(mode)
-        while objective(mode - scale * step) > old - 1e-4 * scale * (gradient @ step):
+        rounding = 8 * np.finfo(float).eps * (1 + abs(old))
+        while objective(mode - scale * step) > old - 1e-4 * scale * (gradient @ step) + rounding:
             scale *= 0.5
             if scale < 1e-10:
                 if np.max(np.abs(step), initial=0) < 1e-7:

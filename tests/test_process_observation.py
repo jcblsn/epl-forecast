@@ -79,3 +79,53 @@ def test_sampling_matches_process_and_goal_moments():
 def test_invalid_observations(goals, xg, scale):
     with pytest.raises(ValueError):
         ProcessObservation(goals, xg, scale)
+
+
+def test_large_line_search_proposals_have_finite_likelihood():
+    likelihood = ProcessObservation([2, 1], [np.nan, 1.3], 0.1)
+    value, gradient, curvature = likelihood([20, 20])
+    assert np.isfinite(value)
+    assert np.isfinite(gradient).all()
+    assert np.isfinite(curvature).all()
+
+
+def test_bessel_density_matches_independent_packet_sum():
+    from scipy.special import gammaln, logsumexp
+
+    for rate, x, q in [(0.01, 0.002, 1.0), (1.3, 2.1, 0.25), (12, 10, 0.08)]:
+        n = np.arange(1, 1000)
+        value = (
+            logsumexp(
+                n * np.log(rate / q)
+                - rate / q
+                - gammaln(n + 1)
+                + (n - 1) * np.log(x)
+                - x / q
+                - gammaln(n)
+                - n * np.log(q)
+            )
+            - x
+        )
+        actual = ProcessObservation([0], [x], q)([np.log(rate)])[0]
+        assert actual == pytest.approx(value, abs=1e-11)
+
+
+def test_line_search_backtracks_unresolvable_proposals():
+    from epl_forecast.models.gaussian import LikelihoodDomainError, likelihood_laplace_update
+
+    calls = []
+
+    def likelihood(eta):
+        calls.append(float(eta[0]))
+        if eta[0] > 3:
+            raise LikelihoodDomainError("proposal beyond numerical domain")
+        rate = np.exp(eta[0])
+        return 20 * eta[0] - rate, np.array([20 - rate]), np.array([[rate]])
+
+    mean, covariance, evidence = likelihood_laplace_update(
+        np.zeros(1), np.ones((1, 1)), np.ones((1, 1)), likelihood
+    )
+    assert max(calls) > 3
+    assert abs(mean[0] + np.exp(mean[0]) - 20) < 1e-7
+    assert covariance[0, 0] > 0
+    assert np.isfinite(evidence)

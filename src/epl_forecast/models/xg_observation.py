@@ -3,6 +3,8 @@
 import numpy as np
 from scipy.special import gammaln, logsumexp
 
+from epl_forecast.models.gaussian import LikelihoodDomainError
+
 
 class ChanceObservation:
     def __init__(self, goals, xg, chance_probability):
@@ -65,7 +67,9 @@ class ChanceObservation:
                     if ratio < 1 and weights[-1] * ratio / (1 - ratio) < 1e-14:
                         break
                     if len(missed) >= 8191:
-                        raise RuntimeError("Opportunity likelihood series failed to converge")
+                        raise LikelihoodDomainError(
+                            "Opportunity likelihood series failed to converge"
+                        )
                     terms = self._terms(g, x, 2 * (int(missed[-1]) + 1))
                 expected = weights @ missed
                 variance = weights @ (missed - expected) ** 2
