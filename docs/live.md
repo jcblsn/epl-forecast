@@ -111,3 +111,43 @@ The M5 batch generated 10,000 forward season paths from that captured schedule.
 See the [batch report](experiments/m5_quality_tilt.md) for the exact archive and
 verification evidence. Neither the sampled posterior nor the dynamics grid is
 claimed to be fully calibrated.
+
+## Recurring prospective capture
+
+Run `uv run python scripts/capture_prospective.py --force` to take a fresh snapshot
+and archive M2, retained M5/M6/M7, and experimental M8 under a unique
+`runs/prospective/<timestamp>/` directory. Each attempt records command exit
+codes, logs, source fingerprints and verified forecast archive hashes. Partial
+failures keep successful model exports and do not advance `last_success.json`.
+The next invocation retries from a fresh snapshot; previous forecasts survive.
+
+The runner checks fixture/result and player club, role, availability and news
+fields. It creates forecasts when that information changes or six hours have
+passed since success. Every invocation retains its raw snapshot even when no
+forecast refresh is needed. Player histories are reused only when the result
+and player-membership fingerprint is unchanged and their dataset hash verifies.
+A new result or player ID triggers a fresh history capture. The historical
+Understat xG pin stays immutable; current-season matches without pinned xG use
+the model's missing-xG likelihood. M8 remains experimental and is not the default.
+
+On macOS, install the local half-hourly collector with:
+
+```sh
+uv run python scripts/capture_prospective.py --install-launch-agent
+launchctl print gui/$(id -u)/org.epl-forecast.prospective
+```
+
+The LaunchAgent uses this checkout and `uv run --locked`, with logs under
+`runs/prospective/`. It runs while the user session and computer are available;
+it cannot capture during shutdown or sleep. A process-held file lock prevents
+simultaneous collectors, including after an interrupted invocation. The agent
+uses the current season automatically unless `--season-start` is supplied.
+
+Inspect the latest attempt's `capture.json` and immutable `complete.json` for
+success or partial failure. Archives classify a fixture as prospective only if
+they finish before its captured kickoff. In-progress games are not forecast;
+upcoming-match capture can proceed while season simulation awaits results.
+Check rescheduling against later snapshots before scoring archives. The sequence
+of snapshots and linked successful attempts preserves information before and
+after transfers, absences, returns and unexpected lineup changes; it does not
+claim those events have already occurred in the current record.

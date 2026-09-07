@@ -1,0 +1,3254 @@
+{
+  "evidence": {
+    "conditional_goals": {
+      "assumption": "M8 G|X ~ Poisson(X); realized xG diagnostic only",
+      "results": [
+        {
+          "conditional_score_nll": 1.2982442939425007,
+          "ge4_expected": 0.06653201999544793,
+          "ge4_observed": 0.034210526315789476,
+          "goal_mean": 1.2947368421052632,
+          "outside_central_90_percent": 0.07631578947368421,
+          "pearson_dispersion": 0.8192376728294658,
+          "period": "2014",
+          "pit_histogram": [
+            31,
+            36,
+            35,
+            43,
+            36,
+            49,
+            34,
+            41,
+            44,
+            31
+          ],
+          "team_matches": 380,
+          "xg_mean": 1.2491695239473684,
+          "zero_expected": 0.3541849653026344,
+          "zero_observed": 0.28421052631578947,
+          "zero_standardized_difference": -3.1427468236847096
+        },
+        {
+          "conditional_score_nll": 1.2833896978876977,
+          "ge4_expected": 0.07491791937004162,
+          "ge4_observed": 0.04342105263157895,
+          "goal_mean": 1.2855263157894736,
+          "outside_central_90_percent": 0.07631578947368421,
+          "pearson_dispersion": 0.7848467808609865,
+          "period": "2015",
+          "pit_histogram": [
+            62,
+            67,
+            64,
+            80,
+            89,
+            94,
+            95,
+            67,
+            86,
+            56
+          ],
+          "team_matches": 760,
+          "xg_mean": 1.2989083228947367,
+          "zero_expected": 0.34752450154180003,
+          "zero_observed": 0.3026315789473684,
+          "zero_standardized_difference": -2.89549445502203
+        },
+        {
+          "conditional_score_nll": 1.331399156582753,
+          "ge4_expected": 0.07546121356508056,
+          "ge4_observed": 0.07142857142857142,
+          "goal_mean": 1.4113756613756614,
+          "outside_central_90_percent": 0.08333333333333333,
+          "pearson_dispersion": 0.8507320714037679,
+          "period": "2016",
+          "pit_histogram": [
+            52,
+            58,
+            60,
+            65,
+            83,
+            79,
+            88,
+            93,
+            108,
+            70
+          ],
+          "team_matches": 756,
+          "xg_mean": 1.2887608915343916,
+          "zero_expected": 0.35522209772251717,
+          "zero_observed": 0.2552910052910053,
+          "zero_standardized_difference": -6.478997274747525
+        },
+        {
+          "conditional_score_nll": 1.2800670671161518,
+          "ge4_expected": 0.08015825946992877,
+          "ge4_observed": 0.07481296758104738,
+          "goal_mean": 1.3516209476309227,
+          "outside_central_90_percent": 0.07481296758104738,
+          "pearson_dispersion": 0.8141133226543534,
+          "period": "2017",
+          "pit_histogram": [
+            70,
+            65,
+            64,
+            70,
+            93,
+            93,
+            98,
+            99,
+            86,
+            64
+          ],
+          "team_matches": 802,
+          "xg_mean": 1.302023951246883,
+          "zero_expected": 0.35923839677448216,
+          "zero_observed": 0.32169576059850374,
+          "zero_standardized_difference": -2.515714849687597
+        },
+        {
+          "conditional_score_nll": 1.31233708278309,
+          "ge4_expected": 0.08373454948847282,
+          "ge4_observed": 0.0660377358490566,
+          "goal_mean": 1.3908355795148248,
+          "outside_central_90_percent": 0.06334231805929919,
+          "pearson_dispersion": 0.7944867640143389,
+          "period": "2018",
+          "pit_histogram": [
+            53,
+            56,
+            58,
+            95,
+            78,
+            78,
+            94,
+            92,
+            83,
+            55
+          ],
+          "team_matches": 742,
+          "xg_mean": 1.356052589083558,
+          "zero_expected": 0.33774740424877575,
+          "zero_observed": 0.2628032345013477,
+          "zero_standardized_difference": -4.863246983290512
+        },
+        {
+          "conditional_score_nll": 1.3130330569200925,
+          "ge4_expected": 0.09610749521951341,
+          "ge4_observed": 0.05408970976253298,
+          "goal_mean": 1.4010554089709764,
+          "outside_central_90_percent": 0.0712401055408971,
+          "pearson_dispersion": 0.8214499553788018,
+          "period": "2019",
+          "pit_histogram": [
+            59,
+            59,
+            76,
+            71,
+            99,
+            99,
+            90,
+            70,
+            73,
+            62
+          ],
+          "team_matches": 758,
+          "xg_mean": 1.4360611788918205,
+          "zero_expected": 0.32344681916682966,
+          "zero_observed": 0.2598944591029024,
+          "zero_standardized_difference": -4.24640026938127
+        },
+        {
+          "conditional_score_nll": 1.3155905572574593,
+          "ge4_expected": 0.0922334268281541,
+          "ge4_observed": 0.06547619047619048,
+          "goal_mean": 1.3526785714285714,
+          "outside_central_90_percent": 0.08630952380952381,
+          "pearson_dispersion": 0.8269099321542681,
+          "period": "2020",
+          "pit_histogram": [
+            59,
+            48,
+            74,
+            80,
+            67,
+            69,
+            84,
+            79,
+            63,
+            49
+          ],
+          "team_matches": 672,
+          "xg_mean": 1.4000826584821429,
+          "zero_expected": 0.3341839051233731,
+          "zero_observed": 0.2976190476190476,
+          "zero_standardized_difference": -2.290062253256454
+        },
+        {
+          "conditional_score_nll": 1.277519179850613,
+          "ge4_expected": 0.09094794440609252,
+          "ge4_observed": 0.056372549019607844,
+          "goal_mean": 1.357843137254902,
+          "outside_central_90_percent": 0.058823529411764705,
+          "pearson_dispersion": 0.7243588160240573,
+          "period": "2021",
+          "pit_histogram": [
+            60,
+            78,
+            75,
+            77,
+            95,
+            106,
+            94,
+            93,
+            91,
+            47
+          ],
+          "team_matches": 816,
+          "xg_mean": 1.3929069667892156,
+          "zero_expected": 0.33446966799554373,
+          "zero_observed": 0.2928921568627451,
+          "zero_standardized_difference": -2.8656736440623156
+        },
+        {
+          "conditional_score_nll": 1.3274971930855233,
+          "ge4_expected": 0.09451824224645179,
+          "ge4_observed": 0.07063711911357341,
+          "goal_mean": 1.419667590027701,
+          "outside_central_90_percent": 0.07756232686980609,
+          "pearson_dispersion": 0.8617072227807757,
+          "period": "2022",
+          "pit_histogram": [
+            61,
+            50,
+            63,
+            77,
+            92,
+            83,
+            91,
+            94,
+            62,
+            49
+          ],
+          "team_matches": 722,
+          "xg_mean": 1.4264142729916898,
+          "zero_expected": 0.3254567546433222,
+          "zero_observed": 0.2770083102493075,
+          "zero_standardized_difference": -3.1603162245225906
+        },
+        {
+          "conditional_score_nll": 1.3428567403341187,
+          "ge4_expected": 0.11506964876793428,
+          "ge4_observed": 0.07524271844660194,
+          "goal_mean": 1.483009708737864,
+          "outside_central_90_percent": 0.06310679611650485,
+          "pearson_dispersion": 0.6989294140076642,
+          "period": "2023",
+          "pit_histogram": [
+            61,
+            73,
+            83,
+            100,
+            90,
+            101,
+            106,
+            82,
+            72,
+            56
+          ],
+          "team_matches": 824,
+          "xg_mean": 1.5720359628640777,
+          "zero_expected": 0.29204414625145486,
+          "zero_observed": 0.24150485436893204,
+          "zero_standardized_difference": -3.600764274840219
+        },
+        {
+          "conditional_score_nll": 1.415846327548056,
+          "ge4_expected": 0.1338424528542766,
+          "ge4_observed": 0.09543010752688172,
+          "goal_mean": 1.603494623655914,
+          "outside_central_90_percent": 0.05913978494623656,
+          "pearson_dispersion": 0.7965306033577703,
+          "period": "2024",
+          "pit_histogram": [
+            57,
+            73,
+            78,
+            80,
+            92,
+            63,
+            87,
+            97,
+            79,
+            38
+          ],
+          "team_matches": 744,
+          "xg_mean": 1.7059339184139786,
+          "zero_expected": 0.26559940219674033,
+          "zero_observed": 0.21505376344086022,
+          "zero_standardized_difference": -3.5243309923257864
+        },
+        {
+          "conditional_score_nll": 1.335155371993933,
+          "ge4_expected": 0.10484315278854128,
+          "ge4_observed": 0.06084656084656084,
+          "goal_mean": 1.4312169312169312,
+          "outside_central_90_percent": 0.06349206349206349,
+          "pearson_dispersion": 0.7475998599617665,
+          "period": "2025",
+          "pit_histogram": [
+            59,
+            65,
+            66,
+            91,
+            94,
+            99,
+            84,
+            81,
+            68,
+            49
+          ],
+          "team_matches": 756,
+          "xg_mean": 1.5126688534391535,
+          "zero_expected": 0.3018202129771808,
+          "zero_observed": 0.24735449735449735,
+          "zero_standardized_difference": -3.677997889511575
+        },
+        {
+          "conditional_score_nll": 1.3455880127597122,
+          "ge4_expected": 0.10967962944458713,
+          "ge4_observed": 0.03350515463917526,
+          "goal_mean": 1.342783505154639,
+          "outside_central_90_percent": 0.07731958762886598,
+          "pearson_dispersion": 0.7241600907437695,
+          "period": "2026",
+          "pit_histogram": [
+            34,
+            33,
+            46,
+            49,
+            42,
+            43,
+            46,
+            43,
+            39,
+            13
+          ],
+          "team_matches": 388,
+          "xg_mean": 1.570147600515464,
+          "zero_expected": 0.28038270280835076,
+          "zero_observed": 0.2551546391752577,
+          "zero_standardized_difference": -1.2315474020593253
+        },
+        {
+          "conditional_score_nll": 1.3209702231819196,
+          "ge4_expected": 0.09420896453654053,
+          "ge4_observed": 0.06392543859649123,
+          "goal_mean": 1.4006578947368422,
+          "outside_central_90_percent": 0.0694078947368421,
+          "pearson_dispersion": 0.7894345990643148,
+          "period": "overall",
+          "pit_histogram": [
+            720,
+            781,
+            906,
+            904,
+            1026,
+            1097,
+            1089,
+            1025,
+            943,
+            629
+          ],
+          "team_matches": 9120,
+          "xg_mean": 1.4254180602521929,
+          "zero_expected": 0.3244342963360621,
+          "zero_observed": 0.27028508771929827,
+          "zero_standardized_difference": -12.491261724409968
+        }
+      ],
+      "seed": 801
+    },
+    "predictive": {
+      "draws_per_match": 2000,
+      "scale_history": [
+        {
+          "day": "2023-08-11",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.597420684231585e-56,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-08-12",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.2874609653730076e-56,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-08-13",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.270603541120558e-56,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-08-14",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.237921627419358e-56,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-08-18",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.2544453788616796e-56,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-08-19",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.9585409900996952e-56,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-08-20",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.6503555961341517e-56,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-08-21",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.961565439232511e-56,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-08-25",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.6679827775351187e-56,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-08-26",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.522585506775636e-56,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-08-27",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.7781841076198406e-56,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-09-01",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.3381782423470371e-56,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-09-02",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.2720515791156336e-56,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-09-03",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.032770449967093e-56,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-09-16",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 6.991186366972983e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-09-17",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.621942364628663e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-09-18",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.825585156686676e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-09-23",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 6.00552985349238e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-09-24",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 9.855744474406186e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-09-30",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 8.245808873089466e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-10-01",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.244070279555198e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-10-02",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.4563098451595166e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-10-03",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.851246193463485e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-10-07",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.404935692326361e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-10-08",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.0772901313913612e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-10-21",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 7.11157343254373e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-10-22",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 8.147038793082141e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-10-23",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 6.942764740545844e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-10-27",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.831877496581027e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-10-28",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.3933514220658545e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-10-29",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.115850802091999e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-11-04",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 6.2906724051180735e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-11-05",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.456587040513334e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-11-06",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.0602825823748116e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-11-11",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 6.530001438231952e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-11-12",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.941691119819897e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-11-25",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.890338225068891e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-11-26",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.245478456986437e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-11-27",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.079287579083207e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-12-02",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.9938599853004064e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-12-03",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.4661236142815637e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-12-05",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 9.109382070466894e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-12-06",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 6.448492899227633e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-12-07",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.093260589661093e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-12-09",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.2471767846461569e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-12-10",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 9.423485733262885e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-12-15",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.3713644261125987e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-12-16",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.1167349156159446e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-12-17",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 9.366635475202839e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-12-21",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 6.885022737497715e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-12-22",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.5317426190698505e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-12-23",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 6.089564107017248e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-12-24",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.203210643042131e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-12-26",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.526406070390819e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-12-27",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 6.733987367727421e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-12-28",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.797140343384816e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-12-30",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.392791081404753e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2023-12-31",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.9145012102350854e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-01-01",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.003251255938975e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-01-02",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.5030899402885723e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-01-12",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.3249528079637302e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-01-13",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.0734366807842731e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-01-14",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 7.626936576122062e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-01-20",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.981109294176887e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-01-21",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.1120599720503986e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-01-22",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.279102974150293e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-01-30",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.676024365449892e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-01-31",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.0370998211797026e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-02-01",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.3941484383935078e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-02-03",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.5362422847762055e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-02-04",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.7312583872386595e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-02-05",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.7527540682499474e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-02-10",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.466701219739688e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-02-11",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 9.746982293366194e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-02-12",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.7644663819917073e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-02-17",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.592499612262468e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-02-18",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 8.114991193784079e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-02-19",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 9.962242215278834e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-02-20",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 8.376400945197821e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-02-21",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 7.056163026587511e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-02-24",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.550195479622544e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-02-25",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 9.165305519530475e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-02-26",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 8.59154983022289e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-03-02",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 7.263239219520439e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-03-03",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.182992326025804e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-03-04",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.4911596946369e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-03-09",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.072098192587439e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-03-10",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.9134603982817076e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-03-11",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.190549960174098e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-03-13",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.619928185302957e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-03-16",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.361064053161335e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-03-17",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.8907325599762736e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-03-30",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.553924597746692e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-03-31",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.963911269713575e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-04-02",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.5014078819033394e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-04-03",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.938884917069404e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-04-04",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.183894517128503e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-04-06",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.1471185026114464e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-04-07",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 6.269688047168333e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-04-13",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.0966948310969459e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-04-14",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.614147338442031e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-04-15",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 8.12786051326966e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-04-20",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 7.577663768279408e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-04-21",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.369096805049673e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-04-23",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.7256027361612374e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-04-24",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.711287951831872e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-04-25",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.8097611667951374e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-04-27",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.546729790891396e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-04-28",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 7.823739860702432e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-05-02",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 9.513943927107603e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-05-03",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 7.574549550702919e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-05-04",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 6.56675444517925e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-05-05",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.0038729125576232e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-05-06",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.471081687661259e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-05-11",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.621359110777284e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-05-12",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.740371250520386e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-05-13",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.5357377637426607e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-05-14",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.6324260698409275e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-05-15",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.4405427541800644e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-05-19",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 9.415725473959573e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-08-16",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.859393324211705e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-08-17",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 6.3365720158721285e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-08-18",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.0851787762979103e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-08-19",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.4650179401567704e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-08-24",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.2596657480672128e-57,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-08-25",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 7.970952863389144e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-08-31",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.675826964966915e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-09-01",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.028936353989848e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-09-14",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.467917170325921e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-09-15",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.291554890195474e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-09-21",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.628752688509035e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-09-22",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 9.900808316782606e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-09-28",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 7.803250496155892e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-09-29",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.2495776147052462e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-09-30",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.583511994675445e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-10-05",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.653233579562485e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-10-06",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 6.650141115441533e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-10-19",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 9.741434231863034e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-10-20",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 6.3448085331321724e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-10-21",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.470968859986057e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-10-25",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.5596947239978884e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-10-26",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.0022738324664062e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-10-27",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.471208693295824e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-11-02",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.788874455890822e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-11-03",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.0458435659942527e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-11-04",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.961794410808571e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-11-09",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.6669216757428484e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-11-10",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.5082998613985494e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-11-23",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.0246983229971685e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-11-24",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.600024675558404e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-11-25",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.269280332304374e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-11-29",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.1154920428454142e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-11-30",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 9.219200559106012e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-12-01",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.2717612393764095e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-12-03",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.6557930619755393e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-12-04",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.8197576932813997e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-12-05",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.0773237753447608e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-12-07",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.304234842878004e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-12-08",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.2656924203688328e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-12-09",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.491116087464507e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-12-14",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.2822343590603722e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-12-15",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.7367744575278468e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-12-16",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.272827446538068e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-12-21",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.0558826646975577e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-12-22",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.8933576511622698e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-12-26",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.368387368605366e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-12-27",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.4409209670333915e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-12-29",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.355224958622453e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2024-12-30",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.5757605952962536e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-01-01",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.0141161070590044e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-01-04",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 9.81722506990924e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-01-05",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.5225311174708552e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-01-06",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.2581844166149768e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-01-14",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.4657191138908145e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-01-15",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.2988990644674663e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-01-16",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 6.850674470163697e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-01-18",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 7.388779234638697e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-01-19",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 9.744537054746491e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-01-20",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 6.4854571210055135e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-01-25",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.30159938532879e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-01-26",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.4473492495984157e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-02-01",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 6.279696663097178e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-02-02",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 6.95436048315392e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-02-03",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.772546657041867e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-02-12",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.827196081241831e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-02-14",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.02091840165826e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-02-15",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.491862575227123e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-02-16",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.994367512965909e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-02-19",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.338794768883369e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-02-21",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.436578783460796e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-02-22",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.909256134336469e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-02-23",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.3992772477265484e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-02-25",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.4445321647902208e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-02-26",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.1380093364850692e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-02-27",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.0462508678840382e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-03-08",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.0907437557125558e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-03-09",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 7.766411979341887e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-03-10",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 7.149437440831371e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-03-15",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.952312766786868e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-03-16",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.317700193619189e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-04-01",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.274404394794461e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-04-02",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.600828769476279e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-04-03",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.371119435080581e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-04-05",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.889705269047084e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-04-06",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.1989437489442883e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-04-07",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.7718779693924757e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-04-12",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.050000417356632e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-04-13",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.464850894418649e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-04-14",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.13201133466912e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-04-16",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.287131351919696e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-04-19",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.3506164528474363e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-04-20",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.048298757712337e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-04-21",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 9.493492996856071e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-04-22",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 9.571467805772229e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-04-23",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 8.45427247385107e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-04-26",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.1752479843501002e-58,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-04-27",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 8.141392373758066e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-05-01",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 8.995064503577852e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-05-02",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 7.936001778360732e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-05-03",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 8.192887572799225e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-05-04",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.77948687763175e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-05-05",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 9.340231117800243e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-05-10",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 8.216364883787867e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-05-11",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.942180574162584e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-05-16",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 8.010041949535155e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-05-18",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 7.703644683497844e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-05-19",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.687303910112647e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-05-20",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 6.296096274543858e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-05-25",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.205334388232741e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-08-15",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.0549681807851864e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-08-16",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.54589890186456e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-08-17",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.951283775317694e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-08-18",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.0719892807689847e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-08-22",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.3549354318636571e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-08-23",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.9392182164996911e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-08-24",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.082133792335032e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-08-25",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 7.262548678722987e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-08-30",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 7.16024340091025e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-08-31",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.478645536263868e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-09-13",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.325543064294228e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-09-14",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.18311806697359e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-09-20",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.0256793668246813e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-09-21",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.138105538915125e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-09-27",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 6.25837449938693e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-09-28",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.1443268787315774e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-09-29",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 8.555835124348103e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-10-03",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 7.451583824058103e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-10-04",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.900814958526853e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-10-05",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.92390670174018e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-10-18",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.847841510044678e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-10-19",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.091491059935682e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-10-20",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.7727769928517424e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-10-24",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 6.170213218701099e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-10-25",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.496272785494686e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-10-26",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.484498014447756e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-11-01",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 7.110244770544566e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-11-02",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.4088065419447997e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-11-03",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.6803258527865328e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-11-08",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.333884367814389e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-11-09",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.1575355321190254e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-11-22",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.727045490067685e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-11-23",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.7321270401543547e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-11-24",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.7226352775641375e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-11-29",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.650450774767154e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-11-30",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.268486882244645e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-12-02",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.0399221490038102e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-12-03",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 7.128247763993622e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-12-04",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 8.921426479580209e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-12-06",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 7.525110271442398e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-12-07",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.088153214615938e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-12-08",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 8.491534055774288e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-12-13",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.5815212285695564e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-12-14",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.0046457648669595e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-12-15",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.8939121626503413e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-12-20",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.4091155520396734e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-12-21",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.4077005437829502e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-12-22",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.1810836044218543e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-12-26",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.0587773656234915e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-12-27",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 9.409346034109057e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-12-28",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.109435852808255e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2025-12-30",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.0975030909552417e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-01-01",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.6366640957733936e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-01-03",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.0482110824337427e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-01-04",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.942376041963991e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-01-06",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.4365359677406627e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-01-07",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.1891314849970357e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-01-08",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 8.732963249398535e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-01-17",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.0981773810535712e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-01-18",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.6321608368833619e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-01-19",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.5359670073597294e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-01-24",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.3040733843011464e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-01-25",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.2626421908497467e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-01-26",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 7.892254315951879e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-01-31",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 6.573488076480082e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-02-01",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.0411289241246693e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-02-02",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 9.32651972366366e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-02-06",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.1421478019145642e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-02-07",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.3261172124846832e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-02-08",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.1495642269331211e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-02-10",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.2341850694319203e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-02-11",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.145225298956368e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-02-12",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.8140855289476351e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-02-18",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.003193266339547e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-02-21",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.8230903305515942e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-02-22",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.3402123940552252e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-02-23",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.1078726299680029e-59,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-02-27",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 9.953352247476619e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-02-28",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 8.20313116612892e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-03-01",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.500569772858085e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-03-03",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.8454336961053053e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-03-04",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.930955734868382e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-03-05",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.850015730889198e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-03-14",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.5077469057776323e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-03-15",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 7.537032627866025e-61,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-03-16",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.7914266782626334e-61,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-03-20",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.8447899963289184e-61,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-03-21",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.7114602927987636e-61,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-03-22",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.4599313325632605e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-04-10",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.473357202517664e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-04-11",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.425171063155246e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-04-12",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 8.87922728040992e-61,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-04-13",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.6487512343253786e-61,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-04-18",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 7.894904618311879e-61,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-04-19",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 7.490970215768229e-61,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-04-20",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 8.836041329721949e-61,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-04-21",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.020071209550488e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-04-22",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.6070415697909333e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-04-24",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.085076760191141e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-04-25",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 1.0495484652037466e-60,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-04-27",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 8.817089133260095e-61,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-05-01",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 6.972041391651406e-61,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-05-02",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.8890217798464584e-61,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-05-03",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 5.5347385199026454e-61,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-05-04",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.752861156102339e-61,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-05-09",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.29158108078447e-61,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-05-10",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 6.601537412292907e-61,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-05-11",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 4.8383494110709035e-61,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-05-13",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.986377075540043e-61,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-05-15",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.842785451975186e-61,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-05-17",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.5952955171137516e-61,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-05-18",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 2.6133988762454793e-61,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-05-19",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.367112992009314e-61,
+          "upper_edge_mass": 0.0
+        },
+        {
+          "day": "2026-05-24",
+          "lower_edge_mass": 0.0,
+          "mean": 0.1555538159259244,
+          "sd": 3.2155274440432495e-61,
+          "upper_edge_mass": 0.0
+        }
+      ],
+      "scale_quadrature_sensitivity": [
+        {
+          "comparison": [
+            {
+              "order": 5,
+              "probabilities": [
+                0.14082920191139922,
+                0.174038278160887,
+                0.6851325199277138
+              ],
+              "scale_mean": 0.1555538159259244,
+              "scale_sd": 2.597420684231585e-56
+            },
+            {
+              "order": 9,
+              "probabilities": [
+                0.1437156290909182,
+                0.1738936866393764,
+                0.6823906842697054
+              ],
+              "scale_mean": 0.1747438933669678,
+              "scale_sd": 1.4058802360889045e-51
+            }
+          ],
+          "day": "2023-08-11",
+          "match_id": "eng-premier-league:2023-2024:burnley:manchester-city",
+          "max_probability_difference": 0.00288642717951898
+        },
+        {
+          "comparison": [
+            {
+              "order": 5,
+              "probabilities": [
+                0.45714158161950974,
+                0.21736652053224734,
+                0.32549189784824284
+              ],
+              "scale_mean": 0.1555538159259244,
+              "scale_sd": 1.621359110777284e-57
+            },
+            {
+              "order": 9,
+              "probabilities": [
+                0.45304880233065037,
+                0.21623185683321083,
+                0.33071934083613885
+              ],
+              "scale_mean": 0.1747438933669678,
+              "scale_sd": 2.6971133573635386e-60
+            }
+          ],
+          "day": "2024-05-11",
+          "match_id": "eng-premier-league:2023-2024:bournemouth:brentford",
+          "max_probability_difference": 0.005227442987896014
+        },
+        {
+          "comparison": [
+            {
+              "order": 5,
+              "probabilities": [
+                0.703768800455535,
+                0.16270122205785728,
+                0.13352997748660775
+              ],
+              "scale_mean": 0.1555538159259244,
+              "scale_sd": 4.205334388240389e-59
+            },
+            {
+              "order": 9,
+              "probabilities": [
+                0.6980969703404873,
+                0.16353791159759018,
+                0.1383651180619224
+              ],
+              "scale_mean": 0.1747438933669678,
+              "scale_sd": 2.3628674495617907e-64
+            }
+          ],
+          "day": "2025-05-25",
+          "match_id": "eng-premier-league:2024-2025:bournemouth:leicester-city",
+          "max_probability_difference": 0.005671830115047682
+        }
+      ],
+      "scope": "Chronological pre-match joint predictive sampling; target xG and goals excluded",
+      "seed": 803,
+      "summary": [
+        {
+          "bias": 0.003728947368421052,
+          "central90_coverage": 0.9210526315789473,
+          "model": "M7",
+          "observation": "goals",
+          "observed_ge4": 0.09342105263157895,
+          "observed_zero": 0.20657894736842106,
+          "pit_histogram": [
+            72,
+            68,
+            80,
+            75,
+            79,
+            84,
+            69,
+            92,
+            83,
+            58
+          ],
+          "predicted_ge4": 0.10104342105263159,
+          "predicted_zero": 0.22218421052631582,
+          "season": "2023-2024",
+          "team_matches": 760
+        },
+        {
+          "bias": -0.046914153760922235,
+          "central90_coverage": 0.9157894736842105,
+          "model": "M7",
+          "observation": "xg",
+          "observed_ge4": 0.02631578947368421,
+          "observed_zero": 0.0,
+          "pit_histogram": [
+            59,
+            76,
+            82,
+            78,
+            83,
+            64,
+            80,
+            69,
+            82,
+            87
+          ],
+          "predicted_ge4": 0.025119736842105264,
+          "predicted_zero": 0.0025578947368421054,
+          "season": "2023-2024",
+          "team_matches": 760
+        },
+        {
+          "bias": 0.1750736842105263,
+          "central90_coverage": 0.9236842105263158,
+          "model": "M7",
+          "observation": "goals",
+          "observed_ge4": 0.07105263157894737,
+          "observed_zero": 0.23421052631578948,
+          "pit_histogram": [
+            79,
+            89,
+            81,
+            94,
+            77,
+            82,
+            71,
+            76,
+            63,
+            48
+          ],
+          "predicted_ge4": 0.10017236842105263,
+          "predicted_zero": 0.22102302631578946,
+          "season": "2024-2025",
+          "team_matches": 760
+        },
+        {
+          "bias": 0.040996847334087885,
+          "central90_coverage": 0.9184210526315789,
+          "model": "M7",
+          "observation": "xg",
+          "observed_ge4": 0.021052631578947368,
+          "observed_zero": 0.0,
+          "pit_histogram": [
+            74,
+            83,
+            86,
+            75,
+            79,
+            80,
+            63,
+            72,
+            82,
+            66
+          ],
+          "predicted_ge4": 0.023973684210526314,
+          "predicted_zero": 0.0023763157894736843,
+          "season": "2024-2025",
+          "team_matches": 760
+        },
+        {
+          "bias": 0.1332309210526316,
+          "central90_coverage": 0.9421052631578948,
+          "model": "M7",
+          "observation": "goals",
+          "observed_ge4": 0.04078947368421053,
+          "observed_zero": 0.25526315789473686,
+          "pit_histogram": [
+            75,
+            86,
+            84,
+            66,
+            76,
+            96,
+            92,
+            59,
+            70,
+            56
+          ],
+          "predicted_ge4": 0.0775986842105263,
+          "predicted_zero": 0.24105986842105262,
+          "season": "2025-2026",
+          "team_matches": 760
+        },
+        {
+          "bias": -0.022130462441413718,
+          "central90_coverage": 0.9026315789473685,
+          "model": "M7",
+          "observation": "xg",
+          "observed_ge4": 0.009210526315789473,
+          "observed_zero": 0.0,
+          "pit_histogram": [
+            68,
+            81,
+            68,
+            77,
+            79,
+            69,
+            74,
+            81,
+            89,
+            74
+          ],
+          "predicted_ge4": 0.012912500000000002,
+          "predicted_zero": 0.002611842105263158,
+          "season": "2025-2026",
+          "team_matches": 760
+        },
+        {
+          "bias": 0.10401118421052631,
+          "central90_coverage": 0.9289473684210526,
+          "model": "M7",
+          "observation": "goals",
+          "observed_ge4": 0.06842105263157895,
+          "observed_zero": 0.23201754385964912,
+          "pit_histogram": [
+            226,
+            243,
+            245,
+            235,
+            232,
+            262,
+            232,
+            227,
+            216,
+            162
+          ],
+          "predicted_ge4": 0.09293815789473685,
+          "predicted_zero": 0.2280890350877193,
+          "season": "overall",
+          "team_matches": 2280
+        },
+        {
+          "bias": -0.009349256289416028,
+          "central90_coverage": 0.9122807017543859,
+          "model": "M7",
+          "observation": "xg",
+          "observed_ge4": 0.018859649122807017,
+          "observed_zero": 0.0,
+          "pit_histogram": [
+            201,
+            240,
+            236,
+            230,
+            241,
+            213,
+            217,
+            222,
+            253,
+            227
+          ],
+          "predicted_ge4": 0.02066864035087719,
+          "predicted_zero": 0.0025153508771929827,
+          "season": "overall",
+          "team_matches": 2280
+        },
+        {
+          "bias": 0.002403289473684219,
+          "central90_coverage": 0.9276315789473685,
+          "model": "M8",
+          "observation": "goals",
+          "observed_ge4": 0.09342105263157895,
+          "observed_zero": 0.20657894736842106,
+          "pit_histogram": [
+            58,
+            51,
+            88,
+            79,
+            71,
+            83,
+            101,
+            88,
+            94,
+            47
+          ],
+          "predicted_ge4": 0.12144078947368421,
+          "predicted_zero": 0.26930065789473684,
+          "season": "2023-2024",
+          "team_matches": 760
+        },
+        {
+          "bias": -0.048533423509672845,
+          "central90_coverage": 0.8644736842105263,
+          "model": "M8",
+          "observation": "xg",
+          "observed_ge4": 0.02631578947368421,
+          "observed_zero": 0.0,
+          "pit_histogram": [
+            76,
+            87,
+            83,
+            66,
+            70,
+            58,
+            67,
+            70,
+            81,
+            102
+          ],
+          "predicted_ge4": 0.01824078947368421,
+          "predicted_zero": 0.0007881578947368421,
+          "season": "2023-2024",
+          "team_matches": 760
+        },
+        {
+          "bias": 0.17965526315789476,
+          "central90_coverage": 0.9421052631578948,
+          "model": "M8",
+          "observation": "goals",
+          "observed_ge4": 0.07105263157894737,
+          "observed_zero": 0.23421052631578948,
+          "pit_histogram": [
+            69,
+            62,
+            82,
+            94,
+            88,
+            86,
+            96,
+            68,
+            83,
+            32
+          ],
+          "predicted_ge4": 0.12095855263157897,
+          "predicted_zero": 0.2667052631578947,
+          "season": "2024-2025",
+          "team_matches": 760
+        },
+        {
+          "bias": 0.04510639006092871,
+          "central90_coverage": 0.8697368421052631,
+          "model": "M8",
+          "observation": "xg",
+          "observed_ge4": 0.021052631578947368,
+          "observed_zero": 0.0,
+          "pit_histogram": [
+            110,
+            76,
+            86,
+            66,
+            70,
+            68,
+            53,
+            71,
+            74,
+            86
+          ],
+          "predicted_ge4": 0.01856447368421053,
+          "predicted_zero": 0.000643421052631579,
+          "season": "2024-2025",
+          "team_matches": 760
+        },
+        {
+          "bias": 0.1354065789473684,
+          "central90_coverage": 0.9407894736842105,
+          "model": "M8",
+          "observation": "goals",
+          "observed_ge4": 0.04078947368421053,
+          "observed_zero": 0.25526315789473686,
+          "pit_histogram": [
+            60,
+            83,
+            65,
+            72,
+            93,
+            92,
+            95,
+            86,
+            73,
+            41
+          ],
+          "predicted_ge4": 0.09940986842105262,
+          "predicted_zero": 0.2899052631578947,
+          "season": "2025-2026",
+          "team_matches": 760
+        },
+        {
+          "bias": -0.02080202487378753,
+          "central90_coverage": 0.8605263157894737,
+          "model": "M8",
+          "observation": "xg",
+          "observed_ge4": 0.009210526315789473,
+          "observed_zero": 0.0,
+          "pit_histogram": [
+            100,
+            73,
+            68,
+            76,
+            64,
+            60,
+            63,
+            77,
+            82,
+            97
+          ],
+          "predicted_ge4": 0.008082236842105264,
+          "predicted_zero": 0.0007131578947368422,
+          "season": "2025-2026",
+          "team_matches": 760
+        },
+        {
+          "bias": 0.1058217105263158,
+          "central90_coverage": 0.9368421052631579,
+          "model": "M8",
+          "observation": "goals",
+          "observed_ge4": 0.06842105263157895,
+          "observed_zero": 0.23201754385964912,
+          "pit_histogram": [
+            187,
+            196,
+            235,
+            245,
+            252,
+            261,
+            292,
+            242,
+            250,
+            120
+          ],
+          "predicted_ge4": 0.11393640350877192,
+          "predicted_zero": 0.27530372807017545,
+          "season": "overall",
+          "team_matches": 2280
+        },
+        {
+          "bias": -0.00807635277417722,
+          "central90_coverage": 0.8649122807017544,
+          "model": "M8",
+          "observation": "xg",
+          "observed_ge4": 0.018859649122807017,
+          "observed_zero": 0.0,
+          "pit_histogram": [
+            286,
+            236,
+            237,
+            208,
+            204,
+            186,
+            183,
+            218,
+            237,
+            285
+          ],
+          "predicted_ge4": 0.014962500000000004,
+          "predicted_zero": 0.0007149122807017544,
+          "season": "overall",
+          "team_matches": 2280
+        }
+      ]
+    },
+    "xg_sha256": "f2df8be711b56d5c5165937d6aa27bb115cf25864673ae5a2126993c04fadc08"
+  },
+  "source": "runs/m8-predictive-diagnostics-v1/report.json",
+  "source_sha256": "02cb943d7a43c870c0a5e677cb0d28e0a37b7c9e995f2537450193de19a596a2"
+}

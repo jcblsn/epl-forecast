@@ -1,10 +1,10 @@
 # M8 process batch
 
 M2 remains the operational benchmark and M7-v1 the retained xG research parent.
-M8-v1 is an evaluated candidate with a provisional parking decision: treating
+M8-v1 is parked: treating
 provider xG as realized Poisson scoring intensity produces excessive scoring
-variation. Prospective infrastructure and player-process preparation are still
-in progress; this is not yet the completed batch report.
+variation. The batch retains reusable diagnostics and a restricted promotion-bridge candidate.
+Prospective capture verification is still in progress.
 
 ## Representation and chronological evidence
 
@@ -66,6 +66,15 @@ its numerical cap now raises a typed exception. Recomputed chronological home
 probabilities differ from the original successful run by less than 4e-9 across
 all models. Failed diagnostic directories remain separate from retained runs.
 
+The [pre-match predictive checks](m8/predictive_diagnostics.json) cover the same
+1,140 fixtures with 2,000 joint process/goal draws per match. M8 xG central-90%
+coverage is 86.49%, versus 91.23% for M7. M8 predicts 27.53% scoreless team
+performances versus 23.20% observed; M7 predicts 22.81%. The M8 scale quadrature
+collapses onto q=0.15555. Nine-node checks instead select q=0.17474 and change
+sampled match probabilities by up to 0.00567. This is numerical under-resolution
+of a concentrated scale posterior, not evidence of negligible scale uncertainty.
+Do not retune the grid to rescue the failed observation assumption.
+
 ## Championship initialization
 
 The [raw-field audit](m8/process_fields.json) covers the pinned 16-season source.
@@ -89,3 +98,14 @@ coverage is 88.89% versus 72.22%. These summaries include target observation
 variance and are not latent-state coverage. This is useful evidence for a
 restricted process bridge, not a validated change to live promoted priors.
 Retain the current operational bridge while carrying this candidate forward.
+
+## Player-process foundation
+
+The [second-player proposal](../player_process_model.md) defines a pooled,
+role-aware attacking-process layer with persistent club/system defense and an
+actual-minutes versus forecast-minutes comparison. The [identity audit](m8/player_identity.json)
+links 760 sampled appearances and keeps 107 unresolved; 166 lack FPL coverage.
+Role/provider distinctions and source hashes are retained. No operational player
+layer relies on these incomplete links. Because M8 did not settle into an adequate
+team observation model, its conditional player-extension experiment was not
+triggered; no player-process oracle gain is claimed.

@@ -1,0 +1,22 @@
+{
+  "artifacts": {
+    "docs/experiments/m8/chronological_market_predictions.csv.gz": {
+      "rows": 3420,
+      "sha256": "ca82794698e5ce965941f49c8cea47aaccfac12d4f9c92523578cfd47ff5e308"
+    },
+    "docs/experiments/m8/chronological_predictions.csv.gz": {
+      "rows": 5700,
+      "sha256": "9dcb2ab1395b10de2a35ddda4cd8eea02c4906807d1bc2fa64272bf086ed0a22"
+    }
+  },
+  "inputs": {
+    "configs/data_snapshot.json": "d7a8e8cf5521d2daf9c47263f3a6c0712019b14f4437a725c69f3e6d663dcb0a",
+    "configs/process_quality_tilt.toml": "10b9211c25a08b0e45d6cd69e7e8b7af5537a05da4c9d78a01c0b1fb063a72b8",
+    "configs/understat_snapshot.json": "848325224edbae56499d21fe0cc35c26b06d085f14d5c65d9ed8b229b2465739",
+    "runs/m8-holdout-v3/market_predictions.csv": "f9a7dd131fdd4614e87b72473881f3b4bca613ed19c4216c6f19885e7dca6a57",
+    "runs/m8-holdout-v3/predictions.csv": "2447b1ba5cf239e498a07639f639d999645a414b55c8b99ab4e789aed7a62334",
+    "runs/m8-validation-v3/market_predictions.csv": "409f07cc5b3055fcef605d94e689b366709278723936fa408a5ce2863d650ad0",
+    "runs/m8-validation-v3/predictions.csv": "00d3064d811094980a93f9c0d4ca536d4d0cc9e89babc0a63c353e0d804310f5"
+  },
+  "scope": "1,140 matched chronological development fixtures; no operational promotion"
+}

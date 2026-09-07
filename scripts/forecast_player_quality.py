@@ -35,7 +35,7 @@ def main():
     args.output.mkdir(parents=True, exist_ok=False)
     live = load_live_season(args.snapshot)
     check_freshness(live, 24)
-    if any(
+    if not args.forecast_only and any(
         r["status"] in {"in_progress", "awaiting_result", "unscheduled"}
         for r in live.details.values()
     ):
@@ -47,7 +47,9 @@ def main():
     history = PlayerHistory(load_player_history(args.players) + captured)
     squads = snapshot_squads(args.snapshot, observed, history)
     kickoffs = {
-        f.match_id: timestamp(live.details[f.match_id]["kickoff_time"]) for f in live.remaining
+        f.match_id: timestamp(live.details[f.match_id]["kickoff_time"])
+        for f in live.remaining
+        if live.details[f.match_id]["kickoff_time"]
     }
     matches, _, _ = load_processed(Path("data/processed"))
     as_of = observed.astimezone(LONDON).date()
