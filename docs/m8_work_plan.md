@@ -37,7 +37,12 @@ pooling, a process dispersion scale q. They do not identify separate physical
 shot volume, chance quality, finishing or goalkeeper skill. Do not fit free
 team-specific volume and quality trajectories. Use a strongly pooled prior on
 q, learned only from earlier observations; no historical outcome-loss grid
-optimization. Distinguish uncertainty in q from team-state uncertainty.
+optimization. Distinguish uncertainty in q from team-state uncertainty. The initial prior is
+log(q) ~ Normal(log(0.25), 0.35²), integrated with five Gauss-Hermite nodes.
+This regularizes a league-wide process scale around a modest overdispersion
+(Var(G)/E[G] = 1.5 at the prior median), independently of historical score loss.
+Check quadrature sensitivity and posterior boundary concentration before trusting
+the scale uncertainty; five fixed nodes are an approximation, not exact inference.
 
 Park this formulation if its conditional goals-given-xG checks are materially
 miscalibrated, its joint predictive checks cannot reproduce zero/tail behavior,

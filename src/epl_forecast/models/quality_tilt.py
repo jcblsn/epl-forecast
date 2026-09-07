@@ -124,6 +124,14 @@ class QualityTiltFilter(DynamicAttackDefense):
     def sample_forecast_state(self, rng, size=1):
         return ForwardQualityTiltStates(self, rng, size)
 
+    def sample_goal_rates(self, home_rate, away_rate, rng):
+        tempo = (
+            1.0
+            if self.dispersion is None
+            else rng.gamma(self.dispersion, 1 / self.dispersion, len(home_rate))
+        )
+        return rng.poisson(tempo * home_rate), rng.poisson(tempo * away_rate)
+
     def player_quality_difference(self, fixture, values, rng, unknown):
         return 0.0
 
@@ -316,13 +324,9 @@ class ForwardQualityTiltStates:
             h, a = team_value(fixture.home_team_id), team_value(fixture.away_team_id)
             quality, tilt = h[:, 0] - a[:, 0], h[:, 1] + a[:, 1]
             quality += model.player_quality_difference(fixture, values, rng, unknown)
-            tempo = (
-                1.0
-                if model.dispersion is None
-                else rng.gamma(model.dispersion, 1 / model.dispersion, len(positions))
+            home[positions], away[positions] = model.sample_goal_rates(
+                np.exp(values[:, 0] + values[:, 1] + quality + tilt),
+                np.exp(values[:, 0] - quality + tilt),
+                rng,
             )
-            home[positions] = rng.poisson(
-                tempo * np.exp(values[:, 0] + values[:, 1] + quality + tilt)
-            )
-            away[positions] = rng.poisson(tempo * np.exp(values[:, 0] - quality + tilt))
         return home, away
