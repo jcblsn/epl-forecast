@@ -4,18 +4,21 @@ Build a real-time probabilistic Premier League model comparable in functional
 ambition to PELE and adapted to club football. This is a capability target, not
 a reproduction specification. Forecasts and their explanations are the product.
 
-M2 remains the operational reference. M5 now represents changing Quality and
-Tilt, approximate uncertainty over states and dynamics, correlated overdispersed
-scores, and coherent season trajectories. A limited sampled Bayesian reference
-and historical rolling comparisons identify its current approximation limits.
-The [M5 report](experiments/m5_quality_tilt.md) records the evidence.
+M2 is the operational benchmark. M7-v1 is the retained xG research model and
+preferred research parent. M8 is the next team-process research candidate.
+M6-v1 is the retained first player-information formulation, not the current
+architectural parent. The [M7 report](experiments/m7_xg_parent.md) supports
+continuing the process architecture, while leaving calibration and promoted-team
+initialization unresolved. Aggregate gains do not justify operational promotion.
 
-The next main gap is squad information. Distinguish persistent club/system
-quality from hierarchical player contributions and expected-lineup uncertainty.
-The [player audit](player_data_audit.md) supplies fixture-level historical data
-and identifies what cannot yet be reconstructed before an old match. Player
-and squad information should eventually inform both Quality and Tilt; shots/xG
-are candidate observations of those states.
+The next gap is a defensible process observation layer with tested state
+uncertainty. Preserve identifiable centered Quality/Tilt dynamics; evaluate
+coverage, adaptation and predictive calibration. Audit available Championship
+process observations for promoted priors. Then use strongly pooled, role-aware
+player information to explain attacking process, retaining club/system state for
+contributions that cannot credibly be assigned to individuals. Preserve the
+separate meanings of league-match and additive player/shot xG. The
+[M8 plan](m8_work_plan.md) defines the current batch and its decision logic.
 
 Translate uncertain states into a joint score distribution, then into match and
 table probabilities. Forward generative simulations evolve sampled latent states;
