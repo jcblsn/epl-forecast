@@ -1,8 +1,8 @@
 # M8 team-process batch
 
 The September 2026 steering memo freezes M7-xg-v1 and keeps M2 operational.
-M7-v1 is the retained xG research model; M8 is the next team-process research
-candidate. M6-v1 is the retained first player-information formulation, not the
+M7-v1 is the retained xG research model; M8 was the next team-process research
+candidate. M8-v1 is now parked; [the report](experiments/m8_process.md) records why. M6-v1 is the retained first player-information formulation, not the
 architectural parent. Existing M7 predictions, source pins, references and
 prospective artifacts must remain intact.
 
@@ -55,14 +55,14 @@ provider measurement error and test synthetic misspecification explicitly.
 
 | Work | Evidence required | Status |
 | --- | --- | --- |
-| Freeze M7; align research statuses | Existing retained artifacts; current README and research docs | Documentation aligned; final preservation audit pending |
-| Implement M8 generative model | Normalization, derivative, marginalization, cutoff and evolving-state checks | Implemented; 199-test regression suite passes |
+| Freeze M7; align research statuses | Existing retained artifacts; current README and research docs | Documentation aligned; retained M7 artifacts and source pins verified against baseline revision and hashes |
+| Implement M8 generative model | Normalization, derivative, marginalization, cutoff and evolving-state checks | Implemented; 205-test regression suite passes |
 | Chronological comparison | Identical fixtures for M8, M7, centered goals parent, M2 and pre-closing/closing markets; loss, NLL, Brier and calibration | 1,140 matched fixtures retained in `experiments/m8/chronological_diagnostics.json` |
-| State and observation validity | Predictive xG/goals checks; known-state coverage, shocks, missing-xG sensitivity; sampled references in multiple regimes where reasonable | Pending |
+| State and observation validity | Predictive xG/goals checks; known-state coverage, shocks, missing-xG sensitivity; sampled references in multiple regimes where reasonable | 1,140 predictive checks; 120 synthetic replicates across four regimes; two sampled references; five/nine-node sensitivity retained |
 | Championship information audit | Pinned raw-field coverage, validity, semantics and stability by season; bridge test if usable | Post-2013 restricted bridge tested on nine promoted teams; evidence in batch report |
-| Player-process foundation | Identity/role mapping, provider distinction, pooled attacking formulation and oracle versus forecast-lineup evidence once team structure settles | Pending |
-| Protect prospective forecasts | Reliable minimal scheduled capture, immutable before/after information archives, M2/M5/M6/M7 and successor records | Pending |
-| Batch decision | Concise report, compact evidence, explicit retention/parking decision and limits | Pending |
+| Player-process foundation | Identity/role mapping, provider distinction, pooled attacking formulation and oracle versus forecast-lineup evidence once team structure settles | Sample mapping and design retained; fitting/oracle condition not triggered because M8 failed team-observation checks; no operational reliance on unresolved identities |
+| Protect prospective forecasts | Reliable minimal scheduled capture, immutable before/after information archives, M2/M5/M6/M7 and successor records | Installed half-hourly collector; five verified model archives and scheduled unchanged-input followup retained |
+| Batch decision | Concise report, compact evidence, explicit retention/parking decision and limits | M8-v1 parked; M7 retained; operational M2 and promotion bridge unchanged; report retained |
 
 Commit and push at natural milestones. Keep market information outside structural
 states. No player Tilt, symmetric defensive player effects, M7 constant tuning,

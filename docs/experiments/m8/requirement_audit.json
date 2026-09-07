@@ -1,0 +1,92 @@
+{
+  "decision": "Batch complete with M8-v1 parked; retain M7 research parent and M2 operational benchmark",
+  "requirements": [
+    {
+      "evidence": [
+        "verification.json",
+        "prospective_manifest.json"
+      ],
+      "item": 1,
+      "note": "Protected M7 artifacts/configuration match baseline; only a numerical-domain exception changed for correct line-search backtracking.",
+      "requirement": "Freeze M7-v1 and preserve prospective/research evidence",
+      "result": "verified"
+    },
+    {
+      "evidence": [
+        "../m8_process.md",
+        "../../m8_work_plan.md",
+        "chronological_manifest.json"
+      ],
+      "item": 2,
+      "note": "Pre-implementation design committed before likelihood; joint downstream goals, exact missing-data marginal, cutoff tests, full centered-state covariance and evolving simulation implemented.",
+      "requirement": "Implement one materially different team process with stated assumptions, identifiability and parking diagnostics",
+      "result": "verified"
+    },
+    {
+      "evidence": [
+        "chronological_diagnostics.json",
+        "predictive_diagnostics.json",
+        "state_diagnostics.json",
+        "reference_opening.json",
+        "reference_midseason.json"
+      ],
+      "item": 3,
+      "note": "1140 fixtures; 120 synthetic replicates across four regimes; two sampled references; scale quadrature inadequacy recorded, not concealed.",
+      "requirement": "Matched chronological comparison plus observation/state calibration and sampled checks",
+      "result": "verified"
+    },
+    {
+      "evidence": [
+        "process_fields.json",
+        "bridge_diagnostic.json"
+      ],
+      "item": 4,
+      "note": "Identified regime break and invalid/missing rows; restricted post-2013 bridge produces uncertain priors evaluated on nine promoted-team process proxies; operational bridge retained.",
+      "requirement": "Audit existing Championship process fields and test a principled bridge if usable",
+      "result": "verified"
+    },
+    {
+      "evidence": [
+        "player_identity.json",
+        "player_identity_records.json.gz",
+        "../../player_process_model.md"
+      ],
+      "item": 5,
+      "note": "M8 failed the team-observation adequacy condition. No player extension was fitted on it; no new operational layer relies on unresolved mappings. Attacking-only pooled design and oracle/forecast-minutes protocol retained.",
+      "requirement": "Prepare process-based second player formulation, preserve identities/roles/provider semantics and actual-minutes decision logic",
+      "result": "prepared; fitting condition not triggered"
+    },
+    {
+      "evidence": [
+        "chronological_market_predictions.csv.gz",
+        "chronological_diagnostics.json"
+      ],
+      "item": 6,
+      "note": "Three market baselines on identical fixtures; no market assimilation into M8 states.",
+      "requirement": "Retain pre-closing/closing markets in major comparisons, outside structural states",
+      "result": "verified"
+    },
+    {
+      "evidence": [
+        "prospective_manifest.json",
+        "prospective_2026-09-07.tar.gz",
+        "verification.json"
+      ],
+      "item": 7,
+      "note": "Five complete archives; installed half-hourly local collector; verified scheduled unchanged-input followup, immutable attempts and changed-input regression tests; historical forecasts preserved. No eligible new outcomes have matured.",
+      "requirement": "Protect timestamped M2/M5/M6/M7/successor forecasts with minimal reliable automation",
+      "result": "verified"
+    },
+    {
+      "evidence": [
+        "../../north_star.md",
+        "../../next_experiments.md",
+        "../m8_process.md"
+      ],
+      "item": 8,
+      "note": "M2 operational; M7 retained xG research parent; evaluated M8-v1 parked; M6 retained first player formulation, not architectural parent.",
+      "requirement": "Align research status documentation without general cleanup",
+      "result": "verified"
+    }
+  ]
+}

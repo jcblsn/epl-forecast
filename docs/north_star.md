@@ -5,7 +5,9 @@ ambition to PELE and adapted to club football. This is a capability target, not
 a reproduction specification. Forecasts and their explanations are the product.
 
 M2 is the operational benchmark. M7-v1 is the retained xG research model and
-preferred research parent. M8 is the next team-process research candidate.
+preferred research parent. M8 was the next team-process research candidate; M8-v1 is now parked after
+observation and calibration checks. The [M8 report](experiments/m8_process.md)
+retains its diagnostics and restricted promotion-bridge evidence.
 M6-v1 is the retained first player-information formulation, not the current
 architectural parent. The [M7 report](experiments/m7_xg_parent.md) supports
 continuing the process architecture, while leaving calibration and promoted-team

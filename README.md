@@ -6,11 +6,14 @@ with current, interpretable forecasts. Reproducible experiments help improve and
 validate the model; the forecasts are the product.
 
 The project now archives live FPL and Football-Data responses and produces a
-2026/27 forecast as JSON, CSV and a static HTML page. Refreshes are manual for now.
+2026/27 forecast as JSON, CSV and a static HTML page. A local recurring collector
+now protects timestamped research forecasts; see [capture operation](docs/live.md#recurring-prospective-capture).
 M2 remains the operational benchmark. M7-v1 is the retained xG research model
-and preferred research parent; M8 is the next team-process research candidate.
+and preferred research parent. M8 was the next team-process candidate; M8-v1 is
+now parked after observation and calibration checks.
 M6-v1 is the retained first player-information formulation, not the architectural
-parent. See the [M8 batch plan](docs/m8_work_plan.md). M5 adds explicit Quality and Tilt, approximate
+parent. See the [M8 batch evidence](docs/experiments/m8_process.md).
+M5 adds explicit Quality and Tilt, approximate
 Bayesian dynamics weights, correlated overdispersed scores, and season paths
 with future state evolution. M4 remains available as the earlier prototype. Historical results cover 16 PL and Championship
 seasons. The [north star](docs/north_star.md) describes the intended architecture.
@@ -187,8 +190,8 @@ score-distribution and simulation arithmetic checks. Repeat byte-for-byte
 normalization when normalization changes; reserve fresh-directory reproduction
 for occasional checks and releases.
 
-The project uses ordinary Python, NumPy and SciPy. It has no hosted frontend,
-scheduler or betting automation. Raw snapshots and generated forecasts are local,
+The project uses ordinary Python, NumPy and SciPy. It has a local collection
+scheduler, with no hosted frontend or betting automation. Raw snapshots and generated forecasts are local,
 Git-ignored artifacts; back them up if retaining the live record matters.
 
 When testing a rebuilt wheel at the same version, use `uv run --no-cache

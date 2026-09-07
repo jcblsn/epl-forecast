@@ -4,7 +4,7 @@ M2 remains the operational benchmark and M7-v1 the retained xG research parent.
 M8-v1 is parked: treating
 provider xG as realized Poisson scoring intensity produces excessive scoring
 variation. The batch retains reusable diagnostics and a restricted promotion-bridge candidate.
-Prospective capture verification is still in progress.
+Prospective archives and the local collector are verified.
 
 ## Representation and chronological evidence
 
@@ -19,16 +19,19 @@ The [chronological evidence](m8/chronological_diagnostics.json) covers identical
 1,140 fixtures in 2023/24–2025/26. These are previously inspected development
 seasons. Market baselines have outcome probabilities, not score distributions.
 
-| Model | Outcome loss | Score NLL | ECE |
-| --- | ---: | ---: | ---: |
-| M2 | 0.98039 | 2.98251 | 0.02055 |
-| Centered goals parent | 0.98250 | 2.97448 | 0.02849 |
-| M7-v1 | 0.97827 | 2.97217 | 0.03598 |
-| M8-v1 | 0.98380 | 3.02554 | 0.03824 |
-| Average pre-closing market | 0.96502 | — | 0.02037 |
-| Average closing market | 0.95973 | — | 0.01809 |
+| Model | Outcome loss | Score NLL | Brier | ECE |
+| --- | ---: | ---: | ---: | ---: |
+| M2 | 0.98039 | 2.98251 | 0.58378 | 0.02055 |
+| Centered goals parent | 0.98250 | 2.97448 | 0.58516 | 0.02849 |
+| M7-v1 | 0.97827 | 2.97217 | 0.58153 | 0.03598 |
+| M8-v1 | 0.98380 | 3.02554 | 0.58421 | 0.03824 |
+| Average pre-closing market | 0.96502 | — | 0.57401 | 0.02037 |
+| Average closing market | 0.95973 | — | 0.56989 | 0.01809 |
 
-M8 worsens outcome loss and score NLL in both evaluation periods. The linked
+M8 worsens outcome loss and score NLL in both evaluation periods. Its paired
+outcome-loss difference versus M7 is +0.00553 (calendar-week bootstrap 95%
+interval [0.00278, 0.00828]). Opening-five loss is 0.94776 versus 0.93488; promoted
+match loss is 0.90655 versus 0.89435. The linked
 machine-readable evidence also contains Brier, fixed-bin calibration, promoted
 and opening slices, and paired calendar-week bootstrap comparisons.
 
@@ -109,3 +112,67 @@ Role/provider distinctions and source hashes are retained. No operational player
 layer relies on these incomplete links. Because M8 did not settle into an adequate
 team observation model, its conditional player-extension experiment was not
 triggered; no player-process oracle gain is claimed.
+
+## Prospective retention and operation
+
+The [prospective manifest](m8/prospective_manifest.json) verifies fresh M2/M5/M6/M7/M8
+exports, each with 350 pre-kickoff forecasts and 2,000 season paths fixing the
+30 captured results. The compressed bundle retains 719 files: model exports,
+raw snapshots, timestamped player histories and attempt records. Hash checks,
+pre-kickoff eligibility, table constraints and direct-versus-simulated frequencies
+pass. Across models, 99.52–99.81% of outcome frequencies are within three Monte
+Carlo standard errors. This verifies the forecasts' implementation and timing,
+not predictive calibration. No new matches have matured for prospective scoring.
+
+The local half-hourly LaunchAgent is installed and verified. A separate scheduled
+invocation captured a new snapshot and correctly skipped duplicate forecasts
+when the meaningful information fingerprint was unchanged. Attempts and raw
+snapshots remain immutable; model failures are isolated; changed fixture/results
+or availability signals trigger new forecasts. Existing M7-batch prospective
+sources and exports still match their retained hashes. The collector depends on
+an awake local computer and network, and current-season xG missing from the
+frozen historical pin is integrated as missing. No frontend or notification
+project was added.
+
+## Verification and decision
+
+[Verification](m8/verification.json) records 205 passing tests, the final capture
+tests, Ruff, retained source pins, recomputed metrics, and chronological cutoffs.
+M2 parameters and predictions are unchanged. M7 research artifacts, observation
+constants and dynamics remain frozen; its only implementation change is the
+numerical exception handling described above. The M6 player coefficients,
+lineup assumptions and model architecture are unchanged.
+
+Park M8-v1. Retain M7 as the research parent, M2 operationally, and the restricted
+shot bridge as an initialization candidate requiring stronger forecast evidence.
+Carry forward the tested diagnostics and player-process foundation. Do not
+elaborate the rejected observation model or interpret an under-resolved scale
+posterior as calibrated uncertainty.
+
+To reproduce in fresh output directories:
+
+```sh
+OPENBLAS_NUM_THREADS=1 uv run epl-forecast evaluate \
+  --config configs/process_quality_tilt.toml --split validation --output runs/m8-validation-new
+OPENBLAS_NUM_THREADS=1 uv run epl-forecast evaluate \
+  --config configs/process_quality_tilt.toml --split holdout --output runs/m8-holdout-new
+OPENBLAS_NUM_THREADS=1 uv run python scripts/diagnose_xg.py \
+  --evaluations runs/m8-validation-new runs/m8-holdout-new \
+  --config configs/process_quality_tilt.toml --focus-model M8-process-v1 \
+  --include-markets --skip-oracle --output runs/m8-comparison-new
+OPENBLAS_NUM_THREADS=1 uv run python scripts/diagnose_process.py \
+  --replicates 30 --bridge --output runs/m8-state-new
+OPENBLAS_NUM_THREADS=1 uv run python scripts/diagnose_process.py \
+  --replicates 0 --predictive --start 2023-08-01 --end 2026-07-01 \
+  --output runs/m8-predictive-new
+OPENBLAS_NUM_THREADS=1 uv run --extra research python scripts/check_quality_tilt_posterior.py \
+  --xg data/processed/understat/matches.json --process-scale 0.25 \
+  --start 2024-08-01 --end 2024-11-01 --output runs/m8-reference-opening-new
+OPENBLAS_NUM_THREADS=1 uv run --extra research python scripts/check_quality_tilt_posterior.py \
+  --xg data/processed/understat/matches.json --process-scale 0.25 \
+  --start 2025-01-01 --end 2025-04-01 --output runs/m8-reference-midseason-new
+uv run python scripts/audit_process_fields.py --output runs/m8-fields-new.json
+uv run python scripts/audit_player_process.py --output runs/m8-identities-new.json
+OPENBLAS_NUM_THREADS=1 uv run --extra research pytest -q
+uv run ruff check .
+```

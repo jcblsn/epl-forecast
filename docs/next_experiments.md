@@ -1,32 +1,36 @@
 # Research queue
 
 M2 is the operational benchmark. M7-v1 is the retained xG research model and
-preferred research parent. M8 is the next team-process research candidate.
-M6-v1 is the retained first player-information formulation, not the current
-architectural parent. The [M7 report](experiments/m7_xg_parent.md) records an
-encouraging aggregate result, but uncertainty calibration and opening/promoted
-performance do not justify an operational switch.
+preferred research parent. M8 was the next team-process research candidate;
+M8-v1 is now parked after its conditional scoring and predictive calibration
+checks failed. M6-v1 remains the retained first player-information formulation,
+not the current architectural parent. The [M8 report](experiments/m8_process.md)
+records the comparison, state checks, approximation limits and retained work.
 
-The [M8 work plan](m8_work_plan.md) records the new generative assumptions,
-identifiability limits, parking diagnostics and full batch evidence requirements
-before implementation. Freeze the M7 observation grid and existing predictions.
-Prioritize a materially different, pooled process observation model and stronger
-coverage, posterior-predictive and structural-change checks over a tiny loss gain.
-Retain centered Quality/Tilt dynamics and evolving future states.
+Do not tune M7's fixed noise grid or expand M8's scale grid to rescue its scoring
+assumption. M8's known-state experiments support its implementation under its own
+assumptions, but provider noise degrades coverage and historical score NLL is
+worse than M7. Retain the simpler adequate team xG formulation while accumulating
+prospective evidence and studying provider measurement semantics.
 
-Audit the Championship shots and shots-on-target fields already retained before
-changing promoted-team initialization. Test a cross-division process bridge only
-if coverage and semantics support it; otherwise document the information limit.
-Do not search indiscriminately for another Championship xG source.
+The Championship audit supports a restricted post-2013 shot-information bridge
+experiment. Nine promoted-team process-proxy checks are encouraging but do not
+establish a chronological match-forecast gain. Carry that candidate forward
+with its cross-division uncertainty; keep the operational bridge unchanged.
+No new Championship xG feed is needed to pursue this evidence.
 
-After the team process settles, complete Understat/FPL identity and role mapping
-and evaluate a strongly pooled attacking player-process formulation. Preserve
-league-match versus additive player/shot xG semantics. Compare actual-lineup
-oracle and forecast-lineup evidence; leave persistent tactical and defensive
-contributions in club state. Do not add player Tilt or symmetric defensive effects.
+The [second-player design](player_process_model.md) explains how strongly pooled
+attacking-process contributions could extend a settled team observation layer.
+The pinned sample now has explicit Understat/FPL identity and role evidence;
+unresolved links and the relation between league-match and additive player/shot
+xG remain visible. Complete the mapping for the intended fitting population
+before operational reliance. Preserve actual-minutes oracle versus forecast-
+minutes comparisons. Failure with known minutes calls for reassessing the
+representation, not adding player Tilt or symmetric defensive effects.
 
-Protect timestamped M2/M5/M6/M7 and successor forecasts with minimal reliable
-capture automation. Preserve forecasts before and after transfer, injury,
-suspension, return and lineup information changes. Historical reconstructed
-availability is not prospective evidence. Keep pre-closing and closing market
-baselines in major matched chronological comparisons, outside the team states.
+Use the [local recurring collector](live.md#recurring-prospective-capture) to
+retain timestamped M2/M5/M6/M7 and experimental M8 forecasts and information
+snapshots. Preserve both sides of information changes. Historical reconstructed
+availability is not prospective evidence. Keep pre-closing and closing markets
+in major matched comparisons, outside structural states. A market-assisted
+product remains a separate future track.

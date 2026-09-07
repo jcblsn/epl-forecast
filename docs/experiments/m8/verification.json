@@ -1,0 +1,109 @@
+{
+  "artifact_hashes": {
+    "docs/experiments/m8/bridge_diagnostic.json": "968a086177d6b51750145b5f2a62ea1675c9a66b2f0efbc2ef92d598207b210f",
+    "docs/experiments/m8/chronological_diagnostics.json": "c8576635fff3f51afe3b43b6a5dc5137de280e6f3332bb1b413d278c24f79f60",
+    "docs/experiments/m8/chronological_manifest.json": "4e710e95e3c1ac74aa9e18be9209a036998e36f14e8363417d76b583d870089d",
+    "docs/experiments/m8/chronological_market_predictions.csv.gz": "ca82794698e5ce965941f49c8cea47aaccfac12d4f9c92523578cfd47ff5e308",
+    "docs/experiments/m8/chronological_predictions.csv.gz": "9dcb2ab1395b10de2a35ddda4cd8eea02c4906807d1bc2fa64272bf086ed0a22",
+    "docs/experiments/m8/player_identity.json": "69ec1282bddffd2aeb27b22f859ff03ebc6d175d22b024c92c043a6f35a0ced4",
+    "docs/experiments/m8/player_identity_records.json.gz": "e4066e1959eeb648b12b939f2e990dd6af0072d66131ee57a912500e642a3820",
+    "docs/experiments/m8/predictive_diagnostics.json": "ed3f2a0fc06525c41bda0eee4f6e92b73bea95b9ce9aadd8e3f30d67d154223e",
+    "docs/experiments/m8/process_fields.json": "b4e4b8f08cccb765b6dd9d19a3f20ce769005408330991724efc232f4b354fd9",
+    "docs/experiments/m8/prospective_2026-09-07.tar.gz": "08f0ec1dcdd416e07b4433d8f179747a83a21698c88c9cb6cb0da9e2573b67aa",
+    "docs/experiments/m8/prospective_manifest.json": "220d367ebe187dd4eb8191655558ecff2ecbf1654bc1e673256b20303874ebd0",
+    "docs/experiments/m8/reference_midseason.json": "6a53fbedecb2bff723729ffd60b6ade4c42edbfcd417c85f52a4e02650474af6",
+    "docs/experiments/m8/reference_opening.json": "6c886aa59a533108c839326d3dd7f966b1ef4bb0f5ee8ddcddd6a319e2e0c15d",
+    "docs/experiments/m8/requirement_audit.json": "274616d43af7c8bf9c19fa7ec2576eff15eb378e80c2ffd472dd033714544e8b",
+    "docs/experiments/m8/state_diagnostics.json": "bbb16473b93d21a456f5b0d8ef88c361d8fd292cae9055d261aff21ad5f234ac"
+  },
+  "automation": {
+    "interval_seconds": 1800,
+    "plist": "/Users/jacobeliason/Library/LaunchAgents/org.epl-forecast.prospective.plist",
+    "plist_sha256": "d3700a819e602fcf114a30727810b6176b21b3315d2d03065aeff0cc45ceeda3",
+    "scope": "Local logged-in user session; captures require an awake computer and network",
+    "unchanged_followup": "runs/prospective/2026-09-07T121149.462671Z/complete.json",
+    "unchanged_followup_sha256": "b86a6f6d36bc645e8356b32577e5c21dcd3f6f5cffb5f6be7d3e019d5f1097a0",
+    "unchanged_snapshot": "snapshots/2026-09-07T121149.463805Z",
+    "verified_last_exit_code": 0
+  },
+  "capture_tests": "4 passed in 0.82s",
+  "chronological_cutoffs_verified": 5700,
+  "documentation_hashes": {
+    "README.md": "d248e65c4e1168d3de56e07007df37f8b29aa9769398b84c4a4948565abd3aa2",
+    "docs/experiments/m8_process.md": "61c275506c63e6e18ecd6644a943527985b39fefec497e002b6e64e19ccc15b4",
+    "docs/m8_work_plan.md": "fbbd9e619f4bfea02644f98bcb8d1ac3be06bf903018c60ab566b36328c69330",
+    "docs/next_experiments.md": "15813ebc88fdae76b4d5a8cdf3abc36d9245a2204835c40d02dae2b01b96c23f",
+    "docs/north_star.md": "020459b8a9b20911605cc28d67f47e7e65ad2c3830be1c1a20259f260531d0c2",
+    "docs/player_process_model.md": "1f73b1c2cd5591f4a94737088a1636a696d5a866fa5ffc17ec26d561bfa0c453"
+  },
+  "installer_idempotence": "Verified re-running installation detects the existing LaunchAgent without bootstrapping a duplicate",
+  "lint": "All checks passed!\n122 files already formatted",
+  "matched_fixtures": 1140,
+  "models_and_markets": [
+    "M2-attack-defense-v1",
+    "M5-centered-poisson-control",
+    "M5-quality-tilt-poisson",
+    "M7-xg-v1",
+    "M8-process-v1",
+    "market:bet365_preclosing",
+    "market:market_average_closing",
+    "market:market_average_preclosing"
+  ],
+  "numerical_comparison": {
+    "holdout": {
+      "M2-attack-defense-v1": 0.0,
+      "M5-centered-poisson-control": 1.482582945300237e-10,
+      "M5-quality-tilt-poisson": 2.725939474146344e-10,
+      "M7-xg-v1": 6.361774218532901e-09,
+      "M8-process-v1": 9.634888886722592e-09
+    },
+    "validation": {
+      "M2-attack-defense-v1": 0.0,
+      "M5-centered-poisson-control": 1.41146072607512e-09,
+      "M5-quality-tilt-poisson": 4.166066602806495e-09,
+      "M7-xg-v1": 1.089630874417935e-08,
+      "M8-process-v1": 1.8141133040217028e-08
+    }
+  },
+  "numerical_correctness_exception": "M7 series parameters unchanged; typed numerical-domain exception enables Laplace proposal backtracking",
+  "original_m7_prospective_sources": "All sources and exports in the retained M7 prospective manifest match their original hashes",
+  "prospective_archive_files_verified": 35,
+  "prospective_models": [
+    "m2",
+    "m5",
+    "m6",
+    "m7",
+    "m8"
+  ],
+  "protected_baseline_revision": "8d67166",
+  "recomputed_metrics_max_tolerance": 1e-12,
+  "source_pins": [
+    {
+      "manifest": "configs/data_snapshot.json",
+      "sha256": "d7a8e8cf5521d2daf9c47263f3a6c0712019b14f4437a725c69f3e6d663dcb0a",
+      "verified_files": 32
+    },
+    {
+      "manifest": "configs/understat_snapshot.json",
+      "sha256": "848325224edbae56499d21fe0cc35c26b06d085f14d5c65d9ed8b229b2465739",
+      "verified_files": 12
+    },
+    {
+      "manifest": "configs/understat_player_sample.json",
+      "sha256": "e2987414d33eab78dd5e4662f3edfd847388826ed739c9644ad775b968d30269",
+      "verified_files": 36
+    }
+  ],
+  "test_output": "205 passed in 25.74s",
+  "unchanged_paths": [
+    "docs/experiments/m7",
+    "configs/xg_quality_tilt.toml",
+    "configs/understat_snapshot.json",
+    "configs/understat_player_sample.json",
+    "configs/baselines.toml",
+    "src/epl_forecast/models/xg_quality_tilt.py",
+    "src/epl_forecast/models/player_quality.py",
+    "src/epl_forecast/lineups.py"
+  ],
+  "understat_processed_sha256": "f2df8be711b56d5c5165937d6aa27bb115cf25864673ae5a2126993c04fadc08"
+}

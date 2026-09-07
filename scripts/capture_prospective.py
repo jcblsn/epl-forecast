@@ -60,7 +60,12 @@ def main():
         if path.exists() and path.read_bytes() != payload:
             raise ValueError(f"Existing launch agent differs; inspect {path} before replacing")
         path.write_bytes(payload)
-        subprocess.run(["launchctl", "bootstrap", f"gui/{os.getuid()}", str(path)], check=True)
+        domain = f"gui/{os.getuid()}"
+        registered = subprocess.run(
+            ["launchctl", "print", f"{domain}/{label}"], capture_output=True, check=False
+        )
+        if registered.returncode:
+            subprocess.run(["launchctl", "bootstrap", domain, str(path)], check=True)
         print(f"Registered half-hourly local capture: {path}")
         return
     now = datetime.now(UTC)
