@@ -232,6 +232,7 @@ def forecast_command(args) -> None:
         "attack_defense_poisson",
         "dynamic_attack_defense",
         "bayesian_quality_tilt",
+        "bayesian_xg_quality_tilt",
     }:
         raise ValueError("The live strength export currently requires an attack/defense model")
     europe = (

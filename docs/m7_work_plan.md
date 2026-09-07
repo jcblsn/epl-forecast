@@ -1,39 +1,23 @@
 # M7 xG-informed Bayesian parent
 
-Source: September 6, 2026 steering memo. Completion is judged against the full
-memo, with M2 unchanged and prospective M5/M6 archives preserved.
+Source: September 6, 2026 steering memo. The batch implementation and evaluation
+are complete; [the report](experiments/m7_xg_parent.md) records decisions and limits.
+M2 remains the unchanged operational benchmark.
 
-- Document practical research principles separating information, representation
-  and operational evidence.
-- Audit and pin Understat EPL match xG from 2014/15; reconcile canonical teams,
-  dates and scores, retain provider semantics and explicit availability limits.
-- Replace common Tilt/global scoring redundancy structurally. Verify transformed
-  rates, uncertainty and transitions against the existing and sampled references;
-  a coordinate change must not be claimed to cure a Laplace mode/mean bias.
-- Implement a coherent probabilistic team goals/xG observation channel with
-  Bayesian uncertainty and evolving season simulation. Avoid a fixed blend,
-  broad dynamics grids, dispersion tuning or expanded finishing/player effects.
-- Compare the goals-only parent and M7 chronologically against unchanged M2,
-  including opening-season, promoted-team, adaptation, distribution and state
-  diagnostics plus a feasible high-information condition. Retain compact evidence.
-- Once the team layer works, audit Understat match/player identity and process
-  coverage for the next formulation, without extensive M6-v1 tuning.
-- Verify and continue prospective M5/M6 archives using existing capture tools;
-  deliver one concise batch report and reproducible machine-readable summaries.
+| Requirement | Evidence |
+| --- | --- |
+| Separate information, representation and operational evidence | `research_principles.md` |
+| Pin long-history Understat match xG and reconcile fixtures | `experiments/m7/understat_audit.json`, `configs/understat_snapshot.json` |
+| Center Tilt while preserving priors, dynamics and forecasts | `centered_quality_tilt_model.md`, `experiments/m7/centered_reference.json` |
+| Joint probabilistic goals/xG channel with uncertainty | `xg_model.md`, `experiments/m7/xg_reference.json`, likelihood/cutoff tests |
+| Chronological M2/M5/M7 comparison and diagnostics | `experiments/m7/chronological_summary.json`, `experiments/m7/diagnostics.json` |
+| High-information, adaptation and state checks | Oracle and known-state tracking sections in `diagnostics.json` |
+| Evolving season simulation | 350-fixture, 10,000-path M7 archive and direct-frequency/table checks |
+| Audit player process and identity feasibility | `experiments/m7/understat_players.json`, `configs/understat_player_sample.json` |
+| Continue M5/M6 prospective capture | `experiments/m7/prospective_manifest.json` and retained bundle |
+| Preserve benchmark and avoid prohibited tuning | Final diff audit; M2 and M6-v1 parameters unchanged |
 
-Implementation and verification are in progress. This checklist is not evidence
-of completion; the final report must point to each corresponding artifact/check.
-
-## Verified implementation checkpoints
-
-The source audit, research principles and centered-state equivalence checks are
-committed. The team goals/xG likelihood, Bayesian observation-noise mixture,
-pinned evaluation configuration and sampled M7 check are implemented. Full
-historical comparisons cover 1,140 identical fixtures. See the linked artifacts
-and limitations in [the batch report](experiments/m7_xg_parent.md).
-
-Remaining: high-information and slice/calibration/complementarity diagnostics,
-adaptation/state interpretation, full season simulation validation, Understat
-player-match audit, refreshed/verified prospective M5/M6 archives and final
-requirement-by-requirement completion audit. No operational switch is justified
-by the initial historical gains.
+Remaining scientific limitations are not hidden implementation tasks: the xG
+observation is simplified, historical publication times are unverified, calibration
+is not established, opening/promoted slices do not improve, and player identity/role
+mappings require a separate formulation. Operational promotion is not justified.

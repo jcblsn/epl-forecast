@@ -4,7 +4,7 @@ import argparse
 from pathlib import Path
 
 from epl_forecast.data.normalize import load_processed
-from epl_forecast.data.understat import audit_snapshot, fetch_snapshot
+from epl_forecast.data.understat import audit_player_matches, audit_snapshot, fetch_snapshot
 from epl_forecast.storage import file_hash, json_bytes, write_immutable, write_json
 
 
@@ -20,6 +20,7 @@ def main():
     parser.add_argument(
         "--output", type=Path, default=Path("data/processed/understat/matches.json")
     )
+    parser.add_argument("--players", action="store_true", help="Audit a pinned player-match sample")
     args = parser.parse_args()
     manifest = fetch_snapshot(args.root, args.manifest, args.start, args.end)
     matches, _, _ = load_processed(args.root / "processed")
@@ -31,6 +32,11 @@ def main():
         raise ValueError(f"Understat reconciliation failed; inspect {args.report}")
     write_immutable(args.output, json_bytes(records))
     print(f"Reconciled {len(records):,} matches; {args.report}")
+    if args.players:
+        players = audit_player_matches(
+            args.root, Path("configs/understat_player_sample.json"), records
+        )
+        write_json(Path("docs/experiments/m7/understat_players.json"), players)
 
 
 if __name__ == "__main__":

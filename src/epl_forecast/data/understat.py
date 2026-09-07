@@ -209,3 +209,151 @@ def audit_snapshot(root: Path, manifest: dict, matches: list[Match]):
         ),
         "source_hashes": {e["path"]: file_hash(root / e["path"]) for e in manifest["files"]},
     }
+
+
+def audit_player_matches(root: Path, manifest_path: Path, records: list[dict]):
+    """Audit opening, midpoint and final fixtures per season, without claiming full coverage."""
+    selected = []
+    for season in sorted({r["season_id"] for r in records}):
+        season_rows = sorted(
+            [r for r in records if r["season_id"] == season],
+            key=lambda r: (r["match_date"], r["match_id"]),
+        )
+        selected.extend(
+            season_rows[i] for i in sorted({0, len(season_rows) // 2, len(season_rows) - 1})
+        )
+    existing = manifest_path.exists()
+    manifest = (
+        json.loads(manifest_path.read_text())
+        if existing
+        else {
+            "schema_version": 1,
+            "provider": PROVIDER,
+            "selection": "first, midpoint, last fixture per season",
+            "files": [],
+        }
+    )
+    if existing and [r["source_match_id"] for r in manifest["files"]] != [
+        r["source_match_id"] for r in selected
+    ]:
+        raise ValueError("Player audit snapshot selection differs")
+    reports, identities, identity_seasons = [], {}, {}
+    for index, fixture in enumerate(selected):
+        source_id = fixture["source_match_id"]
+        url = f"https://understat.com/getMatchData/{source_id}"
+        if existing:
+            entry = manifest["files"][index]
+            expected = f"raw/understat/matches/{source_id}/{entry['sha256']}.bin"
+            if entry["path"] != expected or entry["url"] != url:
+                raise ValueError("Unexpected player audit snapshot path or URL")
+            path = root / expected
+            payload = path.read_bytes() if path.exists() else download(url, headers=HEADERS)[0]
+            if sha256_bytes(payload) != entry["sha256"]:
+                raise ValueError("Player audit source checksum mismatch")
+            write_immutable(path, payload)
+        else:
+            payload, metadata = download(url, headers=HEADERS)
+            path = root / f"raw/understat/matches/{source_id}/{metadata['sha256']}.bin"
+            write_immutable(path, payload)
+            entry = {
+                "source_match_id": source_id,
+                "match_id": fixture["match_id"],
+                "path": path.relative_to(root).as_posix(),
+                **{k: metadata[k] for k in ("url", "sha256", "bytes", "retrieved_at")},
+            }
+            manifest["files"].append(entry)
+        data = json.loads(gzip.decompress(payload) if payload.startswith(b"\x1f\x8b") else payload)
+        league_path = (
+            root / f"raw/understat/{fixture['season_id'][:4]}/{fixture['source_sha256']}.bin"
+        )
+        league_payload = league_path.read_bytes()
+        if sha256_bytes(league_payload) != fixture["source_sha256"]:
+            raise ValueError("League source checksum mismatch during player audit")
+        season_players = {r["id"] for r in parse_payload(league_payload)["players"]}
+        issues, sides = [], []
+        for side, label in (("h", "home"), ("a", "away")):
+            roster = list(data["rosters"][side].values())
+            shots = data["shots"][side]
+            ids = [r["player_id"] for r in roster]
+            if len(set(ids)) != len(ids):
+                issues.append(f"{side}: duplicate player IDs")
+            roster_map = {r["player_id"]: r for r in roster}
+            for row in roster:
+                identities.setdefault(row["player_id"], set()).add(row["player"])
+                identity_seasons.setdefault(row["player_id"], set()).add(fixture["season_id"])
+                if row["player_id"] not in season_players:
+                    issues.append(f"{side}: player missing from league season summary")
+                for field in ("time", "shots", "xG", "xA", "key_passes", "xGChain", "xGBuildup"):
+                    value = float(row[field])
+                    if not math.isfinite(value) or value < 0:
+                        issues.append(f"{side}: invalid {field}")
+            for shot in shots:
+                if (
+                    shot["match_id"] != source_id
+                    or shot["player_id"] not in roster_map
+                    or shot["date"] != fixture["source_datetime"]
+                ):
+                    issues.append(f"{side}: shot identity/date mismatch")
+            shot_xg = sum(float(s["xG"]) for s in shots)
+            roster_xg = sum(float(r["xG"]) for r in roster)
+            if abs(shot_xg - roster_xg) > 5e-5:
+                issues.append(f"{side}: shot and roster xG sums disagree")
+            own_goals = sum(s["result"] == "OwnGoal" for s in shots)
+            if sum(int(r["shots"]) for r in roster) != len(shots) - own_goals:
+                issues.append(f"{side}: non-own-goal shot count mismatch")
+            opposite = "a" if side == "h" else "h"
+            goals = sum(int(r["goals"]) for r in roster) + sum(
+                int(r["own_goals"]) for r in data["rosters"][opposite].values()
+            )
+            if goals != fixture[f"{label}_goals"]:
+                issues.append(f"{side}: goals including opposition own goals do not reconcile")
+            starters = sum(r["position"] != "Sub" for r in roster)
+            if starters != 11:
+                issues.append(f"{side}: {starters} starters")
+            sides.append(
+                {
+                    "side": label,
+                    "players": len(roster),
+                    "starters": starters,
+                    "substitute_role_unspecified": sum(r["position"] == "Sub" for r in roster),
+                    "minutes_sum": sum(int(r["time"]) for r in roster),
+                    "shots": len(shots),
+                    "own_goal_events": own_goals,
+                    "roster_minus_match_xg": roster_xg - fixture[f"{label}_xg"],
+                    "match_xg_is_additive": abs(roster_xg - fixture[f"{label}_xg"]) <= 5e-5,
+                    "roster_xg": roster_xg,
+                    "shot_xg": shot_xg,
+                    "canonical_xg": fixture[f"{label}_xg"],
+                }
+            )
+        reports.append(
+            {
+                "match_id": fixture["match_id"],
+                "source_match_id": source_id,
+                "season_id": fixture["season_id"],
+                "sides": sides,
+                "issues": issues,
+            }
+        )
+        print(f"Audited Understat roster {source_id}", flush=True)
+    write_immutable(manifest_path, json_bytes(manifest))
+    return {
+        "scope": manifest["selection"],
+        "sample_matches": len(reports),
+        "matches": reports,
+        "unique_sampled_player_ids": len(identities),
+        "player_ids_repeated_across_seasons": sum(len(v) > 1 for v in identity_seasons.values()),
+        "nonadditive_match_sides": sum(
+            not s["match_xg_is_additive"] for r in reports for s in r["sides"]
+        ),
+        "ids_with_name_variants": {k: sorted(v) for k, v in identities.items() if len(v) > 1},
+        "passed": not any(r["issues"] for r in reports),
+        "manifest_sha256": file_hash(manifest_path),
+        "limitations": [
+            "League match xG is not additive to player/shot xG; keep distinct semantics",
+            "Deterministic sample, not exhaustive player-match coverage",
+            "Substitute positions are Sub, not attacking roles",
+            "Provider identities are not yet linked to FPL identities",
+            "Retrospective participation is not pre-match availability",
+        ],
+    }

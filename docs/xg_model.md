@@ -27,8 +27,9 @@ with this observation model. Home and away opportunities are independent given
 the joint team state; there is no new shared-Gamma tempo or dispersion tuning.
 
 This is a simplified aggregate process model, not a literal reconstruction of
-shots. Provider xG sums calibrated shot probabilities, whereas exponential marks
-can exceed one, and the model does not let an individual mark alter finishing
+shots. The retained league-match xG is not consistently the sum of player/shot xG;
+those provider fields must remain distinct. Exponential opportunity marks can
+exceed one, and the model does not let an individual mark alter finishing
 probability once N is given. Variation in average chance quality is represented
 by team rate and observation uncertainty, not a separate shot-quality state.
 These assumptions make identification possible from match aggregates but limit

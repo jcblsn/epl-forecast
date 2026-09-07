@@ -138,3 +138,69 @@ def test_date_correction_requires_exact_source_and_fixture(monkeypatch):
     row["xG"]["h"] = "2.1"
     records, report = run([row], [match])
     assert not records and report["issues"][0]["error"] == "Date mismatch"
+
+
+def test_player_sample_preserves_nonadditivity_and_own_goal_semantics(tmp_path, monkeypatch):
+    from epl_forecast.data import understat
+    from epl_forecast.storage import json_bytes, write_immutable
+
+    roster = {}
+    for side in "ha":
+        roster[side] = {}
+        for i in range(11):
+            key = f"{side}{i}"
+            roster[side][key] = dict.fromkeys(
+                (
+                    "time",
+                    "shots",
+                    "xG",
+                    "xA",
+                    "key_passes",
+                    "xGChain",
+                    "xGBuildup",
+                    "goals",
+                    "own_goals",
+                ),
+                "0",
+            )
+            roster[side][key].update(player_id=key, player=key, position="GK" if i == 0 else "DC")
+    roster["h"]["h0"].update(shots="1", xG="1.2", own_goals="1")
+    stamp = "2024-08-16 19:00:00"
+    shot = {"match_id": "1", "player_id": "h0", "date": stamp, "xG": "1.2", "result": "SavedShot"}
+    payload = json_bytes(
+        {
+            "rosters": roster,
+            "shots": {"h": [shot, {**shot, "xG": "0", "result": "OwnGoal"}], "a": []},
+        }
+    )
+    league = json_bytes(
+        {"dates": [{}], "players": [{"id": k} for side in roster.values() for k in side]}
+    )
+    league_hash = sha256_bytes(league)
+    write_immutable(tmp_path / f"raw/understat/2024/{league_hash}.bin", league)
+    fixture = {
+        "match_id": "fixture",
+        "source_match_id": "1",
+        "season_id": "2024-2025",
+        "match_date": "2024-08-16",
+        "source_datetime": stamp,
+        "source_sha256": league_hash,
+        "home_xg": 1.0,
+        "away_xg": 0,
+        "home_goals": 0,
+        "away_goals": 1,
+    }
+    metadata = {
+        "sha256": sha256_bytes(payload),
+        "bytes": len(payload),
+        "retrieved_at": "2026-09-06T12:00:00+00:00",
+        "url": "https://understat.com/getMatchData/1",
+    }
+    monkeypatch.setattr(understat, "download", lambda *a, **kw: (payload, metadata))
+    manifest = tmp_path / "players.json"
+    report = understat.audit_player_matches(tmp_path, manifest, [fixture])
+    assert report["passed"] and report["sample_matches"] == 1
+    assert report["nonadditive_match_sides"] == 1
+    assert report["matches"][0]["sides"][0]["own_goal_events"] == 1
+    monkeypatch.setattr(understat, "download", lambda *a, **kw: pytest.fail("Unexpected network"))
+    assert understat.audit_player_matches(tmp_path, manifest, [fixture]) == report
