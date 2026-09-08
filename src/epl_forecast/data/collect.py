@@ -56,7 +56,7 @@ def same_named_player(left, right):
     given name must abbreviate the other, so teammates who merely share a middle
     name or a surname are not reported as contradictions.
     """
-    a, b = api.name_tokens(left), api.name_tokens(right)
+    a, b = api.name_words(left), api.name_words(right)
     if not a or not b or a[-1] != b[-1]:
         return False
     return a[0].startswith(b[0]) or b[0].startswith(a[0])

@@ -223,3 +223,14 @@ Twelve-hour collection stays as it is. Before evaluating any model whose claimed
 advantage depends on late injury news or confirmed lineups, match-day capture
 cadence must first rise enough for the experiment to observe those signals;
 until then the quieter schedule holds.
+
+Both leagues' M2 forecasts were regenerated against the replayed store, and the
+three installed launch agents still run under `uv run --locked`. The suite holds
+189 passing tests, and GitHub Actions runs the same format, lint and test checks
+as `scripts/verify.sh`. No model work was done: M2 remains the operational
+benchmark and the existing negative research results stand.
+
+Remaining before this plan retires: the pre-2016 archive, whose fixtures predate
+provider player statistics, and current-player transfer and sidelined histories.
+Neither blocks player-model work on the recent window once its one defective
+fixture and one unresolved substitute identity are accepted or repaired.
