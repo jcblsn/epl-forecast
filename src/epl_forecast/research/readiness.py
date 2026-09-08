@@ -16,6 +16,62 @@ from epl_forecast.datasets import Dataset
 from epl_forecast.storage import json_bytes, sha256_bytes, write_immutable
 
 
+def player_evidence_audit(data, fixtures, contradictions):
+    appearances = defaultdict(list)
+    process = defaultdict(list)
+    for row in data.rows("SELECT * FROM appearances"):
+        appearances[row["match_id"]].append(row)
+    for row in data.rows("SELECT * FROM player_process"):
+        process[row["match_id"]].append(row)
+    collisions = {r["match_id"] for r in contradictions["same_team_name_collisions"]}
+    valid, exclusions = [], []
+    for fixture in fixtures:
+        if fixture["status"] != "finished":
+            continue
+        mid = fixture["match_id"]
+        rows = process[mid]
+        reasons = []
+        if mid in collisions:
+            reasons.append("unresolved same-team identity collision")
+        if not rows:
+            reasons.append("no player-process capture")
+        else:
+            expected = {fixture["home_team_id"], fixture["away_team_id"]}
+            if {r["team_id"] for r in rows} != expected:
+                reasons.append("player-process team set does not match fixture")
+            if any(r["player_id"] is None for r in rows):
+                reasons.append("unlinked player-process identity")
+            keys = [(r["team_id"], r["player_id"]) for r in rows if r["player_id"] is not None]
+            if len(keys) != len(set(keys)):
+                reasons.append("multiple process records share a canonical player")
+            if any(r["minutes"] is None or r["minutes"] < 0 for r in rows):
+                reasons.append("unknown or invalid process exposure")
+            if any(r["xg"] is None or r["shots"] is None for r in rows):
+                reasons.append("missing attacking-process observations")
+            active = {
+                (r["team_id"], r["player_id"])
+                for r in appearances[mid]
+                if r["minutes"] is not None and (r["minutes"] > 0 or r["starts"] == 1)
+            }
+            observed = {
+                (r["team_id"], r["player_id"])
+                for r in rows
+                if r["minutes"] is not None and r["minutes"] > 0
+            }
+            if not active or active != observed:
+                reasons.append("positive-exposure identities disagree across providers")
+        if reasons:
+            exclusions.append({"match_id": mid, "reasons": sorted(set(reasons))})
+        else:
+            valid.append(mid)
+    return {
+        "valid_matches": sorted(valid),
+        "exclusions": exclusions,
+        "captured_fixtures": sum(bool(process[f["match_id"]]) for f in fixtures),
+        "scope": "Necessary identity/exposure checks only; intersect with starter_minutes and team xG. Provider minute totals remain separate measurements. This is not sufficient model, allocation-likelihood, or strict-replay readiness.",
+    }
+
+
 def research_readiness(data: Dataset, start: int = 2013, end: int = 2026) -> dict:
     if start > end:
         raise ValueError("Research window start must not exceed end")
@@ -85,11 +141,19 @@ def research_readiness(data: Dataset, start: int = 2013, end: int = 2026) -> dic
     ids = {p["api_id"] for p in people}
     missing = {endpoint: sorted(ids - captured) for endpoint, captured in histories.items()}
     contradictions = identity_contradictions(data)
+    player_audit = player_evidence_audit(data, fixtures, contradictions)
     contradictions["same_team_name_collisions"] = [
         r
         for r in contradictions["same_team_name_collisions"]
         if recent_start <= r["season_id"] <= f"{end}-{end + 1}"
     ]
+    player_ids = set(player_audit["valid_matches"])
+    for cohort in cohorts.values():
+        cohort["valid_matches"]["player_oracle_evidence"] = sorted(
+            player_ids
+            & set(cohort["valid_matches"]["starter_minutes"])
+            & set(cohort["valid_matches"]["xg"])
+        )
     experiments = defaultdict(list)
     for key, cohort in sorted(cohorts.items()):
         expected = {"eng-premier-league": 380, "eng-championship": 552}.get(key[0])
@@ -124,6 +188,7 @@ def research_readiness(data: Dataset, start: int = 2013, end: int = 2026) -> dic
         "recent_player_population": len(ids),
         "missing_recent_player_histories": missing,
         "identity_contradictions": contradictions,
+        "player_evidence_audit": player_audit,
         "roster_experiment_ready": False,
         "roster_gate": "History capture coverage alone cannot establish historical squad turnover available before kickoff; retrospective and strict-replay designs need separate validation.",
         "player_oracle_ready": False,

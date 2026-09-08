@@ -279,3 +279,27 @@ player oracle gate after team findings, and current EFL-edition verification.
 The license choice remains pending. The twelve-hour capture schedule and M2/M7/
 M8 roles are unchanged. The backfill session `38720` remains active; do not start
 a competing writer merely because it is quiet.
+
+## Explicit player-evidence gate
+
+The readiness manifest now records fixture-level `player_oracle_evidence` IDs,
+intersecting team xG and usable starters with linked player-process identities,
+matching positive-exposure participants, valid process exposure/observations,
+and no same-team identity collision. Multiple process records cannot silently
+collapse to one canonical player. Unknown IDs are reported as unlinked, not as
+duplicate canonical identities. Provider minute totals remain separate; these
+necessary identity checks do not establish a calibrated allocation likelihood
+or historical information availability.
+
+The live canonical audit found only 30 current-season player-process fixtures,
+929 records and 309 linked identities. No fixture passed the player-evidence
+gate. Historical player-process ingestion follows the live backfill's recent
+history phase; do not substitute the old sparse sample for an evaluated oracle.
+`runs/research-ready-v1-player-gate-audit/manifest.json` retains the new gate and
+the evolving capture snapshot; it does not replace the experiments' frozen
+initial input or claim final recent-history completion. The earlier
+`player-gate-check` snapshot counted unknown IDs in its duplicate-key reason;
+it is superseded by this corrected audit, with the same zero-eligibility outcome.
+
+All 221 tests pass. Tests cover unlinked IDs, incomplete
+cross-provider participants, identity collisions and genuine duplicate keys.
