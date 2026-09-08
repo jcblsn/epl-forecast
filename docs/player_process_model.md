@@ -1,11 +1,20 @@
-# Second player-process formulation: prepared, not fitted
+# Second attacking-player formulation: M7 oracle gate
 
 M6-v1 remains the retained first player-information experiment. Its static,
 goals-based player Quality coefficients are not the next architectural parent.
-M7-v1 remains the retained team xG parent. M8-v1's downstream Poisson assumption
-fails observation checks, so the condition for fitting a player extension on a
-settled M8 structure was not met in this batch. Do not hide that failure by
-adding player flexibility.
+M7 remains the team xG parent; M8 remains parked. The current steering memo
+supersedes the earlier requirement to settle M8 before this gate. The
+[uncertainty budget](experiments/uncertainty_budget.md) and
+[promotion-prior comparison](experiments/promotion_transition.md) now provide
+the requested team-level evidence. They do not establish player gains or justify
+adaptive dynamics.
+
+The existing M6 `PlayerQualityFilter._augment_design` assigns each scalar player
+coefficient to both home and away score rates with opposite signs. Its oracle
+score projection uses the same symmetric direction. Reusing it unchanged would
+violate the attacking-only formulation below. Existing lineup sampling and
+cutoff handling may be reused, but both training and forecast player designs
+must give a club's players zero direct coefficient in its opponent's rate.
 
 ## Identity and roles
 
@@ -70,6 +79,17 @@ with actual lineups calls for reassessing the player representation before
 adding complexity. Report opening/promoted, large lineup-change and unseen-player
 slices, and verify directional responses and coefficient identification.
 
-This batch supplies the mapping audit, role rules, representation and decision
-protocol. It does not claim player-process predictive gains or manufacture an
-oracle result for a model that has not been fitted.
+The earlier batch supplied the mapping audit, role rules, representation and
+decision protocol. The current batch is capturing the bounded 2023/24–2025/26
+canonical process population. Exact retained provider names may establish
+unambiguous links within the same fixture/team; future name and stable-ID
+evidence is excluded. The old 36-match sample above remains historical evidence,
+not the current experiment's cohort.
+
+The machine-readable `player_oracle_evidence` cohort additionally requires team
+xG, starter-minute coverage, linked process identities and matching positive-
+exposure participants, excluding unresolved identity contradictions. This is a
+necessary data gate, not validation of the proposed allocation likelihood.
+Publication, reconciliation, matched three-condition evaluation and actual
+empirical oracle results are still outstanding. No player-process predictive
+gain is claimed for an unfitted model.
