@@ -9,6 +9,7 @@ from pathlib import Path
 
 import numpy as np
 
+from epl_forecast.artifacts import execution_provenance
 from epl_forecast.datasets import timestamp
 from epl_forecast.storage import file_hash, write_json
 
@@ -81,6 +82,7 @@ def main():
     assert reference["diagnostics"]["divergences"] == 0
     assert reference["diagnostics"]["max_rhat"] < 1.01
     report = {
+        "execution": execution_provenance(),
         "forecast_archive_sha256_verified": True,
         "snapshot_and_player_input_hashes_verified": True,
         "prospective_match_count": 350,

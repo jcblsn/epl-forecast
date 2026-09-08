@@ -8,6 +8,7 @@ from pathlib import Path
 
 import numpy as np
 
+from epl_forecast.artifacts import new_run_directory
 from epl_forecast.datasets import load_dataset
 from epl_forecast.live import LONDON, load_live_season, timestamp
 from epl_forecast.live_forecast import check_freshness, export_forecast
@@ -30,7 +31,7 @@ def main():
     parser.add_argument("--seed", type=int, default=610)
     parser.add_argument("--forecast-only", action="store_true")
     args = parser.parse_args()
-    args.output.mkdir(parents=True, exist_ok=False)
+    new_run_directory(args.output)
     live = load_live_season(args.data, args.cutoff, args.competition)
     check_freshness(live, 24)
     if not args.forecast_only and any(

@@ -7,7 +7,7 @@ from pathlib import Path
 
 import numpy as np
 
-from epl_forecast.artifacts import write_csv
+from epl_forecast.artifacts import new_run_directory, write_csv
 from epl_forecast.datasets import load_player_history, timestamp
 from epl_forecast.lineups import sample_lineups
 from epl_forecast.squads import PlayerHistory
@@ -112,7 +112,7 @@ def main():
     parser.add_argument("--seed", type=int, default=20260906)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    args.output.mkdir(parents=True, exist_ok=False)
+    new_run_directory(args.output)
     history = PlayerHistory(load_player_history(args.players))
     rows, predictions = evaluate(history, args.seasons, args.draws, args.seed)
     slices = {

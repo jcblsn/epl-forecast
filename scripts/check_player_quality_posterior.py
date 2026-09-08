@@ -5,6 +5,7 @@ from pathlib import Path
 
 import numpy as np
 
+from epl_forecast.artifacts import new_run_directory
 from epl_forecast.datasets import load_dataset, load_player_history
 from epl_forecast.models.player_quality import PlayerQualityFilter
 from epl_forecast.research.quality_tilt_reference import (
@@ -21,7 +22,7 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--matches", type=int, default=60)
     args = parser.parse_args()
-    args.output.mkdir(parents=True, exist_ok=False)
+    new_run_directory(args.output)
     path = Path("data")
     matches, _, manifest = load_dataset(Path("data"))
     matches = sorted(

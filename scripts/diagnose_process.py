@@ -4,6 +4,7 @@ import argparse
 from datetime import date
 from pathlib import Path
 
+from epl_forecast.artifacts import new_run_directory
 from epl_forecast.datasets import load_dataset
 from epl_forecast.research.process_diagnostics import conditional_goal_checks, known_state_checks
 from epl_forecast.storage import write_json
@@ -19,7 +20,7 @@ def main():
     parser.add_argument("--bridge", action="store_true")
     parser.add_argument("--predictive", action="store_true")
     args = parser.parse_args()
-    args.output.mkdir(parents=True, exist_ok=False)
+    new_run_directory(args.output)
     from epl_forecast.datasets import load_process
 
     observations = load_process(args.data)

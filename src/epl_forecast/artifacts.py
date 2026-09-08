@@ -7,7 +7,7 @@ from importlib.metadata import distributions
 from pathlib import Path
 
 from epl_forecast import __version__
-from epl_forecast.storage import file_hash, json_bytes, sha256_bytes
+from epl_forecast.storage import file_hash, json_bytes, sha256_bytes, write_immutable
 
 
 def code_fingerprint() -> str:
@@ -79,6 +79,12 @@ def new_run_directory(path: Path) -> None:
     if path.exists() and any(path.iterdir()):
         raise ValueError(f"Run directory is not empty: {path}. Choose a new output path.")
     path.mkdir(parents=True, exist_ok=True)
+    retain_execution(path)
+
+
+def retain_execution(directory: Path) -> None:
+    payload = json_bytes(execution_provenance())
+    write_immutable(directory / "executions" / f"{sha256_bytes(payload)}.json", payload)
 
 
 def results_markdown(summary: dict) -> str:

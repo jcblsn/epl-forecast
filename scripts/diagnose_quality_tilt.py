@@ -5,7 +5,7 @@ from pathlib import Path
 
 import numpy as np
 
-from epl_forecast.artifacts import write_csv
+from epl_forecast.artifacts import new_run_directory, write_csv
 from epl_forecast.evaluation import metrics
 from epl_forecast.storage import file_hash, write_json
 
@@ -16,7 +16,7 @@ def main():
     parser.add_argument("--scores", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    args.output.mkdir(parents=True, exist_ok=False)
+    new_run_directory(args.output)
     groups = defaultdict(list)
     inputs = {}
     for directory in args.evaluations:

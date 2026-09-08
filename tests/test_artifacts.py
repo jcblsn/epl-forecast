@@ -1,7 +1,7 @@
 import subprocess
 import sys
 
-from epl_forecast.artifacts import execution_provenance
+from epl_forecast.artifacts import execution_provenance, new_run_directory, retain_execution
 from epl_forecast.storage import file_hash
 
 
@@ -45,3 +45,20 @@ def test_execution_provenance_outside_checkout_is_explicitly_unknown(tmp_path):
     assert result["commit"] is None
     assert result["dirty"] is None
     assert result["lockfile_sha256"] is None
+
+
+def test_run_directory_retains_each_distinct_execution_without_overwrite(tmp_path, monkeypatch):
+    import json
+
+    directory = tmp_path / "run"
+    new_run_directory(directory)
+    paths = list((directory / "executions").glob("*.json"))
+    assert len(paths) == 1
+    original = paths[0].read_bytes()
+    retain_execution(directory)
+    assert len(list((directory / "executions").glob("*.json"))) == 1
+    monkeypatch.setattr(sys, "argv", ["changed-invocation", "--seed", "2"])
+    retain_execution(directory)
+    assert len(list((directory / "executions").glob("*.json"))) == 2
+    assert paths[0].read_bytes() == original
+    assert json.loads(original)["commit"]

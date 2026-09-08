@@ -6,6 +6,7 @@ from pathlib import Path
 import numpy as np
 from scipy.stats import norm
 
+from epl_forecast.artifacts import new_run_directory
 from epl_forecast.datasets import load_dataset
 from epl_forecast.research.quality_tilt_reference import (
     PARAMETERS,
@@ -43,7 +44,7 @@ def main():
     args = parser.parse_args()
     if args.process_scale is not None and (args.xg is None or args.process_scale <= 0):
         raise ValueError("M8 reference requires xG and a positive process scale")
-    args.output.mkdir(parents=True, exist_ok=False)
+    new_run_directory(args.output)
     matches, _, manifest = load_dataset(args.data)
     data = prepare(
         [

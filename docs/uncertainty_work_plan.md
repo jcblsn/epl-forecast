@@ -207,3 +207,20 @@ single-season uncertainty intervals are left unknown. The earlier
 is retained only as an implementation checkpoint. All 212 tests pass, including
 future-target isolation and redundant-sensor covariance checks. Multi-season
 empirical interpretation and the promotion/offseason application remain open.
+
+The full information-value run completed from `4cc1131` in
+`runs/information-value-v1`. The [empirical report](experiments/information_value.md)
+records the exact evidence hashes and findings. Individual sensor improvements
+are not stable under season-cluster uncertainty. Shot residuals persist modestly,
+but their complementarity with existing observations is not established. Keep
+shots/SOT out of an independent production likelihood; test pooled transition
+summaries against the population prior before drawing a promotion-prior decision.
+
+Execution provenance now also covers the older diagnostic runners. Shared run
+directory creation writes content-addressed immutable execution records; rerunnable
+reports retain separate records for distinct commands/code without overwriting the
+previous execution evidence. The season rescoring/reporting and retained M6 audit
+paths are included. All 213 tests pass, including preservation of prior execution
+records across changed invocations. The public repository has no code license;
+an asynchronous user choice about MIT-for-code-only is pending. No provider-data
+rights are altered.

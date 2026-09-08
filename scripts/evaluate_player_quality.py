@@ -8,7 +8,7 @@ from pathlib import Path
 
 import numpy as np
 
-from epl_forecast.artifacts import write_csv
+from epl_forecast.artifacts import new_run_directory, write_csv
 from epl_forecast.datasets import load_dataset, load_player_history
 from epl_forecast.models.player_quality import BayesianPlayerQuality, player_identity
 from epl_forecast.models.quality_tilt import BayesianQualityTilt
@@ -91,7 +91,7 @@ def main():
     parser.add_argument("--draws", type=int, default=32)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    args.output.mkdir(parents=True, exist_ok=False)
+    new_run_directory(args.output)
     matches, _, manifest = load_dataset(args.data)
     matches = [m for m in matches if m.fixture.match_date >= args.train_start]
     history = PlayerHistory(load_player_history(args.players))

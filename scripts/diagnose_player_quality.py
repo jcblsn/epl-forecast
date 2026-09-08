@@ -10,7 +10,7 @@ from pathlib import Path
 import numpy as np
 from evaluate_player_quality import information_tags, summarize
 
-from epl_forecast.artifacts import write_csv
+from epl_forecast.artifacts import new_run_directory, write_csv
 from epl_forecast.datasets import load_dataset, load_player_history
 from epl_forecast.squads import PlayerHistory
 from epl_forecast.storage import file_hash, write_json
@@ -21,7 +21,7 @@ def main():
     parser.add_argument("--evaluation", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    args.output.mkdir(parents=True, exist_ok=False)
+    new_run_directory(args.output)
     run = json.loads((args.evaluation / "run.json").read_text())
     history = PlayerHistory(load_player_history(Path(run["arguments"]["players"])))
     observations = defaultdict(list)

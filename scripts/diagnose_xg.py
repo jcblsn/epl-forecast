@@ -8,6 +8,7 @@ from pathlib import Path
 
 import numpy as np
 
+from epl_forecast.artifacts import new_run_directory
 from epl_forecast.cli import load_config, save_rows
 from epl_forecast.datasets import load_dataset
 from epl_forecast.evaluation import metrics
@@ -165,7 +166,7 @@ def main():
     parser.add_argument("--adaptation-replicates", type=int, default=0)
     parser.add_argument("--archives", type=Path, nargs="*", default=[])
     args = parser.parse_args()
-    args.output.mkdir(parents=True, exist_ok=False)
+    new_run_directory(args.output)
     config = load_config(args.config)
     matches, _, _ = load_dataset(Path("data"))
     from epl_forecast.datasets import load_process

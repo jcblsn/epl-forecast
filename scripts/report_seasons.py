@@ -10,6 +10,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
+from epl_forecast.artifacts import retain_execution
 from epl_forecast.cli import save_rows
 from epl_forecast.season_evaluation import summarize
 
@@ -78,6 +79,7 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
+    retain_execution(args.output)
     rows = read_rows(args.evaluation / "club_seasons.csv")
     calibration = read_rows(args.evaluation / "calibration.csv")
     summary = read_rows(args.evaluation / "summary.csv")

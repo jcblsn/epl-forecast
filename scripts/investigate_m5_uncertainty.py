@@ -8,6 +8,7 @@ import numpy as np
 from scipy.special import logsumexp
 from scipy.stats import norm
 
+from epl_forecast.artifacts import new_run_directory
 from epl_forecast.datasets import load_dataset
 from epl_forecast.models.quality_tilt import QualityTiltFilter
 from epl_forecast.research.quality_tilt_reference import (
@@ -285,7 +286,7 @@ def main():
         default=["grid_support", "integration", "coverage", "season_sensitivity"],
     )
     args = parser.parse_args()
-    args.output.mkdir(parents=True, exist_ok=False)
+    new_run_directory(args.output)
     matches, _, manifest = load_dataset(args.data)
     report = {"input_manifest": manifest, "seed": args.seed}
     for name, run in (

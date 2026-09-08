@@ -5,6 +5,7 @@ import gzip
 import json
 from pathlib import Path
 
+from epl_forecast.artifacts import retain_execution
 from epl_forecast.cli import save_rows
 from epl_forecast.season_evaluation import score_forecast, summarize
 from epl_forecast.storage import file_hash, write_json
@@ -45,6 +46,7 @@ def main():
             )
         )
     args.output.mkdir(parents=True, exist_ok=True)
+    retain_execution(args.output)
     write_json(
         args.output / "manifest.json",
         {
