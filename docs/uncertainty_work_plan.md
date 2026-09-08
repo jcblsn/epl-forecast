@@ -253,3 +253,15 @@ moments. Full multi-season empirical results are not yet claimed.
 The main ladder has finished all eleven seasons and five origins in
 `runs/uncertainty-ladder-v1`; its attribution report contains 400 season and 300
 match comparisons with no missing pairs. Its empirical write-up is next.
+
+The [uncertainty-budget report](experiments/uncertainty_budget.md) now records
+the full empirical result and input hashes. Current-state uncertainty earns
+early-season support; innovations do not earn adaptive elaboration. Calibrated
+M2 season dependence improves preseason points CRPS and TRPS while preserving
+match probabilities exactly. Richer season models do not establish a reliable
+preseason advantage over that split product. The gamma score-law change is not
+admitted. These are development findings, not a production-model switch.
+
+The promotion runner was committed and pushed at `7f7e10c`, with all 220 tests
+passing. `runs/promotion-transition-v1` is running the ten admitted target
+seasons 2016/17–2025/26 with 2,000 paths per variant from that clean checkpoint.
