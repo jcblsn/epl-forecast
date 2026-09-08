@@ -192,9 +192,10 @@ rate. Both use the model's league reference. {escape(prior_note)}</p>
 <th>Training matches</th></tr></thead><tbody>{"".join(strengths)}</tbody></table></div></details>
 <p><a href="forecast.json">Full forecast JSON</a> · <a href="matches.csv">Match CSV</a> ·
 <a href="table.csv">Season CSV</a> · <a href="team_strengths.csv">Team strengths CSV</a></p>
-<p class="note">Free source data:
+<p class="note">Source data:
 <a href="https://www.api-football.com/">API-Football</a> and
-<a href="https://football-data.co.uk/">Football-Data</a>.</p>
+<a href="https://football-data.co.uk/">Football-Data</a>. Use and redistribution
+are subject to each provider's terms.</p>
 </body></html>
 """
 

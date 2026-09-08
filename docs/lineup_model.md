@@ -48,9 +48,9 @@ must be known by the squad cutoff. Beyond expiry, the assumption has no effect.
 Reproduce inputs and chronological lineup coverage with:
 
 ```sh
-uv run python scripts/audit_players.py
+uv run epl-forecast data audit
 uv run python scripts/evaluate_lineups.py --output runs/m6-lineups-v1
-uv run pytest tests/test_players.py tests/test_lineups.py tests/test_live.py
+uv run pytest tests/test_lineups.py
 ```
 
 The evaluation retains every candidate/outcome-union player prediction, including

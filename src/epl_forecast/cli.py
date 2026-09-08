@@ -292,7 +292,7 @@ def forecast_command(args) -> None:
 
 def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(
-        description="Premier League probabilistic forecasts and season simulation"
+        description="Probabilistic forecasts and season simulation for England's top two leagues"
     )
     commands = root.add_subparsers(dest="command", required=True)
     forecast = commands.add_parser("forecast", help="Archive a current-season score-model forecast")

@@ -6,6 +6,7 @@ requires-python = ">=3.12"
 dependencies = [
     "duckdb>=1.5.5",
     "numpy>=2.5.2",
+    # DuckDB imports pytz to return TIMESTAMPTZ values as Python datetimes.
     "pytz>=2026.3.post1",
     "scipy>=1.18.1",
 ]

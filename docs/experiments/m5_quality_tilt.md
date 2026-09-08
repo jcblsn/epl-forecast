@@ -137,7 +137,6 @@ uv run python scripts/diagnose_quality_tilt.py \
   --scores runs/m5-holdout --output runs/m5-diagnostics
 uv run --extra research python scripts/check_quality_tilt_posterior.py \
   --output runs/m5-posterior-reference
-uv run python scripts/audit_players.py
 ```
 
 Commands require fresh output directories. The original tail diagnostics used

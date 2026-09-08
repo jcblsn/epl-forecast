@@ -37,8 +37,14 @@ uv run epl-forecast forecast --config configs/quality_tilt.toml --model M5-quali
 ```
 
 Backfills resume from successful request checkpoints and reserve daily API quota
-for current collection. The migration plan tracks remaining ingestion and audit
-work; a successful request does not establish complete historical coverage.
+for current collection. They complete the current season for both leagues, then
+current-player transfer and sidelined histories, then the preceding three seasons,
+before older history. The migration plan tracks remaining ingestion and audit work;
+a successful request does not establish complete historical coverage.
+
+`data normalize` replays every raw capture into a fresh canonical store and
+publishes it only after verification, so identity corrections and provider
+repairs are reproducible from immutable evidence rather than accumulated state.
 
 Forecasts produce JSON, CSV and HTML under `runs/forecasts/`. Premier League
 projections report European league positions; Championship projections report
@@ -87,13 +93,15 @@ inference without adding MCMC to production:
 ```sh
 uv run --extra research python scripts/check_quality_tilt_posterior.py \
   --output runs/m5-posterior-reference
-uv run python scripts/audit_players.py
 ```
 
-The [player audit](docs/player_data_audit.md) supplies 253,509 normalized
-player-match rows for deliberate M6 design. It distinguishes chronological
-prior-minutes features from unverified historical publication timestamps.
-See the [research queue](docs/next_experiments.md) for the remaining issues.
+Player-match rows now come from the canonical `appearances` table; inspect their
+coverage with `data audit` and the recent input window with
+`data/audits/recent_readiness.json`. Readiness requires eleven starters with
+usable identity and minutes for each team in every finished regular fixture.
+The superseded [FPL feasibility audit](docs/player_data_audit.md) is retained
+as a record of the earlier dataset, not as a runnable pipeline. See the
+[research queue](docs/next_experiments.md) for the remaining issues.
 
 ## Player-aware M6 research forecasts
 
@@ -163,7 +171,8 @@ uv run ruff check
 uv run pytest
 ```
 
-Tests use synthetic data and need no network. Keep leakage, identity, probability,
+GitHub Actions runs exactly these three checks on pushes to `main` and on pull
+requests; there is no other automation. Tests use synthetic data and need no network. Keep leakage, identity, probability,
 score-distribution and simulation arithmetic checks. Repeat byte-for-byte
 normalization when normalization changes; reserve fresh-directory reproduction
 for occasional checks and releases.
