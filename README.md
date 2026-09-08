@@ -1,5 +1,7 @@
 # Open Premier League forecast
 
+Active work: [data architecture migration](docs/data_architecture_migration.md).
+
 An open, real-time probabilistic Premier League forecasting and season-simulation
 model using free data. The aim is the strongest practical model we can build,
 with current, interpretable forecasts. Reproducible experiments help improve and

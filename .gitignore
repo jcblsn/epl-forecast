@@ -12,3 +12,8 @@ data/raw/
 data/processed/
 runs/
 snapshots/
+data/parquet/
+data/manifests/
+data/requests/
+data/audits/
+data/*.lock
