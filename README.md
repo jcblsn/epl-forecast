@@ -166,13 +166,13 @@ Use canonical IDs from [the team registry](src/epl_forecast/data/teams.csv).
 ## Development
 
 ```sh
-uv run ruff format --check
-uv run ruff check
-uv run pytest
+scripts/verify.sh
 ```
 
-GitHub Actions runs exactly these three checks on pushes to `main` and on pull
-requests; there is no other automation. Tests use synthetic data and need no network. Keep leakage, identity, probability,
+That formats, lints and tests in that order, keeping the `research` extra
+installed. GitHub Actions runs the same three checks on pushes to `main` and on
+pull requests, with `ruff format --check` in place of the rewriting formatter;
+there is no other automation. Tests use synthetic data and need no network. Keep leakage, identity, probability,
 score-distribution and simulation arithmetic checks. Repeat byte-for-byte
 normalization when normalization changes; reserve fresh-directory reproduction
 for occasional checks and releases.
