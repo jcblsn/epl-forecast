@@ -213,9 +213,12 @@ def main():
                 **vars(player.availability),
                 "observed_at": player.availability.observed_at.isoformat(),
                 "expires_at": player.availability.expires_at.isoformat(),
+                "target_kickoff": player.availability.target_kickoff.isoformat()
+                if player.availability.target_kickoff
+                else None,
             },
             "counterfactual": "Restore captured player availability; same fitted model",
-            "expiry_policy": "FPL proxy: linear recovery over 28 days; expiry is an assumption",
+            "expiry_policy": player.availability.source,
             "matches": scenario_matches,
             "restored_minus_current_season": season_changes,
             "m6_minus_m5_matches": changes,

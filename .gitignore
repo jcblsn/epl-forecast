@@ -17,3 +17,4 @@ data/manifests/
 data/requests/
 data/audits/
 data/*.lock
+data/.normalize-*/

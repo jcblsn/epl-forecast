@@ -38,7 +38,7 @@ Run through the existing pipeline:
 uv run epl-forecast evaluate --config configs/quality_tilt.toml \
   --split holdout --output runs/m5-holdout
 uv run epl-forecast forecast --config configs/quality_tilt.toml \
-  --model M5-quality-tilt-v1 --snapshot snapshots/<UTC timestamp>
+  --model M5-quality-tilt-v1 --data data
 ```
 
 Live JSON and CSV expose Q, T, standard deviations and covariance. Match JSON

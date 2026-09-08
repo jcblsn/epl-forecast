@@ -2,6 +2,8 @@
 
 import csv
 import json
+import re
+import unicodedata
 from datetime import datetime
 from pathlib import Path
 from urllib.parse import urlencode
@@ -25,8 +27,30 @@ ROLES = {
 }
 
 
+with Path(__file__).with_name("api_player_aliases.csv").open() as stream:
+    PLAYER_ALIASES = {int(r["alias_api_id"]): int(r["api_id"]) for r in csv.DictReader(stream)}
+
+
+def canonical_api_id(value):
+    if value is None or int(value) <= 0:
+        return None
+    return PLAYER_ALIASES.get(int(value), int(value))
+
+
 def player_id(value):
-    return f"p{int(value)}" if value is not None else None
+    value = canonical_api_id(value)
+    return f"p{value}" if value is not None else None
+
+
+def compatible_name(left, right):
+    def tokens(value):
+        value = unicodedata.normalize("NFKD", value.lower()).encode("ascii", "ignore").decode()
+        return re.findall("[a-z]+", value)
+
+    a, b = tokens(left), tokens(right)
+    return bool(
+        a and b and (a[0].startswith(b[0]) or b[0].startswith(a[0])) and set(a[1:]) & set(b[1:])
+    )
 
 
 def request(fetcher, endpoint, params=None, context=None, **kwargs):
@@ -98,9 +122,11 @@ def team_registry():
     return aliases
 
 
-def team_key(team, required=False):
+def team_key(team, required=False, known=None):
     if team.get("id") is None:
         return None
+    if not required:
+        return (known or {}).get(team["id"], f"af-team-{team['id']}")
     found = team_registry().get(team["name"])
     if found:
         return found
@@ -112,10 +138,14 @@ def team_key(team, required=False):
 def normalize(record, body, root):
     endpoint, context = record["context"]["endpoint"], record["context"]
     tables = {}
-    fixture_keys = {}
-    if endpoint == "injuries":
+    fixture_keys, team_keys = {}, {}
+    if endpoint in ("injuries", "transfers"):
         data = Dataset(root)
         try:
+            team_keys = {
+                r["api_id"]: r["team_id"]
+                for r in data.rows("SELECT * FROM teams WHERE api_id IS NOT NULL")
+            }
             fixture_keys = {
                 r["api_id"]: r["match_id"]
                 for r in data.rows(
@@ -195,15 +225,21 @@ def normalize(record, body, root):
                 "season_id": season,
                 "kickoff_time": kickoff,
             }
-            lineup = {}
+            lineup, shirts = {}, {}
             for side in item.get("lineups", []):
                 team = team_key(side["team"], True)
                 for collection, starts in [("startXI", 1), ("substitutes", 0)]:
                     for p in side[collection]:
                         p = p["player"]
-                        if p["id"] is None:
+                        if not canonical_api_id(p["id"]):
                             continue
                         pid = player_id(p["id"])
+                        if p.get("number") is not None:
+                            key_number = team, p["number"]
+                            identity = canonical_api_id(p["id"]), p["name"]
+                            if key_number in shirts and shirts[key_number][0] != identity[0]:
+                                raise ValueError("Conflicting same-team shirt numbers in lineup")
+                            shirts[key_number] = identity
                         lineup[pid] = {
                             **base,
                             "team_id": team,
@@ -211,13 +247,23 @@ def normalize(record, body, root):
                             "position": ROLES.get(p.get("pos"), "UNK"),
                             "starts": starts,
                         }
-                        add("players", {"player_id": pid, "api_id": p["id"], "name": p["name"]})
+                        add(
+                            "players",
+                            {
+                                "player_id": pid,
+                                "api_id": canonical_api_id(p["id"]),
+                                "name": p["name"],
+                            },
+                        )
             for side in item.get("players", []):
                 team = team_key(side["team"], True)
                 for entry in side["players"]:
                     p, s = entry["player"], entry["statistics"][0]
-                    if p["id"] is None:
-                        continue
+                    if not canonical_api_id(p["id"]):
+                        known = shirts.get((team, s["games"].get("number")))
+                        if known is None or not compatible_name(known[1], p["name"]):
+                            continue
+                        p = {**p, "id": known[0]}
                     pid = player_id(p["id"])
                     row = lineup.setdefault(
                         pid,
@@ -241,7 +287,10 @@ def normalize(record, body, root):
                                 "red_cards": s["cards"]["red"],
                             }
                         )
-                    add("players", {"player_id": pid, "api_id": p["id"], "name": p["name"]})
+                    add(
+                        "players",
+                        {"player_id": pid, "api_id": canonical_api_id(p["id"]), "name": p["name"]},
+                    )
             for row in lineup.values():
                 add("appearances", row)
         elif endpoint == "players":
@@ -251,7 +300,7 @@ def normalize(record, body, root):
                 "players",
                 {
                     "player_id": pid,
-                    "api_id": p["id"],
+                    "api_id": canonical_api_id(p["id"]),
                     "name": " ".join(filter(None, [p.get("firstname"), p.get("lastname")]))
                     or p["name"],
                     "birth_date": p.get("birth", {}).get("date"),
@@ -291,7 +340,10 @@ def normalize(record, body, root):
                 positions.setdefault(p["id"], set()).add(p["position"])
             for p in item["players"]:
                 pid = player_id(p["id"])
-                add("players", {"player_id": pid, "api_id": p["id"], "name": p["name"]})
+                add(
+                    "players",
+                    {"player_id": pid, "api_id": canonical_api_id(p["id"]), "name": p["name"]},
+                )
                 add(
                     "memberships",
                     {
@@ -337,14 +389,33 @@ def normalize(record, body, root):
                 },
             )
         elif endpoint == "transfers":
+            p = item["player"]
+            add(
+                "players",
+                {
+                    "player_id": player_id(p["id"]),
+                    "api_id": canonical_api_id(p["id"]),
+                    "name": p.get("name"),
+                },
+            )
             for t in item["transfers"]:
+                for team in t["teams"].values():
+                    if team.get("id") is not None:
+                        add(
+                            "teams",
+                            {
+                                "team_id": team_key(team, known=team_keys),
+                                "api_id": team["id"],
+                                "name": team["name"],
+                            },
+                        )
                 add(
                     "transfers",
                     {
                         "player_id": player_id(item["player"]["id"]),
                         "transfer_date": t["date"],
-                        "from_team_id": team_key(t["teams"]["out"]),
-                        "to_team_id": team_key(t["teams"]["in"]),
+                        "from_team_id": team_key(t["teams"]["out"], known=team_keys),
+                        "to_team_id": team_key(t["teams"]["in"], known=team_keys),
                         "transfer_type": t["type"],
                     },
                 )
@@ -353,6 +424,15 @@ def normalize(record, body, root):
             merged = {}
             for r in rows:
                 merged.setdefault(r["player_id"], {}).update(r)
+            tables[table] = list(merged.values())
+        elif table == "teams":
+            merged = {}
+            for row in sorted(rows, key=lambda r: r["name"] or ""):
+                key = row["team_id"]
+                if key in merged and merged[key]["api_id"] != row["api_id"]:
+                    raise ValueError(f"Conflicting provider team IDs: {key}")
+                # Transfer histories contain spelling variants for the same provider ID.
+                merged.setdefault(key, row)
             tables[table] = list(merged.values())
         else:
             tables[table] = list({json.dumps(r, sort_keys=True): r for r in rows}.values())

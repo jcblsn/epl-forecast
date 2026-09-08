@@ -32,14 +32,18 @@ def capture_attempt(
     simulations=2000,
     force=False,
     backfill_requests=0,
+    collect_first=True,
 ):
     root, data_root = Path(root), Path(data_root)
     root.mkdir(parents=True, exist_ok=True)
-    try:
-        with writer_lock(data_root):
-            collection = collect(data_root)
-    except SourceAccessError as error:
-        return {"status": "skipped", "reason": str(error)}
+    if collect_first:
+        try:
+            with writer_lock(data_root):
+                collection = collect(data_root)
+        except SourceAccessError as error:
+            return {"status": "skipped", "reason": str(error)}
+    else:
+        collection = json.loads((data_root / "audits" / "collection.json").read_text())
     now = datetime.now(UTC)
     data = Dataset(data_root, now)
     try:
@@ -56,7 +60,7 @@ def capture_attempt(
         force
         or fingerprint != state.get("fingerprint")
         or last is None
-        or (now - last).total_seconds() >= 21600
+        or (now - last).total_seconds() >= 12 * 3600
     )
     result = {"status": collection["status"], "collection": collection}
     if due:

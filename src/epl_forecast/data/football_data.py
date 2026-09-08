@@ -10,21 +10,6 @@ from epl_forecast.data.sources import COMPETITIONS, csv_rows
 from epl_forecast.schema import Fixture, Match, fixture_id
 
 TEAM_FILE = Path(__file__).with_name("teams.csv")
-MATCH_FIELDS = [
-    "match_id",
-    "competition_id",
-    "season_id",
-    "match_date",
-    "home_team_id",
-    "away_team_id",
-    "home_goals",
-    "away_goals",
-    "outcome",
-    "available_on",
-    "source_sha256",
-    "source_row",
-    "source_time",
-]
 ODDS_FAMILIES = {
     "bet365_preclosing": ("B365H", "B365D", "B365A"),
     "betbrain_average_preclosing": ("BbAvH", "BbAvD", "BbAvA"),
@@ -211,11 +196,28 @@ def ingest(root, record, payload):
         r.pop("available_on")
         r.pop("source_sha256")
     raw = dict(csv_rows(payload)[1])
-    process = []
+    process, issues = [], []
     for m in matches:
         row = raw[m.source_row]
         for t, prefix in [(m.fixture.home_team_id, "H"), (m.fixture.away_team_id, "A")]:
             shots, target = row.get(prefix + "S"), row.get(prefix + "ST")
+            if (
+                shots
+                and target
+                and shots.isdigit()
+                and target.isdigit()
+                and int(target) > int(shots)
+            ):
+                issues.append(
+                    {
+                        "match_id": m.fixture.match_id,
+                        "team_id": t,
+                        "reason": "shots_on_target exceeds shots; both unknown",
+                        "shots": shots,
+                        "shots_on_target": target,
+                    }
+                )
+                shots, target = None, None
             process.append(
                 {
                     "match_id": m.fixture.match_id,
@@ -239,7 +241,7 @@ def ingest(root, record, payload):
     teams = sorted({t for m in matches for t in (m.fixture.home_team_id, m.fixture.away_team_id)})
     return publish(
         root,
-        record,
+        {**record, "normalization_issues": issues} if issues else record,
         {
             "fixtures": fixtures,
             "odds": quotes,
@@ -263,7 +265,7 @@ def ingest_latest_odds(root, record, payload):
     if not {"Div", "Date", "HomeTeam", "AwayTeam"}.issubset(reader.fieldnames or []):
         raise ValueError("Latest odds response lacks fixture identity columns")
     aliases = team_aliases()
-    data = Dataset(root)
+    data = Dataset(root, record["retrieved_at"])
     fixtures = {f["match_id"]: f for f in data.fixtures()}
     data.close()
     rows = []

@@ -1,4 +1,4 @@
-# Open Premier League forecasting model
+# Premier League and Championship forecasting model
 
 ## Objective
 

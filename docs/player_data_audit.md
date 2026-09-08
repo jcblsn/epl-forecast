@@ -1,5 +1,8 @@
 # Player data feasibility audit
 
+Historical FPL feasibility audit. The active data layer now uses API-Football player
+identity and appearances; see [the migration plan](data_architecture_migration.md).
+
 Audited September 6, 2026. A retrospective M6 research dataset is feasible now;
 strict historical publication-time replay and complete past injury/roster states
 are not yet established. No player model was built.
@@ -16,7 +19,7 @@ The script restores missing raw files from immutable commit URLs. Its outputs ar
 `data/processed/players/player_matches.csv.gz` and the committed
 [machine-readable audit](player_data_audit.json). The dataset is local and ignored
 by Git, consistent with the project's other processed data. Its SHA-256 is recorded
-in the audit; the [source manifest](../configs/player_data_snapshot.json) pins all
+in the audit; the [source manifest](../.archive/legacy_data/player_data_snapshot.json) pins all
 36 source files to commit `9779cdbc0c07f6c900c2d0c181ddf6bb9c800f88` of the
 [FPL Historical Dataset](https://github.com/vaastav/Fantasy-Premier-League/tree/9779cdbc0c07f6c900c2d0c181ddf6bb9c800f88).
 

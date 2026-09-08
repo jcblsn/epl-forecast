@@ -88,9 +88,14 @@ def publish(root, request, tables):
                 unknown = set(row) - set(columns)
                 if unknown:
                     raise ValueError(f"Unknown {table} columns: {unknown}")
-            con.executemany(
-                "INSERT INTO records VALUES (" + ",".join("?" for _ in columns) + ")",
-                [[r.get(c) for c in columns] for r in values],
+            con.execute(
+                "INSERT INTO records SELECT unnest(from_json_strict(?, ?), recursive := true)",
+                [
+                    json.dumps([{c: r.get(c) for c in columns} for r in values], allow_nan=False),
+                    json.dumps(
+                        [{c[1]: c[2] for c in con.execute("PRAGMA table_info(records)").fetchall()}]
+                    ),
+                ],
             )
             invalid = {
                 "fixtures": "home_team_id=away_team_id OR home_team_id IS NULL "
@@ -185,7 +190,14 @@ class Dataset:
             if table == "players":
                 columns = [c.split()[0] for c in (schema + ", " + COMMON).split(", ")]
                 selections = ["player_id"] + [
-                    f"arg_max({c}, retrieved_at) AS {c}" for c in columns if c != "player_id"
+                    (
+                        "arg_max(name, (birth_date IS NOT NULL, "
+                        "retrieved_at, source_sha256)) AS name"
+                        if c == "name"
+                        else f"arg_max({c}, (retrieved_at, source_sha256)) AS {c}"
+                    )
+                    for c in columns
+                    if c != "player_id"
                 ]
                 self.con.execute(
                     "CREATE VIEW players AS SELECT "

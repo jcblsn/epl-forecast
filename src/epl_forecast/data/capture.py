@@ -21,6 +21,10 @@ class QuotaReached(SourceAccessError):
     pass
 
 
+class WriterBusy(SourceAccessError):
+    pass
+
+
 def api_key():
     value = os.environ.get("API_FOOTBALL_KEY")
     if not value and Path(".env").exists():
@@ -40,7 +44,7 @@ def writer_lock(root):
         try:
             fcntl.flock(lock, fcntl.LOCK_EX | fcntl.LOCK_NB)
         except BlockingIOError:
-            raise SourceAccessError("Another local data writer is running") from None
+            raise WriterBusy("Another local data writer is running") from None
         yield
 
 

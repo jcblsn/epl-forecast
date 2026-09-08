@@ -64,21 +64,26 @@ missingness and contradictory results. No inferred minutes for early missing sta
 
 ## Ongoing collection
 
-Ten-minute scheduler with due-time checks: fixture status every 30 minutes (10 around
-matches), squads daily, API injuries every four hours, FPL availability every 30 minutes,
-lineups every ten minutes from 90 minutes pre-kickoff, statistics after completion then
-next day and seven days later. Understat daily plus correction checks; transfers daily
-in transfer windows and weekly otherwise. Football-Data daily, latest odds every six hours.
-Keep timestamps for unchanged successful captures while deduplicating raw content.
-Keep forecast change triggers and six-hour heartbeat. Secrets use ignored .env or environment.
+Twelve-hour collection and forecast checks during model development, following the
+user's September 8 steering. Fixture inventories and details have a twelve-hour
+minimum refresh interval and no rapid match-day override. Squads refresh daily,
+current player profiles weekly, and other due sources refresh at scheduled collection.
+Final fixture details retain bounded completion/next-day/seven-day correction checkpoints.
+Understat and Football-Data update as available; current transfers update daily in
+transfer windows and weekly otherwise. Keep successful capture timestamps while
+deduplicating raw content. Secrets use ignored .env or environment.
+
+The slower schedule deliberately misses some late lineups and availability changes;
+raise cadence only when the modeling work warrants the archive volume. A separate
+local backfill job can consume its bounded quota without triggering new live captures.
 
 ## Implementation checklist
 
 - [x] Canonical schemas, DuckDB queries, immutable publication, API preflight.
-- [ ] Ongoing collection and resumable backfill; import existing evidence once.
+- [x] Ongoing collection and resumable backfill; import existing evidence once.
 - [x] Forecasting, evaluation, lineup and research consumers migrated.
-- [ ] Installed collector replaced and scheduled execution verified.
-- [ ] Old adapters, restoration commands, outputs/configuration and obsolete tests removed.
+- [x] Installed collector replaced and scheduled execution verified.
+- [x] Old adapters, restoration commands, outputs/configuration and obsolete tests removed.
 - [ ] Historical archive audited; offline research verified.
 
 ## Acceptance and retirement
@@ -133,3 +138,32 @@ The plan remains active until the archive and scheduled cutover are verified.
 Remaining implementation checks include full raw replay/rebuild determinism, current
 identity mapping coverage, obsolete source-configuration retirement, and final
 collector verification. Historical backfill remains resumable and quota-limited.
+
+Full offline replay of 1,685 raw requests passed after exposing two invalid historic
+shot pairs, which are now explicitly unknown with audited raw evidence. The obsolete
+processed CSV cache was removed; original raw data, snapshots and runs were retained.
+The retired importer and source configurations are in `.archive/legacy_data/`.
+All ten manual forecast checks passed (five models for each league). Collection and
+forecasting now run as separate local scheduled jobs so model runtime cannot postpone
+prospective captures. The suite currently contains 178 passing tests.
+
+## Latest steering and current priority
+
+Live collection and forecast checks are installed at twelve-hour intervals. The
+separate historical job runs hourly with a 200-request budget and a daily quota
+reserve; this does not create frequent live fixture snapshots.
+
+API backfill now completes the current season for both leagues, then prioritizes
+current-player sidelined and transfer histories, then the preceding three seasons
+and their player histories, before older seasons. Player requests interleave the
+two leagues. `data/audits/recent_readiness.json` reports the 2023/24–2026/27 input
+window independently of whole-archive completion.
+
+The recent fixture/results window is complete for both leagues. Initial starter-minute
+coverage was complete for PL, but Championship had 82 affected matches across the
+four seasons. Inspection found multiple provider IDs for the same player in lineups
+and statistics, and zero IDs used as missing-ID sentinels. Fifty explicit API aliases
+are recorded in `src/epl_forecast/data/api_player_aliases.csv`, with same-fixture
+team/shirt-number evidence and raw hashes. These are deterministic provider identity
+corrections, not names used as player keys. Full replay and readiness verification
+of this repair remain in progress at this checkpoint.

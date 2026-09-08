@@ -1,4 +1,9 @@
-# Implementation plan
+# Historical implementation checkpoint: September 6, 2026
+
+Superseded by the [active data architecture migration](data_architecture_migration.md).
+Both the Premier League and Championship are current forecasting targets.
+Commands and scheduler status below describe the old implementation.
+
 
 Build a current Premier League forecasting product and improve its predictive
 information. The historical data, model interface, chronological harness and

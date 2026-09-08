@@ -14,22 +14,24 @@ lock prevents concurrent ingestion; models query published files without a serve
 
 ## Recurring prospective capture
 
-The local macOS launch agent is installed with:
+The local collection and forecast jobs, plus optional historical backfill, are installed with:
 
 ```sh
 uv run python scripts/capture_prospective.py --install-launch-agent --backfill-requests 200
 ```
 
-It wakes every ten minutes, collects due provider observations, and archives forecasts
-when canonical information changes or a six-hour heartbeat is due. M2, M5, M6, M7
+The collector wakes every twelve hours and captures due provider observations. The
+separate forecast worker checks for canonical information changes or a twelve-hour
+heartbeat. Expensive model runs therefore do not delay capture. M2, M5, M6, M7
 and M8 run for both leagues. Research model outputs do not establish model promotion.
 Each attempt records independent command outcomes and logs; failed forecasts are
 retried on a later tick. All models in an attempt use one cutoff after collection.
-`--backfill-requests 200` enables a bounded resumable archive pass after forecasting.
+`--backfill-requests 200` installs a separate hourly job for bounded archive passes.
 The API quota reserve protects current collection. Remove this option when the
 historical archive is complete. Logs live under `runs/prospective/`.
 
-For a manual run, omit `--install-launch-agent`; use `--force --simulations 20` for
+`--collect-only` and `--forecast-only` run the workers independently. For a combined
+manual run, omit `--install-launch-agent`; use `--force --simulations 20` for
 a small operational smoke check. Installation should follow a successful manual
 run. The active migration plan records whether this cutover has been verified.
 
@@ -57,3 +59,28 @@ winning the playoffs. PL European qualification requires an explicit cup scenari
 
 Back up `data/` and `runs/`; they contain evidence that Git does not restore.
 Legacy `snapshots/` remain local evidence from the retired collector.
+
+## Rebuild normalization
+
+Stop the collection, forecast and backfill launch agents and finish active forecasts before running
+`uv run epl-forecast data normalize`. This offline operation verifies raw hashes,
+replays provider dependencies into temporary Parquet, validates the result, then
+replaces the old normalized directories. It preserves requests and raw responses.
+A failed replay leaves the old publication intact. The final directory replacement
+requires no concurrent readers; restart collection afterwards. This is a rebuild,
+not a second supported cache or a historical-observation timestamp rewrite.
+
+During model development, scheduled collection and forecast checks run every twelve
+hours. Fixture inventories and fixture details use a twelve-hour minimum refresh
+interval, with no rapid match-day override. This deliberately trades late lineup
+and availability coverage for a quieter archive. Raw timestamps still describe
+actual captures; missing observations are never reconstructed later.
+
+## Recent data first
+
+Backfill prioritizes both leagues' current-season inputs and current-player histories,
+then the preceding three seasons, before older coverage. It interleaves the leagues'
+player requests. `data/audits/recent_readiness.json` separates usable recent inputs
+from whole-archive completeness; complete historical backfill is not a prerequisite
+for starting model work. Coverage readiness is distinct from model validation and
+from historical point-in-time evidence.

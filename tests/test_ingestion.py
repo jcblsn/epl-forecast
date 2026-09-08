@@ -119,3 +119,189 @@ def test_fixture_absence_does_not_become_an_injury_interval(tmp_path):
     player = captured_squads(data, datetime(2026, 9, 8, 14, tzinfo=UTC))["arsenal"].candidates[0]
     assert player.availability is None
     data.close()
+
+
+def test_raw_rebuild_is_deterministic_and_failure_preserves_publication(tmp_path):
+    import json
+
+    import pytest
+
+    from epl_forecast.data.capture import retain
+    from epl_forecast.data.collect import normalize
+
+    request = squad_record("2026-09-08T10:00:00+00:00")
+    body = {
+        "response": [
+            {
+                "team": {"id": 42, "name": "Arsenal"},
+                "players": [{"id": 1, "name": "Player One", "position": "Defender"}],
+            }
+        ]
+    }
+    record = retain(
+        tmp_path,
+        "api_football",
+        "https://example.test/squads",
+        json.dumps(body).encode(),
+        request["retrieved_at"],
+        "captured",
+        request["context"],
+    )
+    normalize(tmp_path)
+    before = {p.name: p.read_bytes() for p in (tmp_path / "manifests").glob("*.json")}
+    normalize(tmp_path)
+    assert before == {p.name: p.read_bytes() for p in (tmp_path / "manifests").glob("*.json")}
+    (tmp_path / record["raw_path"]).write_bytes(b"corrupt")
+    with pytest.raises(ValueError, match="hash mismatch"):
+        normalize(tmp_path)
+    assert before == {p.name: p.read_bytes() for p in (tmp_path / "manifests").glob("*.json")}
+    data = Dataset(tmp_path)
+    assert data.rows("SELECT count(*) AS n FROM players") == [{"n": 1}]
+    data.close()
+
+
+def test_inconsistent_shot_pair_is_audited_without_discarding_result(tmp_path):
+    from epl_forecast.data.football_data import ingest
+
+    record = {
+        "provider": "football_data",
+        "retrieved_at": "2026-09-08T10:00:00+00:00",
+        "evidence_basis": "retrospective",
+        "source_sha256": "a" * 64,
+        "context": {
+            "season_start": 2024,
+            "season_id": "2024-2025",
+            "competition_id": "eng-premier-league",
+            "division": "E0",
+        },
+    }
+    payload = (
+        b"Div,Date,HomeTeam,AwayTeam,FTHG,FTAG,FTR,HS,HST,AS,AST\n"
+        b"E0,01/09/2024,Arsenal,Chelsea,1,0,H,2,7,10,3\n"
+    )
+    manifest = ingest(tmp_path, record, payload)
+    assert len(manifest["request"]["normalization_issues"]) == 1
+    data = Dataset(tmp_path)
+    assert len(data.matches()) == 1
+    assert data.rows("SELECT shots, shots_on_target FROM team_process WHERE team_id='arsenal'") == [
+        {"shots": None, "shots_on_target": None}
+    ]
+    assert data.rows("SELECT shots, shots_on_target FROM team_process WHERE team_id='chelsea'") == [
+        {"shots": 10, "shots_on_target": 3}
+    ]
+    data.close()
+
+
+def test_fpl_identity_uses_unique_captured_team_and_birth_date(tmp_path):
+    import json
+
+    from epl_forecast.data import fpl
+    from epl_forecast.datasets import publish
+
+    record = squad_record("2026-09-08T10:00:00+00:00")
+    api.normalize(
+        record,
+        {
+            "response": [
+                {
+                    "team": {"id": 42, "name": "Arsenal"},
+                    "players": [
+                        {"id": i, "name": f"API Player {i}", "position": "Defender"}
+                        for i in (1, 2, 3)
+                    ],
+                }
+            ]
+        },
+        tmp_path,
+    )
+    publish(
+        tmp_path,
+        {**record, "context": {"endpoint": "players"}},
+        {
+            "players": [
+                {
+                    "player_id": f"p{i}",
+                    "api_id": i,
+                    "name": f"Full API Name {i}",
+                    "birth_date": "2000-01-01" if i == 1 else "2000-01-02",
+                }
+                for i in (1, 2, 3)
+            ]
+        },
+    )
+    body = {
+        "teams": [{"id": 1, "name": "Arsenal"}],
+        "events": [],
+        "elements": [
+            {
+                "code": code,
+                "element_type": 2,
+                "first_name": "Full",
+                "second_name": "Name",
+                "birth_date": birthday,
+                "team": 1,
+                "status": "a",
+                "news": "",
+            }
+            for code, birthday in ((100, "2000-01-01"), (200, "2000-01-02"))
+        ],
+    }
+    fpl.ingest(
+        tmp_path,
+        {
+            **record,
+            "provider": "fpl",
+            "retrieved_at": "2026-09-08T11:00:00+00:00",
+            "context": {"season_id": "2026-2027"},
+        },
+        json.dumps(body).encode(),
+    )
+    data = Dataset(tmp_path)
+    assert data.rows("SELECT fpl_code, player_id FROM availability ORDER BY fpl_code") == [
+        {"fpl_code": "100", "player_id": "p1"},
+        {"fpl_code": "200", "player_id": None},
+    ]
+    data.close()
+
+
+def test_transfers_do_not_identify_foreign_clubs_by_name(tmp_path):
+    record = squad_record("2026-09-08T10:00:00+00:00")
+    api.normalize(
+        record, {"response": [{"team": {"id": 42, "name": "Arsenal"}, "players": []}]}, tmp_path
+    )
+    api.normalize(
+        {**record, "context": {"endpoint": "transfers", "player": 1}},
+        {
+            "response": [
+                {
+                    "player": {"id": 1, "name": "Player One"},
+                    "transfers": [
+                        {
+                            "date": "2026-08-01",
+                            "type": "Loan",
+                            "teams": {
+                                "out": {"id": 999, "name": "Arsenal"},
+                                "in": {"id": 42, "name": "Arsenal"},
+                            },
+                        }
+                    ],
+                }
+            ]
+        },
+        tmp_path,
+    )
+    data = Dataset(tmp_path)
+    assert data.rows("SELECT from_team_id, to_team_id FROM transfers") == [
+        {"from_team_id": "af-team-999", "to_team_id": "arsenal"}
+    ]
+    assert data.rows("SELECT player_id FROM players") == [{"player_id": "p1"}]
+    data.close()
+
+
+def test_api_player_aliases_and_zero_ids_are_explicit():
+    assert api.player_id(531386) == api.player_id(297641) == "p297641"
+    assert api.canonical_api_id(531386) == 297641
+    assert api.player_id(0) is None
+    assert api.compatible_name("J. Metcalfe", "Jenson Metcalfe")
+    assert not api.compatible_name("T. Collyer", "Carlos Baleba")
+    assert not (set(api.PLAYER_ALIASES) & set(api.PLAYER_ALIASES.values()))

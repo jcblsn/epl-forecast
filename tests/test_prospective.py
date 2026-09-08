@@ -82,3 +82,24 @@ def test_final_fixture_capture_has_bounded_correction_checkpoints():
     assert fixture_details_due(fixtures, records(25), kickoff + timedelta(days=2)) == []
     assert fixture_details_due(fixtures, records(25), kickoff + timedelta(days=7)) == [10]
     assert fixture_details_due(fixtures, records(169), kickoff + timedelta(days=30)) == []
+
+
+def test_forecast_worker_does_not_block_on_collection(tmp_path, monkeypatch):
+    root = tmp_path / "data"
+    (root / "audits").mkdir(parents=True)
+    (root / "audits" / "collection.json").write_text(
+        json.dumps({"status": "complete", "errors": []})
+    )
+
+    def forbidden(*args, **kwargs):
+        raise AssertionError("Forecast worker must use the independently captured archive")
+
+    monkeypatch.setattr(prospective, "collect", forbidden)
+    monkeypatch.setattr(
+        prospective.subprocess,
+        "run",
+        lambda *args, **kwargs: SimpleNamespace(returncode=0, stdout="", stderr=""),
+    )
+    report = prospective.capture_attempt(tmp_path / "runs", root, collect_first=False)
+    assert report["status"] == "complete"
+    assert len(report["forecasts"]) == 10

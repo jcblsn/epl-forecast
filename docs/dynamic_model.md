@@ -99,7 +99,7 @@ priors in JSON/CSV.
 uv run epl-forecast evaluate --config configs/dynamic.toml \
   --split development --output runs/m4-development
 uv run epl-forecast forecast --config configs/dynamic.toml \
-  --model M4-dynamic-hierarchical-v1 --snapshot snapshots/<UTC timestamp>
+  --model M4-dynamic-hierarchical-v1 --data data
 uv run epl-forecast simulate --config configs/dynamic.toml \
   --model M4-dynamic-hierarchical-v1 --season 2024-2025 --as-of 2024-08-01 \
   --simulations 10000 --output runs/m4-season

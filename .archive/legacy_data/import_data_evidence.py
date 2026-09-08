@@ -20,7 +20,7 @@ def main():
             ("football_data", "data_snapshot.json"),
             ("understat", "understat_snapshot.json"),
         ]:
-            manifest = json.loads((Path("configs") / config).read_text())
+            manifest = json.loads((Path(__file__).parent / config).read_text())
             for entry in manifest["files"]:
                 path = root / entry["path"]
                 if file_hash(path) != entry["sha256"]:

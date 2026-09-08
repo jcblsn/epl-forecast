@@ -77,19 +77,12 @@ and 0.15160. These are initial absolute scores, not an improvement claim; a
 chronological lineup baseline comparison remains necessary. Full predictions and
 fixture-side diagnostics remain in `runs/m6-lineups-v1`, with hashes in the report.
 
-## Current fixture histories
+## Historical fixture-history experiment
 
-Capture a fresh season snapshot, then collect each player endpoint into a new
-immutable directory. Replay normalization separately without refetching:
-
-```sh
-uv run epl-forecast data snapshot --season-start 2026
-uv run python scripts/capture_player_histories.py \
-  --snapshot snapshots/2026-09-06T145910.469163Z --output runs/m6-player-capture-v1
-uv run python scripts/capture_player_histories.py \
-  --capture data/raw/players/live/2026-09-06T145935.114093Z \
-  --output runs/m6-player-capture-replay-v1
-```
+The following results describe the retired FPL element-summary capture path.
+Current collection uses API-Football appearances and current squad observations
+through `uv run epl-forecast data collect`; the canonical backfill supplies history.
+The original captures remain evidence for this dated experiment.
 
 The [first retained capture](experiments/m6/current_player_capture.json) collected
 all 653 endpoints between 14:59:35 and 15:00:16 UTC on September 6. Normalization
