@@ -202,3 +202,8 @@ M7 research adds a pinned Understat team xG channel to the centered Quality/Tilt
 parent. See [the model](docs/xg_model.md) and [batch evidence](docs/experiments/m7_xg_parent.md).
 Use `configs/xg_quality_tilt.toml` for chronological comparisons; M2 remains the
 operational benchmark. Historical xG availability is reconstructed, not prospective.
+
+Season projections now have a [direct evaluation layer](docs/season_evaluation.md):
+TRPS for standings, points CRPS/PIT/interval coverage, and title/top-four/relegation
+Brier scores and reliability curves. Compare these product-level scores alongside
+match loss when assessing a replacement for M2.
