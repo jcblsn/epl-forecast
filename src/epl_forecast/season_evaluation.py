@@ -64,7 +64,7 @@ def score_forecast(forecast, truth, promoted, seed):
     actual = {r["team_id"]: r for r in truth["teams"]}
     if {r["team_id"] for r in forecast["teams"]} != set(actual):
         raise ValueError("Forecast and truth teams differ")
-    rng = np.random.default_rng(seed)
+    rng = np.random.default_rng(np.random.SeedSequence([seed, 0x504954]))
     rows = []
     for team in sorted(forecast["teams"], key=lambda r: r["team_id"]):
         target = actual[team["team_id"]]

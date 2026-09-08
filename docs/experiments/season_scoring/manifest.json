@@ -1,0 +1,7 @@
+{
+  "archive_sha256": "c384b65055608ce99ac2bcff3671c47270369fbf8c4968dd02177e55d6aa3562",
+  "forecast_cells": 220,
+  "pit_stream": "SeedSequence([forecast seed, 0x504954]); shared across models",
+  "runner_sha256": "30c350bf4f3b93be3771972ee0bcfefe9fe64e30629ce0c509d5487123749f02",
+  "scorer_sha256": "8eb50e5460696084a328b382fa7338da85593383b7a9b1882fcb30fc033a947c"
+}

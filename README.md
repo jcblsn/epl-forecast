@@ -76,8 +76,9 @@ errors; candidates need no frozen protocol or minimum-gain threshold.
 
 The [M5 batch report](docs/experiments/m5_quality_tilt.md) compares 4,180 matches
 in 2015/16–2025/26 and checks a sampled posterior on a smaller historical subset.
-M5 is near M2 on aggregate outcome loss and adds useful generative capabilities;
-it does not justify replacing M2. The finite dynamics grid concentrates heavily,
+M5 is near M2 on aggregate outcome loss. The [season-level comparison](docs/experiments/season_scoring.md)
+now shows better early-season distribution scores and coverage for M4/M5/M7,
+with tradeoffs across origins and targets; M2 remains operational. The finite dynamics grid concentrates heavily,
 and synthetic league-level coverage needs improvement.
 
 ```sh

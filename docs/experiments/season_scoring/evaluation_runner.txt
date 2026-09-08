@@ -1,0 +1,126 @@
+"""Reproducible, resumable historical season scoring for retained model specifications."""
+
+import argparse
+import json
+from pathlib import Path
+
+from epl_forecast.cli import fitted_model, load_config, save_rows
+from epl_forecast.data.normalize import load_processed
+from epl_forecast.data.rules import historical_adjustments
+from epl_forecast.models.baselines import AttackDefensePoisson
+from epl_forecast.season_evaluation import final_cutoff, score_forecast, season_origins, summarize
+from epl_forecast.simulation import simulate_season
+from epl_forecast.storage import file_hash, write_json
+
+SPECS = {
+    "M2": ("configs/dynamic.toml", "M2-attack-defense-v1"),
+    "M4": ("configs/dynamic.toml", "M4-dynamic-hierarchical-v1"),
+    "M5": ("configs/quality_tilt.toml", "M5-quality-tilt-v1"),
+    "M7": ("configs/xg_quality_tilt.toml", "M7-xg-v1"),
+}
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--data", type=Path, default=Path("data/processed"))
+    parser.add_argument("--simulations", type=int, default=10000)
+    parser.add_argument("--seed", type=int, default=20260908)
+    parser.add_argument("--seasons", nargs="+", type=int, default=list(range(2015, 2026)))
+    parser.add_argument("--models", nargs="+", choices=SPECS, default=list(SPECS))
+    args = parser.parse_args()
+    matches, _, manifest = load_processed(args.data)
+    metadata = {
+        "simulations": args.simulations,
+        "seed": args.seed,
+        "seasons": args.seasons,
+        "models": args.models,
+        "data_manifest": manifest,
+        "configs": {name: load_config(Path(SPECS[name][0])) for name in args.models},
+        "code_hashes": {str(p): file_hash(p) for p in sorted(Path("src").rglob("*.py"))},
+        "runner_hash": file_hash(Path(__file__)),
+        "adjustments_hash": file_hash(Path("src/epl_forecast/data/pl_adjustments.json")),
+        "origin_definition": "Start of first match date; next day after 60/120/190/300 results, whole days",
+    }
+    metadata_path = args.output / "manifest.json"
+    if metadata_path.exists() and json.loads(metadata_path.read_text()) != metadata:
+        raise ValueError("Resume manifest differs; use a new output directory")
+    write_json(metadata_path, metadata)
+    premier = [m for m in matches if m.fixture.competition_id == "eng-premier-league"]
+    rows = []
+    for year in args.seasons:
+        season = f"{year}-{year + 1}"
+        season_matches = [m for m in premier if m.fixture.season_id == season]
+        origins = season_origins(season_matches)
+        teams = sorted(
+            {t for m in season_matches for t in (m.fixture.home_team_id, m.fixture.away_team_id)}
+        )
+        previous = {
+            t
+            for m in premier
+            if m.fixture.season_id == f"{year - 1}-{year}"
+            for t in (m.fixture.home_team_id, m.fixture.away_team_id)
+        }
+        if len(previous) != 20:
+            raise ValueError("Missing previous season for promotion labels")
+        cutoff = final_cutoff(season_matches)
+        truth_model = AttackDefensePoisson()
+        truth_model.as_of = cutoff
+        truth = simulate_season(
+            truth_model,
+            season_matches,
+            [],
+            teams,
+            cutoff,
+            1,
+            args.seed,
+            historical_adjustments(season, cutoff),
+        )
+        for origin_index, (origin, as_of) in enumerate(origins.items()):
+            seed = args.seed + year * 10 + origin_index
+            played = [m for m in season_matches if m.available_on <= as_of]
+            remaining = [m.fixture for m in season_matches if m.available_on > as_of]
+            for name in args.models:
+                path = args.output / "forecasts" / f"{season}-{origin}-{name}.json"
+                if path.exists():
+                    forecast = json.loads(path.read_text())
+                else:
+                    print(f"Fitting {season} {origin} {name} ({len(played)} played)", flush=True)
+                    config = metadata["configs"][name]
+                    model, _, _ = fitted_model(matches, config, SPECS[name][1], as_of)
+                    forecast = simulate_season(
+                        model,
+                        played,
+                        remaining,
+                        teams,
+                        as_of,
+                        args.simulations,
+                        seed,
+                        historical_adjustments(season, as_of),
+                    )
+                    write_json(path, forecast)
+                rows.extend(
+                    {
+                        "model_id": name,
+                        "season_id": season,
+                        "origin": origin,
+                        "as_of": str(as_of),
+                        "played_matches": len(played),
+                        **row,
+                    }
+                    for row in score_forecast(forecast, truth, set(teams) - previous, seed)
+                )
+                save_rows(args.output / "club_seasons.csv", rows)
+    summary, calibration = summarize(rows)
+    save_rows(args.output / "summary.csv", summary)
+    save_rows(args.output / "calibration.csv", calibration)
+    per_season = []
+    for season in sorted({r["season_id"] for r in rows}):
+        scores, _ = summarize([r for r in rows if r["season_id"] == season])
+        per_season.extend({"season_id": season, **r} for r in scores)
+    save_rows(args.output / "by_season.csv", per_season)
+    print(args.output / "summary.csv", flush=True)
+
+
+if __name__ == "__main__":
+    main()

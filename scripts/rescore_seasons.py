@@ -7,6 +7,7 @@ from pathlib import Path
 
 from epl_forecast.cli import save_rows
 from epl_forecast.season_evaluation import score_forecast, summarize
+from epl_forecast.storage import file_hash, write_json
 
 
 def main():
@@ -44,6 +45,16 @@ def main():
             )
         )
     args.output.mkdir(parents=True, exist_ok=True)
+    write_json(
+        args.output / "manifest.json",
+        {
+            "archive_sha256": file_hash(args.archive),
+            "scorer_sha256": file_hash(Path("src/epl_forecast/season_evaluation.py")),
+            "runner_sha256": file_hash(Path(__file__)),
+            "forecast_cells": len(seen),
+            "pit_stream": "SeedSequence([forecast seed, 0x504954]); shared across models",
+        },
+    )
     summary, calibration = summarize(rows)
     save_rows(args.output / "club_seasons.csv", rows)
     save_rows(args.output / "summary.csv", summary)

@@ -77,3 +77,19 @@ The reporter exports paired comparisons and standalone PNG calibration figures.
 Each forecast is checkpointed and an unchanged command resumes completed cells.
 Changes to recorded inputs or code reject reuse; choose a new output directory.
 Raw forecasts remain under Git-ignored `runs/`; retain the directory for auditing.
+
+The committed [11-season comparison](experiments/season_scoring.md) includes
+compressed forecast marginals and realized tables. To rescore those without the
+historical data cache or model fitting:
+
+```sh
+uv run python scripts/rescore_seasons.py \
+  --archive docs/experiments/season_scoring/forecast_marginals.json.gz \
+  --output runs/season-rescored
+uv run python scripts/report_seasons.py \
+  --evaluation runs/season-rescored --output runs/season-rescored/report
+```
+
+The rescore manifest hashes the archive, scorer and runner. PIT uses a separate
+`SeedSequence([forecast_seed, 0x504954])` stream, shared across models for paired
+club-origin comparisons. The report also exports promoted and incumbent subgroups.
