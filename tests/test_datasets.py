@@ -1,0 +1,90 @@
+from datetime import UTC, datetime
+
+import duckdb
+import pytest
+
+from epl_forecast.datasets import Dataset, publish
+
+
+def evidence(time="2026-09-08T12:00:00+00:00"):
+    return {
+        "provider": "test",
+        "retrieved_at": time,
+        "evidence_basis": "retrospective",
+        "source_sha256": "a" * 64,
+        "context": {},
+    }
+
+
+def fixture(goals=1):
+    return {
+        "match_id": "eng-premier-league:2025-2026:a:b",
+        "competition_id": "eng-premier-league",
+        "season_id": "2025-2026",
+        "home_team_id": "a",
+        "away_team_id": "b",
+        "match_date": "2025-08-10",
+        "stage": "regular",
+        "status": "finished",
+        "home_goals": goals,
+        "away_goals": 0,
+    }
+
+
+def test_publication_is_deterministic_and_cutoff_does_not_backdate(tmp_path):
+    manifest = publish(tmp_path, evidence(), {"fixtures": [fixture()]})
+    assert publish(tmp_path, evidence(), {"fixtures": [fixture()]}) == manifest
+    data = Dataset(tmp_path)
+    assert len(data.matches()) == 1
+    data.verify()
+    data.close()
+    old = Dataset(tmp_path, datetime(2025, 8, 11, tzinfo=UTC))
+    assert not old.matches()
+    old.close()
+
+
+def test_unpublished_files_are_invisible_and_corruption_is_detected(tmp_path):
+    manifest = publish(tmp_path, evidence(), {"fixtures": [fixture()]})
+    path = tmp_path / manifest["files"][0]["path"]
+    path.write_bytes(b"corrupted")
+    with pytest.raises((duckdb.Error, ValueError)):
+        data = Dataset(tmp_path)
+        data.verify()
+    (tmp_path / "manifests" / (manifest["batch_id"] + ".json")).unlink()
+    data = Dataset(tmp_path)
+    assert not data.matches()
+    data.close()
+
+
+def test_duplicate_rows_and_provider_contradictions_fail(tmp_path):
+    with pytest.raises(ValueError, match="duplicate"):
+        publish(tmp_path, evidence(), {"fixtures": [fixture(), fixture(2)]})
+    publish(tmp_path, evidence(), {"fixtures": [fixture()]})
+    other = {**evidence(), "provider": "other"}
+    publish(tmp_path, other, {"fixtures": [fixture(2)]})
+    data = Dataset(tmp_path)
+    with pytest.raises(ValueError, match="Contradictory"):
+        data.matches()
+    data.close()
+
+
+def test_unscoped_history_keeps_unknown_end_date(tmp_path):
+    publish(
+        tmp_path,
+        evidence(),
+        {
+            "availability": [
+                {
+                    "player_id": "p1",
+                    "scope": "interval",
+                    "status": "sidelined",
+                    "start_date": "2024-01-01",
+                    "end_date": None,
+                }
+            ]
+        },
+    )
+    data = Dataset(tmp_path)
+    rows = data.rows("SELECT * FROM availability")
+    assert len(rows) == 1 and rows[0]["end_date"] is None
+    data.close()

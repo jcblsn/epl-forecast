@@ -1,0 +1,300 @@
+"""Canonical local datasets; no network or provider payload interpretation."""
+
+import json
+from collections import defaultdict
+from datetime import UTC, date, datetime
+from pathlib import Path
+
+import duckdb
+
+from epl_forecast.schema import Fixture, Match
+from epl_forecast.storage import file_hash, json_bytes, sha256_bytes, write_immutable
+
+COMMON = "provider VARCHAR, retrieved_at TIMESTAMPTZ, evidence_basis VARCHAR, source_sha256 VARCHAR"
+SCHEMAS = {
+    "competition_seasons": "competition_id VARCHAR, season_id VARCHAR, team_ids VARCHAR[], "
+    "expected_matches INTEGER, coverage VARCHAR",
+    "teams": "team_id VARCHAR, name VARCHAR, api_id BIGINT",
+    "fixtures": "match_id VARCHAR, competition_id VARCHAR, season_id VARCHAR, stage VARCHAR, "
+    "home_team_id VARCHAR, away_team_id VARCHAR, match_date DATE, kickoff_time TIMESTAMPTZ, "
+    "status VARCHAR, home_goals INTEGER, away_goals INTEGER, api_id BIGINT, source_row INTEGER, "
+    "source_time VARCHAR",
+    "players": "player_id VARCHAR, api_id BIGINT, name VARCHAR, birth_date DATE, "
+    "understat_id VARCHAR, fpl_code VARCHAR",
+    "memberships": "player_id VARCHAR, team_id VARCHAR, season_id VARCHAR, competition_id VARCHAR, "
+    "position VARCHAR, basis VARCHAR, scope VARCHAR",
+    "appearances": "match_id VARCHAR, player_id VARCHAR, team_id VARCHAR, competition_id VARCHAR, "
+    "season_id VARCHAR, kickoff_time TIMESTAMPTZ, position VARCHAR, "
+    "starts INTEGER, minutes INTEGER, "
+    "goals INTEGER, assists INTEGER, shots INTEGER, shots_on_target INTEGER, saves INTEGER, "
+    "yellow_cards INTEGER, red_cards INTEGER",
+    "availability": "player_id VARCHAR, fpl_code VARCHAR, team_id VARCHAR, competition_id VARCHAR, "
+    "season_id VARCHAR, match_id VARCHAR, scope VARCHAR, status VARCHAR, reason VARCHAR, "
+    "start_date DATE, end_date DATE, chance_this_round INTEGER, chance_next_round INTEGER, "
+    "current_round INTEGER, next_round INTEGER, news_added TIMESTAMPTZ",
+    "transfers": "player_id VARCHAR, transfer_date DATE, from_team_id VARCHAR, to_team_id VARCHAR, "
+    "transfer_type VARCHAR",
+    "team_process": "match_id VARCHAR, team_id VARCHAR, competition_id VARCHAR, season_id VARCHAR, "
+    "xg DOUBLE, shots INTEGER, shots_on_target INTEGER, source_match_id VARCHAR",
+    "player_process": "match_id VARCHAR, team_id VARCHAR, player_id VARCHAR, understat_id VARCHAR, "
+    "competition_id VARCHAR, season_id VARCHAR, position VARCHAR, minutes INTEGER, xg DOUBLE, "
+    "xa DOUBLE, shots INTEGER",
+    "odds": "match_id VARCHAR, competition_id VARCHAR, season_id VARCHAR, family VARCHAR, "
+    "home_odds DOUBLE, draw_odds DOUBLE, away_odds DOUBLE, observed_at TIMESTAMPTZ",
+}
+KEYS = {
+    "competition_seasons": ["competition_id", "season_id"],
+    "teams": ["team_id"],
+    "fixtures": ["match_id"],
+    "players": ["player_id"],
+    "memberships": ["player_id", "team_id", "season_id", "basis"],
+    "appearances": ["match_id", "player_id", "team_id"],
+    "availability": ["player_id", "fpl_code", "scope", "status", "start_date", "reason"],
+    "transfers": ["player_id", "transfer_date", "from_team_id", "to_team_id", "transfer_type"],
+    "team_process": ["match_id", "team_id"],
+    "player_process": ["match_id", "understat_id"],
+    "odds": ["match_id", "family"],
+}
+
+
+def timestamp(value):
+    result = datetime.fromisoformat(value) if isinstance(value, str) else value
+    if result.tzinfo is None:
+        raise ValueError("Timestamp requires timezone")
+    return result.astimezone(UTC)
+
+
+def publish(root, request, tables):
+    root = Path(root)
+    batch = sha256_bytes(json_bytes({"request": request, "tables": tables}))
+    destination = root / "manifests" / f"{batch}.json"
+    if destination.exists():
+        return json.loads(destination.read_text())
+    files = []
+    with duckdb.connect() as con:
+        for table, rows in sorted(tables.items()):
+            if not rows:
+                continue
+            if table not in SCHEMAS:
+                raise ValueError(f"Unknown canonical table: {table}")
+            con.execute(f"CREATE TABLE records ({SCHEMAS[table]}, {COMMON})")
+            columns = [r[0] for r in con.execute("DESCRIBE records").fetchall()]
+            common = {
+                k: request[k]
+                for k in ("provider", "retrieved_at", "evidence_basis", "source_sha256")
+            }
+            values = [{**common, **r} for r in rows]
+            for row in values:
+                unknown = set(row) - set(columns)
+                if unknown:
+                    raise ValueError(f"Unknown {table} columns: {unknown}")
+            con.executemany(
+                "INSERT INTO records VALUES (" + ",".join("?" for _ in columns) + ")",
+                [[r.get(c) for c in columns] for r in values],
+            )
+            invalid = {
+                "fixtures": "home_team_id=away_team_id OR home_team_id IS NULL "
+                "OR away_team_id IS NULL OR (status='finished' AND (home_goals IS NULL "
+                "OR away_goals IS NULL OR home_goals<0 OR away_goals<0))",
+                "appearances": "player_id IS NULL OR minutes<0 OR minutes>120 "
+                "OR starts NOT IN (0,1)",
+                "players": "player_id IS NULL",
+                "team_process": "xg<0 OR NOT isfinite(xg) OR shots<0 OR shots_on_target<0 "
+                "OR shots_on_target>shots",
+                "player_process": "xg<0 OR NOT isfinite(xg) OR xa<0 OR NOT isfinite(xa)",
+                "odds": "home_odds<=1 OR draw_odds<=1 OR away_odds<=1 "
+                "OR NOT isfinite(home_odds) OR NOT isfinite(draw_odds) "
+                "OR NOT isfinite(away_odds)",
+            }.get(table)
+            if invalid and con.execute(f"SELECT 1 FROM records WHERE {invalid} LIMIT 1").fetchone():
+                raise ValueError(f"Invalid canonical {table} data")
+            keys = ",".join(KEYS[table])
+            if con.execute(
+                f"SELECT 1 FROM records GROUP BY {keys} HAVING count(*)>1 LIMIT 1"
+            ).fetchone():
+                raise ValueError(f"Contradictory or duplicate {table} keys")
+            partitions = [("all", "all")]
+            if "competition_id" in columns and "season_id" in columns:
+                partitions = con.execute(
+                    "SELECT DISTINCT competition_id, season_id FROM records ORDER BY 1,2"
+                ).fetchall()
+            for competition, season in partitions:
+                parent = root / "parquet" / table
+                if competition != "all":
+                    parent /= f"competition_id={competition}/season_id={season}"
+                parent.mkdir(parents=True, exist_ok=True)
+                path = parent / f"{batch}.parquet"
+                temp = path.with_suffix(".tmp")
+                where = (
+                    ""
+                    if competition == "all"
+                    else " WHERE competition_id IS NOT DISTINCT FROM ? "
+                    "AND season_id IS NOT DISTINCT FROM ?"
+                )
+                params = [] if competition == "all" else [competition, season]
+                query = f"SELECT * FROM records{where} ORDER BY {keys}"
+                con.execute(
+                    f"COPY ({query}) TO ? (FORMAT PARQUET, COMPRESSION ZSTD)", [str(temp), *params]
+                )
+                temp.replace(path)
+                files.append(
+                    {"table": table, "path": str(path.relative_to(root)), "sha256": file_hash(path)}
+                )
+            con.execute("DROP TABLE records")
+    manifest = {
+        "batch_id": batch,
+        "request": request,
+        "files": files,
+        "rows": {t: len(r) for t, r in tables.items()},
+    }
+    write_immutable(destination, json_bytes(manifest))
+    return manifest
+
+
+class Dataset:
+    def __init__(self, root=Path("data"), cutoff=None, manifests=None):
+        self.root = Path(root)
+        self.cutoff = timestamp(cutoff) if cutoff is not None else None
+        self.manifests = (
+            manifests
+            if manifests is not None
+            else [
+                json.loads(p.read_text()) for p in sorted((self.root / "manifests").glob("*.json"))
+            ]
+        )
+        self.manifests = [
+            m
+            for m in self.manifests
+            if self.cutoff is None or timestamp(m["request"]["retrieved_at"]) <= self.cutoff
+        ]
+        self.con = duckdb.connect()
+        for table, schema in SCHEMAS.items():
+            paths = [
+                str(self.root / f["path"])
+                for m in self.manifests
+                for f in m["files"]
+                if f["table"] == table
+            ]
+            if paths:
+                self.con.read_parquet(paths, hive_partitioning=False).create_view(
+                    f"{table}_observations"
+                )
+            else:
+                self.con.execute(f"CREATE TABLE {table}_observations ({schema}, {COMMON})")
+            keys = ",".join(["provider", *KEYS[table]])
+            self.con.execute(
+                f"CREATE VIEW {table} AS SELECT * FROM {table}_observations "
+                f"QUALIFY row_number() OVER (PARTITION BY {keys} "
+                "ORDER BY retrieved_at DESC, source_sha256 DESC)=1"
+            )
+
+    def close(self):
+        self.con.close()
+
+    def rows(self, sql, parameters=None):
+        result = self.con.execute(sql, parameters or [])
+        columns = [c[0] for c in result.description]
+        return [dict(zip(columns, r, strict=True)) for r in result.fetchall()]
+
+    def provenance(self):
+        return {
+            "batches": [m["batch_id"] for m in self.manifests],
+            "cutoff": self.cutoff.isoformat() if self.cutoff else None,
+            "files": [f for m in self.manifests for f in m["files"]],
+        }
+
+    def verify(self):
+        for m in self.manifests:
+            for f in m["files"]:
+                if file_hash(self.root / f["path"]) != f["sha256"]:
+                    raise ValueError(f"Parquet checksum mismatch: {f['path']}")
+
+    def fixtures(self):
+        grouped = defaultdict(list)
+        for r in self.rows("SELECT * FROM fixtures ORDER BY retrieved_at, provider"):
+            grouped[r["match_id"]].append(r)
+        result = []
+        for key, rows in grouped.items():
+            identity = {
+                (r["home_team_id"], r["away_team_id"], r["competition_id"], r["season_id"])
+                for r in rows
+            }
+            scores = {(r["home_goals"], r["away_goals"]) for r in rows if r["status"] == "finished"}
+            if len(identity) != 1 or len(scores) > 1:
+                raise ValueError(f"Contradictory fixture data: {key}")
+            row = next((r for r in reversed(rows) if r["provider"] == "api_football"), rows[-1])
+            if scores and row["status"] != "finished":
+                row = dict(
+                    row,
+                    status="finished",
+                    home_goals=next(iter(scores))[0],
+                    away_goals=next(iter(scores))[1],
+                )
+            result.append(row)
+        return sorted(result, key=lambda r: (r["match_date"] or date.max, r["match_id"]))
+
+    def matches(self):
+        return [
+            Match(
+                Fixture(
+                    r["match_id"],
+                    r["competition_id"],
+                    r["season_id"],
+                    r["match_date"],
+                    r["home_team_id"],
+                    r["away_team_id"],
+                ),
+                r["home_goals"],
+                r["away_goals"],
+                r["source_sha256"],
+                r["source_row"] or 0,
+                r["source_time"] or "",
+            )
+            for r in self.fixtures()
+            if r["status"] == "finished" and r["stage"] == "regular"
+        ]
+
+    def process(self):
+        observations = {
+            (r["match_id"], r["team_id"]): r
+            for r in self.rows("SELECT * FROM team_process WHERE xg IS NOT NULL")
+        }
+        result = []
+        for match in self.matches():
+            f = match.fixture
+            h, a = (observations.get((f.match_id, t)) for t in (f.home_team_id, f.away_team_id))
+            if h is None or a is None:
+                continue
+            result.append(
+                {
+                    "match_id": f.match_id,
+                    "season_id": f.season_id,
+                    "match_date": str(f.match_date),
+                    "home_team_id": f.home_team_id,
+                    "away_team_id": f.away_team_id,
+                    "home_goals": match.home_goals,
+                    "away_goals": match.away_goals,
+                    "home_xg": h["xg"],
+                    "away_xg": a["xg"],
+                    "source_sha256": h["source_sha256"],
+                    "available_on": str(match.available_on),
+                    "availability_basis": h["evidence_basis"],
+                }
+            )
+        return result
+
+    def player_history(self):
+        return self.rows(
+            "SELECT a.*, p.name AS player_name FROM appearances a LEFT JOIN "
+            "(SELECT * FROM players QUALIFY row_number() OVER "
+            "(PARTITION BY player_id ORDER BY retrieved_at DESC)=1) p USING(player_id) "
+            "WHERE a.minutes IS NOT NULL ORDER BY kickoff_time, player_id"
+        )
+
+
+def load_dataset(directory=Path("data")):
+    data = Dataset(directory)
+    try:
+        return data.matches(), data.rows("SELECT * FROM odds"), data.provenance()
+    finally:
+        data.close()
