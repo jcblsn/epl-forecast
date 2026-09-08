@@ -1,7 +1,9 @@
 import csv
 import io
 import platform
-from importlib.metadata import version
+import subprocess
+import sys
+from importlib.metadata import distributions
 from pathlib import Path
 
 from epl_forecast import __version__
@@ -18,12 +20,54 @@ def code_fingerprint() -> str:
     return sha256_bytes(json_bytes(files))
 
 
+def execution_provenance(root: Path | None = None) -> dict:
+    root = root or Path(__file__).resolve().parents[2]
+
+    def git(*args):
+        try:
+            result = subprocess.run(
+                ["git", "-C", str(root), *args],
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            return result.stdout.rstrip("\n")
+        except (OSError, subprocess.CalledProcessError):
+            return None
+
+    commit = git("rev-parse", "HEAD")
+    status = git("status", "--porcelain=v1", "--untracked-files=all")
+    execution_files = [root / "pyproject.toml", root / "uv.lock"]
+    execution_files.extend(sorted((root / "scripts").glob("*.py")))
+    invoked = Path(sys.argv[0]).resolve()
+    return {
+        "commit": commit,
+        "dirty": bool(status) if status is not None else None,
+        "git_status": status,
+        "execution_files": {
+            p.relative_to(root).as_posix(): file_hash(p) for p in execution_files if p.is_file()
+        },
+        "lockfile_sha256": file_hash(root / "uv.lock") if (root / "uv.lock").is_file() else None,
+        "argv": list(sys.argv),
+        "interpreter_argv": list(sys.orig_argv),
+        "invoked_file_sha256": file_hash(invoked) if invoked.is_file() else None,
+        "working_directory": str(Path.cwd()),
+        "python": platform.python_version(),
+        "python_executable": sys.executable,
+        "dependencies": dict(
+            sorted((d.metadata["Name"], d.version) for d in distributions() if d.metadata["Name"])
+        ),
+    }
+
+
 def provenance(config: dict, data_manifest: dict) -> dict:
+    execution = execution_provenance()
     return {
         "package_version": __version__,
         "code_sha256": code_fingerprint(),
         "python": platform.python_version(),
-        "dependencies": {name: version(name) for name in ("numpy", "scipy")},
+        "dependencies": execution["dependencies"],
+        "execution": execution,
         "config": config,
         "config_sha256": sha256_bytes(json_bytes(config)),
         "data_manifest": data_manifest,

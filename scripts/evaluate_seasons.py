@@ -4,6 +4,7 @@ import argparse
 import json
 from pathlib import Path
 
+from epl_forecast.artifacts import execution_provenance
 from epl_forecast.cli import fitted_model, load_config, save_rows
 from epl_forecast.data.rules import historical_adjustments
 from epl_forecast.datasets import load_dataset
@@ -31,6 +32,7 @@ def main():
     args = parser.parse_args()
     matches, _, manifest = load_dataset(args.data)
     metadata = {
+        "execution": execution_provenance(),
         "simulations": args.simulations,
         "seed": args.seed,
         "seasons": args.seasons,

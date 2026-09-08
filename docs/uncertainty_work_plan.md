@@ -72,3 +72,16 @@ open, so current-season rules verification is not yet claimed complete. Existing
 
 Verification: `scripts/verify.sh`, 201 passing tests, including each requested
 boundary, multi-team ties, criteria precedence, PL regressions and slot conservation.
+
+## Execution provenance checkpoint
+
+Shared forecast/evaluation provenance and the season-evaluation runner now record
+Git commit and dirty status, lockfile and script hashes, Python executable/version,
+interpreter arguments and application arguments, working directory, and installed
+dependency versions (including optional research dependencies). The original shell
+or `uv` wrapper invocation is not recoverable from Python; interpreter arguments
+are retained explicitly without claiming to reconstruct that wrapper. Non-checkout
+installations record unknown Git/lock values rather than inventing a clean state.
+Standalone older diagnostic runners still need an execution-provenance adoption
+audit. Verification: 203 passing tests, including actual temporary Git repositories
+with runner and lockfile mutations.
