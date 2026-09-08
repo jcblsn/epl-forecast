@@ -265,3 +265,17 @@ admitted. These are development findings, not a production-model switch.
 The promotion runner was committed and pushed at `7f7e10c`, with all 220 tests
 passing. `runs/promotion-transition-v1` is running the ten admitted target
 seasons 2016/17–2025/26 with 2,000 paths per variant from that clean checkpoint.
+
+That run has now completed all four variants, with 30 promoted club-seasons and
+144 unique opening fixtures per variant. The
+[promotion-transition report](experiments/promotion_transition.md) records means,
+transition variances, forecast calibration and paired uncertainty. Process
+statistics widen priors but do not improve opening or preseason proper scores
+reliably beyond results/population. No operational prior change is made.
+
+Remaining batch work is the bounded recent-history completion and final identity/
+coverage freeze, the conditional roster-discontinuity feasibility/test, the
+player oracle gate after team findings, and current EFL-edition verification.
+The license choice remains pending. The twelve-hour capture schedule and M2/M7/
+M8 roles are unchanged. The backfill session `38720` remains active; do not start
+a competing writer merely because it is quiet.
