@@ -85,3 +85,34 @@ installations record unknown Git/lock values rather than inventing a clean state
 Standalone older diagnostic runners still need an execution-provenance adoption
 audit. Verification: 203 passing tests, including actual temporary Git repositories
 with runner and lockfile mutations.
+
+## Frozen-input checkpoint
+
+`scripts/freeze_research.py` publishes an immutable `research-ready-v1` manifest
+with exact per-signal fixture eligibility, complete ordered-pair schedule checks,
+player history/identity findings and explicit experiment gates. It pins canonical
+publication manifests and hashes, retaining actual request timing. The reader
+verifies the snapshot and Parquet checksums and can apply strict retrieval cutoffs.
+The eligibility window is bounded to 2013/14–2026/27; older retained publications
+remain in the pinned evidence for training provenance, not newly approved sensors.
+
+The initial local snapshot is `runs/research-ready-v1-initial/manifest.json`,
+snapshot SHA-256 `776fed3ce2fc679e5d801f9002ade86ef09e2c0e188a4589b05ed09bbc5a00fa`.
+It admits twelve complete EPL seasons with xG (2014/15–2025/26), and twenty-six
+complete competition-seasons for goals and matched complete-case shots/SOT.
+The ongoing 2026/27 season is not a completed-season evaluation target.
+This is input eligibility, not a claim of validated models or independent sensors.
+
+The recent four-season population has 2,859 identified API players, with 2,563
+transfer and 2,562 sidelined histories absent in this initial snapshot. That is
+broader than the current-season population of 1,453 players. Roster/player gates
+remain closed. The scheduled bounded backfill was confirmed active (PID 5619);
+an extra pass correctly skipped its held writer lock. Do not delete the lock or
+restart based on elapsed time. Recheck the actual process before attempting a
+larger recent-window pass. A later evidence freeze must use a new output path.
+
+The next implementation priority is the matched ladder over frozen team inputs,
+followed by the information-value harness and transition application. Keep the
+uncompleted requirements above open. Manifest tests cover immutable snapshot
+isolation, corruption rejection, retrospective/strict-cutoff separation, incomplete
+season rejection and per-signal complete-case eligibility.

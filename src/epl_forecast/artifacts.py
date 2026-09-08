@@ -42,6 +42,7 @@ def execution_provenance(root: Path | None = None) -> dict:
     invoked = Path(sys.argv[0]).resolve()
     return {
         "commit": commit,
+        "package_code_sha256": code_fingerprint(),
         "dirty": bool(status) if status is not None else None,
         "git_status": status,
         "execution_files": {
