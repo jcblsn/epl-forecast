@@ -3,6 +3,7 @@
 import argparse
 import json
 import tempfile
+from collections import defaultdict
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
@@ -47,6 +48,93 @@ def prioritized_players(root, start, end):
         data.close()
 
 
+def captured_player_histories(manifests):
+    """API IDs whose transfer/sidelined history has its own captured response."""
+    captured = {"transfers": set(), "sidelined": set()}
+    for manifest in manifests:
+        context = manifest["request"]["context"]
+        endpoint = context.get("endpoint")
+        if endpoint in captured and "player" in context:
+            captured[endpoint].add(int(context["player"]))
+    return captured
+
+
+def starter_counts(data):
+    counts = defaultdict(dict)
+    for row in data.rows(
+        "SELECT match_id, team_id, count(DISTINCT player_id) AS starters, "
+        "count(DISTINCT player_id) FILTER (WHERE minutes IS NOT NULL) AS usable_starters "
+        "FROM appearances WHERE starts=1 GROUP BY 1,2"
+    ):
+        counts[row["match_id"]][row["team_id"]] = row
+    return counts
+
+
+def incomplete_lineup(counts, fixture):
+    """Starter detail when a fixture lacks exactly eleven usable starters for each team."""
+    sides = counts.get(fixture["match_id"], {})
+    teams = [fixture["home_team_id"], fixture["away_team_id"]]
+    detail = {t: sides.get(t, {"starters": 0, "usable_starters": 0}) for t in teams}
+    unexpected = sorted(set(sides) - set(teams))
+    if not unexpected and all(
+        d["starters"] == 11 and d["usable_starters"] == 11 for d in detail.values()
+    ):
+        return None
+    return {
+        "match_id": fixture["match_id"],
+        "competition_id": fixture["competition_id"],
+        "season_id": fixture["season_id"],
+        "teams": {
+            t: {"starters": d["starters"], "usable_starters": d["usable_starters"]}
+            for t, d in detail.items()
+        },
+        "unexpected_teams": unexpected,
+    }
+
+
+def identity_contradictions(data):
+    """Provider identities that cannot all describe distinct players."""
+    report = {
+        "unapplied_player_aliases": sorted(
+            set(api.PLAYER_ALIASES)
+            & {
+                r["api_id"]
+                for r in data.rows("SELECT DISTINCT api_id FROM players WHERE api_id IS NOT NULL")
+            }
+        ),
+        "chained_player_aliases": sorted(
+            set(api.PLAYER_ALIASES) & set(api.PLAYER_ALIASES.values())
+        ),
+    }
+    for column in ("understat_id", "fpl_code"):
+        report[f"shared_{column}"] = data.rows(
+            f"SELECT {column}, count(DISTINCT player_id) AS players FROM players "
+            f"WHERE {column} IS NOT NULL GROUP BY 1 HAVING count(DISTINCT player_id)>1 ORDER BY 1"
+        )
+    rows = defaultdict(list)
+    for row in data.rows(
+        "SELECT a.match_id, a.team_id, a.player_id, a.season_id, p.name "
+        "FROM appearances a JOIN players p USING(player_id)"
+    ):
+        rows[(row["match_id"], row["team_id"])].append(row)
+    duplicates = []
+    for (match_id, team_id), entries in sorted(rows.items()):
+        for index, left in enumerate(entries):
+            for right in entries[index + 1 :]:
+                if api.compatible_name(left["name"], right["name"]):
+                    duplicates.append(
+                        {
+                            "match_id": match_id,
+                            "team_id": team_id,
+                            "season_id": left["season_id"],
+                            "player_ids": sorted([left["player_id"], right["player_id"]]),
+                            "names": [left["name"], right["name"]],
+                        }
+                    )
+    report["same_team_name_collisions"] = duplicates
+    return report
+
+
 def recent_readiness(root, end):
     data = Dataset(root)
     try:
@@ -62,53 +150,54 @@ def recent_readiness(root, end):
             for comp in COMPETITIONS.values()
             for year in range(end - 3, end + 1)
         }
-        appearances = {
-            r["match_id"]: r["n"]
-            for r in data.rows(
-                "SELECT match_id, count(DISTINCT player_id) AS n FROM appearances "
-                "WHERE starts=1 AND minutes IS NOT NULL GROUP BY match_id"
-            )
-        }
+        counts = starter_counts(data)
+        incomplete = []
         for fixture in data.fixtures():
             row = cohorts.get((fixture["competition_id"], fixture["season_id"]))
             if row is None or fixture["stage"] != "regular":
                 continue
             row["fixtures"] += 1
-            if fixture["status"] == "finished":
-                row["finished"] += 1
-                row["finished_with_starter_minutes"] += (
-                    appearances.get(fixture["match_id"], 0) == 22
-                )
-        captures = {
-            endpoint: {
-                int(m["request"]["context"]["player"])
-                for m in data.manifests
-                if m["request"]["context"].get("endpoint") == endpoint
-                and "player" in m["request"]["context"]
-            }
-            for endpoint in ("transfers", "sidelined")
-        }
+            if fixture["status"] != "finished":
+                continue
+            row["finished"] += 1
+            missing = incomplete_lineup(counts, fixture)
+            if missing is None:
+                row["finished_with_starter_minutes"] += 1
+            else:
+                incomplete.append(missing)
+        captures = captured_player_histories(data.manifests)
+        contradictions = identity_contradictions(data)
     finally:
         data.close()
+    window = {r["season_id"] for r in cohorts.values()}
+    contradictions["same_team_name_collisions"] = [
+        c for c in contradictions["same_team_name_collisions"] if c["season_id"] in window
+    ]
     rows = list(cohorts.values())
     match_ready = all(
         r["fixtures"] == r["expected_fixtures"]
         and (r["season_id"] == season_name(end) or r["finished"] == r["expected_fixtures"])
         for r in rows
     )
+    lineups_ready = all(r["finished"] == r["finished_with_starter_minutes"] for r in rows)
+    identity_ready = not any(contradictions.values())
     current = prioritized_players(root, end, end)
+    current_ids = {p["api_id"] for p in current}
     report = {
         "audited_at": datetime.now(UTC).isoformat(),
         "window_start": season_name(end - 3),
         "window_end": season_name(end),
         "seasons": rows,
         "ready_for_match_experiments": match_ready,
-        "ready_for_player_experiments": match_ready
-        and all(r["finished"] == r["finished_with_starter_minutes"] for r in rows),
+        "ready_for_player_experiments": match_ready and lineups_ready and identity_ready,
+        "starter_requirement": "Eleven starters with usable identity and minutes for each "
+        "team in every finished regular fixture",
+        "incomplete_starting_lineups": len(incomplete),
+        "incomplete_starting_lineup_detail": incomplete[:50],
+        "identity_contradictions": contradictions,
         "current_players": len(current),
         "pending_current_player_histories": {
-            endpoint: sum(p["api_id"] not in captured for p in current)
-            for endpoint, captured in captures.items()
+            endpoint: len(current_ids - captured) for endpoint, captured in captures.items()
         },
         "scope": "Input coverage only; not model validation or historical point-in-time evidence",
     }
@@ -559,33 +648,44 @@ def audit(root):
             "count(a.match_id) AS fixtures_with_appearances "
             "FROM f LEFT JOIN a USING(match_id) GROUP BY 1,2 ORDER BY 1,2"
         )
-        report["incomplete_starting_lineups"] = data.rows(
-            "SELECT match_id, team_id, sum(starts) AS starters, "
-            "count(*) FILTER (WHERE minutes IS NULL) AS unknown_minutes "
-            "FROM appearances GROUP BY 1,2 HAVING sum(starts)<>11 OR sum(starts) IS NULL "
-            "ORDER BY 1,2"
-        )
-        report["players_without_transfer_capture"] = data.rows(
-            "SELECT count(*) AS n FROM players p WHERE api_id IS NOT NULL AND "
-            "(EXISTS (SELECT 1 FROM memberships m WHERE m.player_id=p.player_id) OR "
-            "EXISTS (SELECT 1 FROM appearances a WHERE a.player_id=p.player_id))"
-        )[0]["n"]
-        captured_transfers = set()
-        captured_sidelined = set()
-        for manifest in data.manifests:
-            context = manifest["request"]["context"]
-            if context.get("endpoint") == "transfers" and "player" in context:
-                captured_transfers.add(int(context["player"]))
-            if context.get("endpoint") == "sidelined" and "player" in context:
-                captured_sidelined.add(int(context["player"]))
-        total_players = report["players_without_transfer_capture"]
-        report["players_without_transfer_capture"] = total_players - len(captured_transfers)
-        report["players_without_sidelined_capture"] = total_players - len(captured_sidelined)
+        counts = starter_counts(data)
+        incomplete = [
+            missing
+            for f in fixtures
+            if f["stage"] == "regular"
+            and f["status"] == "finished"
+            and (missing := incomplete_lineup(counts, f)) is not None
+        ]
+        by_season = {}
+        for row in incomplete:
+            key = f"{row['competition_id']}/{row['season_id']}"
+            by_season[key] = by_season.get(key, 0) + 1
+        report["incomplete_starting_lineups"] = {
+            "requirement": "Eleven starters with usable identity and minutes for each team",
+            "fixtures": len(incomplete),
+            "by_season": dict(sorted(by_season.items())),
+            "examples": incomplete[:50],
+        }
+        report["identity_contradictions"] = identity_contradictions(data)
+        relevant = {
+            r["api_id"]
+            for r in data.rows(
+                "SELECT DISTINCT api_id FROM players p WHERE api_id IS NOT NULL AND "
+                "(EXISTS (SELECT 1 FROM memberships m WHERE m.player_id=p.player_id) OR "
+                "EXISTS (SELECT 1 FROM appearances a WHERE a.player_id=p.player_id))"
+            )
+        }
+        captured = captured_player_histories(data.manifests)
+        report["players_needing_history"] = len(relevant)
+        for endpoint in ("transfers", "sidelined"):
+            report[f"players_without_{endpoint}_capture"] = len(relevant - captured[endpoint])
         report["archive_status"] = (
             "incomplete"
             if (
-                report["players_without_transfer_capture"]
+                report["players_without_transfers_capture"]
                 or report["players_without_sidelined_capture"]
+                or report["incomplete_starting_lineups"]["fixtures"]
+                or any(report["identity_contradictions"].values())
                 or any(
                     r["regular_fixtures"] != r["expected_regular"]
                     for r in report["season_coverage"]
