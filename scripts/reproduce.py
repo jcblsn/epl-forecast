@@ -21,18 +21,13 @@ def main() -> None:
     parser.add_argument("--config", type=Path, default=Path("configs/baselines.toml"))
     args = parser.parse_args()
     new_run_directory(args.output)
-    processed = args.output / "processed"
-    run("data", "restore", "--root", args.data_root)
-    run("data", "normalize", "--root", args.data_root, "--output", processed)
-    repeated = args.output / "processed_repeat"
-    run("data", "normalize", "--root", args.data_root, "--output", repeated)
-    hashes = {}
-    for name in ("matches.csv", "odds.csv", "coverage.json", "manifest.json"):
-        hashes[name] = file_hash(processed / name)
-        if hashes[name] != file_hash(repeated / name):
-            raise RuntimeError(f"Normalization is not deterministic: {name}")
-    run("data", "audit", "--data", processed, "--output", args.output / "data_audit.csv")
-    run("data", "cross-check", "--data", processed, "--output", args.output / "crosscheck.json")
+    from epl_forecast.datasets import Dataset
+
+    data = Dataset(args.data_root)
+    data.verify()
+    hashes = data.provenance()
+    data.close()
+    processed = args.data_root
     for split in ("development", "validation", "holdout"):
         run(
             "evaluate",
@@ -90,7 +85,6 @@ def main() -> None:
             "normalized_files_identical": hashes,
             "title_probability_sum": title_sum,
             "relegation_probability_sum": relegation_sum,
-            "crosscheck_passed": True,
             "completed_splits": ["development", "validation", "holdout"],
             "simulation_draws": simulation["simulations"],
             "remaining_fixtures": simulation["remaining_matches"],

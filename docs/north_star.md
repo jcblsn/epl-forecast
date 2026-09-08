@@ -1,6 +1,6 @@
 # North star
 
-Build a real-time probabilistic Premier League model comparable in functional
+Build a real-time probabilistic Premier League and Championship model comparable in functional
 ambition to PELE and adapted to club football. This is a capability target, not
 a reproduction specification. Forecasts and their explanations are the product.
 

@@ -5,7 +5,7 @@ from pathlib import Path
 
 import numpy as np
 
-from epl_forecast.data.normalize import write_csv
+from epl_forecast.artifacts import write_csv
 from epl_forecast.evaluation import metrics
 from epl_forecast.storage import file_hash, write_json
 

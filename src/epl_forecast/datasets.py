@@ -182,11 +182,22 @@ class Dataset:
             else:
                 self.con.execute(f"CREATE TABLE {table}_observations ({schema}, {COMMON})")
             keys = ",".join(["provider", *KEYS[table]])
-            self.con.execute(
-                f"CREATE VIEW {table} AS SELECT * FROM {table}_observations "
-                f"QUALIFY row_number() OVER (PARTITION BY {keys} "
-                "ORDER BY retrieved_at DESC, source_sha256 DESC)=1"
-            )
+            if table == "players":
+                columns = [c.split()[0] for c in (schema + ", " + COMMON).split(", ")]
+                selections = ["player_id"] + [
+                    f"arg_max({c}, retrieved_at) AS {c}" for c in columns if c != "player_id"
+                ]
+                self.con.execute(
+                    "CREATE VIEW players AS SELECT "
+                    + ", ".join(selections)
+                    + " FROM players_observations GROUP BY player_id"
+                )
+            else:
+                self.con.execute(
+                    f"CREATE VIEW {table} AS SELECT * FROM {table}_observations "
+                    f"QUALIFY row_number() OVER (PARTITION BY {keys} "
+                    "ORDER BY retrieved_at DESC, source_sha256 DESC)=1"
+                )
 
     def close(self):
         self.con.close()
@@ -220,7 +231,8 @@ class Dataset:
                 for r in rows
             }
             scores = {(r["home_goals"], r["away_goals"]) for r in rows if r["status"] == "finished"}
-            if len(identity) != 1 or len(scores) > 1:
+            dates = {r["match_date"] for r in rows if r["status"] == "finished"}
+            if len(identity) != 1 or len(scores) > 1 or len(dates) > 1:
                 raise ValueError(f"Contradictory fixture data: {key}")
             row = next((r for r in reversed(rows) if r["provider"] == "api_football"), rows[-1])
             if scores and row["status"] != "finished":
@@ -292,9 +304,25 @@ class Dataset:
         )
 
 
-def load_dataset(directory=Path("data")):
-    data = Dataset(directory)
+def load_dataset(directory=Path("data"), cutoff=None):
+    data = Dataset(directory, cutoff)
     try:
         return data.matches(), data.rows("SELECT * FROM odds"), data.provenance()
+    finally:
+        data.close()
+
+
+def load_player_history(root=Path("data")):
+    data = Dataset(root)
+    try:
+        return data.player_history()
+    finally:
+        data.close()
+
+
+def load_process(root=Path("data")):
+    data = Dataset(root)
+    try:
+        return data.process()
     finally:
         data.close()

@@ -25,7 +25,7 @@ def ingest(root, record, payload):
     upcoming = next((e["id"] for e in b["events"] if e["is_next"]), None)
     data = Dataset(root)
     try:
-        players = data.rows("SELECT * FROM players")
+        players = data.rows("SELECT * FROM players_observations")
         known = {p["fpl_code"]: p["player_id"] for p in players if p["fpl_code"]}
         rows, mappings = [], []
         for p in b["elements"]:

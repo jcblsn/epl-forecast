@@ -6,7 +6,7 @@ Status: implementation in progress. Accepted September 8, 2026.
 
 Replace snapshot/restoration and normalized CSV pathways with thin provider ingestion,
 immutable raw captures, canonical Parquet, and embedded DuckDB queries. Support PL and
-Championship data; preserve model mathematics, leakage discipline and prospective evidence.
+Championship ingestion, match forecasts and regular-season projections; preserve model mathematics, leakage discipline and prospective evidence.
 No backward compatibility is required. Git restores code, not ignored local evidence.
 
 ## Decisions
@@ -104,3 +104,13 @@ research must work without API access. Raw provider data stays local, subject to
   populated, Championship player statistics paginated over 59 pages. Single fixture details
   include events, lineups and player statistics. Supplied key initially Free; user subsequently
   confirmed Pro activation. Current FPL capture has 232 next-round playing probabilities.
+
+## Steering during implementation
+
+Both leagues are first-class, including match forecasts and 24-team Championship season
+projections. Report automatic promotion and season-specific playoff qualification rather
+than PL European-position columns. Championship playoff qualification expands from places
+3–6 to 3–8 in 2026/27. Retain playoff fixtures separately; knockout advancement requires an
+explicit extra-time/penalty observation model and is not implied by qualification probability.
+Current project descriptions must not frame provider data as free or freely redistributable.
+Source: https://www.efl.com/news/2026/march/05/efl-statement--sky-bet-championship-play-off-format/

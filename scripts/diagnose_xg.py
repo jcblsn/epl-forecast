@@ -2,7 +2,6 @@
 
 import argparse
 import csv
-import json
 from collections import defaultdict
 from itertools import groupby
 from pathlib import Path
@@ -10,7 +9,7 @@ from pathlib import Path
 import numpy as np
 
 from epl_forecast.cli import load_config, save_rows
-from epl_forecast.data.normalize import load_processed
+from epl_forecast.datasets import load_dataset
 from epl_forecast.evaluation import metrics
 from epl_forecast.models import make_model
 from epl_forecast.research.xg_diagnostics import (
@@ -168,12 +167,10 @@ def main():
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
     config = load_config(args.config)
-    matches, _, _ = load_processed(Path("data/processed"))
-    spec = next(s for s in config["models"] if s["id"] == "M7-xg-v1")
-    path = Path(spec["parameters"]["observations_path"])
-    if file_hash(path) != spec["parameters"]["observations_sha256"]:
-        raise ValueError("xG checksum mismatch")
-    observations = {r["match_id"]: r for r in json.loads(path.read_text())}
+    matches, _, _ = load_dataset(Path("data"))
+    from epl_forecast.datasets import load_process
+
+    observations = {r["match_id"]: r for r in load_process(Path("data"))}
     files = [root / "predictions.csv" for root in args.evaluations]
     rows = [row for file in files for row in csv.DictReader(file.open())]
     if args.include_markets:
@@ -181,7 +178,7 @@ def main():
         rows.extend(row for file in market_files for row in csv.DictReader(file.open()))
         files.extend(market_files)
     report, labels = historical_diagnostics(rows, matches, observations, args.focus_model)
-    report["inputs"] = {str(p): file_hash(p) for p in [args.config, path, *files]}
+    report["inputs"] = {str(p): file_hash(p) for p in [args.config, *files]}
     report["scope"] = "Historical development diagnostics; retrospective next-day xG assumed"
     if args.adaptation_replicates:
         report["adaptation"] = adaptation_diagnostic(matches, args.adaptation_replicates)

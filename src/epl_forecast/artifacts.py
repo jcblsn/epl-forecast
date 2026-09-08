@@ -1,3 +1,5 @@
+import csv
+import io
 import platform
 from importlib.metadata import version
 from pathlib import Path
@@ -59,3 +61,12 @@ def results_markdown(summary: dict) -> str:
             f"{row['brier']:.5f} | {row['classwise_ece']:.5f} | {score} |"
         )
     return "\n".join(lines) + "\n"
+
+
+def write_csv(path: Path, fields: list[str], rows: list[dict]) -> None:
+    stream = io.StringIO(newline="")
+    writer = csv.DictWriter(stream, fields, lineterminator="\n")
+    writer.writeheader()
+    writer.writerows(rows)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(stream.getvalue())

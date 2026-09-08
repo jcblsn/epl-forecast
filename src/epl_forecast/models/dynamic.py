@@ -43,6 +43,7 @@ class DynamicAttackDefense(BaseModel):
         self.annual_league_sd = annual_league_sd
         self.initial_team_sd = initial_team_sd
         self.quadrature_order = quadrature_order
+        self.primary_competition = PL
         self.promotion_performance = promotion_performance
         self._reset()
 
@@ -73,6 +74,8 @@ class DynamicAttackDefense(BaseModel):
         return self._bridges[key]
 
     def _entry_prior(self, team: str, season: str, as_of: date) -> TeamPrior:
+        if self.primary_competition == CHAMPIONSHIP:
+            return TeamPrior(np.zeros(2), np.eye(2) * self.initial_team_sd**2, "league population")
         prior = self._bridge(season, as_of).prior(team, self.promotion_performance)
         if prior is not None:
             return prior
@@ -99,7 +102,7 @@ class DynamicAttackDefense(BaseModel):
             prior = TeamPrior(
                 self.mean[index : index + 2].copy(),
                 self.covariance[index : index + 2, index : index + 2].copy(),
-                "previous PL state",
+                "previous league state",
             )
         self.entry_priors[team, season] = prior
         self._last_season[team] = season
@@ -136,15 +139,19 @@ class DynamicAttackDefense(BaseModel):
         if len({m.fixture.match_id for m in matches}) != len(matches):
             raise ValueError("Duplicate training matches")
         ordered = sorted(matches, key=lambda m: (m.fixture.match_date, m.fixture.match_id))
-        if not any(m.fixture.competition_id == PL for m in ordered):
-            raise ValueError("M4 requires Premier League results")
+        if not any(m.fixture.competition_id == self.primary_competition for m in ordered):
+            raise ValueError("Dynamic model requires results in its forecast competition")
         if (
             self.as_of is None
             or as_of < self.as_of
             or ordered[: len(self._history)] != self._history
         ):
             self._reset()
-        new = [m for m in ordered[len(self._history) :] if m.fixture.competition_id == PL]
+        new = [
+            m
+            for m in ordered[len(self._history) :]
+            if m.fixture.competition_id == self.primary_competition
+        ]
         self._seasons = completed_seasons(ordered, as_of)
         try:
             for day, games in groupby(new, key=lambda m: m.fixture.match_date):
@@ -175,7 +182,7 @@ class DynamicAttackDefense(BaseModel):
         except (ValueError, RuntimeError, np.linalg.LinAlgError):
             self._reset()
             raise
-        self.as_of, self.competition_id, self._history = as_of, PL, ordered
+        self.as_of, self.competition_id, self._history = as_of, self.primary_competition, ordered
         self.fit_diagnostics = {
             "inference": "daily joint Laplace Gaussian filter",
             "updates": self.updates,
@@ -231,7 +238,7 @@ class DynamicAttackDefense(BaseModel):
                 self.covariance[index : index + 2, index : index + 2].copy(),
                 self.entry_priors[team, season].source
                 if (team, season) in self.entry_priors
-                else "previous PL state",
+                else "previous league state",
             )
         return self._entry_prior(team, season, self.as_of)
 

@@ -26,7 +26,22 @@ def make_model(spec: dict):
         model_type = MODEL_TYPES[spec["kind"]]
     except KeyError as error:
         raise ValueError(f"Unknown model kind: {spec.get('kind')}") from error
+    parameters = dict(spec.get("parameters", {}))
+    competition = parameters.pop("competition_id", "eng-premier-league")
+    data_root = parameters.pop("data_root", None)
+    if data_root is not None:
+        from epl_forecast.datasets import Dataset
+
+        data = Dataset(data_root, parameters.pop("data_cutoff", None))
+        try:
+            parameters["observations"] = data.process()
+        finally:
+            data.close()
     try:
-        return model_type(**spec.get("parameters", {}))
+        model = model_type(**parameters)
+        for member in getattr(model, "members", [model]):
+            if hasattr(member, "primary_competition"):
+                member.primary_competition = competition
+        return model
     except TypeError as error:
         raise ValueError(f"Invalid parameters for {spec['kind']}: {error}") from error

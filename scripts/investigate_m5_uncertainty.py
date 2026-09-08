@@ -8,7 +8,7 @@ import numpy as np
 from scipy.special import logsumexp
 from scipy.stats import norm
 
-from epl_forecast.data.normalize import load_processed
+from epl_forecast.datasets import load_dataset
 from epl_forecast.models.quality_tilt import QualityTiltFilter
 from epl_forecast.research.quality_tilt_reference import (
     PARAMETERS,
@@ -265,7 +265,7 @@ def season_sensitivity(matches, power, seed, simulations):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--data", type=Path, default=Path("data/processed"))
+    parser.add_argument("--data", type=Path, default=Path("data"))
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--power", type=int, default=12)
     parser.add_argument("--replicates", type=int, default=200)
@@ -286,7 +286,7 @@ def main():
     )
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
-    matches, _, manifest = load_processed(args.data)
+    matches, _, manifest = load_dataset(args.data)
     report = {"input_manifest": manifest, "seed": args.seed}
     for name, run in (
         ("grid_support", lambda: grid_support(matches)),

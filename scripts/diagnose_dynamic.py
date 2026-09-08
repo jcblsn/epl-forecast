@@ -11,7 +11,7 @@ import numpy as np
 
 from epl_forecast.artifacts import new_run_directory, provenance, results_markdown
 from epl_forecast.cli import load_config, save_rows
-from epl_forecast.data.normalize import load_processed
+from epl_forecast.datasets import load_dataset
 from epl_forecast.evaluation import market_predictions, metrics, rolling_predictions, summarize
 from epl_forecast.models.baselines import AttackDefensePoisson
 from epl_forecast.models.dynamic import DynamicAttackDefense
@@ -206,14 +206,14 @@ def synthetic_form_response(seed=20260905):
 def main():
     parser = argparse.ArgumentParser(description="Inspect the M4 vertical slice against M2")
     parser.add_argument("--evaluations", type=Path, nargs="+", required=True)
-    parser.add_argument("--data", type=Path, default=Path("data/processed"))
+    parser.add_argument("--data", type=Path, default=Path("data"))
     parser.add_argument("--config", type=Path, default=Path("configs/dynamic.toml"))
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     started = perf_counter()
     config = load_config(args.config)
     config["bootstrap_samples"] = 1000
-    matches, odds, manifest = load_processed(args.data)
+    matches, odds, manifest = load_dataset(args.data)
     predictions = read_predictions(args.evaluations)
     new_run_directory(args.output)
     spec = deepcopy(next(s for s in config["models"] if s["id"] == M4))

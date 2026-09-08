@@ -3,9 +3,8 @@ from datetime import UTC, datetime
 from html import escape
 from pathlib import Path
 
-from epl_forecast.artifacts import new_run_directory
-from epl_forecast.data.live import LiveSeason, timestamp
-from epl_forecast.data.normalize import write_csv
+from epl_forecast.artifacts import new_run_directory, write_csv
+from epl_forecast.live import LiveSeason, timestamp
 from epl_forecast.models.base import ForecastModel
 from epl_forecast.schema import Match
 from epl_forecast.simulation import EuropeScenario, simulate_season
@@ -18,14 +17,10 @@ def check_freshness(live: LiveSeason, max_age_hours: float) -> None:
     now = datetime.now(UTC)
     if live.observed_at > now:
         raise ValueError("Snapshot observation time is in the future")
-    for entry in live.manifest["files"]:
-        if entry["name"].startswith("fpl_"):
-            age = (now - timestamp(entry["retrieved_at"])).total_seconds() / 3600
-            if age > max_age_hours:
-                raise ValueError(
-                    f"Snapshot is {age:.1f} hours old; capture fresh data or explicitly increase "
-                    "--max-snapshot-age-hours for offline replay"
-                )
+    observed = timestamp(live.manifest["fixtures_retrieved_at"])
+    age = (now - observed).total_seconds() / 3600
+    if age > max_age_hours:
+        raise ValueError(f"Fixture data is {age:.1f} hours old; collect fresh data")
 
 
 def current_table(live: LiveSeason, adjustments: list[dict]) -> dict[str, dict]:
@@ -44,6 +39,9 @@ def current_table(live: LiveSeason, adjustments: list[dict]) -> dict[str, dict]:
 def render_forecast(forecast: dict) -> str:
     names = forecast["team_names"]
     simulation = forecast["simulation"]
+    championship = forecast["competition_id"] == "eng-championship"
+    first_event = "automatic_promotion_probability" if championship else "top_four_probability"
+    second_event = "playoff_qualification_probability" if championship else "top_five_probability"
     uncertainty_note = (
         "These probabilities include uncertainty in current team strength and match randomness. "
         "Each simulated season holds its sampled strengths fixed; "
@@ -80,17 +78,17 @@ def render_forecast(forecast: dict) -> str:
                 str(team["current_points"]),
                 f"{team['mean_points']:.1f}",
                 f"{team['title_probability']:.1%}",
-                f"{team['top_four_probability']:.1%}",
-                f"{team['top_five_probability']:.1%}",
+                f"{team[first_event]:.1%}",
+                f"{team[second_event]:.1%}",
                 f"{team['relegation_probability']:.1%}",
             ]
             rows.append("<tr>" + "".join(f"<td>{cell}</td>" for cell in cells) + "</tr>")
         table = (
             "<div class='scroll'><table><thead><tr><th>Team</th><th>Played</th>"
             "<th>Points now</th><th>Expected final points</th><th>Title</th>"
-            "<th>Top four</th><th>Top five</th><th>Relegation</th></tr></thead><tbody>"
-            + "".join(rows)
-            + "</tbody></table></div>"
+            f"<th>{'Automatic promotion' if championship else 'Top four'}</th>"
+            f"<th>{'Playoffs' if championship else 'Top five'}</th>"
+            "<th>Relegation</th></tr></thead><tbody>" + "".join(rows) + "</tbody></table></div>"
         )
     else:
         table = f"<p>{escape(forecast['simulation_unavailable_reason'])}</p>"
@@ -159,7 +157,7 @@ def render_forecast(forecast: dict) -> str:
         )
     return f"""<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width">
-<title>Premier League {escape(forecast["season_id"])} forecast</title>
+<title>{escape(forecast["competition_name"])} {escape(forecast["season_id"])} forecast</title>
 <style>
 body {{font:16px/1.5 system-ui,sans-serif;max-width:1120px;margin:32px auto;padding:0 20px;
 color:#17242c;background:#fafbf9}} h1,h2 {{line-height:1.2}} h2 {{margin-top:36px}}
@@ -169,12 +167,12 @@ th,td {{text-align:right;padding:9px 12px;border-bottom:1px solid #dce3dd;white-
 th:first-child,td:first-child {{text-align:left}} th {{background:#edf3ee}}
 .note {{color:#52616b;font-size:14px}} details {{margin-top:24px}}
 </style></head><body>
-<h1>Premier League {escape(forecast["season_id"])}</h1>
+<h1>{escape(forecast["competition_name"])} {escape(forecast["season_id"])}</h1>
 <p>Probabilistic match forecasts and the expected final table.
 Model: {escape(forecast["model"]["id"])}.</p>
 <p class="note">Season state captured {escape(forecast["state_observed_at"])}.
 Forecast generated {escape(forecast["generated_at"])}. Times are UTC.
-Full-time scores include today's completed games; recent FPL scores may be provisional.
+Full-time scores include today's completed games; results use captured provider reports.
 Team strengths use results before {escape(forecast["model_results_cutoff"])} (London date).</p>
 <h2>Season forecast</h2>{table}
 <p class="note">Top four and top five are league positions. European qualification also
@@ -195,7 +193,7 @@ rate. Both use the model's league reference. {escape(prior_note)}</p>
 <p><a href="forecast.json">Full forecast JSON</a> · <a href="matches.csv">Match CSV</a> ·
 <a href="table.csv">Season CSV</a> · <a href="team_strengths.csv">Team strengths CSV</a></p>
 <p class="note">Free source data:
-<a href="https://fantasy.premierleague.com/">Fantasy Premier League</a> and
+<a href="https://www.api-football.com/">API-Football</a> and
 <a href="https://football-data.co.uk/">Football-Data</a>.</p>
 </body></html>
 """
@@ -219,12 +217,11 @@ def export_forecast(
         for row in live.details.values()
         if row["status"] in {"in_progress", "awaiting_result"}
     ]
-    evolving = bool(getattr(model, "fit_diagnostics", {}).get("future_states"))
     unscheduled = [
         row["match_id"] for row in live.details.values() if row["status"] == "unscheduled"
     ]
     simulation = None
-    if not in_progress and not (evolving and unscheduled):
+    if not in_progress and not unscheduled:
         simulation = simulate_season(
             model,
             live.played,
@@ -329,11 +326,15 @@ def export_forecast(
             "this model does not forecast games in play."
             if in_progress
             else "Season projection awaits fixture dates required for future state evolution."
-            if evolving and unscheduled
+            if unscheduled
             else None
         ),
         "fixtures_awaiting_results": in_progress,
         "results_crosschecked": live.results_crosschecked,
+        "competition_id": live.competition_id,
+        "competition_name": "Championship"
+        if live.competition_id == "eng-championship"
+        else "Premier League",
         "sources": live.manifest["files"],
         "source_errors": live.manifest["errors"],
     }

@@ -5,15 +5,15 @@ from pathlib import Path
 
 import numpy as np
 
-from epl_forecast.data.normalize import load_processed
-from epl_forecast.data.squads import PlayerHistory, load_player_history
+from epl_forecast.datasets import load_dataset, load_player_history
 from epl_forecast.models.player_quality import PlayerQualityFilter
 from epl_forecast.research.quality_tilt_reference import (
     compare_posterior,
     prepare,
     sample_reference,
 )
-from epl_forecast.storage import file_hash, write_json
+from epl_forecast.squads import PlayerHistory
+from epl_forecast.storage import write_json
 
 
 def main():
@@ -22,8 +22,8 @@ def main():
     parser.add_argument("--matches", type=int, default=60)
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
-    path = Path("data/processed/players/player_matches.csv.gz")
-    matches, _, _ = load_processed(Path("data/processed"))
+    path = Path("data")
+    matches, _, manifest = load_dataset(Path("data"))
     matches = sorted(
         [
             m
@@ -70,10 +70,7 @@ def main():
         "cutoff_match_log_rates": compare_posterior(
             sampled @ projection.T, projection @ mean, projection @ covariance @ projection.T
         ),
-        "inputs": {
-            str(path): file_hash(path),
-            "data/processed/matches.csv": file_hash(Path("data/processed/matches.csv")),
-        },
+        "inputs": manifest,
     }
     write_json(args.output / "reference.json", report)
     print(diagnostics, flush=True)

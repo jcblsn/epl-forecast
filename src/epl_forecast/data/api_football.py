@@ -29,10 +29,13 @@ def player_id(value):
     return f"p{int(value)}" if value is not None else None
 
 
-def request(fetcher, endpoint, params=None, **kwargs):
+def request(fetcher, endpoint, params=None, context=None, **kwargs):
     url = BASE + endpoint + ("?" + urlencode(sorted((params or {}).items())) if params else "")
     record, payload = fetcher.get(
-        "api_football", url, context={"endpoint": endpoint, **(params or {})}, **kwargs
+        "api_football",
+        url,
+        context={"endpoint": endpoint, **(params or {}), **(context or {})},
+        **kwargs,
     )
     return record, json.loads(payload)
 
@@ -237,7 +240,8 @@ def normalize(record, body, root):
                 {
                     "player_id": pid,
                     "api_id": p["id"],
-                    "name": p["name"],
+                    "name": " ".join(filter(None, [p.get("firstname"), p.get("lastname")]))
+                    or p["name"],
                     "birth_date": p.get("birth", {}).get("date"),
                 },
             )
@@ -246,6 +250,8 @@ def normalize(record, body, root):
                     s["league"]["id"] != context["league"]
                     or s["league"]["season"] != context["season"]
                 ):
+                    continue
+                if not s["games"].get("appearences"):
                     continue
                 add(
                     "memberships",

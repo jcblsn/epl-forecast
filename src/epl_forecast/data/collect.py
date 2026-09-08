@@ -10,7 +10,7 @@ from epl_forecast.data import football_data, fpl, understat_ingest
 from epl_forecast.data.capture import Fetcher, QuotaReached, SourceAccessError, writer_lock
 from epl_forecast.data.sources import COMPETITIONS, season_name, source_url
 from epl_forecast.datasets import Dataset
-from epl_forecast.storage import write_json
+from epl_forecast.storage import sha256_bytes, write_json
 
 
 def normalized_request(fetcher, endpoint, params=None, **kwargs):
@@ -120,7 +120,12 @@ def collect(root=Path("data"), season=None):
         teams = {r["teams"][side]["id"] for r in fixtures for side in ("home", "away")}
         for team in sorted(teams):
             record_body = attempt(
-                api.request, fetcher, "players/squads", {"team": team}, max_age=86400
+                api.request,
+                fetcher,
+                "players/squads",
+                {"team": team},
+                max_age=86400,
+                context={"competition_id": comp, "season_id": season_name(year)},
             )
             if record_body:
                 record, squad = record_body
@@ -194,6 +199,8 @@ def normalize(root):
     requests = [json.loads(p.read_text()) for p in (Path(root) / "requests").glob("*.json")]
     for record in sorted(requests, key=lambda r: r["retrieved_at"]):
         payload = (Path(root) / record["raw_path"]).read_bytes()
+        if sha256_bytes(payload) != record["source_sha256"]:
+            raise ValueError(f"Raw capture hash mismatch: {record['raw_path']}")
         if record["provider"] == "api_football":
             if record["context"]["endpoint"] != "status":
                 api.normalize(record, json.loads(payload), root)

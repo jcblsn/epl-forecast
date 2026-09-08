@@ -1,7 +1,7 @@
 [project]
 name = "epl-forecast"
 version = "0.1.0"
-description = "Live probabilistic Premier League forecasts and season simulation"
+description = "Probabilistic Premier League and Championship forecasts and season simulation"
 requires-python = ">=3.12"
 dependencies = [
     "duckdb>=1.5.5",

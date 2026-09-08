@@ -3,28 +3,27 @@
 import argparse
 from copy import deepcopy
 from dataclasses import replace
-from datetime import UTC, date, datetime
+from datetime import date
 from pathlib import Path
 
 import numpy as np
 
-from epl_forecast.data.live import LONDON, load_live_season, timestamp
-from epl_forecast.data.normalize import load_processed
-from epl_forecast.data.squads import PlayerHistory, load_player_history, snapshot_squads
+from epl_forecast.datasets import load_dataset
+from epl_forecast.live import LONDON, load_live_season, timestamp
 from epl_forecast.live_forecast import check_freshness, export_forecast
 from epl_forecast.models.player_quality import BayesianPlayerQuality
 from epl_forecast.models.quality_tilt import BayesianQualityTilt
 from epl_forecast.simulation import simulate_season
-from epl_forecast.storage import file_hash, write_json
+from epl_forecast.squads import PlayerHistory, captured_squads
+from epl_forecast.storage import write_json
 
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--snapshot", type=Path, required=True)
-    parser.add_argument("--live-players", type=Path, required=True)
-    parser.add_argument(
-        "--players", type=Path, default=Path("data/processed/players/player_matches.csv.gz")
-    )
+    parser.add_argument("--data", type=Path, default=Path("data"))
+    parser.add_argument("--cutoff")
+    parser.add_argument("--competition", default="eng-premier-league")
+    parser.add_argument("--players", type=Path, default=Path("data"))
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--train-start", type=date.fromisoformat, default=date(2023, 7, 1))
     parser.add_argument("--simulations", type=int, default=2000)
@@ -33,25 +32,27 @@ def main():
     parser.add_argument("--forecast-only", action="store_true")
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
-    live = load_live_season(args.snapshot)
+    live = load_live_season(args.data, args.cutoff, args.competition)
     check_freshness(live, 24)
     if not args.forecast_only and any(
         r["status"] in {"in_progress", "awaiting_result", "unscheduled"}
         for r in live.details.values()
     ):
         raise ValueError("Complete dated fixture state is required for this scenario demonstration")
-    captured = load_player_history(args.live_players)
-    observed = max([live.observed_at] + [timestamp(r["historical_observed_at"]) for r in captured])
-    if observed > datetime.now(UTC):
-        raise ValueError("Player observations are in the future")
-    history = PlayerHistory(load_player_history(args.players) + captured)
-    squads = snapshot_squads(args.snapshot, observed, history)
+    from epl_forecast.datasets import Dataset
+
+    observed = live.observed_at
+    data = Dataset(args.data, observed)
+    history = PlayerHistory(data.player_history())
+    squads = captured_squads(data, observed, history)
+    inputs = data.provenance()
+    data.close()
     kickoffs = {
         f.match_id: timestamp(live.details[f.match_id]["kickoff_time"])
         for f in live.remaining
         if live.details[f.match_id]["kickoff_time"]
     }
-    matches, _, _ = load_processed(Path("data/processed"))
+    matches, _, _ = load_dataset(Path("data"))
     as_of = observed.astimezone(LONDON).date()
     training = [m for m in matches if m.fixture.season_id != live.season_id] + live.played
     training = [
@@ -64,15 +65,6 @@ def main():
         f"Fitted M6: {len(training)} results, {len(model.members[0].player_index)} players",
         flush=True,
     )
-    inputs = {
-        str(path): file_hash(path)
-        for path in (
-            args.players,
-            args.live_players,
-            args.snapshot / "manifest.json",
-            Path("data/processed/matches.csv"),
-        )
-    }
     run = {
         "model": {"id": "M6-player-quality-v1", "kind": "bayesian_player_quality"},
         "inputs": inputs,
@@ -203,7 +195,8 @@ def main():
     write_json(
         args.output / "scenario.json",
         {
-            "snapshot": str(args.snapshot),
+            "data_root": str(args.data),
+            "competition_id": args.competition,
             "source_hashes": inputs,
             "observed_at": observed.isoformat(),
             "team_id": team,

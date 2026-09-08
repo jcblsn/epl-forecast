@@ -5,8 +5,8 @@ import json
 from pathlib import Path
 
 from epl_forecast.cli import fitted_model, load_config, save_rows
-from epl_forecast.data.normalize import load_processed
 from epl_forecast.data.rules import historical_adjustments
+from epl_forecast.datasets import load_dataset
 from epl_forecast.models.baselines import AttackDefensePoisson
 from epl_forecast.season_evaluation import final_cutoff, score_forecast, season_origins, summarize
 from epl_forecast.simulation import simulate_season
@@ -23,13 +23,13 @@ SPECS = {
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
-    parser.add_argument("--data", type=Path, default=Path("data/processed"))
+    parser.add_argument("--data", type=Path, default=Path("data"))
     parser.add_argument("--simulations", type=int, default=10000)
     parser.add_argument("--seed", type=int, default=20260908)
     parser.add_argument("--seasons", nargs="+", type=int, default=list(range(2015, 2026)))
     parser.add_argument("--models", nargs="+", choices=SPECS, default=list(SPECS))
     args = parser.parse_args()
-    matches, _, manifest = load_processed(args.data)
+    matches, _, manifest = load_dataset(args.data)
     metadata = {
         "simulations": args.simulations,
         "seed": args.seed,

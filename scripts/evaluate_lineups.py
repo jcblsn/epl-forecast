@@ -7,10 +7,10 @@ from pathlib import Path
 
 import numpy as np
 
-from epl_forecast.data.live import timestamp
-from epl_forecast.data.normalize import write_csv
-from epl_forecast.data.squads import PlayerHistory, load_player_history
+from epl_forecast.artifacts import write_csv
+from epl_forecast.datasets import load_player_history, timestamp
 from epl_forecast.lineups import sample_lineups
+from epl_forecast.squads import PlayerHistory
 from epl_forecast.storage import file_hash, write_json
 
 
@@ -30,7 +30,7 @@ def evaluate(history, seasons, draws, seed):
         squad = history.retrospective_squad(team, season, cutoff)
         sampled = sample_lineups(squad, timestamp(kickoff), rng, draws)
         predicted = {p["player_id"]: p for p in sampled.summary() if not p["anonymous"]}
-        actual = {f"fpl:{r['fpl_player_code']}": r for r in outcomes}
+        actual = {r["player_id"]: r for r in outcomes}
         starters = {key for key, row in actual.items() if row["starts"] == "1"}
         if len(starters) != 11:
             raise ValueError("Lineup evaluation requires eleven observed starters")
@@ -106,9 +106,7 @@ def summarize(rows):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument(
-        "--players", type=Path, default=Path("data/processed/players/player_matches.csv.gz")
-    )
+    parser.add_argument("--players", type=Path, default=Path("data"))
     parser.add_argument("--seasons", nargs="+", default=["2023-2024", "2024-2025", "2025-2026"])
     parser.add_argument("--draws", type=int, default=128)
     parser.add_argument("--seed", type=int, default=20260906)

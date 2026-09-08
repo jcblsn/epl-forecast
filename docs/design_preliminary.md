@@ -3,7 +3,7 @@
 ## Objective
 
 Build the strongest practical Premier League forecasting and season-simulation
-model possible using free data. Produce current, interpretable probabilities for
+model possible using locally archived provider data. Produce current, interpretable probabilities for
 matches and the season table. Reproducible experimentation improves and validates
 the model; it is supporting infrastructure, not the primary product.
 
@@ -28,7 +28,7 @@ whether to use it. Current [live behavior](live.md) and the
 
 ## Data
 
-Prefer free, accessible sources with useful coverage and definitions. Keep raw
+Prefer a small set of reliable sources with useful coverage and definitions. Keep raw
 responses separate from normalized data and record observation times and hashes.
 Use canonical team identities and fixture IDs that survive postponements.
 

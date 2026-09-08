@@ -1,72 +1,58 @@
-# Open Premier League forecast
+# Premier League and Championship forecasts
 
 Active work: [data architecture migration](docs/data_architecture_migration.md).
 
-An open, real-time probabilistic Premier League forecasting and season-simulation
-model using free data. The aim is the strongest practical model we can build,
-with current, interpretable forecasts. Reproducible experiments help improve and
-validate the model; the forecasts are the product.
+Probabilistic match forecasts and season simulations for England's top two leagues,
+using locally archived provider data. Both leagues are supported forecasting targets.
+M2 remains the operational benchmark; M5–M8 are research models with distinct
+uncertainty, process and player-information assumptions. Historical experiment
+reports retain their original datasets and results; the migration changes the data
+boundary and requires renewed validation of player models.
 
-The project now archives live FPL and Football-Data responses and produces a
-2026/27 forecast as JSON, CSV and a static HTML page. A local recurring collector
-now protects timestamped research forecasts; see [capture operation](docs/live.md#recurring-prospective-capture).
-M2 remains the operational benchmark. M7-v1 is the retained xG research model
-and preferred research parent. M8 was the next team-process candidate; M8-v1 is
-now parked after observation and calibration checks.
-M6-v1 is the retained first player-information formulation, not the architectural
-parent. See the [M8 batch evidence](docs/experiments/m8_process.md).
-M5 adds explicit Quality and Tilt, approximate
-Bayesian dynamics weights, correlated overdispersed scores, and season paths
-with future state evolution. M4 remains available as the earlier prototype. Historical results cover 16 PL and Championship
-seasons. The [north star](docs/north_star.md) describes the intended architecture.
+## Data and forecasts
 
-## Capture and forecast
-
-Run from the repository root with [uv](https://docs.astral.sh/uv/):
+Run from the repository root with uv. Set `API_FOOTBALL_KEY` in the environment
+or an ignored `.env` file. Provider access and redistribution are subject to each
+provider's terms; credentials and captured data are not committed.
 
 ```sh
 uv sync --locked
-uv run epl-forecast data snapshot --season-start 2026
+uv run epl-forecast data collect
+uv run epl-forecast data audit
+uv run epl-forecast forecast --competition eng-premier-league
+uv run epl-forecast forecast --competition eng-championship --config configs/championship.toml
 ```
 
-This creates `snapshots/<UTC timestamp>/` containing FPL players/availability,
-fixtures/results, Football-Data latest fixtures/odds, and current PL and
-Championship result files. Raw bytes, retrieval times and hashes are retained.
-Successful responses survive a partial source failure. No API key is needed.
-
-Pass the printed snapshot directory to the forecast command:
+API-Football supplies schedules and player data. Football-Data supplies results,
+odds and basic match statistics. Understat supplies Premier League xG; Championship
+xG is unavailable. FPL is retained only for captured availability/news and playing
+probabilities. Canonical Parquet tables under `data/parquet/` are queried through
+embedded DuckDB. Immutable request records and publication manifests retain raw
+hashes, provenance and actual retrieval timestamps.
 
 ```sh
-uv run epl-forecast forecast --snapshot snapshots/<UTC timestamp>
+uv run epl-forecast data backfill --start 2010 --max-requests 200
+uv run epl-forecast data query --sql 'SELECT competition_id, season_id, count(*) FROM fixtures GROUP BY 1,2 ORDER BY 1,2'
+uv run epl-forecast forecast --config configs/quality_tilt.toml --model M5-quality-tilt-v1
 ```
 
-To use M5 and propagate current uncertainty and future evolution into the season forecast:
+Backfills resume from successful request checkpoints and reserve daily API quota
+for current collection. The migration plan tracks remaining ingestion and audit
+work; a successful request does not establish complete historical coverage.
 
-```sh
-uv run epl-forecast forecast --config configs/quality_tilt.toml \
-  --model M5-quality-tilt-v1 --snapshot snapshots/<UTC timestamp>
-```
+Forecasts produce JSON, CSV and HTML under `runs/forecasts/`. Premier League
+projections report European league positions; Championship projections report
+automatic promotion and season-specific playoff qualification. Playoff fixtures
+are kept separate from the regular-season table. Qualification probability does
+not include winning the knockout playoffs.
 
-Open the printed `runs/forecasts/<UTC timestamp>/index.html`. Each run archives:
+`--cutoff <ISO timestamp>` limits inputs to evidence retrieved by that timestamp.
+Model fitting also excludes results from the forecast's London calendar date.
+Retrospective backfills cannot recreate historical pre-match observations.
+Unresolved live or unscheduled fixtures withhold a complete season projection.
 
-- current strengths and each team's next-match probabilities;
-- M5 Quality, Tilt, their uncertainty, and separate state/match variance contributions;
-- all remaining H/D/A probabilities and exact-score matrices with tail mass;
-- expected final points, position distributions, title, top-four/five and relegation chances;
-- the captured schedule, source provenance and actual forecast archival time.
-
-Completed scores, including today's provisional full-time FPL results, stay fixed
-in the season projection. Model fitting retains the conservative rule of using
-results before the snapshot's London calendar date. A game in progress suspends
-the season projection while upcoming-match forecasts remain available.
-
-Top-four/five chances describe positions. To add conditional European qualification,
-pass `--europe-scenario configs/europe_scenario.example.json`, which supplies
-hypothetical cup winners and league UCL places. M2 uses fixed fitted strengths.
-M4 holds one sampled current state throughout each path. M5 samples a dynamics
-specification and evolves Quality/Tilt through fixture dates, with independent
-match-tempo shocks. Injuries and transfers are not yet modeled.
-See [live operation and limitations](docs/live.md).
+The [migration plan](docs/data_architecture_migration.md) records collector cutover,
+historical archive completeness and the conditions for retiring the plan.
 
 ## Improve the model
 

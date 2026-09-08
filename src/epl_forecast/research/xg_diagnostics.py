@@ -264,7 +264,7 @@ def audit_forecast_archive(directory):
     import json
     from pathlib import Path
 
-    from epl_forecast.data.live import timestamp
+    from epl_forecast.datasets import timestamp
     from epl_forecast.storage import file_hash
 
     archive = json.loads((directory / "archive.json").read_text())

@@ -9,38 +9,37 @@ from pathlib import Path
 
 import numpy as np
 
-from epl_forecast.data.live import LONDON, load_live_season, timestamp
-from epl_forecast.data.normalize import load_processed
-from epl_forecast.data.squads import (
+from epl_forecast.datasets import load_dataset
+from epl_forecast.live import LONDON, load_live_season, timestamp
+from epl_forecast.models.player_quality import BayesianPlayerQuality
+from epl_forecast.squads import (
     Availability,
     PlayerHistory,
-    load_player_history,
-    snapshot_squads,
+    captured_squads,
 )
-from epl_forecast.models.player_quality import BayesianPlayerQuality
 from epl_forecast.storage import file_hash, write_json
 
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--scenario", type=Path, required=True)
-    parser.add_argument("--live-players", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
     scenario = json.loads(args.scenario.read_text())
-    snapshot = Path(scenario["snapshot"])
-    live = load_live_season(snapshot)
-    captured = load_player_history(args.live_players)
-    observed = max([live.observed_at] + [timestamp(r["historical_observed_at"]) for r in captured])
-    history = PlayerHistory(
-        load_player_history(Path("data/processed/players/player_matches.csv.gz")) + captured
-    )
-    squads = snapshot_squads(snapshot, observed, history)
+    root = Path(scenario["data_root"])
+    from epl_forecast.datasets import Dataset
+
+    observed = timestamp(scenario["observed_at"])
+    live = load_live_season(root, observed, scenario["competition_id"])
+    data = Dataset(root, observed)
+    history = PlayerHistory(data.player_history())
+    squads = captured_squads(data, observed, history)
+    data.close()
     kickoffs = {
         f.match_id: timestamp(live.details[f.match_id]["kickoff_time"]) for f in live.remaining
     }
-    matches, _, _ = load_processed(Path("data/processed"))
+    matches, _, _ = load_dataset(Path("data"))
     as_of = observed.astimezone(LONDON).date()
     training = [m for m in matches if m.fixture.season_id != live.season_id] + live.played
     training = [

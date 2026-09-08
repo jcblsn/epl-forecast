@@ -4,9 +4,9 @@ from datetime import UTC, date, datetime, timedelta
 import numpy as np
 import pytest
 
-from epl_forecast.data.squads import Availability, PlayerHistory
 from epl_forecast.models.player_quality import PlayerQualityFilter
 from epl_forecast.models.quality_tilt import QualityTiltFilter
+from epl_forecast.squads import Availability, PlayerHistory
 
 
 def history_for(matches):
@@ -20,12 +20,11 @@ def history_for(matches):
                         "team_id": team,
                         "season_id": match.fixture.season_id,
                         "kickoff_time": f"{match.fixture.match_date}T15:00:00Z",
-                        "player_season_id": f"{team}-{i}",
-                        "fpl_player_code": f"{team}-{i}",
+                        "player_id": f"{team}-{i}",
                         "player_name": f"{team}-{i}",
                         "position": role,
                         "minutes": "90" if i < 11 else "0",
-                        "starts": "1" if i < 11 else "0",
+                        "starts": 1 if i < 11 else 0,
                     }
                 )
     return PlayerHistory(rows)
@@ -40,7 +39,7 @@ def test_joint_updates_covariance_incremental_and_new_clubs(small_history):
     assert model.covariance == pytest.approx(fresh.covariance, abs=1e-9)
     assert len(model.player_index) == 44
     club = 2 + 2 * model.team_index["a"]
-    player = model.player_index["fpl:a-0"]
+    player = model.player_index["a-0"]
     assert abs(model.covariance[club, player]) > 1e-4
     assert model.covariance[player, player] < model.player_sd**2
     assert np.linalg.eigvalsh(model.covariance).min() > 0
@@ -56,7 +55,7 @@ def test_absence_reacts_and_expires_with_same_fitted_model(small_history):
     )
     fixture = replace(small_history[0].fixture, match_date=cutoff + timedelta(days=1))
     squad = model.squad(fixture, "a")
-    player = "fpl:a-0"
+    player = "a-0"
     # A controlled strong goalkeeper verifies direction independently of weak goals-only learning.
     model.mean[model.player_index[player]] = 2
     before = model.predict_match(fixture).probabilities[0]

@@ -10,8 +10,9 @@ from pathlib import Path
 import numpy as np
 from evaluate_player_quality import information_tags, summarize
 
-from epl_forecast.data.normalize import load_processed, write_csv
-from epl_forecast.data.squads import PlayerHistory, load_player_history
+from epl_forecast.artifacts import write_csv
+from epl_forecast.datasets import load_dataset, load_player_history
+from epl_forecast.squads import PlayerHistory
 from epl_forecast.storage import file_hash, write_json
 
 
@@ -26,7 +27,7 @@ def main():
     observations = defaultdict(list)
     for row in history.rows:
         observations[row["match_id"], row["team_id"]].append(row)
-    matches, _, _ = load_processed(Path(run["arguments"]["data"]))
+    matches, _, _ = load_dataset(Path(run["arguments"]["data"]))
     matches = sorted(matches, key=lambda m: (m.fixture.match_date, m.fixture.match_id))
     lookup = {m.fixture.match_id: m for m in matches}
     predictions = list(csv.DictReader((args.evaluation / "predictions.csv").open()))

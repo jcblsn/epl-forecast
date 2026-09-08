@@ -1,8 +1,6 @@
 """M8 pooled compound-process observation on the frozen centered team dynamics."""
 
-import json
 from copy import copy
-from pathlib import Path
 
 import numpy as np
 from numpy.polynomial.hermite import hermgauss
@@ -17,7 +15,6 @@ from epl_forecast.models.quality_tilt import (
     QualityTiltFilter,
 )
 from epl_forecast.models.xg_quality_tilt import XG_DYNAMICS, XGQualityTiltFilter
-from epl_forecast.storage import file_hash
 
 LOG_SCALE_PRIOR_MEAN = float(np.log(0.25))
 
@@ -49,7 +46,6 @@ class ProcessQualityTiltFilter(XGQualityTiltFilter):
                 "observation_model": "compound Poisson process; downstream Poisson goals",
                 "process_scale": self.process_scale,
                 "xg_matches": self.xg_updates,
-                "xg_provider": "understat",
                 "xg_availability": "retrospective next-day assumption; late records skipped",
                 "equivalence": "frozen centered dynamics; M8 process score marginal",
             }
@@ -75,22 +71,12 @@ class BayesianProcessQualityTilt(BayesianQualityTilt):
         log_scale_sd=0.35,
         scale_order=5,
         quadrature_order=9,
-        observations_path=None,
-        observations_sha256=None,
     ):
         if not np.isfinite(log_scale_mean) or not np.isfinite(log_scale_sd) or log_scale_sd <= 0:
             raise ValueError("Log process-scale prior must have finite mean and positive SD")
         if type(scale_order) is not int or scale_order < 2:
             raise ValueError("Process scale quadrature order must be an integer of at least two")
         observations = tuple(observations)
-        if observations_path is not None:
-            path = Path(observations_path)
-            if observations or file_hash(path) != observations_sha256:
-                raise ValueError("Specify only the checksum-verified xG observation file")
-            observations = json.loads(path.read_text())
-        elif observations_sha256 is not None:
-            raise ValueError("xG checksum requires an observation file")
-        self.observations_sha256 = observations_sha256
         nodes, masses = hermgauss(scale_order)
         scales = np.exp(log_scale_mean + np.sqrt(2) * log_scale_sd * nodes)
         super().__init__(
@@ -117,8 +103,6 @@ class BayesianProcessQualityTilt(BayesianQualityTilt):
             {
                 "observation_model": "compound Poisson process; downstream goals",
                 "xg_matches": self.members[0].xg_updates,
-                "xg_provider": "understat",
-                "xg_observations_sha256": self.observations_sha256,
                 "process_scale_prior": self.scale_prior,
                 "process_scale_uncertainty": "lognormal quadrature; chronological evidence",
                 "coordinates": "centered Tilt contrasts and transition-only scoring memory",

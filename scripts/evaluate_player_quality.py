@@ -8,10 +8,11 @@ from pathlib import Path
 
 import numpy as np
 
-from epl_forecast.data.normalize import load_processed, write_csv
-from epl_forecast.data.squads import PlayerHistory, load_player_history
+from epl_forecast.artifacts import write_csv
+from epl_forecast.datasets import load_dataset, load_player_history
 from epl_forecast.models.player_quality import BayesianPlayerQuality, player_identity
 from epl_forecast.models.quality_tilt import BayesianQualityTilt
+from epl_forecast.squads import PlayerHistory
 from epl_forecast.storage import file_hash, write_json
 
 
@@ -43,8 +44,8 @@ def labels(model, fixture, counts):
 def information_tags(rows, squad, previous_rows):
     tags = set()
     actual = {player_identity(r): float(r["minutes"]) for r in rows}
-    starters = {player_identity(r) for r in rows if r["starts"] == "1"}
-    previous = {player_identity(r) for r in previous_rows if r["starts"] == "1"}
+    starters = {player_identity(r) for r in rows if r["starts"] == 1}
+    previous = {player_identity(r) for r in previous_rows if r["starts"] == 1}
     candidates = {p.player_id for p in squad.candidates}
     if len(previous) == len(starters) == 11 and len(previous - starters) >= 4:
         tags.add("major_lineup_change")
@@ -59,7 +60,7 @@ def information_tags(rows, squad, previous_rows):
     ):
         tags.add("returning_player")
     if any(
-        r["position"] == "GK" and r["starts"] == "1" and player_identity(r) not in starters
+        r["position"] == "GK" and r["starts"] == 1 and player_identity(r) not in starters
         for r in previous_rows
     ):
         tags.add("goalkeeper_change")
@@ -82,10 +83,8 @@ def summarize(rows):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data", type=Path, default=Path("data/processed"))
-    parser.add_argument(
-        "--players", type=Path, default=Path("data/processed/players/player_matches.csv.gz")
-    )
+    parser.add_argument("--data", type=Path, default=Path("data"))
+    parser.add_argument("--players", type=Path, default=Path("data"))
     parser.add_argument("--train-start", type=date.fromisoformat, default=date(2023, 7, 1))
     parser.add_argument("--season", default="2024-2025")
     parser.add_argument("--limit", type=int)
@@ -93,7 +92,7 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=False)
-    matches, _, _ = load_processed(args.data)
+    matches, _, manifest = load_dataset(args.data)
     matches = [m for m in matches if m.fixture.match_date >= args.train_start]
     history = PlayerHistory(load_player_history(args.players))
     parent = BayesianQualityTilt(independent_poisson=True)
@@ -173,7 +172,7 @@ def main():
                 for key, value in vars(args).items()
             },
             "inputs": {
-                str(args.players): file_hash(args.players),
+                "canonical_data": manifest,
                 str(args.data / "matches.csv"): file_hash(args.data / "matches.csv"),
             },
             "comparison": "Matched expanding window; original four Poisson M5 dynamics specs",

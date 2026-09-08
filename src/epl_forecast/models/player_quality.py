@@ -6,17 +6,15 @@ from datetime import UTC, datetime, time
 
 import numpy as np
 
-from epl_forecast.data.squads import PlayerHistory
 from epl_forecast.lineups import sample_lineups
 from epl_forecast.models.poisson import PoissonMixture
 from epl_forecast.models.quality_tilt import BayesianQualityTilt, QualityTiltFilter
 from epl_forecast.models.quality_tilt_scores import GammaPoissonMixture, ScoreMixture
+from epl_forecast.squads import PlayerHistory
 
 
 def player_identity(row):
-    return (
-        f"fpl:{row['fpl_player_code']}" if row.get("fpl_player_code") else row["player_season_id"]
-    )
+    return row["player_id"]
 
 
 class PlayerQualityFilter(QualityTiltFilter):

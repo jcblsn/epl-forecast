@@ -47,8 +47,7 @@ kind = "bayesian_xg_quality_tilt"
 train_window_days = 0
 train_competitions = ["eng-premier-league", "eng-championship"]
 [models.parameters]
-observations_path = "data/processed/understat/matches.json"
-observations_sha256 = "f2df8be711b56d5c5165937d6aa27bb115cf25864673ae5a2126993c04fadc08"
+data_root = "data"
 
 [[models]]
 id = "M8-process-v1"
@@ -56,5 +55,4 @@ kind = "bayesian_process_quality_tilt"
 train_window_days = 0
 train_competitions = ["eng-premier-league", "eng-championship"]
 [models.parameters]
-observations_path = "data/processed/understat/matches.json"
-observations_sha256 = "f2df8be711b56d5c5165937d6aa27bb115cf25864673ae5a2126993c04fadc08"
+data_root = "data"

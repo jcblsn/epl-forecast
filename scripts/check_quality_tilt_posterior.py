@@ -6,7 +6,7 @@ from pathlib import Path
 import numpy as np
 from scipy.stats import norm
 
-from epl_forecast.data.normalize import load_processed
+from epl_forecast.datasets import load_dataset
 from epl_forecast.research.quality_tilt_reference import (
     PARAMETERS,
     centered_history_comparison,
@@ -22,7 +22,7 @@ from epl_forecast.storage import write_json
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--data", type=Path, default=Path("data/processed"))
+    parser.add_argument("--data", type=Path, default=Path("data"))
     parser.add_argument("--start", type=date.fromisoformat, default=date(2024, 8, 1))
     parser.add_argument("--end", type=date.fromisoformat, default=date(2024, 11, 1))
     parser.add_argument("--output", type=Path, required=True)
@@ -44,7 +44,7 @@ def main():
     if args.process_scale is not None and (args.xg is None or args.process_scale <= 0):
         raise ValueError("M8 reference requires xG and a positive process scale")
     args.output.mkdir(parents=True, exist_ok=False)
-    matches, _, manifest = load_processed(args.data)
+    matches, _, manifest = load_dataset(args.data)
     data = prepare(
         [
             m

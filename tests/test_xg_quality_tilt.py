@@ -86,21 +86,15 @@ def test_bayesian_noise_and_evolving_paths(small_history):
     ) == pytest.approx(0, abs=1e-14)
 
 
-def test_configured_xg_checksums_and_factory(tmp_path, small_history):
+def test_canonical_observations_and_factory(small_history):
     from epl_forecast.models import make_model
-    from epl_forecast.storage import file_hash, write_json
 
-    path = tmp_path / "xg.json"
-    write_json(path, observations(small_history))
     spec = {
         "kind": "bayesian_xg_quality_tilt",
-        "parameters": {"observations_path": str(path), "observations_sha256": file_hash(path)},
+        "parameters": {"observations": observations(small_history)},
     }
     model = make_model(spec).fit(small_history, small_history[-1].available_on)
-    assert model.fit_diagnostics["xg_observations_sha256"] == file_hash(path)
-    path.write_text("[]")
-    with pytest.raises(ValueError, match="checksum"):
-        make_model(spec)
+    assert model.fit_diagnostics["xg_matches"] == len(small_history)
     control = make_model(
         {"kind": "centered_quality_tilt", "parameters": {"independent_poisson": True}}
     )

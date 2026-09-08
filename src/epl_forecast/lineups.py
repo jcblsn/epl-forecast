@@ -3,7 +3,7 @@ from datetime import datetime
 
 import numpy as np
 
-from epl_forecast.data.squads import ROLES, Candidate, Squad
+from epl_forecast.squads import ROLES, Candidate, Squad
 
 FORMATIONS = ((1, 4, 4, 2), (1, 4, 3, 3), (1, 3, 5, 2), (1, 3, 4, 3), (1, 5, 4, 1))
 

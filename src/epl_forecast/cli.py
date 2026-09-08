@@ -5,18 +5,12 @@ import tomllib
 from datetime import UTC, date, datetime
 from pathlib import Path
 
-from epl_forecast.artifacts import new_run_directory, provenance, results_markdown
-from epl_forecast.data.crosscheck import crosscheck_openfootball
-from epl_forecast.data.live import LONDON, capture_snapshot, load_live_season
-from epl_forecast.data.normalize import load_processed, normalize_snapshot, write_csv
+from epl_forecast.artifacts import new_run_directory, provenance, results_markdown, write_csv
+from epl_forecast.data.capture import SourceAccessError
 from epl_forecast.data.rules import historical_adjustments
-from epl_forecast.data.sources import (
-    SourceAccessError,
-    fetch_snapshot,
-    read_snapshot,
-    restore_snapshot,
-)
+from epl_forecast.datasets import load_dataset
 from epl_forecast.evaluation import market_predictions, rolling_predictions, summarize
+from epl_forecast.live import LONDON, load_live_season
 from epl_forecast.live_forecast import check_freshness, export_forecast
 from epl_forecast.models import make_model
 from epl_forecast.schema import Fixture, fixture_id
@@ -36,6 +30,8 @@ def load_config(path: Path) -> dict:
         previous_end = end
     if config["train_window_days"] < 1 or config["min_train_matches"] < 1:
         raise ValueError("Training limits must be positive")
+    for spec in config["models"]:
+        spec.setdefault("parameters", {})["competition_id"] = config["competition_id"]
     return config
 
 
@@ -54,7 +50,7 @@ def save_rows(path: Path, rows: list[dict]) -> None:
 
 def evaluate_command(args) -> None:
     config = load_config(args.config)
-    matches, odds, manifest = load_processed(args.data)
+    matches, odds, manifest = load_dataset(args.data)
     start = date.fromisoformat(config[f"{args.split}_start"])
     end = date.fromisoformat(config[f"{args.split}_end"])
     new_run_directory(args.output)
@@ -89,15 +85,16 @@ def evaluate_command(args) -> None:
 
 def simulate_command(args) -> None:
     config = load_config(args.config)
-    matches, _, manifest = load_processed(args.data)
+    matches, _, manifest = load_dataset(args.data)
     model, spec, training = fitted_model(matches, config, args.model, args.as_of)
     season_matches = [
         m
         for m in matches
-        if m.fixture.season_id == args.season and m.fixture.competition_id == "eng-premier-league"
+        if m.fixture.season_id == args.season
+        and m.fixture.competition_id == config["competition_id"]
     ]
     if not season_matches:
-        raise ValueError(f"No Premier League matches for {args.season}")
+        raise ValueError(f"No matches for {args.season} in selected competition")
     teams = sorted(
         {team for m in season_matches for team in (m.fixture.home_team_id, m.fixture.away_team_id)}
     )
@@ -171,7 +168,7 @@ def simulate_command(args) -> None:
 
 def predict_command(args) -> None:
     config = load_config(args.config)
-    matches, _, manifest = load_processed(args.data)
+    matches, _, manifest = load_dataset(args.data)
     as_of = args.as_of or args.date
     model, spec, training = fitted_model(matches, config, args.model, as_of)
     fixture = Fixture(
@@ -216,15 +213,21 @@ def predict_command(args) -> None:
 
 
 def forecast_command(args) -> None:
-    live = load_live_season(args.snapshot)
+    live = load_live_season(args.data, args.cutoff, args.competition, args.season)
     check_freshness(live, args.max_snapshot_age_hours)
     config = load_config(args.config)
-    history, _, manifest = load_processed(args.data)
+    config["competition_id"] = live.competition_id
+    for model in config["models"]:
+        model.setdefault("parameters", {})["competition_id"] = live.competition_id
+        if "data_root" in model.get("parameters", {}):
+            model["parameters"]["data_root"] = str(args.data)
+            model["parameters"]["data_cutoff"] = live.observed_at.isoformat()
+    history, _, manifest = load_dataset(args.data, live.observed_at)
     history = [
         match
         for match in history
         if (match.fixture.competition_id, match.fixture.season_id)
-        != ("eng-premier-league", live.season_id)
+        != (live.competition_id, live.season_id)
     ] + live.played
     as_of = live.observed_at.astimezone(LONDON).date()
     model, spec, training = fitted_model(history, config, args.model, as_of)
@@ -245,6 +248,8 @@ def forecast_command(args) -> None:
         json.loads(args.adjustments.read_text())
         if args.adjustments
         else historical_adjustments(live.season_id, as_of)
+        if live.competition_id == "eng-premier-league"
+        else []
     )
     output = args.output or Path("runs/forecasts") / datetime.now(UTC).strftime(
         "%Y-%m-%dT%H%M%S.%fZ"
@@ -256,7 +261,7 @@ def forecast_command(args) -> None:
         {
             **provenance(config, manifest),
             "model": spec,
-            "snapshot": str(args.snapshot),
+            "data_cutoff": live.observed_at.isoformat(),
             "live_snapshot": live.manifest,
             "seed": args.seed,
             "simulations": args.simulations,
@@ -285,81 +290,21 @@ def forecast_command(args) -> None:
     print(f"Open {output / 'index.html'}")
 
 
-def audit_command(args) -> None:
-    _, _, manifest = load_processed(args.data)
-    coverage = json.loads((args.data / "coverage.json").read_text())["seasons"]
-    rows = []
-    for audit in coverage:
-        missing = audit["missing_by_column"]
-        rows.append(
-            {
-                **{
-                    key: audit[key]
-                    for key in (
-                        "season_id",
-                        "division",
-                        "matches",
-                        "teams",
-                        "complete",
-                        "date_min",
-                        "date_max",
-                    )
-                },
-                "missing_time": missing.get("Time", audit["matches"]),
-                "missing_core": sum(
-                    missing[key] for key in ("Date", "HomeTeam", "AwayTeam", "FTHG", "FTAG", "FTR")
-                ),
-                "missing_shots": sum(
-                    missing.get(key, audit["matches"]) for key in ("HS", "AS", "HST", "AST")
-                ),
-                "bet365_valid": audit["odds"]["bet365_preclosing"].get("valid", 0),
-                "average_closing_valid": audit["odds"]["market_average_closing"].get("valid", 0),
-                "invalid_odds": sum(x.get("invalid", 0) for x in audit["odds"].values()),
-                **{
-                    key: audit[key]
-                    for key in ("mean_home_goals", "mean_away_goals", "goal_covariance")
-                },
-            }
-        )
-    save_rows(args.output, rows)
-    print(
-        f"Audited {manifest['matches']:,} matches in {len(coverage)} season files; "
-        f"{sum(row['complete'] for row in coverage)} complete schedules. Saved {args.output}"
-    )
-
-
 def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(
         description="Premier League probabilistic forecasts and season simulation"
     )
     commands = root.add_subparsers(dest="command", required=True)
-    data = commands.add_parser("data").add_subparsers(dest="action", required=True)
-    snapshot = data.add_parser("snapshot", help="Archive current FPL and Football-Data responses")
-    snapshot.add_argument("--root", type=Path, default=Path("snapshots"))
-    snapshot.add_argument("--season-start", type=int, required=True)
-    for name in ("fetch", "restore", "normalize"):
-        command = data.add_parser(name)
-        command.add_argument("--root", type=Path, default=Path("data"))
-        command.add_argument("--snapshot", type=Path, default=Path("configs/data_snapshot.json"))
-        if name == "fetch":
-            command.add_argument("--start-season", type=int, default=2010)
-            command.add_argument("--end-season", type=int, default=2025)
-            command.add_argument("--divisions", nargs="+", default=["E0", "E1"])
-        if name == "normalize":
-            command.add_argument("--output", type=Path, default=Path("data/processed"))
-    audit = data.add_parser("audit")
-    audit.add_argument("--data", type=Path, default=Path("data/processed"))
-    audit.add_argument("--output", type=Path, default=Path("docs/data_audit.csv"))
-    crosscheck = data.add_parser("cross-check")
-    crosscheck.add_argument("--data", type=Path, default=Path("data/processed"))
-    crosscheck.add_argument(
-        "--snapshot", type=Path, default=Path("configs/crosscheck_snapshot.json")
-    )
-    crosscheck.add_argument("--output", type=Path, default=Path("docs/crosscheck.json"))
     forecast = commands.add_parser("forecast", help="Archive a current-season score-model forecast")
-    forecast.add_argument("--snapshot", type=Path, required=True)
+    forecast.add_argument("--cutoff", type=datetime.fromisoformat)
+    forecast.add_argument(
+        "--competition",
+        choices=["eng-premier-league", "eng-championship"],
+        default="eng-premier-league",
+    )
+    forecast.add_argument("--season")
     forecast.add_argument("--config", type=Path, default=Path("configs/baselines.toml"))
-    forecast.add_argument("--data", type=Path, default=Path("data/processed"))
+    forecast.add_argument("--data", type=Path, default=Path("data"))
     forecast.add_argument("--output", type=Path)
     forecast.add_argument("--model", default="M2-attack-defense-v1")
     forecast.add_argument("--simulations", type=int, default=10000)
@@ -372,7 +317,7 @@ def parser() -> argparse.ArgumentParser:
     for name in ("evaluate", "simulate", "predict"):
         command = commands.add_parser(name)
         command.add_argument("--config", type=Path, default=Path("configs/baselines.toml"))
-        command.add_argument("--data", type=Path, default=Path("data/processed"))
+        command.add_argument("--data", type=Path, default=Path("data"))
         command.add_argument("--output", type=Path, required=name != "predict")
         if name == "evaluate":
             command.add_argument(
@@ -399,41 +344,16 @@ def parser() -> argparse.ArgumentParser:
 
 
 def main() -> None:
+    if len(sys.argv) > 1 and sys.argv[1] == "data":
+        from epl_forecast.data.collect import main as data_main
+
+        sys.argv.pop(1)
+        data_main()
+        return
     root = parser()
     args = root.parse_args()
     try:
-        if args.command != "data":
-            args.func(args)
-        elif args.action == "snapshot":
-            directory = capture_snapshot(args.root, args.season_start)
-            manifest = json.loads((directory / "manifest.json").read_text())
-            print(f"Archived {len(manifest['files'])} sources to {directory}")
-            if manifest["errors"]:
-                raise SourceAccessError(
-                    f"{len(manifest['errors'])} sources failed; "
-                    "successful responses remain archived"
-                )
-        elif args.action == "fetch":
-            snapshot = fetch_snapshot(
-                args.root, args.snapshot, args.start_season, args.end_season, args.divisions
-            )
-            print(f"Pinned {len(snapshot['files'])} source files in {args.snapshot}")
-        elif args.action == "restore":
-            snapshot = read_snapshot(args.snapshot)
-            restore_snapshot(args.root, snapshot)
-            print(f"Verified {len(snapshot['files'])} raw files")
-        elif args.action == "normalize":
-            manifest = normalize_snapshot(args.root, args.snapshot, args.output)
-            print(f"Normalized {manifest['matches']:,} matches to {args.output}")
-        elif args.action == "cross-check":
-            report = crosscheck_openfootball(args.data, args.snapshot, args.output)
-            print(
-                f"Compared {report['compared_matches']} matches; all agree: {report['all_agree']}"
-            )
-            if not report["all_agree"]:
-                sys.exit(1)
-        else:
-            audit_command(args)
+        args.func(args)
     except (ValueError, SourceAccessError, OSError, RuntimeError) as error:
         print(f"Error: {error}", file=sys.stderr)
         sys.exit(1)

@@ -4,16 +4,15 @@ from datetime import UTC, datetime, timedelta
 import numpy as np
 import pytest
 
-from epl_forecast.data.squads import Availability, Candidate, PlayerHistory, Squad
 from epl_forecast.lineups import FORMATIONS, availability_probability, sample_lineups
+from epl_forecast.squads import Availability, Candidate, PlayerHistory, Squad
 
 CUTOFF = datetime(2024, 8, 20, tzinfo=UTC)
 
 
 def observation(player, day, team="one", season="2024-2025", **extra):
     return {
-        "player_season_id": f"{season}:{player}",
-        "fpl_player_code": str(player),
+        "player_id": str(player),
         "player_name": f"Player {player}",
         "season_id": season,
         "kickoff_time": f"2024-08-{day:02d}T15:00:00Z",
@@ -21,8 +20,8 @@ def observation(player, day, team="one", season="2024-2025", **extra):
         "team_id": team,
         "position": "MID",
         "minutes": "90",
-        "starts": "1",
-        "historical_observed_at": "",
+        "starts": 1,
+        "retrieved_at": None,
         **extra,
     }
 
@@ -52,7 +51,7 @@ def test_candidate_pool_cannot_discover_target_or_future_players():
     changed = rows[:2] + [observation(999, 20, minutes="0"), observation(888, 22)]
     after = PlayerHistory(changed).retrospective_squad("one", "2024-2025", CUTOFF)
     assert before == after
-    assert [p.player_id for p in before.candidates] == ["fpl:1"]
+    assert [p.player_id for p in before.candidates] == ["1"]
     assert before.candidates[0].membership_observed_at is None
     assert "retrospective" in before.evidence
 
@@ -67,12 +66,12 @@ def test_club_change_uses_last_past_club_and_does_not_reuse_last_season():
 
 def test_publication_time_never_substituted_with_kickoff():
     history = PlayerHistory(
-        [observation(1, 10), observation(1, 12, historical_observed_at="2024-08-21T00:00:00Z")]
+        [observation(1, 10), observation(1, 12, retrieved_at="2024-08-21T00:00:00Z")]
     )
     assert history.exposure("1", CUTOFF, strict=True) == ()
     assert history.exposure("1", CUTOFF) == ((90, 1),)
-    with pytest.raises(ValueError, match="Ambiguous player code"):
-        PlayerHistory([observation(1, 10), observation(2, 12, fpl_player_code="1")])
+    with pytest.raises(ValueError, match="Duplicate player fixture"):
+        PlayerHistory([observation(1, 10), observation(1, 10)])
 
 
 def test_lineups_have_eleven_starters_990_minutes_and_at_most_five_substitutions():

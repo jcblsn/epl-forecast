@@ -119,19 +119,20 @@ def validate_schedule(
     as_of: date,
     results_observed_at: datetime | None = None,
 ) -> None:
-    if len(teams) != 20 or len(set(teams)) != 20:
-        raise ValueError("Premier League simulation requires 20 distinct season participants")
     fixtures = [m.fixture for m in played] + remaining
+    competitions = {f.competition_id for f in fixtures}
+    if len(competitions) != 1:
+        raise ValueError("Simulation requires one competition")
+    competition = next(iter(competitions))
+    expected_teams = {"eng-premier-league": 20, "eng-championship": 24}.get(competition)
+    if expected_teams is None or len(teams) != expected_teams or len(set(teams)) != expected_teams:
+        raise ValueError("Invalid league season participants")
     if len({f.season_id for f in fixtures}) != 1:
         raise ValueError("Simulation fixtures must belong to one season")
-    if {f.competition_id for f in fixtures} != {"eng-premier-league"}:
-        raise ValueError("Simulation supports Premier League fixtures only")
     pairs = [(f.home_team_id, f.away_team_id) for f in fixtures]
     expected = {(home, away) for home in teams for away in teams if home != away}
-    if len(pairs) != 380 or len(set(pairs)) != 380 or set(pairs) != expected:
-        raise ValueError(
-            "Simulation requires every ordered opponent pair exactly once (380 matches)"
-        )
+    if len(pairs) != len(expected) or len(set(pairs)) != len(expected) or set(pairs) != expected:
+        raise ValueError("Simulation requires every ordered opponent pair exactly once")
     if results_observed_at is None:
         if any(match.available_on > as_of for match in played):
             raise ValueError("Played results must be available at the simulation cutoff")
@@ -239,7 +240,9 @@ def simulate_season(
         )
     if not np.array_equal(goals_for.sum(axis=1), goals_against.sum(axis=1)):
         raise RuntimeError("Simulation goals do not balance")
-    if not np.array_equal(points.sum(axis=1), 3 * 380 - draws + point_offsets.sum()):
+    if not np.array_equal(
+        points.sum(axis=1), 3 * len(teams) * (len(teams) - 1) - draws + point_offsets.sum()
+    ):
         raise RuntimeError("Simulation points do not balance")
     goal_difference = goals_for - goals_against
     position_counts = np.zeros((len(teams), len(teams)))
@@ -252,7 +255,11 @@ def simulate_season(
         else {}
     )
     season = (played[0].fixture if played else remaining[0]).season_id
-    use_head_to_head = int(season[:4]) >= 2019
+    competition = (played[0].fixture if played else remaining[0]).competition_id
+    championship = competition == "eng-championship"
+    if championship and europe is not None:
+        raise ValueError("European qualification scenarios apply to the Premier League")
+    use_head_to_head = not championship and int(season[:4]) >= 2019
     unresolved_count, head_to_head_count = 0, 0
     for sample in range(simulations):
         order, ties, unresolved, used_h2h = rank_table(
@@ -303,12 +310,19 @@ def simulate_season(
             "top_five_probability": float(positions[:5].sum()),
             "relegation_probability": float(positions[-3:].sum()),
         }
+        if championship:
+            playoff_end = 8 if int(season[:4]) >= 2026 else 6
+            row["automatic_promotion_probability"] = float(positions[:2].sum())
+            row["playoff_qualification_probability"] = float(positions[2:playoff_end].sum())
+            row.pop("top_four_probability")
+            row.pop("top_five_probability")
         if europe is not None:
             row["conditional_europe_probabilities"] = {
                 key: float(values[index] / simulations) for key, values in qualification.items()
             }
         rows.append(row)
     return {
+        "competition_id": competition,
         "season_id": season,
         "as_of": str(as_of),
         "results_observed_at": results_observed_at.isoformat() if results_observed_at else None,

@@ -9,7 +9,7 @@ from pathlib import Path
 
 import numpy as np
 
-from epl_forecast.data.live import timestamp
+from epl_forecast.datasets import timestamp
 from epl_forecast.storage import file_hash, write_json
 
 

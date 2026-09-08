@@ -122,7 +122,7 @@ def test_promoted_prior_is_used_before_first_pl_result_and_replaces_stale_pl(bri
     assert state.mean == pytest.approx(expected.mean)
     assert state.covariance == pytest.approx(expected.covariance)
     assert model.team_summary("e3", "2020-2021")["season_pl_matches"] == 0
-    assert model.team_state("e0", "2020-2021").source == "previous PL state"
+    assert model.team_state("e0", "2020-2021").source == "previous league state"
 
 
 def test_championship_results_change_the_promotion_prior(bridge_history):
@@ -225,3 +225,32 @@ def test_shared_training_blocks_same_day_and_future_in_both_divisions(bridge_his
     assert model.predict_match(current[0].fixture).probabilities == pytest.approx(
         [predicted[k] for k in ("p_home", "p_draw", "p_away")]
     )
+
+
+def test_dynamic_factory_can_forecast_championship(small_history):
+    from dataclasses import replace
+
+    from epl_forecast.models import make_model
+
+    games = [
+        replace(
+            m,
+            fixture=replace(
+                m.fixture,
+                competition_id="eng-championship",
+                match_id=m.fixture.match_id.replace("eng-premier-league", "eng-championship"),
+            ),
+        )
+        for m in small_history
+    ]
+    cutoff = games[-1].available_on
+    model = make_model(
+        {
+            "kind": "bayesian_quality_tilt",
+            "parameters": {"competition_id": "eng-championship", "independent_poisson": True},
+        }
+    ).fit(games, cutoff)
+    fixture = replace(games[-1].fixture, match_date=cutoff)
+    probabilities = model.predict_match(fixture).probabilities
+    assert sum(probabilities) == pytest.approx(1)
+    assert all(m.competition_id == "eng-championship" for m in model.members)

@@ -1,63 +1,64 @@
 """Pooled Championship shot summaries mapped to promoted PL process priors."""
 
 from collections import defaultdict
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 
 import numpy as np
 
-from epl_forecast.data.normalize import normalize_rows, team_aliases
-from epl_forecast.data.sources import csv_rows, read_snapshot
+from epl_forecast.datasets import Dataset
 from epl_forecast.models.promotion import PromotionBridge, TeamPrior, fit_bridge_regression
-from epl_forecast.storage import file_hash
 
 
-def shot_summaries(snapshot_path, data_root):
-    aliases = team_aliases()
+def shot_summaries(data_root):
+    data = Dataset(data_root)
     result = {}
-    for entry in read_snapshot(snapshot_path)["files"]:
-        if entry["division"] != "E1" or entry["season_start"] < 2013:
-            continue
-        path = data_root / entry["path"]
-        if file_hash(path) != entry["sha256"]:
-            raise ValueError("Championship raw checksum mismatch")
-        payload = path.read_bytes()
-        matches, _, _ = normalize_rows(payload, entry, aliases)
-        raw = dict(csv_rows(payload)[1])
-        groups = defaultdict(list)
-        all_shots = []
-        for match in matches:
-            row = raw[match.source_row]
-            if not all(row.get(f, "").isdigit() for f in ("HS", "AS", "HST", "AST")):
-                continue
-            hs, ass, ht, at = (int(row[f]) for f in ("HS", "AS", "HST", "AST"))
-            if ht > hs or at > ass:
-                continue
-            all_shots.append([hs, ass])
-            groups[match.fixture.home_team_id].append([hs, ass, 1])
-            groups[match.fixture.away_team_id].append([ass, hs, 0])
-        average = np.mean(all_shots, axis=0)
-        teams = {}
-        for team, rows in groups.items():
-            values = np.array(rows)
-            home = values[:, 2]
-            exposure = np.column_stack(
-                [
-                    home * average[0] + (1 - home) * average[1],
-                    home * average[1] + (1 - home) * average[0],
-                ]
-            )
-            ratios = values[:, :2] / exposure
-            relative = ratios.mean(axis=0)
-            mean = np.log(relative) * [1, -1]
-            variance = ratios.var(axis=0, ddof=1) / (len(rows) * relative**2)
-            teams[team] = {"mean": mean, "variance": variance, "matches": len(rows)}
-        result[entry["season_id"]] = {
-            "teams": teams,
-            "available_on": max(m.available_on for m in matches),
-            "sha256": entry["sha256"],
-        }
-    return result
+    try:
+        rows = data.rows(
+            "SELECT f.season_id, f.match_date, f.match_id, f.home_team_id, "
+            "f.away_team_id, h.shots AS hs, a.shots AS ass, h.source_sha256 FROM fixtures f "
+            "JOIN team_process h ON f.match_id=h.match_id AND f.home_team_id=h.team_id "
+            "JOIN team_process a ON f.match_id=a.match_id AND f.away_team_id=a.team_id "
+            "WHERE f.provider='football_data' AND h.provider='football_data' "
+            "AND a.provider='football_data' AND f.competition_id='eng-championship' "
+            "AND f.season_id>='2013-2014' AND h.shots IS NOT NULL AND a.shots IS NOT NULL "
+            "AND h.shots_on_target<=h.shots AND a.shots_on_target<=a.shots "
+            "ORDER BY f.season_id, f.match_date, f.match_id"
+        )
+        seasons = defaultdict(list)
+        for row in rows:
+            seasons[row["season_id"]].append(row)
+        for season, games in seasons.items():
+            average = np.mean([[r["hs"], r["ass"]] for r in games], axis=0)
+            groups = defaultdict(list)
+            for r in games:
+                groups[r["home_team_id"]].append([r["hs"], r["ass"], 1])
+                groups[r["away_team_id"]].append([r["ass"], r["hs"], 0])
+            teams = {}
+            for team, values in groups.items():
+                values = np.array(values)
+                home = values[:, 2]
+                exposure = np.column_stack(
+                    [
+                        home * average[0] + (1 - home) * average[1],
+                        home * average[1] + (1 - home) * average[0],
+                    ]
+                )
+                ratios = values[:, :2] / exposure
+                relative = ratios.mean(axis=0)
+                teams[team] = {
+                    "mean": np.log(relative) * [1, -1],
+                    "variance": ratios.var(axis=0, ddof=1) / (len(values) * relative**2),
+                    "matches": len(values),
+                }
+            result[season] = {
+                "teams": teams,
+                "available_on": max(r["match_date"] for r in games) + timedelta(days=1),
+                "sha256": games[0]["source_sha256"],
+            }
+        return result
+    finally:
+        data.close()
 
 
 def process_cohorts(matches, records, sources):
@@ -141,10 +142,8 @@ def shot_prior(cohorts, source, as_of, target_season):
     )
 
 
-def bridge_diagnostic(
-    matches, records, snapshot_path=Path("configs/data_snapshot.json"), data_root=Path("data")
-):
-    sources = shot_summaries(snapshot_path, data_root)
+def bridge_diagnostic(matches, records, data_root=Path("data")):
+    sources = shot_summaries(data_root)
     cohorts = process_cohorts(matches, records, sources)
     predictions = []
     for season in sorted({r["season_id"] for r in cohorts if r["season_id"] >= "2023-2024"}):
@@ -202,7 +201,7 @@ def bridge_diagnostic(
             }
         )
     return {
-        "source_snapshot_sha256": file_hash(snapshot_path),
+        "canonical_data_root": str(data_root),
         "cohorts": cohorts,
         "predictions": predictions,
         "summary": summary,

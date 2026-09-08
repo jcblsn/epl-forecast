@@ -1,9 +1,7 @@
 """M7 centered team state with joint opportunity-based goals and Understat xG."""
 
-import json
 from copy import copy
 from datetime import date
-from pathlib import Path
 from types import MappingProxyType
 
 import numpy as np
@@ -12,7 +10,6 @@ from epl_forecast.models.centered_quality_tilt import CenteredQualityTiltFilter
 from epl_forecast.models.gaussian import likelihood_laplace_update
 from epl_forecast.models.quality_tilt import BayesianQualityTilt, ForwardQualityTiltStates
 from epl_forecast.models.xg_observation import ChanceObservation
-from epl_forecast.storage import file_hash
 
 XG_DYNAMICS = {
     "quality_retention": 0.85,
@@ -35,8 +32,6 @@ class XGQualityTiltFilter(CenteredQualityTiltFilter):
             key = row["match_id"]
             if key in rows:
                 raise ValueError("Duplicate xG match observation")
-            if row["provider"] != "understat":
-                raise ValueError("M7 requires provider-specific Understat observations")
             day, available = (
                 date.fromisoformat(row["match_date"]),
                 date.fromisoformat(row["available_on"]),
@@ -92,7 +87,6 @@ class XGQualityTiltFilter(CenteredQualityTiltFilter):
                 "observation_model": "Poisson opportunities; Gamma xG; Binomial goals",
                 "chance_probability": self.chance_probability,
                 "xg_matches": self.xg_updates,
-                "xg_provider": "understat",
                 "xg_availability": "retrospective next-day assumption; late records skipped",
                 "equivalence": "M5 dynamics; Poisson goal marginal; joint goals/xG likelihood",
             }
@@ -108,19 +102,9 @@ class BayesianXGQualityTilt(BayesianQualityTilt):
         prior_weights=None,
         dynamics=None,
         quadrature_order=9,
-        observations_path=None,
-        observations_sha256=None,
     ):
         dynamics = dict(XG_DYNAMICS if dynamics is None else dynamics)
         observations = tuple(observations)
-        if observations_path is not None:
-            path = Path(observations_path)
-            if observations or file_hash(path) != observations_sha256:
-                raise ValueError("Specify only the checksum-verified xG observation file")
-            observations = json.loads(path.read_text())
-        elif observations_sha256 is not None:
-            raise ValueError("xG checksum requires an observation file")
-        self.observations_sha256 = observations_sha256
         probabilities = tuple(chance_probabilities)
         if not probabilities or len(set(probabilities)) != len(probabilities):
             raise ValueError("Specify distinct observation-noise probabilities")
@@ -140,9 +124,7 @@ class BayesianXGQualityTilt(BayesianQualityTilt):
         self.fit_diagnostics.update(
             {
                 "observation_model": "joint opportunity goals/xG likelihood",
-                "xg_provider": "understat",
                 "xg_matches": self.members[0].xg_updates,
-                "xg_observations_sha256": self.observations_sha256,
                 "noise_uncertainty": "finite noise prior; chronological joint evidence",
                 "coordinates": "centered Tilt contrasts and transition-only scoring memory",
             }

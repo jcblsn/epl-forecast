@@ -233,3 +233,36 @@ def test_simulation_reuses_one_joint_state_per_path(full_season):
     assert set(result["teams"][0]["points_distribution"]) == {"0", "114"}
     assert sum(t["title_probability"] for t in result["teams"]) == pytest.approx(1)
     assert sum(t["relegation_probability"] for t in result["teams"]) == pytest.approx(3)
+
+
+def test_championship_projection_conserves_promotion_and_playoff_slots():
+    from types import SimpleNamespace
+
+    from epl_forecast.schema import Fixture, Match, fixture_id
+
+    teams = [f"club-{i}" for i in range(24)]
+    day = date(2026, 8, 10)
+    games = [
+        Match(
+            Fixture(
+                fixture_id("eng-championship", "2026-2027", h, a),
+                "eng-championship",
+                "2026-2027",
+                day,
+                h,
+                a,
+            ),
+            1,
+            1,
+        )
+        for h in teams
+        for a in teams
+        if h != a
+    ]
+    cutoff = date(2026, 8, 11)
+    result = simulate_season(SimpleNamespace(as_of=cutoff), games, [], teams, cutoff, 10, 7)
+    assert len(result["teams"]) == 24
+    assert sum(r["automatic_promotion_probability"] for r in result["teams"]) == pytest.approx(2)
+    assert sum(r["playoff_qualification_probability"] for r in result["teams"]) == pytest.approx(6)
+    assert sum(r["relegation_probability"] for r in result["teams"]) == pytest.approx(3)
+    assert all("top_four_probability" not in r for r in result["teams"])

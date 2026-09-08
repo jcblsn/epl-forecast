@@ -5,7 +5,7 @@ from pathlib import Path
 
 from epl_forecast.artifacts import new_run_directory, results_markdown
 from epl_forecast.cli import save_rows
-from epl_forecast.data.normalize import load_processed
+from epl_forecast.datasets import load_dataset
 from epl_forecast.evaluation import market_predictions, rolling_predictions, summarize
 from epl_forecast.storage import write_json
 from epl_forecast.tuning import select_by_prior_seasons
@@ -13,7 +13,7 @@ from epl_forecast.tuning import select_by_prior_seasons
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Small exploratory rolling M2 parameter search")
-    parser.add_argument("--data", type=Path, default=Path("data/processed"))
+    parser.add_argument("--data", type=Path, default=Path("data"))
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--half-lives", type=float, nargs="+", default=[120, 240, 365, 540, 730])
     parser.add_argument("--ridges", type=float, nargs="+", default=[0.5, 1, 2, 5, 10, 20])
@@ -40,7 +40,7 @@ def main() -> None:
         "bootstrap_samples": 0,
         "models": models,
     }
-    matches, odds, manifest = load_processed(args.data)
+    matches, odds, manifest = load_dataset(args.data)
     new_run_directory(args.output)
     write_json(
         args.output / "run.json",
