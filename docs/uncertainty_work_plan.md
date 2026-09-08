@@ -380,3 +380,26 @@ the player-gate snapshot. Capturing these missing payloads may proceed while
 recent transfer/sidelined histories finish, but identity reconciliation and
 oracle admission must wait for their actual canonical publication and audit.
 Staged evidence is not yet player-model readiness.
+
+## Preserve exact-name evidence in player reconciliation
+
+The staged payload review identified a concrete cause of unresolved links:
+Understat names can exactly match a retained provider name while differing from
+the preferred legal/full display name. For example, the canonical observations
+retain both “Pau Torres” and “Pau Francisco Torres”, and both “Emiliano Martínez”
+and “Damián Emiliano Martínez Romero”. Reconciliation previously discarded that
+usable exact-name evidence by consulting only the preferred display view.
+
+Understat ingestion now considers all retained exact normalized names for
+participants in the same fixture/team. Multiple canonical candidates remain
+unlinked; no fuzzy name rule or guessed alias is added. Name, appearance and
+previous stable-ID evidence must have been retrieved by the payload's capture
+timestamp. Conflicting retained stable links fail explicitly. The original
+preferred player name remains unchanged. A focused test covers alternate exact
+names, ambiguous names and future name/stable-ID isolation.
+
+Staging capture session `37087` (PID 11730) is live and passed its first 100 of
+1,140 fixtures. API backfill session `59435` (PID 11330) is also live. Neither
+has been restarted. Publication will use the tested ingestion implementation
+only after canonical writer access is available; no revised identity coverage
+count is claimed before that audit.

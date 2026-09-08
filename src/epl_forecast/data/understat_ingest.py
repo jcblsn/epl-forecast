@@ -82,14 +82,22 @@ def ingest(root, record, payload):
             return publish(root, record, {"team_process": rows})
         key = context["match_id"]
         f = fixtures[key]
-        known = {
-            r["understat_id"]: r["player_id"]
-            for r in data.rows("SELECT * FROM players WHERE understat_id IS NOT NULL")
-        }
+        known = {}
+        for row in data.rows(
+            "SELECT DISTINCT understat_id, player_id FROM players_observations "
+            "WHERE understat_id IS NOT NULL AND retrieved_at<=?",
+            [record["retrieved_at"]],
+        ):
+            uid, player = row["understat_id"], row["player_id"]
+            if uid in known and known[uid] != player:
+                raise ValueError(f"Contradictory retained player mapping: Understat {uid}")
+            known[uid] = player
         appearances = data.rows(
-            "SELECT a.*, p.name FROM appearances a JOIN players p USING(player_id) "
-            "WHERE a.match_id=?",
-            [key],
+            "SELECT DISTINCT a.team_id, a.player_id, p.name FROM appearances a "
+            "JOIN players_observations p USING(player_id) "
+            "WHERE a.match_id=? AND p.name IS NOT NULL AND p.retrieved_at<=? "
+            "AND a.retrieved_at<=?",
+            [key, record["retrieved_at"], record["retrieved_at"]],
         )
         rows, identities = [], []
         for side, team in [("h", f["home_team_id"]), ("a", f["away_team_id"])]:
