@@ -224,3 +224,32 @@ paths are included. All 213 tests pass, including preservation of prior executio
 records across changed invocations. The public repository has no code license;
 an asynchronous user choice about MIT-for-code-only is pending. No provider-data
 rights are altered.
+
+## Promotion-transition implementation checkpoint
+
+The pooled entry-prior comparison now has a dedicated runner,
+`scripts/evaluate_promotion_transition.py`. It compares the unchanged coarse M7
+entry treatment with a promoted-population prior, a Championship-results prior,
+and a results/shots/SOT prior. Incumbent and global-state moments, forecast
+dynamics, target fixtures and simulation seeds are matched. Source summaries are
+home/division-adjusted season aggregates, not a claimed filtered ending state.
+The bridge integrates coefficient and transition uncertainty and carries the
+correlated sampling covariance of goals/shots/SOT within attack and defense.
+Between-dimension transition covariance and shared bridge-parameter simulation
+across clubs remain explicit limitations.
+
+Only earlier completed PL target cohorts enter each prior; full-target-season
+opponent adjustment is retrospective label construction, not a target-season
+forecast input. The opening-match score is a preseason forecast of each promoted
+club's first five matches, not a daily-refitted or lineup-informed forecast.
+Results and process comparators share source complete cases. The population
+comparator ignores source strength and its measurement covariance.
+
+`runs/promotion-transition-smoke` completed all four variants for 2023/24 with
+100 paths. Tests cover cutoff isolation, known-transition recovery, correlated
+measurement-noise propagation, population invariance and unchanged incumbent
+moments. Full multi-season empirical results are not yet claimed.
+
+The main ladder has finished all eleven seasons and five origins in
+`runs/uncertainty-ladder-v1`; its attribution report contains 400 season and 300
+match comparisons with no missing pairs. Its empirical write-up is next.
