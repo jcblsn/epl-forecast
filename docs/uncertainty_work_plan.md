@@ -363,3 +363,20 @@ The wider recent population remains incomplete. Session `59435` resumes the
 same 2023–2026 scope with the existing 1,000-request daily reserve; do not launch
 a concurrent writer. This is a verified terminal-and-resume transition, not a
 restart caused by quiet output.
+
+## Stage historical player-process evidence
+
+`scripts/stage_player_process.py` separates bounded Understat raw capture from
+canonical publication. Capture uses a separate root, the frozen match/source-ID
+list, cached checksummed payloads and one second between fresh responses. The
+publish action requires complete capture and exclusive canonical writer access;
+it retains original retrieval timestamps, source hashes and contexts. Each
+execution is retained separately. No API-Football quota or capture cadence is
+changed. All 226 tests pass, including refusal to publish while another writer
+holds the lock and preservation of original evidence timing.
+
+The intended staged population is the 1,140 PL fixtures in 2023/24–2025/26 from
+the player-gate snapshot. Capturing these missing payloads may proceed while
+recent transfer/sidelined histories finish, but identity reconciliation and
+oracle admission must wait for their actual canonical publication and audit.
+Staged evidence is not yet player-model readiness.
