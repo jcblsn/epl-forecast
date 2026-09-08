@@ -173,3 +173,37 @@ partial summaries as the batch conclusion. The process handle is exec session
 39240. The repaired bounded recent-window backfill is exec session 38720; its
 budget is 3,000 requests with the existing daily reserve. Revalidate live handles
 and process state before resuming either; do not duplicate running jobs.
+
+## Information-value harness checkpoint
+
+`scripts/evaluate_information_value.py` extracts pre-observation M7-member state
+controls for both leagues, then evaluates new goals, EPL xG, shots and SOT against
+future own-team scoring at lags one, three and six within-season team matches.
+Championship uses M7's goals-only marginal with the same dynamics; no Championship
+xG is created. Source retrieval timestamps/hashes stay separate from the explicit
+next-day research availability assumption. Known future fixture identities/dates
+are retrospective schedule controls, not claimed historical schedule snapshots.
+
+Sensor residualization, pooled ridge coefficients and variance estimates fit only
+earlier seasons whose targets have matured before the evaluated information
+cutoff. Every sensor subset in a league/horizon uses identical complete cases.
+The report includes incremental and leave-one-sensor-out comparisons, whole-season
+intervals, season/team stability, residual correlations and within-team residual
+persistence. Gaussian proxy scores/intervals apply to noisy future log1p-goals;
+they are not match-score NLL or latent-state calibration claims.
+
+Separate identical-prior Laplace updates measure goals and goals+xG effects on
+joint latent match log-rate variance. Shots/SOT are not assimilated or assigned
+invented posterior precision. A known Gaussian-state/correlated-sensor check
+validates dependence accounting, explicitly outside football-model validation.
+In its fixed 20,000-draw test, joint-noise 90% coverage is 90.065%; incorrectly
+independent noise yields 65.845% coverage.
+
+The final two-season smoke artifact is `runs/information-value-state-smoke`:
+2014/15 supplies initial fitting and 2015/16 supplies evaluation, both leagues.
+It completed 177 matched residual comparisons and 21 persistence summaries;
+single-season uncertainty intervals are left unknown. The earlier
+`runs/information-value-smoke` predates the posterior/persistence additions and
+is retained only as an implementation checkpoint. All 212 tests pass, including
+future-target isolation and redundant-sensor covariance checks. Multi-season
+empirical interpretation and the promotion/offseason application remain open.
