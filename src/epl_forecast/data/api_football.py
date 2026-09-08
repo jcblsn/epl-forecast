@@ -8,7 +8,7 @@ from urllib.parse import urlencode
 from zoneinfo import ZoneInfo
 
 from epl_forecast.data.capture import SourceAccessError
-from epl_forecast.datasets import publish
+from epl_forecast.datasets import Dataset, publish
 from epl_forecast.schema import fixture_id
 
 BASE = "https://v3.football.api-sports.io/"
@@ -112,6 +112,18 @@ def team_key(team, required=False):
 def normalize(record, body, root):
     endpoint, context = record["context"]["endpoint"], record["context"]
     tables = {}
+    fixture_keys = {}
+    if endpoint == "injuries":
+        data = Dataset(root)
+        try:
+            fixture_keys = {
+                r["api_id"]: r["match_id"]
+                for r in data.rows(
+                    "SELECT DISTINCT api_id, match_id FROM fixtures WHERE api_id IS NOT NULL"
+                )
+            }
+        finally:
+            data.close()
 
     def add(table, row):
         tables.setdefault(table, []).append(row)
@@ -266,6 +278,17 @@ def normalize(record, body, root):
                     },
                 )
         elif endpoint == "players/squads":
+            add(
+                "teams",
+                {
+                    "team_id": team_key(item["team"], True),
+                    "api_id": item["team"]["id"],
+                    "name": item["team"]["name"],
+                },
+            )
+            positions = {}
+            for p in item["players"]:
+                positions.setdefault(p["id"], set()).add(p["position"])
             for p in item["players"]:
                 pid = player_id(p["id"])
                 add("players", {"player_id": pid, "api_id": p["id"], "name": p["name"]})
@@ -276,7 +299,9 @@ def normalize(record, body, root):
                         "team_id": team_key(item["team"], True),
                         "season_id": record["context"]["season_id"],
                         "competition_id": record["context"]["competition_id"],
-                        "position": ROLES.get(p["position"], "UNK"),
+                        "position": ROLES.get(p["position"], "UNK")
+                        if len(positions[p["id"]]) == 1
+                        else "UNK",
                         "basis": "captured_squad",
                         "scope": str(item["team"]["id"]),
                     },
@@ -292,7 +317,10 @@ def normalize(record, body, root):
                     "competition_id": comp,
                     "season_id": f"{item['league']['season']}-{item['league']['season'] + 1}",
                     "scope": f"fixture:{f['id']}",
-                    "status": p["type"],
+                    "match_id": fixture_keys.get(f["id"]),
+                    "status": {"Missing Fixture": "unavailable", "Questionable": "doubtful"}.get(
+                        p["type"], "unknown"
+                    ),
                     "reason": p["reason"],
                 },
             )

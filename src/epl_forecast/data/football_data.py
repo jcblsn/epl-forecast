@@ -197,19 +197,12 @@ def match_record(match: Match) -> dict:
     }
 
 
-def write_csv(path: Path, fields: list[str], rows: list[dict]) -> None:
-    stream = io.StringIO(newline="")
-    writer = csv.DictWriter(stream, fields, lineterminator="\n")
-    writer.writeheader()
-    writer.writerows(rows)
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(stream.getvalue())
-
-
 def ingest(root, record, payload):
     from epl_forecast.datasets import publish
 
     context = record["context"]
+    if context.get("kind") == "latest_odds":
+        return ingest_latest_odds(root, record, payload)
     entry = {**context, "sha256": record["source_sha256"]}
     matches, odds, audit = normalize_rows(payload, entry, team_aliases())
     fixtures = [{**match_record(m), "stage": "regular", "status": "finished"} for m in matches]
@@ -261,3 +254,44 @@ def ingest(root, record, payload):
             ],
         },
     )
+
+
+def ingest_latest_odds(root, record, payload):
+    from epl_forecast.datasets import Dataset, publish
+
+    reader = csv.DictReader(io.StringIO(payload.decode("utf-8-sig")))
+    if not {"Div", "Date", "HomeTeam", "AwayTeam"}.issubset(reader.fieldnames or []):
+        raise ValueError("Latest odds response lacks fixture identity columns")
+    aliases = team_aliases()
+    data = Dataset(root)
+    fixtures = {f["match_id"]: f for f in data.fixtures()}
+    data.close()
+    rows = []
+    for row in reader:
+        if row["Div"] not in COMPETITIONS:
+            continue
+        comp = COMPETITIONS[row["Div"]]["id"]
+        season = record["context"]["season_id"]
+        key = fixture_id(comp, season, aliases[row["HomeTeam"]], aliases[row["AwayTeam"]])
+        fixture = fixtures.get(key)
+        if fixture is None or fixture["match_date"] != parse_date(row["Date"]):
+            raise ValueError(f"Latest odds fixture does not match canonical schedule: {key}")
+        for family, columns in ODDS_FAMILIES.items():
+            if any(not row.get(c) for c in columns):
+                continue
+            values = [float(row[c]) for c in columns]
+            if not all(math.isfinite(v) and v > 1 for v in values):
+                raise ValueError(f"Invalid latest odds: {key}")
+            rows.append(
+                {
+                    "match_id": key,
+                    "competition_id": comp,
+                    "season_id": season,
+                    "family": family,
+                    "home_odds": values[0],
+                    "draw_odds": values[1],
+                    "away_odds": values[2],
+                    "observed_at": record["retrieved_at"],
+                }
+            )
+    return publish(root, record, {"odds": rows})

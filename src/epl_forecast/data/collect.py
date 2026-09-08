@@ -2,7 +2,7 @@
 
 import argparse
 import json
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
 from epl_forecast.data import api_football as api
@@ -84,6 +84,49 @@ def backfill(root=Path("data"), start=2010, end=None, max_requests=None):
         for p in people:
             for endpoint in ("transfers", "sidelined"):
                 get(endpoint, {"player": p["api_id"]})
+        for year in range(end, start - 1, -1):
+            for division, competition in COMPETITIONS.items():
+                record, payload = fetcher.get(
+                    "football_data",
+                    source_url(year, division),
+                    historical=year < end,
+                    max_age=86400,
+                    context={
+                        "season_start": year,
+                        "season_id": season_name(year),
+                        "division": division,
+                        "competition_id": competition["id"],
+                    },
+                )
+                football_data.ingest(root, record, payload)
+            if year >= 2014:
+                record, payload = fetcher.get(
+                    "understat",
+                    f"https://understat.com/getLeagueData/EPL/{year}",
+                    historical=year < end,
+                    max_age=86400,
+                    context={"kind": "league", "season_start": year},
+                )
+                understat_ingest.ingest(root, record, payload)
+                data = Dataset(root)
+                matches = data.rows(
+                    "SELECT DISTINCT match_id, source_match_id FROM team_process "
+                    "WHERE source_match_id IS NOT NULL AND season_id=?",
+                    [season_name(year)],
+                )
+                data.close()
+                for match in matches:
+                    if max_requests is not None and len(fetcher.records) - initial >= max_requests:
+                        raise QuotaReached(
+                            "This backfill invocation reached its request budget; resume"
+                        )
+                    record, payload = fetcher.get(
+                        "understat",
+                        f"https://understat.com/getMatchData/{match['source_match_id']}",
+                        historical=True,
+                        context={"kind": "players", "match_id": match["match_id"]},
+                    )
+                    understat_ingest.ingest(root, record, payload)
         report["status"] = "complete"
     except QuotaReached as error:
         report.update(status="paused", reason=str(error))
@@ -95,6 +138,41 @@ def backfill(root=Path("data"), start=2010, end=None, max_requests=None):
         report["completed_at"] = datetime.now(UTC).isoformat()
         write_json(Path(root) / "audits" / "backfill.json", report)
     return report
+
+
+def fixture_details_due(fixtures, records, now):
+    captured = {}
+    for record in records:
+        context = record.get("context", {})
+        if record["provider"] != "api_football" or context.get("endpoint") != "fixtures":
+            continue
+        ids = str(context.get("ids", context.get("id", ""))).split("-")
+        for value in ids:
+            if value:
+                fid = int(value)
+                observed = datetime.fromisoformat(record["retrieved_at"])
+                captured[fid] = max(observed, captured.get(fid, observed))
+    selected = []
+    for row in fixtures:
+        fixture = row["fixture"]
+        kickoff = datetime.fromisoformat(fixture["date"])
+        previous = captured.get(fixture["id"])
+        status = fixture["status"]["short"]
+        if status in {"FT", "AET", "PEN", "AWD", "WO"}:
+            targets = [
+                kickoff + timedelta(hours=2),
+                kickoff + timedelta(days=1),
+                kickoff + timedelta(days=7),
+            ]
+            due = any(
+                target <= now and (previous is None or previous < target) for target in targets
+            )
+        else:
+            due = kickoff - timedelta(minutes=90) <= now <= kickoff + timedelta(hours=6)
+            due = due and (previous is None or (now - previous).total_seconds() >= 600)
+        if due:
+            selected.append(fixture["id"])
+    return selected
 
 
 def collect(root=Path("data"), season=None):
@@ -138,6 +216,14 @@ def collect(root=Path("data"), season=None):
                     },
                 }
                 attempt(api.normalize, record, squad, root)
+        for team in sorted(teams):
+            attempt(
+                normalized_request,
+                fetcher,
+                "transfers",
+                {"team": team},
+                max_age=86400 if now.month in (1, 6, 7, 8, 9) else 7 * 86400,
+            )
         attempt(
             normalized_request,
             fetcher,
@@ -145,12 +231,7 @@ def collect(root=Path("data"), season=None):
             {"league": league, "season": year},
             max_age=14400,
         )
-        selected = []
-        for r in fixtures:
-            kickoff = datetime.fromisoformat(r["fixture"]["date"])
-            delta = (now - kickoff).total_seconds()
-            if -5400 <= delta <= 8 * 86400:
-                selected.append(r["fixture"]["id"])
+        selected = fixture_details_due(fixtures, fetcher.records, now)
         for offset in range(0, len(selected), 20):
             attempt(
                 normalized_request,
@@ -178,6 +259,15 @@ def collect(root=Path("data"), season=None):
             attempt(football_data.ingest, root, *response)
     response = attempt(
         fetcher.get,
+        "football_data",
+        "https://football-data.co.uk/fixtures.csv",
+        context={"kind": "latest_odds", "season_id": season_name(year)},
+        max_age=21600,
+    )
+    if response:
+        attempt(football_data.ingest, root, *response)
+    response = attempt(
+        fetcher.get,
         "understat",
         f"https://understat.com/getLeagueData/EPL/{year}",
         context={"kind": "league", "season_start": year},
@@ -185,8 +275,28 @@ def collect(root=Path("data"), season=None):
     )
     if response:
         attempt(understat_ingest.ingest, root, *response)
+    data = Dataset(root)
+    matches = data.rows(
+        "SELECT DISTINCT t.match_id, t.source_match_id, f.match_date "
+        "FROM team_process t JOIN fixtures f USING(match_id) "
+        "WHERE t.source_match_id IS NOT NULL AND t.season_id=? AND "
+        "(f.match_date>=? OR NOT EXISTS "
+        "(SELECT 1 FROM player_process p WHERE p.match_id=t.match_id))",
+        [season_name(year), (now - timedelta(days=8)).date()],
+    )
+    data.close()
+    for match in matches:
+        response = attempt(
+            fetcher.get,
+            "understat",
+            f"https://understat.com/getMatchData/{match['source_match_id']}",
+            context={"kind": "players", "match_id": match["match_id"]},
+            max_age=86400,
+        )
+        if response:
+            attempt(understat_ingest.ingest, root, *response)
     report = {
-        "completed_at": now.isoformat(),
+        "completed_at": datetime.now(UTC).isoformat(),
         "status": "partial" if errors else "complete",
         "errors": errors,
     }
@@ -239,9 +349,54 @@ def audit(root):
             )[0]["n"],
             "unresolved_fpl_codes": data.rows(
                 "SELECT count(DISTINCT fpl_code) AS n "
-                "FROM availability WHERE fpl_code IS NOT NULL AND player_id IS NULL"
+                "FROM availability_observations WHERE fpl_code IS NOT NULL AND player_id IS NULL "
+                "AND retrieved_at=(SELECT max(retrieved_at) FROM availability_observations "
+                "WHERE provider='fpl')"
             )[0]["n"],
         }
+        report["season_coverage"] = data.rows(
+            "WITH f AS (SELECT DISTINCT match_id, competition_id, season_id, stage FROM fixtures), "
+            "a AS (SELECT DISTINCT match_id FROM appearances) "
+            "SELECT competition_id, season_id, "
+            "count(*) FILTER (WHERE stage='regular') AS regular_fixtures, "
+            "CASE WHEN competition_id='eng-premier-league' THEN 380 ELSE 552 END "
+            "AS expected_regular, "
+            "count(*) FILTER (WHERE stage<>'regular') AS playoff_fixtures, "
+            "count(a.match_id) AS fixtures_with_appearances "
+            "FROM f LEFT JOIN a USING(match_id) GROUP BY 1,2 ORDER BY 1,2"
+        )
+        report["incomplete_starting_lineups"] = data.rows(
+            "SELECT match_id, team_id, sum(starts) AS starters, "
+            "count(*) FILTER (WHERE minutes IS NULL) AS unknown_minutes "
+            "FROM appearances GROUP BY 1,2 HAVING sum(starts)<>11 OR sum(starts) IS NULL "
+            "ORDER BY 1,2"
+        )
+        report["players_without_transfer_capture"] = data.rows(
+            "SELECT count(*) AS n FROM players WHERE api_id IS NOT NULL"
+        )[0]["n"]
+        captured_transfers = set()
+        captured_sidelined = set()
+        for manifest in data.manifests:
+            context = manifest["request"]["context"]
+            if context.get("endpoint") == "transfers" and "player" in context:
+                captured_transfers.add(int(context["player"]))
+            if context.get("endpoint") == "sidelined" and "player" in context:
+                captured_sidelined.add(int(context["player"]))
+        total_players = report["players_without_transfer_capture"]
+        report["players_without_transfer_capture"] = total_players - len(captured_transfers)
+        report["players_without_sidelined_capture"] = total_players - len(captured_sidelined)
+        report["archive_status"] = (
+            "incomplete"
+            if (
+                report["players_without_transfer_capture"]
+                or report["players_without_sidelined_capture"]
+                or any(
+                    r["regular_fixtures"] != r["expected_regular"]
+                    for r in report["season_coverage"]
+                )
+            )
+            else "requires_provider_coverage_review"
+        )
         write_json(Path(root) / "audits" / "coverage.json", report)
         return report
     finally:

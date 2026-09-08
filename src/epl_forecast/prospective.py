@@ -70,6 +70,7 @@ def capture_attempt(
             for name, path, model in [
                 ("M2", config, "M2-attack-defense-v1"),
                 ("M5", "configs/quality_tilt.toml", "M5-quality-tilt-v1"),
+                ("M6", None, "M6-player-quality-v1"),
                 ("M7", "configs/xg_quality_tilt.toml", "M7-xg-v1"),
                 ("M8", "configs/process_quality_tilt.toml", "M8-process-v1"),
             ]:
@@ -94,6 +95,22 @@ def capture_attempt(
                     "--simulations",
                     str(simulations),
                 ]
+                if name == "M6":
+                    command = [
+                        sys.executable,
+                        "scripts/forecast_player_quality.py",
+                        "--forecast-only",
+                        "--data",
+                        str(data_root),
+                        "--competition",
+                        league,
+                        "--cutoff",
+                        now.isoformat(),
+                        "--output",
+                        str(output),
+                        "--simulations",
+                        str(simulations),
+                    ]
                 completed = subprocess.run(command, text=True, capture_output=True, check=False)
                 results.append(
                     {"league": league, "model": name, "returncode": completed.returncode}

@@ -27,6 +27,11 @@ def ingest(root, record, payload):
     try:
         players = data.rows("SELECT * FROM players_observations")
         known = {p["fpl_code"]: p["player_id"] for p in players if p["fpl_code"]}
+        identities = {}
+        for player in players:
+            if player["name"] and player["birth_date"]:
+                key = name_tokens(player["name"]), str(player["birth_date"])
+                identities.setdefault(key, set()).add(player["player_id"])
         rows, mappings = [], []
         for p in b["elements"]:
             if p["element_type"] not in (1, 2, 3, 4):
@@ -34,14 +39,7 @@ def ingest(root, record, payload):
             code = str(p["code"])
             pid = known.get(code)
             full = name_tokens(p["first_name"] + " " + p["second_name"])
-            candidates = {
-                r["player_id"]
-                for r in players
-                if r["name"]
-                and name_tokens(r["name"]) == full
-                and r["birth_date"] is not None
-                and str(r["birth_date"]) == p.get("birth_date")
-            }
+            candidates = identities.get((full, p.get("birth_date")), set())
             if len(candidates) == 1:
                 candidate = next(iter(candidates))
                 if pid and candidate != pid:

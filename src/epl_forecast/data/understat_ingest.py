@@ -4,6 +4,8 @@ import gzip
 import json
 import re
 import unicodedata
+from datetime import datetime
+from pathlib import Path
 
 from epl_forecast.data.api_football import team_registry
 from epl_forecast.datasets import Dataset, publish
@@ -35,6 +37,12 @@ def ingest(root, record, payload):
                     "West Bromwich Albion": "west-bromwich-albion",
                 }
             )
+            corrections = {
+                r["source_match_id"]: r
+                for r in json.loads(
+                    Path(__file__).with_name("understat_date_corrections.json").read_text()
+                )
+            }
             rows = []
             for r in body["dates"]:
                 if not r.get("isResult"):
@@ -44,6 +52,14 @@ def ingest(root, record, payload):
                 f = fixtures.get(key)
                 if f is None:
                     raise ValueError(f"Understat fixture not in canonical schedule: {key}")
+                if datetime.fromisoformat(r["datetime"]).date() != f["match_date"]:
+                    correction = corrections.get(str(r["id"]), {})
+                    if (
+                        correction.get("match_id") != key
+                        or correction.get("source_datetime") != r["datetime"]
+                        or correction.get("canonical_date") != str(f["match_date"])
+                    ):
+                        raise ValueError(f"Understat date contradiction: {key}")
                 if (int(r["goals"]["h"]), int(r["goals"]["a"])) != (
                     f["home_goals"],
                     f["away_goals"],

@@ -57,3 +57,28 @@ def test_normalize_rejects_corrupted_raw_capture(tmp_path):
     (tmp_path / record["raw_path"]).write_bytes(b"modified")
     with pytest.raises(ValueError, match="hash mismatch"):
         normalize(tmp_path)
+
+
+def test_final_fixture_capture_has_bounded_correction_checkpoints():
+    from datetime import timedelta
+
+    from epl_forecast.data.collect import fixture_details_due
+
+    kickoff = datetime(2026, 9, 1, 15, tzinfo=UTC)
+    fixtures = [{"fixture": {"id": 10, "date": kickoff.isoformat(), "status": {"short": "FT"}}}]
+
+    def records(hours):
+        return [
+            {
+                "provider": "api_football",
+                "context": {"endpoint": "fixtures", "ids": "10-11"},
+                "retrieved_at": (kickoff + timedelta(hours=hours)).isoformat(),
+            }
+        ]
+
+    assert fixture_details_due(fixtures, [], kickoff + timedelta(hours=3)) == [10]
+    assert fixture_details_due(fixtures, records(3), kickoff + timedelta(hours=4)) == []
+    assert fixture_details_due(fixtures, records(3), kickoff + timedelta(days=1)) == [10]
+    assert fixture_details_due(fixtures, records(25), kickoff + timedelta(days=2)) == []
+    assert fixture_details_due(fixtures, records(25), kickoff + timedelta(days=7)) == [10]
+    assert fixture_details_due(fixtures, records(169), kickoff + timedelta(days=30)) == []

@@ -23,7 +23,6 @@ def main():
     parser.add_argument("--data", type=Path, default=Path("data"))
     parser.add_argument("--cutoff")
     parser.add_argument("--competition", default="eng-premier-league")
-    parser.add_argument("--players", type=Path, default=Path("data"))
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--train-start", type=date.fromisoformat, default=date(2023, 7, 1))
     parser.add_argument("--simulations", type=int, default=2000)
@@ -52,7 +51,7 @@ def main():
         for f in live.remaining
         if live.details[f.match_id]["kickoff_time"]
     }
-    matches, _, _ = load_dataset(Path("data"))
+    matches, _, _ = load_dataset(args.data, observed)
     as_of = observed.astimezone(LONDON).date()
     training = [m for m in matches if m.fixture.season_id != live.season_id] + live.played
     training = [
@@ -60,7 +59,10 @@ def main():
     ]
     model = BayesianPlayerQuality(
         history, lineup_draws=args.draws, seed=args.seed, squads=squads, kickoffs=kickoffs
-    ).fit(training, as_of)
+    )
+    for member in model.members:
+        member.primary_competition = args.competition
+    model.fit(training, as_of)
     print(
         f"Fitted M6: {len(training)} results, {len(model.members[0].player_index)} players",
         flush=True,
@@ -80,7 +82,10 @@ def main():
     print("Archived current M6 forecast", flush=True)
     if args.forecast_only:
         return
-    parent = BayesianQualityTilt(independent_poisson=True).fit(training, as_of)
+    parent = BayesianQualityTilt(independent_poisson=True)
+    for member in parent.members:
+        member.primary_competition = args.competition
+    parent.fit(training, as_of)
     parent_forecast = export_forecast(
         live,
         parent,
@@ -179,7 +184,9 @@ def main():
                 for key in (
                     "mean_points",
                     "title_probability",
-                    "top_four_probability",
+                    "top_four_probability"
+                    if args.competition == "eng-premier-league"
+                    else "automatic_promotion_probability",
                     "relegation_probability",
                 )
             },

@@ -3,6 +3,7 @@
 from collections import defaultdict
 from dataclasses import dataclass, replace
 from datetime import datetime, timedelta
+from zoneinfo import ZoneInfo
 
 from epl_forecast.datasets import timestamp
 
@@ -16,6 +17,7 @@ class Availability:
     expires_at: datetime
     source: str
     recovery: str = "step"
+    target_kickoff: datetime | None = None
 
     def __post_init__(self):
         if self.observed_at.tzinfo is None or self.expires_at.tzinfo is None:
@@ -97,7 +99,11 @@ class PlayerHistory:
 
     @staticmethod
     def _past(row, cutoff, strict):
-        if timestamp(row["kickoff_time"]).date() >= timestamp(cutoff).date():
+        london = ZoneInfo("Europe/London")
+        if (
+            timestamp(row["kickoff_time"]).astimezone(london).date()
+            >= timestamp(cutoff).astimezone(london).date()
+        ):
             return False
         observed = row.get("retrieved_at")
         if strict or (observed and row.get("evidence_basis") != "retrospective"):
@@ -167,7 +173,7 @@ class PlayerHistory:
 
 def captured_squads(data, cutoff, history=None):
     cutoff = timestamp(cutoff)
-    scope_times = {}
+    scope_times, scope_seasons = {}, {}
     for m in data.manifests:
         r = m["request"]
         c = r["context"]
@@ -175,7 +181,9 @@ def captured_squads(data, cutoff, history=None):
             time = timestamp(r["retrieved_at"])
             scope = str(c["team"])
             if time <= cutoff:
-                scope_times[scope] = max(time, scope_times.get(scope, time))
+                if time >= scope_times.get(scope, time):
+                    scope_times[scope] = time
+                    scope_seasons[scope] = c["season_id"]
     players = {r["player_id"]: r for r in data.rows("SELECT * FROM players")}
     latest_fpl = max(
         (
@@ -194,7 +202,29 @@ def captured_squads(data, cutoff, history=None):
         )
         if r["player_id"]
     }
+    injury_times = {}
+    for manifest in data.manifests:
+        request = manifest["request"]
+        context = request["context"]
+        observed = timestamp(request["retrieved_at"])
+        if context.get("endpoint") == "injuries" and observed <= cutoff:
+            scope = context.get("league"), context.get("season")
+            injury_times[scope] = max(observed, injury_times.get(scope, observed))
+    injuries = {}
+    for signal in data.rows(
+        "SELECT a.*, f.kickoff_time FROM availability_observations a "
+        "JOIN fixtures f USING(match_id) WHERE a.status='unavailable' "
+        "AND f.kickoff_time>? AND a.retrieved_at<=? ORDER BY f.kickoff_time DESC",
+        [cutoff, cutoff],
+    ):
+        league = 39 if signal["competition_id"] == "eng-premier-league" else 40
+        if signal["retrieved_at"] == injury_times.get((league, int(signal["season_id"][:4]))):
+            injuries[signal["player_id"]] = signal
     grouped = defaultdict(list)
+    for team in data.rows("SELECT * FROM teams WHERE api_id IS NOT NULL"):
+        scope = str(team["api_id"])
+        if scope in scope_seasons:
+            grouped[team["team_id"], scope_seasons[scope]] = []
     for r in data.rows("SELECT * FROM memberships WHERE basis='captured_squad'"):
         observed = r["retrieved_at"]
         if observed != scope_times.get(r["scope"]) or observed > cutoff:
@@ -210,6 +240,16 @@ def captured_squads(data, cutoff, history=None):
                 signal["retrieved_at"] + timedelta(days=28),
                 "captured round probability; 28-day scenario",
                 "linear",
+            )
+        missing = injuries.get(pid)
+        if missing:
+            kickoff = missing["kickoff_time"]
+            assumption = Availability(
+                missing["retrieved_at"],
+                0.0,
+                kickoff + timedelta(hours=3),
+                "captured missing-fixture report",
+                target_kickoff=kickoff,
             )
         grouped[r["team_id"], r["season_id"]].append(
             Candidate(

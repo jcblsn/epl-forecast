@@ -111,37 +111,26 @@ OPENBLAS_NUM_THREADS=1 uv run --extra research python scripts/check_player_quali
   --output runs/m6-reference
 ```
 
-For a current player-aware export, capture a fresh season snapshot and player
-histories, then pass those timestamped paths:
+For a current player-aware export, collect current squads and use the canonical
+appearance archive:
 
 ```sh
-uv run epl-forecast data snapshot --season-start 2026
-uv run python scripts/capture_player_histories.py \
-  --snapshot snapshots/CAPTURE_TIMESTAMP --output runs/m6-player-capture
+uv run epl-forecast data collect
 OPENBLAS_NUM_THREADS=1 uv run python scripts/forecast_player_quality.py \
-  --snapshot snapshots/CAPTURE_TIMESTAMP \
-  --live-players runs/m6-player-capture/player_matches.csv.gz \
-  --output runs/m6-live
+  --forecast-only --competition eng-premier-league --output runs/m6-live
 ```
 
-This archives M6 and its matched M5 parent, then compares a captured player's
-restricted availability with a restored-player counterfactual. Expiry follows
-an explicit 28-day recovery assumption, not a medical recovery prediction.
-Use `--forecast-only` to archive M6 without running the comparison scenario.
+The same command accepts `--competition eng-championship`. The optional availability
+counterfactual uses an explicit 28-day recovery assumption for captured FPL round
+probabilities; it is a model scenario, not a medical recovery prediction.
 
 ## Historical experiments
 
-The existing normalized cache is required for forecasts. On a new checkout:
-
-```sh
-uv run epl-forecast data restore
-uv run epl-forecast data normalize
-```
-
-Historical raw files are pinned in [data_snapshot.json](configs/data_snapshot.json).
-If an upstream file changes, restoration fails explicitly; preserve the original
-raw cache for long-term reproduction. Live captures use separate timestamped
-snapshots and never replace the historical pin.
+Backfill the canonical archive with `data backfill`; inspect gaps with `data audit`.
+A checkout does not include provider data. Preserve `data/raw/`, `data/requests/`,
+`data/manifests/`, `data/parquet/` and forecast runs when backing up the project.
+The old CSV restoration commands have been removed. Original local snapshot and
+run evidence remains on disk, but new consumers use canonical datasets.
 
 The original [E001](docs/experiments/E001.md) and [E002](docs/experiments/E002.md)
 reports remain records of the work already done. Their gates and split names are

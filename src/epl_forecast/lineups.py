@@ -35,6 +35,8 @@ def availability_probability(player: Candidate, kickoff: datetime):
     assumption = player.availability
     if assumption is None or kickoff >= assumption.expires_at:
         return 1.0
+    if assumption.target_kickoff is not None and kickoff != assumption.target_kickoff:
+        return 1.0
     if kickoff < assumption.observed_at:
         raise ValueError("Cannot project availability before it was observed")
     if assumption.recovery == "step":

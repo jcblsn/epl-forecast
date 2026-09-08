@@ -1,60 +1,45 @@
-# Normalized match schema, version 1
+# Canonical data boundary
 
-`data normalize` writes deterministic UTF-8 CSV with LF newlines. Matches are
-sorted by date and match ID; odds are sorted by match ID and family. Raw files are
-never edited. `manifest.json` hashes every processed table and coverage report.
+`src/epl_forecast/datasets.py` defines the durable canonical schema and query views.
+Parquet is the persisted tabular format; DuckDB is an embedded query engine over
+manifest-listed files. No persistent database service or compatibility CSV cache
+is required. Report CSVs remain output artifacts, not the analytical data layer.
 
-## matches.csv
-
-| Field | Type | Meaning |
-| --- | --- | --- |
-| match_id | string | `competition:season:home:away`; ordered opponents uniquely identify a league fixture. |
-| competition_id | string | `eng-premier-league` or `eng-championship`. |
-| season_id | string | Start and end years, e.g. `2024-2025`. |
-| match_date | ISO date | Recorded date of play; date precision is the evaluation clock. |
-| home_team_id, away_team_id | strings | Reviewed aliases from the team registry, shared between divisions. |
-| home_goals, away_goals | nonnegative integers | Completed full-time scores. Missing scores are errors, never zero-filled. |
-| outcome | enum | `H`, `D`, `A`, checked against the score. |
-| available_on | ISO date | Assumed first usable day: `match_date + 1 day`. |
-| source_sha256 | hex string | Raw blob hash; joins to the source snapshot. |
-| source_row | integer | Source CSV row number, counting the header as 1. |
-| source_time | string or empty | Original kickoff time, retained without a verified timezone claim. |
-
-The source snapshot contains source name, original URL, season, division, original
-retrieval timestamp, byte size and SHA-256. Actual re-download times belong to raw
-metadata sidecars and do not change normalized rows. The snapshot's original
-retrieval time is not a historical result-availability timestamp.
-
-Unknown team names, self-matches, duplicate ordered pairs, dates outside the
-season, fractional/negative/missing goals and inconsistent outcome labels fail
-normalization. July dates are valid. `coverage.json` records per-season expected
-counts, actual counts, fields, missingness, odds validity and scoring summaries.
-Incomplete seasons are identified; simulation requires a complete schedule.
-
-## odds.csv
-
-| Field | Meaning |
+| Table | Grain |
 | --- | --- |
-| match_id | Match foreign key. |
-| family | Bet365 pre-closing, Betbrain average pre-closing, market average pre-closing, or market average closing. |
-| home_odds, draw_odds, away_odds | Decimal prices, finite and strictly greater than 1. |
-| source_columns | Exact original column triplet, separated by semicolons. |
-| source_sha256, source_row | Raw provenance. |
-| observed_at | Empty: the archive has no individual collection timestamp. |
+| competition_seasons | Competition and season |
+| teams | Canonical team and explicit provider ID |
+| fixtures | Match, with regular/playoff stage and source fixture ID |
+| players | Stable player identity and explicit provider IDs |
+| memberships | Player/team/season and membership evidence basis |
+| appearances | Match/player/team, nullable minutes and statistics |
+| availability | Player, fixture/round/interval scope, captured state |
+| transfers | Player, date and origin/destination |
+| team_process | Match/team, distinct provider observations |
+| player_process | Match and source player, nullable canonical mapping |
+| odds | Match and quote family |
 
-A family is retained only when all three prices are valid. Invalid and missing
-triplets are counted separately. Results are retained even when odds are unusable.
-No fallback silently mixes bookmakers, market averages or collection horizons.
-The [source notes](https://football-data.co.uk/notes.txt) define the original fields.
+Each observation retains provider, actual retrieval time, evidence basis and raw
+hash. `<table>_observations` exposes retained history; the base view selects the
+latest row per provider and natural key. Complete-snapshot consumers must use
+request scope and timestamp to recognize removals, including empty snapshots.
+Missing a record never means the player was healthy or registered elsewhere.
 
-## In-memory forecasting boundary
+Raw files live at `data/raw/<provider>/<content hash>.<extension>`. Successful
+requests live in `data/requests/`; publication manifests in `data/manifests/`
+list hashed Parquet files under `data/parquet/<table>/`, partitioned by competition
+and season where applicable. Files without a publication manifest are invisible.
 
-`Match` holds a completed score and provenance. `Fixture` holds identity, date,
-competition, season and opponents only. Models receive past `Match` objects in
-`fit(matches, as_of)` and a label-free `Fixture` in `predict_match(fixture)`.
-They return `Forecast(H/D/A probabilities, optional score distribution)`.
+`Dataset(root, cutoff)` exposes only captures retrieved by the given timestamp.
+`Dataset.fixtures()` reconciles providers and rejects contradictory identities,
+finished dates and scores. `matches()`, `process()` and `player_history()` provide
+model-ready records. Models do not interpret provider payloads.
 
-Post-match statistics remain in immutable raw files for later lagged-feature
-experiments. They are absent from the initial forecasting interface. The current
-models train on one competition; importing Championship rows does not silently
-treat Championship and Premier League strengths as comparable.
+Canonical regular-season fixture IDs use competition, season, home and away team;
+postponement does not change identity. Playoff IDs are distinct. Player IDs are
+anchored to stable API-Football IDs, never names. Transfers and multi-club seasons
+remain multiple explicit membership records, not overwritten player attributes.
+
+Historical research may use retrospectively retrieved outcomes with the explicit
+next-day availability assumption. This differs from replay of truly captured
+pre-match evidence; the latter always requires actual retrieval-time filtering.

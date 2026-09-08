@@ -74,9 +74,9 @@ Keep forecast change triggers and six-hour heartbeat. Secrets use ignored .env o
 
 ## Implementation checklist
 
-- [ ] Canonical schemas, DuckDB queries, immutable publication, API preflight.
+- [x] Canonical schemas, DuckDB queries, immutable publication, API preflight.
 - [ ] Ongoing collection and resumable backfill; import existing evidence once.
-- [ ] Forecasting, evaluation, lineup and research consumers migrated.
+- [x] Forecasting, evaluation, lineup and research consumers migrated.
 - [ ] Installed collector replaced and scheduled execution verified.
 - [ ] Old adapters, restoration commands, outputs/configuration and obsolete tests removed.
 - [ ] Historical archive audited; offline research verified.
@@ -114,3 +114,22 @@ than PL European-position columns. Championship playoff qualification expands fr
 explicit extra-time/penalty observation model and is not implied by qualification probability.
 Current project descriptions must not frame provider data as free or freely redistributable.
 Source: https://www.efl.com/news/2026/march/05/efl-statement--sky-bet-championship-play-off-format/
+
+## Implementation checkpoint: September 8
+
+Canonical consumers and both-league season simulation are implemented. The rewrite
+removed over 3,000 lines overall at the consumer-cutover checkpoint. The test suite
+now contains 174 passing tests, including cutoff isolation, immutable publication,
+fixture-scoped absence, empty squad replacement and bounded final-match refreshes.
+M2 through M8 (excluding the retired M4 scheduling slot) are being smoke-tested for
+both leagues before launch-agent installation. A current collection pass succeeded.
+
+The initial 1,200-request resumed API pass paused at its invocation budget. An audit
+found 5,799 players and 352,859 appearance records; historical transfers, sidelined
+records and full Understat player coverage were still pending. Counts are checkpoints,
+not completeness claims; `data/audits/coverage.json` is the current local authority.
+The plan remains active until the archive and scheduled cutover are verified.
+
+Remaining implementation checks include full raw replay/rebuild determinism, current
+identity mapping coverage, obsolete source-configuration retirement, and final
+collector verification. Historical backfill remains resumable and quota-limited.
