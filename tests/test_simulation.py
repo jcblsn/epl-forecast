@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 
 from epl_forecast.cli import fitted_model
-from epl_forecast.data.rules import historical_adjustments
+from epl_forecast.data.rules import historical_adjustments, league_rules
 from epl_forecast.models.base import Forecast
 from epl_forecast.simulation import (
     EuropeScenario,
@@ -266,3 +266,114 @@ def test_championship_projection_conserves_promotion_and_playoff_slots():
     assert sum(r["playoff_qualification_probability"] for r in result["teams"]) == pytest.approx(6)
     assert sum(r["relegation_probability"] for r in result["teams"]) == pytest.approx(3)
     assert all("top_four_probability" not in r for r in result["teams"])
+    assert result["ranking_rules"] == "efl"
+    assert result["disciplinary_tiebreaks_available"] is False
+
+
+@pytest.mark.parametrize(
+    "season,boundary", [("2025-2026", 2), ("2025-2026", 6), ("2026-2027", 8), ("2026-2027", 21)]
+)
+def test_efl_decisive_boundaries_and_head_to_head(season, boundary):
+    teams = [f"t{i}" for i in range(24)]
+    points = np.arange(24, 0, -1) * 3
+    a, b = boundary - 1, boundary
+    points[b] = points[a]
+    zeros = np.zeros(24, dtype=int)
+    head = np.zeros((24, 24), dtype=int)
+    goals = np.zeros_like(head)
+    kwargs = dict(
+        rules=league_rules("eng-championship", season),
+        head_goals=goals,
+        wins=zeros,
+        away_goals=zeros,
+    )
+    _, ties, unresolved, used = rank_table(
+        teams, points, zeros, zeros, head, goals, np.random.default_rng(0), **kwargs
+    )
+    assert ties == [(a, b + 1)] and unresolved and used
+    head[b, a], head[a, b] = 4, 1
+    order, ties, unresolved, used = rank_table(
+        teams, points, zeros, zeros, head, goals, np.random.default_rng(0), **kwargs
+    )
+    assert order[a : b + 1] == [b, a]
+    assert not ties and not unresolved and used
+
+
+@pytest.mark.parametrize(
+    "criterion",
+    [
+        "head_points",
+        "head_difference",
+        "head_goals",
+        "wins",
+        "away_goals",
+        "discipline",
+        "sendings_off",
+    ],
+)
+def test_efl_criteria_precedence_in_three_team_midtable_tie(criterion):
+    teams = ["leader", "a", "b", "c", "last"]
+    points = np.array([90, 50, 50, 50, 10])
+    zeros = np.zeros(5, dtype=int)
+    head = np.zeros((5, 5), dtype=int)
+    goals = np.zeros_like(head)
+    wins, away, discipline, reds = (zeros.copy() for _ in range(4))
+    if criterion == "head_points":
+        head[2, 1] = 3
+        goals[1, 2] = 5
+    elif criterion == "head_difference":
+        goals[2, 1] = 2
+    elif criterion == "head_goals":
+        goals[2, 3] = goals[3, 2] = 2
+        goals[1, 2] = goals[2, 1] = 1
+    elif criterion == "wins":
+        wins[2] = 20
+        away[1] = 50
+    elif criterion == "away_goals":
+        away[2] = 20
+        discipline[2] = 100
+    elif criterion == "discipline":
+        discipline[:] = 20
+        discipline[2] = 10
+        reds[2] = 5
+    else:
+        reds[:] = 2
+        reds[2] = 1
+    order, _, _, used = rank_table(
+        teams,
+        points,
+        zeros,
+        zeros,
+        head,
+        np.zeros_like(head),
+        np.random.default_rng(0),
+        rules=league_rules("eng-championship", "2026-2027"),
+        head_goals=goals,
+        wins=wins,
+        away_goals=away,
+        disciplinary_points=discipline,
+        serious_sendings_off=reds,
+    )
+    assert order[1] == 2 and used
+
+
+def test_efl_does_not_use_head_to_head_away_goals():
+    teams = ["a", "b"]
+    zeros = np.zeros(2, dtype=int)
+    head = np.array([[0, 3], [3, 0]])
+    goals = np.array([[0, 2], [2, 0]])
+    away = np.array([[0, 1], [2, 0]])
+    _, ties, unresolved, _ = rank_table(
+        teams,
+        zeros,
+        zeros,
+        zeros,
+        head,
+        away,
+        np.random.default_rng(0),
+        rules=league_rules("eng-championship", "2026-2027"),
+        head_goals=goals,
+        wins=zeros,
+        away_goals=zeros,
+    )
+    assert ties == [(0, 2)] and unresolved

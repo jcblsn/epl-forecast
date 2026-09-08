@@ -5,6 +5,7 @@ from zoneinfo import ZoneInfo
 
 import numpy as np
 
+from epl_forecast.data.rules import LeagueRules, league_rules
 from epl_forecast.models.base import ForecastModel
 from epl_forecast.schema import Fixture, Match
 
@@ -45,10 +46,13 @@ def decisive_group(
     teams: list[str],
     relegated: int,
     europe: EuropeScenario | None,
+    boundaries: tuple[int, ...] = (),
 ) -> bool:
     if end - start < 2:
         return False
     if start == 0 or start < len(teams) - relegated < end:
+        return True
+    if any(start < boundary < end for boundary in boundaries):
         return True
     if europe is None:
         return False
@@ -72,7 +76,20 @@ def rank_table(
     relegated: int = 3,
     head_to_head: bool = True,
     europe: EuropeScenario | None = None,
+    rules: LeagueRules | None = None,
+    head_goals: np.ndarray | None = None,
+    wins: np.ndarray | None = None,
+    away_goals: np.ndarray | None = None,
+    disciplinary_points: np.ndarray | None = None,
+    serious_sendings_off: np.ndarray | None = None,
 ) -> tuple[list[int], list[tuple[int, int]], bool, bool]:
+    efl = rules is not None and rules.ranking == "efl"
+    boundaries = () if rules is None else (rules.automatic_promotion, rules.playoff_end)
+    if rules is not None:
+        relegated = rules.relegated
+        head_to_head = rules.ranking == "pl_head_to_head"
+    if efl and any(value is None for value in (head_goals, wins, away_goals)):
+        raise ValueError("EFL ranking requires head-to-head goals, wins and away goals")
     order = list(map(int, np.lexsort((-goals_for, -goal_difference, -points))))
     tied_spans = []
     unresolved, used_head_to_head = False, False
@@ -87,8 +104,28 @@ def rank_table(
                 break
             end += 1
         group = order[start:end]
-        critical = decisive_group(order, start, end, teams, relegated, europe)
-        if len(group) > 1 and critical and head_to_head:
+        critical = decisive_group(order, start, end, teams, relegated, europe, boundaries)
+        if len(group) > 1 and efl:
+            used_head_to_head = True
+            metrics = {}
+            for i in group:
+                scored = int(head_goals[i, group].sum())
+                conceded = int(head_goals[group, i].sum())
+                metrics[i] = (
+                    int(head_points[i, group].sum()),
+                    scored - conceded,
+                    scored,
+                    int(wins[i]),
+                    int(away_goals[i]),
+                )
+                if disciplinary_points is not None:
+                    metrics[i] += (-int(disciplinary_points[i]),)
+                    if serious_sendings_off is not None:
+                        metrics[i] += (-int(serious_sendings_off[i]),)
+            group.sort(key=lambda i: metrics[i], reverse=True)
+            order[start:end] = group
+            keys = [metrics[i] for i in group]
+        elif len(group) > 1 and critical and head_to_head:
             used_head_to_head = True
             h2h_points = {i: int(head_points[i, group].sum()) for i in group}
             h2h_away = {i: int(head_away_goals[i, group].sum()) for i in group}
@@ -105,7 +142,9 @@ def rank_table(
             if stop - offset > 1:
                 left, right = start + offset, start + stop
                 tied_spans.append((left, right))
-                unresolved |= decisive_group(order, left, right, teams, relegated, europe)
+                unresolved |= decisive_group(
+                    order, left, right, teams, relegated, europe, boundaries
+                )
                 order[left:right] = list(map(int, rng.permutation(order[left:right])))
             offset = stop
         start = end
@@ -183,6 +222,8 @@ def simulate_season(
     goals_against = np.zeros_like(points)
     head_points = np.zeros((simulations, len(teams), len(teams)), dtype=np.int16)
     head_away = np.zeros_like(head_points)
+    head_goals = np.zeros_like(head_points)
+    wins = np.zeros_like(points)
     draws = np.zeros(simulations, dtype=int)
 
     def add_result(fixture: Fixture, home_goals, away_goals) -> None:
@@ -199,6 +240,10 @@ def simulate_season(
         head_points[:, h, a] += home_points
         head_points[:, a, h] += away_points
         head_away[:, a, h] += away_goals
+        head_goals[:, h, a] += home_goals
+        head_goals[:, a, h] += away_goals
+        wins[:, h] += home_goals > away_goals
+        wins[:, a] += away_goals > home_goals
         draws[:] += home_goals == away_goals
 
     for match in sorted(played, key=lambda m: m.fixture.match_id):
@@ -259,7 +304,7 @@ def simulate_season(
     championship = competition == "eng-championship"
     if championship and europe is not None:
         raise ValueError("European qualification scenarios apply to the Premier League")
-    use_head_to_head = not championship and int(season[:4]) >= 2019
+    rules = league_rules(competition, season)
     unresolved_count, head_to_head_count = 0, 0
     for sample in range(simulations):
         order, ties, unresolved, used_h2h = rank_table(
@@ -270,7 +315,10 @@ def simulate_season(
             head_points[sample],
             head_away[sample],
             rng,
-            head_to_head=use_head_to_head,
+            rules=rules,
+            head_goals=head_goals[sample],
+            wins=wins[sample],
+            away_goals=head_away[sample].sum(axis=1),
             europe=europe,
         )
         unresolved_count += unresolved
@@ -311,9 +359,12 @@ def simulate_season(
             "relegation_probability": float(positions[-3:].sum()),
         }
         if championship:
-            playoff_end = 8 if int(season[:4]) >= 2026 else 6
-            row["automatic_promotion_probability"] = float(positions[:2].sum())
-            row["playoff_qualification_probability"] = float(positions[2:playoff_end].sum())
+            row["automatic_promotion_probability"] = float(
+                positions[: rules.automatic_promotion].sum()
+            )
+            row["playoff_qualification_probability"] = float(
+                positions[rules.automatic_promotion : rules.playoff_end].sum()
+            )
             row.pop("top_four_probability")
             row.pop("top_five_probability")
         if europe is not None:
@@ -336,6 +387,8 @@ def simulate_season(
         "teams": rows,
         "unseen_teams": sorted(unknown_teams),
         "point_adjustments": adjustments,
+        "ranking_rules": rules.ranking,
+        "disciplinary_tiebreaks_available": False if championship else None,
         "head_to_head_applied_rate": head_to_head_count / simulations,
         "unresolved_decisive_tie_rate": unresolved_count / simulations,
         "assumptions": [
@@ -359,7 +412,12 @@ def simulate_season(
                 "Historical fixture dates are retrospectively recorded."
             ),
             "Nondecisive shared positions split mass across occupied ranks for reporting.",
-            "Unresolved decisive ties assume equal playoff chances; playoff model not estimated.",
+            (
+                "EFL disciplinary tiebreak data are unavailable. Remaining ties split rank mass equally; "
+                "this is an uncertainty assumption, not an application of disciplinary rules or a playoff forecast."
+                if championship
+                else "Unresolved decisive ties assume equal playoff chances; playoff model not estimated."
+            ),
             "Points adjustments include only supplied sanctions known at the cutoff.",
         ]
         + (
@@ -368,6 +426,8 @@ def simulate_season(
                 "Scenario assumes no extra English UEFA titleholders or eligibility exclusions.",
             ]
             if europe
+            else ["Playoff qualification is not promotion through the playoffs."]
+            if championship
             else ["Top-four/five probabilities are table positions, not European qualification."]
         ),
         "europe_scenario": None

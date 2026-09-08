@@ -1,5 +1,9 @@
 # Research queue
 
+The active batch is the [information and uncertainty work plan](uncertainty_work_plan.md).
+It supersedes queue ordering below: establish matched uncertainty attribution and
+sensor information value, then apply the evidence to promotion/offseason priors.
+
 M2 is the operational benchmark. M7-v1 is the retained xG research model and
 preferred research parent. M8 was the next team-process research candidate;
 M8-v1 is now parked after its conditional scoring and predictive calibration
