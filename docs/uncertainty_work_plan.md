@@ -157,3 +157,19 @@ Raw hash `9272a3027558c74fbe679d57abfc8c64b83de0b5c09103fe00428715afcf35ca`
 preserves both. Publication correctly refused contradictory availability keys.
 Normalize the disputed end date as unknown and retain an explicit audit before
 resuming; do not arbitrarily choose either reported date.
+
+The sidelined repair now consolidates only identical episode keys, marks a
+disputed end date unknown, and stores all competing values in the publication's
+normalization issues. Raw responses remain unchanged. The existing aggregate
+coverage audit already exposes those issues. Independent retained EFL rule-page
+captures are checksum-verified but excluded from canonical football-table replay.
+Verification: 209 passing tests, including deterministic disputed-episode
+normalization, distinct-reason preservation and rule-evidence replay.
+
+The full ladder launched from commit `5678a89` into
+`runs/uncertainty-ladder-v1`, using the initial frozen manifest, 2015/16–2025/26,
+2,000 paths per cell, and all rich benchmarks. It remains in progress; do not use
+partial summaries as the batch conclusion. The process handle is exec session
+39240. The repaired bounded recent-window backfill is exec session 38720; its
+budget is 3,000 requests with the existing daily reserve. Revalidate live handles
+and process state before resuming either; do not duplicate running jobs.

@@ -147,6 +147,14 @@ def test_raw_rebuild_is_deterministic_and_failure_preserves_publication(tmp_path
         "captured",
         request["context"],
     )
+    retain(
+        tmp_path,
+        "efl_rules",
+        "https://example.test/rules",
+        b"rules evidence",
+        request["retrieved_at"],
+        "captured",
+    )
     normalize(tmp_path)
     before = {p.name: p.read_bytes() for p in (tmp_path / "manifests").glob("*.json")}
     normalize(tmp_path)
@@ -330,3 +338,33 @@ def test_identity_collisions_ignore_distinct_teammates():
     assert not same_named_player("William Thomas Alves", "William Thomas Fish")
     assert not same_named_player("Jamal Akua Lowe", "Max Josef Lowe")
     assert not same_named_player("Talla Ndiaye", "")
+
+
+def test_disputed_sidelined_end_is_unknown_with_retained_issue(tmp_path):
+    from copy import deepcopy
+
+    record = {
+        **squad_record("2026-09-08T10:00:00+00:00"),
+        "context": {"endpoint": "sidelined", "player": 19558},
+    }
+    body = {
+        "response": [
+            {"type": "Suspended", "start": "2018-02-14", "end": "2018-02-25"},
+            {"type": "Suspended", "start": "2018-02-14", "end": "2018-02-20"},
+            {"type": "Hamstring", "start": "2018-02-14", "end": "2018-03-01"},
+        ]
+    }
+    original = deepcopy(body)
+    manifest = api.normalize(record, body, tmp_path)
+    assert body == original and "normalization_issues" not in record
+    assert manifest == api.normalize(record, body, tmp_path)
+    issues = manifest["request"]["normalization_issues"]
+    assert len(issues) == 1 and issues[0]["reported_values"] == ["2018-02-20", "2018-02-25"]
+    data = Dataset(tmp_path)
+    assert data.rows(
+        "SELECT reason, end_date IS NULL AS unknown_end FROM availability ORDER BY reason"
+    ) == [
+        {"reason": "Hamstring", "unknown_end": False},
+        {"reason": "Suspended", "unknown_end": True},
+    ]
+    data.close()

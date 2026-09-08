@@ -420,6 +420,7 @@ def normalize(record, body, root):
                         "transfer_type": t["type"],
                     },
                 )
+    issues = []
     for table, rows in tables.items():
         if table == "players":
             merged = {}
@@ -435,6 +436,32 @@ def normalize(record, body, root):
                 # Transfer histories contain spelling variants for the same provider ID.
                 merged.setdefault(key, row)
             tables[table] = list(merged.values())
+        elif table == "availability" and endpoint == "sidelined":
+            episodes = {}
+            for row in rows:
+                key = row["player_id"], row["reason"], row["start_date"]
+                episodes.setdefault(key, []).append(row)
+            merged = []
+            for key, entries in episodes.items():
+                ends = {r["end_date"] for r in entries}
+                row = dict(entries[0])
+                if len(ends) > 1:
+                    row["end_date"] = None
+                    issues.append(
+                        {
+                            "table": "availability",
+                            "player_id": key[0],
+                            "reason": key[1],
+                            "start_date": key[2],
+                            "field": "end_date",
+                            "reported_values": sorted(ends, key=lambda value: value or ""),
+                            "resolution": "unknown: conflicting end dates in one provider response",
+                        }
+                    )
+                merged.append(row)
+            tables[table] = merged
         else:
             tables[table] = list({json.dumps(r, sort_keys=True): r for r in rows}.values())
+    if issues:
+        record = {**record, "normalization_issues": issues}
     return publish(root, record, tables)

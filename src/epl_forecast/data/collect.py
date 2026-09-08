@@ -578,6 +578,8 @@ def normalize(root):
             payload = (root / record["raw_path"]).read_bytes()
             if sha256_bytes(payload) != record["source_sha256"]:
                 raise ValueError(f"Raw capture hash mismatch: {record['raw_path']}")
+            if record["provider"] == "efl_rules":
+                continue
             if record["provider"] == "api_football":
                 if record["context"]["endpoint"] != "status":
                     api.normalize(record, json.loads(payload), staging)
