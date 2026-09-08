@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from epl_forecast.cli import save_rows
+from epl_forecast.season_evaluation import summarize
 
 ORIGINS = ["preseason", "MW6", "MW12", "MW19", "MW30"]
 MODELS = ["M2", "M4", "M5", "M7"]
@@ -25,6 +26,10 @@ def paired_comparisons(rows, seed=20260908, samples=10000):
     lookup = {(r["model_id"], r["origin"], r["season_id"], r["team_id"]): r for r in rows}
     if len(lookup) != len(rows):
         raise ValueError("Duplicate club-season origins")
+    baseline_keys = {(o, s, t) for m, o, s, t in lookup if m == "M2"}
+    for model in MODELS:
+        if {(o, s, t) for m, o, s, t in lookup if m == model} != baseline_keys:
+            raise ValueError("Models must have matched club-season origins")
     rng = np.random.default_rng(seed)
     output = []
     for origin in ORIGINS:
@@ -76,6 +81,24 @@ def main():
     rows = read_rows(args.evaluation / "club_seasons.csv")
     calibration = read_rows(args.evaluation / "calibration.csv")
     summary = read_rows(args.evaluation / "summary.csv")
+    numeric_rows = []
+    for row in rows:
+        converted = {}
+        for key, value in row.items():
+            if key == "promoted":
+                converted[key] = value == "True"
+            elif key in ("model_id", "origin", "season_id", "team_id", "as_of"):
+                converted[key] = value
+            else:
+                converted[key] = float(value)
+        numeric_rows.append(converted)
+    subgroup_scores = []
+    for promoted in (True, False):
+        scores, _ = summarize([r for r in numeric_rows if r["promoted"] == promoted])
+        subgroup_scores.extend(
+            {"subgroup": "promoted" if promoted else "incumbent", **r} for r in scores
+        )
+    save_rows(args.output / "subgroups.csv", subgroup_scores)
     save_rows(args.output / "paired_comparisons.csv", paired_comparisons(rows))
     fig, axes = plt.subplots(5, 4, figsize=(15, 15), sharex=True, sharey=True)
     for i, origin in enumerate(ORIGINS):
@@ -96,7 +119,8 @@ def main():
             ax.axhline(0.1, color="black", linestyle="--", linewidth=1)
             ax.set_title(f"{model} · {origin}")
             ax.set_xlim(0, 1)
-    fig.suptitle("Randomized points PIT · 220 club-seasons per panel")
+    counts = sorted({int(r["club_seasons"]) for r in summary})
+    fig.suptitle(f"Randomized points PIT · club-seasons per panel: {counts}")
     fig.supxlabel("PIT")
     fig.supylabel("Fraction of club-seasons")
     fig.tight_layout()

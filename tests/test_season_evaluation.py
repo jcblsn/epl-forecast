@@ -51,3 +51,34 @@ def test_pooling_and_boundary_bins():
     assert summary[0]["points_rmse"] == 2
     assert sum(r["count"] for r in calibration if r["event"] == "pit") == 2
     assert calibration[9]["count"] == 2
+
+
+def test_origins_include_whole_days_and_reject_incomplete_seasons(full_season):
+    from epl_forecast.season_evaluation import season_origins
+
+    origins = season_origins(full_season)
+    assert origins["preseason"] == min(m.fixture.match_date for m in full_season)
+    for week in (6, 12, 19, 30):
+        cutoff = origins[f"MW{week}"]
+        assert sum(m.available_on <= cutoff for m in full_season) >= week * 10
+        assert sum(m.available_on < cutoff for m in full_season) < week * 10
+    with pytest.raises(ValueError):
+        season_origins(full_season[:-1])
+
+
+def test_shared_observed_ranks_use_expected_score():
+    from epl_forecast.season_evaluation import score_forecast
+
+    team = {
+        "team_id": "a",
+        "position_probabilities": [0.5, 0.5],
+        "mean_points": 4,
+        "points_distribution": {"4": 1},
+        "title_probability": 0.5,
+        "top_four_probability": 1,
+        "relegation_probability": 1,
+    }
+    rows = score_forecast({"teams": [team]}, {"teams": [team]}, {"a"}, 12)
+    assert rows[0]["trps"] == 0.25
+    assert rows[0]["title_brier"] == 0.25
+    assert rows[0]["points_crps"] == 0
