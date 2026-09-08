@@ -76,6 +76,11 @@ interval, with no rapid match-day override. This deliberately trades late lineup
 and availability coverage for a quieter archive. Raw timestamps still describe
 actual captures; missing observations are never reconstructed later.
 
+Do not raise the cadence merely because more frequent capture is possible. Raise
+it before evaluating a model whose claimed advantage depends on late injury news
+or confirmed lineups, because at twelve hours the archive cannot observe those
+signals and the experiment could not detect the advantage it claims.
+
 ## Recent data first
 
 Backfill prioritizes both leagues' current-season inputs and current-player histories,
@@ -84,3 +89,8 @@ player requests. `data/audits/recent_readiness.json` separates usable recent inp
 from whole-archive completeness; complete historical backfill is not a prerequisite
 for starting model work. Coverage readiness is distinct from model validation and
 from historical point-in-time evidence.
+
+Player readiness requires eleven starters with usable identity and minutes for each
+team in every finished regular fixture of the window, and no audited identity
+contradiction inside it. The report names the fixtures that fail, so remaining gaps
+can be traced to a provider payload rather than inferred from a total.

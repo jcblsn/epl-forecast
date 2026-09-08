@@ -673,12 +673,21 @@ def audit(root):
         by_season = {}
         for row in incomplete:
             key = f"{row['competition_id']}/{row['season_id']}"
-            by_season[key] = by_season.get(key, 0) + 1
+            counts = by_season.setdefault(key, {"fixtures": 0, "without_any_appearance": 0})
+            counts["fixtures"] += 1
+            counts["without_any_appearance"] += not any(
+                t["starters"] for t in row["teams"].values()
+            )
         report["incomplete_starting_lineups"] = {
             "requirement": "Eleven starters with usable identity and minutes for each team",
             "fixtures": len(incomplete),
+            "note": "Fixtures without any appearance predate the provider's player-statistics "
+            "coverage or await backfill; the rest hold a captured payload that is short, "
+            "duplicated or contradictory",
             "by_season": dict(sorted(by_season.items())),
-            "examples": incomplete[:50],
+            "examples": [r for r in incomplete if any(t["starters"] for t in r["teams"].values())][
+                :50
+            ],
         }
         report["identity_contradictions"] = identity_contradictions(data)
         relevant = {

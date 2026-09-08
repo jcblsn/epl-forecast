@@ -137,3 +137,18 @@ def test_pending_player_histories_use_set_differences(tmp_path, monkeypatch):
     report = collect.recent_readiness(tmp_path, 2026)
     assert report["current_players"] == 3
     assert report["pending_current_player_histories"] == {"transfers": 1, "sidelined": 2}
+
+
+def test_archive_audit_separates_uncovered_seasons_from_defective_captures(tmp_path):
+    publish(tmp_path, evidence(), readiness_fixture("a", "b", (11, 11), (11, 11)))
+    publish(tmp_path, evidence(), readiness_fixture("c", "d", (11, 0), (11, 11)))
+    uncovered = readiness_fixture("e", "f", (0, 0), (0, 0))
+    uncovered["appearances"] = []
+    uncovered["players"] = []
+    publish(tmp_path, evidence(), uncovered)
+    report = collect.audit(tmp_path)["incomplete_starting_lineups"]
+    assert report["fixtures"] == 2
+    assert report["by_season"] == {
+        "eng-premier-league/2026-2027": {"fixtures": 2, "without_any_appearance": 1}
+    }
+    assert [r["match_id"] for r in report["examples"]] == ["eng-premier-league:2026-2027:c:d"]

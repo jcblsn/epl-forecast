@@ -23,6 +23,16 @@ coverage, incomplete starting lineups, unresolved mappings and uncaptured player
 histories. Empty successful captures count as checkpoints, not proof of health.
 Raw request manifests preserve enough evidence to investigate provider omissions.
 
+Audit arithmetic is deliberately conservative, because a false ready is worse than
+a false not-ready. A finished fixture counts as complete only when each of its two
+teams has exactly eleven starters with usable identity and minutes, so a duplicated
+identity on one side cannot offset a missing starter on the other. Uncaptured
+transfer and sidelined histories are set differences between the canonical players
+that need them and the API IDs with their own captured response, never a subtraction
+of aggregate counts. Reported identity contradictions cover unapplied or chained
+aliases, provider IDs shared by several canonical players, and same-team name
+collisions inside one fixture.
+
 The Pro plan provides 7,500 requests/day; the local backfill reserves 1,000 for
 ongoing collection. Successful requests resume from immutable checkpoints.
 Subscription and response quota headers are checked at runtime. No provider key

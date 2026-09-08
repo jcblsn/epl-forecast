@@ -84,6 +84,7 @@ local backfill job can consume its bounded quota without triggering new live cap
 - [x] Forecasting, evaluation, lineup and research consumers migrated.
 - [x] Installed collector replaced and scheduled execution verified.
 - [x] Old adapters, restoration commands, outputs/configuration and obsolete tests removed.
+- [x] Recent 2023/24–2026/27 window audited; replay determinism verified.
 - [ ] Historical archive audited; offline research verified.
 
 ## Acceptance and retirement
@@ -167,3 +168,58 @@ are recorded in `src/epl_forecast/data/api_player_aliases.csv`, with same-fixtur
 team/shirt-number evidence and raw hashes. These are deterministic provider identity
 corrections, not names used as player keys. Full replay and readiness verification
 of this repair remain in progress at this checkpoint.
+
+## Recent player-data validation: September 8
+
+Normalization was replayed from all 2,088 raw captures, and two independent
+replays produced 6,909 byte-identical manifest and Parquet files. The replay
+exposed that the fifty recorded aliases had never reached the published store;
+they now apply, and re-deriving them from raw evidence returned exactly the same
+fifty pairs. Recorded aliases are audited as applied, unchained and unique.
+
+Three further duplicates were reconciled with the file's existing evidence
+standard, one fixture in which both provider IDs carry the same team shirt
+number, plus that capture's hash: a provider spelling variant (Tutierov),
+a longer registered name (Mor Talla Ndiaye) and a wrong initial (J. Weaver).
+Their names disagree beyond what the ingestion shirt-number fallback accepts,
+so each is an explicit recorded correction rather than a rule change.
+
+Readiness now requires eleven starters with usable identity and minutes for each
+team, not twenty-two per fixture. Under that rule the 2023/24–2026/27 window
+holds every expected fixture for both leagues, and every finished regular fixture
+is complete except one. Whole-archive auditing separates 5,765 fixtures that
+predate the provider's player-statistics coverage from two fixtures whose
+captured payload is defective:
+
+- `eng-championship:2016-2017:queens-park-rangers:burton-albion` has eleven
+  named starters per side and no player statistics at all.
+- `eng-championship:2025-2026:middlesbrough:oxford-united` is a provider
+  self-contradiction. Its statistics block reports a complete and internally
+  consistent eleven, including Sam Long at ninety minutes with `substitute`
+  false, while its lineups block puts Long on the bench and starts Brodie
+  Spencer, who has no statistics row. A fresh capture on September 8 reproduces
+  the contradiction, so it is not a stale snapshot. Neither block is treated as
+  authoritative; the fixture stays reported as incomplete.
+
+One identity remains unresolved and audited rather than aliased. West Bromwich
+Albion's `504749` and `539152` are both named B. Stewart in the 2026/27 player
+pages; `504749` carries the fuller profile while `539152` is the ID used across
+fixtures, and the single fixture holding both gives `504749` no shirt number.
+Without shirt-number evidence the direction is a guess, so no alias is recorded.
+
+`ready_for_player_experiments` is therefore false on one fixture and one
+substitute-level identity. That is the intended conservative reading: a false
+not-ready is preferable to a false ready. Match-experiment readiness is true.
+Current-player transfer and sidelined histories remain the outstanding backfill
+priority, with 1,256 of 1,453 current players still uncaptured; the hourly
+bounded job continues that work under its quota reserve.
+
+Alias and reconciliation complexity has not grown: fifty-three explicit
+corrections, all derivable from raw captures, with no chains and no name-keyed
+identity. Separating canonical player identity from API-Football IDs remains
+unnecessary and is not being done preemptively.
+
+Twelve-hour collection stays as it is. Before evaluating any model whose claimed
+advantage depends on late injury news or confirmed lineups, match-day capture
+cadence must first rise enough for the experiment to observe those signals;
+until then the quieter schedule holds.
