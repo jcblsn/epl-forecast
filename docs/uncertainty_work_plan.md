@@ -303,3 +303,27 @@ it is superseded by this corrected audit, with the same zero-eligibility outcome
 
 All 221 tests pass. Tests cover unlinked IDs, incomplete
 cross-provider participants, identity collisions and genuine duplicate keys.
+
+## Current EFL edition verified
+
+The official [2026/27 EFL regulations](https://images.gc.eflservices.co.uk/EFL+Regulations+%5BMASTER+VERSION%5D.pdf)
+were captured through the repository fetcher into `runs/efl-rules-2026` at
+2026-09-08T20:52:07.692189Z. The PDF identifies its edition on page 1; pages
+28–31 confirm sections 9.1–9.9 and the Championship boundaries in 10.1.1(b) and
+10.1.2(b). The retained SHA-256 is
+`0ff9353d9fd8288fcca8c448c2d78e69050eed02b90bc8e7d8ece1e36acce630`.
+
+The existing ranking implementation and automatic-promotion/playoff/relegation
+boundaries match the current edition. The playoff field is explicitly six clubs
+after the top two: fifth hosts eighth and sixth hosts seventh in quarter-finals;
+third/fourth enter the two-legged semi-finals. This verifies qualification
+boundaries, not an implemented playoff-tournament probability model.
+
+`data/efl_rules_evidence.json` records reviewed sections, source timing/hash and
+limits; simulation outputs include this evidence only for the matching season.
+Readiness no longer treats the current edition as unverified. It admits only
+regular-season ranks with explicit unresolved disciplinary-tie uncertainty, not
+promotion-win probabilities. The first-42-match penalty-point comparison,
+wrongful-dismissal reversals and twelve-point sending-off count still lack
+forecast data. Do not claim those official procedures were applied to simulated
+unresolved ties. The review does not automatically certify a future edition.

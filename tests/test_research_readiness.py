@@ -32,6 +32,8 @@ def test_freeze_pins_publications_and_preserves_actual_information_cutoff(tmp_pa
     destination = tmp_path / "research.json"
     report = freeze_research(root, destination)
     assert report["readiness"]["eligible_cohorts"] == {}
+    assert report["readiness"]["championship_season_evidence_ready"]
+    assert report["readiness"]["championship_rules_evidence"]["season_id"] == "2026-2027"
     assert report["readiness"]["cohorts"][0]["valid_matches"]["xg"] == []
     publish(
         root,

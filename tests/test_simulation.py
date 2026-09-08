@@ -5,7 +5,7 @@ import numpy as np
 import pytest
 
 from epl_forecast.cli import fitted_model
-from epl_forecast.data.rules import historical_adjustments, league_rules
+from epl_forecast.data.rules import historical_adjustments, league_rules, reviewed_rules_evidence
 from epl_forecast.models.base import Forecast
 from epl_forecast.simulation import (
     EuropeScenario,
@@ -14,6 +14,17 @@ from epl_forecast.simulation import (
     simulate_season,
     validate_schedule,
 )
+
+
+def test_reviewed_efl_edition_matches_current_boundaries_only():
+    evidence = reviewed_rules_evidence("eng-championship", "2026-2027")
+    rules = league_rules("eng-championship", "2026-2027")
+    assert evidence["edition"] == "EFL Regulations 2026/27"
+    assert evidence["automatic_promotion"] == rules.automatic_promotion == 2
+    assert evidence["playoff_end"] == rules.playoff_end == 8
+    assert evidence["relegated"] == rules.relegated == 3
+    assert reviewed_rules_evidence("eng-championship", "2027-2028") is None
+    assert reviewed_rules_evidence("eng-premier-league", "2026-2027") is None
 
 
 class FixedHomeWin:

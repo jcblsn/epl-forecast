@@ -22,6 +22,13 @@ def league_rules(competition: str, season: str) -> LeagueRules:
     raise ValueError(f"Unsupported league rules: {competition}")
 
 
+def reviewed_rules_evidence(competition: str, season: str) -> dict | None:
+    evidence = json.loads(Path(__file__).with_name("efl_rules_evidence.json").read_text())
+    if (competition, season) == (evidence["competition_id"], evidence["season_id"]):
+        return evidence
+    return None
+
+
 def historical_adjustments(season: str, as_of: date) -> list[dict]:
     events = json.loads(Path(__file__).with_name("pl_adjustments.json").read_text())
     return [

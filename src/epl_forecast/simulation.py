@@ -5,7 +5,7 @@ from zoneinfo import ZoneInfo
 
 import numpy as np
 
-from epl_forecast.data.rules import LeagueRules, league_rules
+from epl_forecast.data.rules import LeagueRules, league_rules, reviewed_rules_evidence
 from epl_forecast.models.base import ForecastModel
 from epl_forecast.schema import Fixture, Match
 
@@ -388,6 +388,7 @@ def simulate_season(
         "unseen_teams": sorted(unknown_teams),
         "point_adjustments": adjustments,
         "ranking_rules": rules.ranking,
+        "ranking_rules_evidence": reviewed_rules_evidence(competition, season),
         "disciplinary_tiebreaks_available": False if championship else None,
         "head_to_head_applied_rate": head_to_head_count / simulations,
         "unresolved_decisive_tie_rate": unresolved_count / simulations,

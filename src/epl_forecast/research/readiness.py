@@ -12,6 +12,7 @@ from epl_forecast.data.collect import (
     incomplete_lineup,
     starter_counts,
 )
+from epl_forecast.data.rules import reviewed_rules_evidence
 from epl_forecast.datasets import Dataset
 from epl_forecast.storage import json_bytes, sha256_bytes, write_immutable
 
@@ -193,8 +194,14 @@ def research_readiness(data: Dataset, start: int = 2013, end: int = 2026) -> dic
         "roster_gate": "History capture coverage alone cannot establish historical squad turnover available before kickoff; retrospective and strict-replay designs need separate validation.",
         "player_oracle_ready": False,
         "player_gate": "Requires team-sensor results, explicit defective-fixture/identity exclusions, and matched known-exposure versus forecast-exposure cohorts.",
-        "championship_season_evidence_ready": False,
-        "championship_gate": "2026/27 regulation edition confirmation remains open; disciplinary ties require uncertainty reporting.",
+        "championship_rules_evidence": reviewed_rules_evidence(
+            "eng-championship", f"{end}-{end + 1}"
+        ),
+        "championship_season_evidence_ready": reviewed_rules_evidence(
+            "eng-championship", f"{end}-{end + 1}"
+        )
+        is not None,
+        "championship_gate": "Ready only for regular-season ranks with explicit unresolved disciplinary-tie uncertainty when the named edition has reviewed evidence. Playoff tournament/promotion-win probabilities are not admitted by this flag.",
         "information_policy": {
             "historical_team_observations": "Retrospective next-calendar-day outcome assumption; not proof of historical publication time.",
             "strict_replay": "Filter actual request retrieved_at by the forecast timestamp; never backdate captures to match or transfer dates.",
