@@ -327,3 +327,39 @@ promotion-win probabilities. The first-42-match penalty-point comparison,
 wrongful-dismissal reversals and twelve-point sending-off count still lack
 forecast data. Do not claim those official procedures were applied to simulated
 unresolved ties. The review does not automatically certify a future edition.
+
+## Bounded roster-departure feasibility
+
+`research/roster_transition.py` defines a deliberately limited candidate:
+prior-season regular-match minutes lost through a coherent transfer chain
+between season end and the next opener. This is recorded-departure exposure,
+not complete squad turnover, arrival quality, or a reconstructed historical
+registration list. No transfer response means unknown, not no departure. Missing
+dates/endpoints, inconsistent chains and unordered same-day moves remain
+unknown; the report retains lower/upper departure-share bounds. Same-day opener
+moves are excluded because a date alone cannot establish pre-kickoff availability.
+Retrieval timestamps never inherit transfer event dates.
+
+`scripts/audit_roster_transition.py` audits only the recent window, excludes
+missing prior divisions and incomplete/colliding prior exposure, and preserves
+per-player reasons. Against the pinned player-gate snapshot it admits 0 of 132
+candidate team-seasons: nine clubs lack a prior division in the two-league
+window, and all other 123 retain unknown departure exposure (one also has
+incomplete starter evidence). Mean unknown prior-minute share is 25.3%, ranging
+from 0.72% to 78.6%. These counts are provisional while captures continue;
+`runs/roster-transition-readiness.json` retains the evidence. Do not fit a variance
+effect by treating those missing histories as unchanged squads.
+
+All 225 tests pass, including coherent return transfers, cutoff isolation,
+ambiguous chains, unknown-history bounds and actual retrieval filtering. The
+regular-season-only minute correction was also checked with the three roster
+tests and the complete live audit. A pooled constant-versus-departure variance
+comparison still requires an admitted cohort; no adaptive dynamics or player
+coefficients were added.
+
+Backfill session `38720` exited normally after its 3,000-request invocation
+budget at 20:54:32Z. It confirmed all 1,453 current-player histories complete.
+The wider recent population remains incomplete. Session `59435` resumes the
+same 2023–2026 scope with the existing 1,000-request daily reserve; do not launch
+a concurrent writer. This is a verified terminal-and-resume transition, not a
+restart caused by quiet output.
