@@ -42,12 +42,13 @@ def player_id(value):
     return f"p{value}" if value is not None else None
 
 
-def compatible_name(left, right):
-    def tokens(value):
-        value = unicodedata.normalize("NFKD", value.lower()).encode("ascii", "ignore").decode()
-        return re.findall("[a-z]+", value)
+def name_tokens(value):
+    value = unicodedata.normalize("NFKD", value.lower()).encode("ascii", "ignore").decode()
+    return re.findall("[a-z]+", value)
 
-    a, b = tokens(left), tokens(right)
+
+def compatible_name(left, right):
+    a, b = name_tokens(left), name_tokens(right)
     return bool(
         a and b and (a[0].startswith(b[0]) or b[0].startswith(a[0])) and set(a[1:]) & set(b[1:])
     )

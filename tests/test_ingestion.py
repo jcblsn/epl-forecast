@@ -305,3 +305,28 @@ def test_api_player_aliases_and_zero_ids_are_explicit():
     assert api.compatible_name("J. Metcalfe", "Jenson Metcalfe")
     assert not api.compatible_name("T. Collyer", "Carlos Baleba")
     assert not (set(api.PLAYER_ALIASES) & set(api.PLAYER_ALIASES.values()))
+
+
+def test_every_alias_records_same_fixture_shirt_number_evidence():
+    import csv
+    from pathlib import Path
+
+    with (Path(api.__file__).parent / "api_player_aliases.csv").open() as stream:
+        rows = list(csv.DictReader(stream))
+    assert len(rows) == len(api.PLAYER_ALIASES)
+    for row in rows:
+        assert int(row["alias_api_id"]) != int(row["api_id"])
+        assert int(row["fixture_id"]) > 0 and int(row["team_api_id"]) > 0
+        assert int(row["shirt_number"]) > 0
+        assert len(row["source_sha256"]) == 64
+    assert len({int(r["alias_api_id"]) for r in rows}) == len(rows)
+
+
+def test_identity_collisions_ignore_distinct_teammates():
+    from epl_forecast.data.collect import same_named_player
+
+    assert same_named_player("T. Ndiaye", "Talla Ndiaye")
+    assert same_named_player("Timur Tuterov", "T. Tuterov")
+    assert not same_named_player("William Thomas Alves", "William Thomas Fish")
+    assert not same_named_player("Jamal Akua Lowe", "Max Josef Lowe")
+    assert not same_named_player("Talla Ndiaye", "")

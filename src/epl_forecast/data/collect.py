@@ -48,6 +48,20 @@ def prioritized_players(root, start, end):
         data.close()
 
 
+def same_named_player(left, right):
+    """Two names that cannot describe distinct players on the same team sheet.
+
+    Stricter than the shirt-number fallback in ingestion, which already knows the
+    two records share a squad number. Here the surname must match exactly and one
+    given name must abbreviate the other, so teammates who merely share a middle
+    name or a surname are not reported as contradictions.
+    """
+    a, b = api.name_tokens(left), api.name_tokens(right)
+    if not a or not b or a[-1] != b[-1]:
+        return False
+    return a[0].startswith(b[0]) or b[0].startswith(a[0])
+
+
 def captured_player_histories(manifests):
     """API IDs whose transfer/sidelined history has its own captured response."""
     captured = {"transfers": set(), "sidelined": set()}
@@ -121,7 +135,7 @@ def identity_contradictions(data):
     for (match_id, team_id), entries in sorted(rows.items()):
         for index, left in enumerate(entries):
             for right in entries[index + 1 :]:
-                if api.compatible_name(left["name"], right["name"]):
+                if same_named_player(left["name"], right["name"]):
                     duplicates.append(
                         {
                             "match_id": match_id,
