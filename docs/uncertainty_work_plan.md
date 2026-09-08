@@ -116,3 +116,44 @@ followed by the information-value harness and transition application. Keep the
 uncompleted requirements above open. Manifest tests cover immutable snapshot
 isolation, corruption rejection, retrospective/strict-cutoff separation, incomplete
 season rejection and per-signal complete-case eligibility.
+
+## Matched ladder implementation
+
+The research-only ladder now shares one goals-parent population snapshot across
+fixed-state, posterior, deterministic mean-reversion, future-innovation,
+promoted-state conditional and alternative-score variants. A matched M7 likelihood
+arm adds xG with the same fixed dynamics, population priors and Poisson score law.
+The promoted switch conditions current promoted coordinates on their posterior
+means (including the corresponding covariance reduction elsewhere); it does not
+claim to reproduce refitting historical entry priors. The transition-prior
+application remains a separate experiment.
+
+The split-product M2 arm uses a Gaussian copula over repeated team attack and
+concession factors. Each fixture still has independent Poisson home/away scores
+with exactly M2's fitted rates. Only dependence across future matches changes.
+The dependence grid is 0, 0.1, 0.25, 0.5, selected by earlier completed seasons'
+points CRPS at the same origin; the first evaluated season defaults to zero.
+Markets play no role. Retained M4/M5/M7 are separate product benchmarks.
+
+`scripts/evaluate_uncertainty_ladder.py` evaluates the five requested origins,
+retains individual forecasts, season and match losses, and chronological selection
+evidence. Match losses here are forecasts of the remaining schedule conditional
+on each season origin, not daily-refit forecasts. The companion report bootstraps
+whole seasons and shows iid-match, calendar-week and season dependence sensitivity.
+No season uncertainty interval is reported from a single season.
+
+The 2023/24 smoke run completed all five origins and twelve variants with 200 paths
+per cell in `runs/uncertainty-ladder-smoke`. Its report has 280 season comparisons
+and 210 match/dependence comparisons; 30 missing entries are the deliberately
+omitted rich benchmarks. These are implementation checks, not retained empirical
+conclusions. The full run must include M4/M5/M7, multiple seasons and more paths.
+Verification: 208 passing tests, including parent forecast equivalence, covariance
+conditioning, unchanged fitted states, copula marginals/cross-match dependence,
+and season-level bootstrap clustering.
+
+The larger recent-window backfill encountered two different reported end dates
+for the same sidelined episode (API player 19558, suspension starting 2018-02-14).
+Raw hash `9272a3027558c74fbe679d57abfc8c64b83de0b5c09103fe00428715afcf35ca`
+preserves both. Publication correctly refused contradictory availability keys.
+Normalize the disputed end date as unknown and retain an explicit audit before
+resuming; do not arbitrarily choose either reported date.
