@@ -4,11 +4,12 @@ import gzip
 import json
 import re
 import unicodedata
+from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 
 from epl_forecast.data.api_football import team_registry
-from epl_forecast.datasets import Dataset, publish
+from epl_forecast.datasets import Dataset, publish, timestamp
 from epl_forecast.schema import fixture_id
 
 
@@ -21,14 +22,77 @@ def name_tokens(value):
     )
 
 
-def ingest(root, record, payload):
+class IngestContext:
+    """Canonical reads reused across a run of Understat player-match ingests.
+
+    Each ingest needs the schedule, every retained Understat-to-canonical link and
+    the retained names, all filtered to what was observed by the payload's own
+    retrieval time. Reading the whole store once per match dominated a bulk
+    publication, so the reads happen once and the identities each ingest publishes
+    are folded back in, which is the only part that changes as the run proceeds.
+    """
+
+    def __init__(self, root):
+        data = Dataset(root)
+        try:
+            self.fixtures = {r["match_id"]: r for r in data.fixtures()}
+            self.links = [
+                (r["understat_id"], r["player_id"], timestamp(r["retrieved_at"]))
+                for r in data.rows(
+                    "SELECT DISTINCT understat_id, player_id, retrieved_at "
+                    "FROM players_observations WHERE understat_id IS NOT NULL"
+                )
+            ]
+            self.names = defaultdict(list)
+            for r in data.rows(
+                "SELECT DISTINCT player_id, name, retrieved_at FROM players_observations "
+                "WHERE name IS NOT NULL"
+            ):
+                self.names[r["player_id"]].append((r["name"], timestamp(r["retrieved_at"])))
+            self.appearances = defaultdict(list)
+            for r in data.rows(
+                "SELECT DISTINCT match_id, team_id, player_id, retrieved_at FROM appearances"
+            ):
+                self.appearances[r["match_id"]].append(
+                    (r["team_id"], r["player_id"], timestamp(r["retrieved_at"]))
+                )
+        finally:
+            data.close()
+
+    def known_links(self, retrieved_at):
+        known = {}
+        for understat_id, player, observed in self.links:
+            if observed > retrieved_at:
+                continue
+            if understat_id in known and known[understat_id] != player:
+                raise ValueError(f"Contradictory retained player mapping: Understat {understat_id}")
+            known[understat_id] = player
+        return known
+
+    def match_appearances(self, match_id, retrieved_at):
+        rows = []
+        for team, player, observed in self.appearances.get(match_id, ()):
+            if observed > retrieved_at:
+                continue
+            for name, named_at in self.names.get(player, ()):
+                if named_at <= retrieved_at:
+                    rows.append({"team_id": team, "player_id": player, "name": name})
+        return rows
+
+    def record(self, identities, retrieved_at):
+        for identity in identities:
+            self.links.append((identity["understat_id"], identity["player_id"], retrieved_at))
+            self.names[identity["player_id"]].append((identity["name"], retrieved_at))
+
+
+def ingest(root, record, payload, context=None):
     body = json.loads(gzip.decompress(payload) if payload.startswith(b"\x1f\x8b") else payload)
-    context = record["context"]
-    data = Dataset(root)
+    request = record["context"]
+    data = None if context is not None and request["kind"] == "players" else Dataset(root)
     try:
-        fixtures = {r["match_id"]: r for r in data.fixtures()}
-        if context["kind"] == "league":
-            year = context["season_start"]
+        fixtures = context.fixtures if data is None else {r["match_id"]: r for r in data.fixtures()}
+        if request["kind"] == "league":
+            year = request["season_start"]
             season, comp = f"{year}-{year + 1}", "eng-premier-league"
             aliases = team_registry()
             aliases.update(
@@ -80,25 +144,30 @@ def ingest(root, record, payload):
                         }
                     )
             return publish(root, record, {"team_process": rows})
-        key = context["match_id"]
+        key = request["match_id"]
         f = fixtures[key]
-        known = {}
-        for row in data.rows(
-            "SELECT DISTINCT understat_id, player_id FROM players_observations "
-            "WHERE understat_id IS NOT NULL AND retrieved_at<=?",
-            [record["retrieved_at"]],
-        ):
-            uid, player = row["understat_id"], row["player_id"]
-            if uid in known and known[uid] != player:
-                raise ValueError(f"Contradictory retained player mapping: Understat {uid}")
-            known[uid] = player
-        appearances = data.rows(
-            "SELECT DISTINCT a.team_id, a.player_id, p.name FROM appearances a "
-            "JOIN players_observations p USING(player_id) "
-            "WHERE a.match_id=? AND p.name IS NOT NULL AND p.retrieved_at<=? "
-            "AND a.retrieved_at<=?",
-            [key, record["retrieved_at"], record["retrieved_at"]],
-        )
+        retrieved = timestamp(record["retrieved_at"])
+        if context is not None:
+            known = context.known_links(retrieved)
+            appearances = context.match_appearances(key, retrieved)
+        else:
+            known = {}
+            for row in data.rows(
+                "SELECT DISTINCT understat_id, player_id FROM players_observations "
+                "WHERE understat_id IS NOT NULL AND retrieved_at<=?",
+                [record["retrieved_at"]],
+            ):
+                uid, player = row["understat_id"], row["player_id"]
+                if uid in known and known[uid] != player:
+                    raise ValueError(f"Contradictory retained player mapping: Understat {uid}")
+                known[uid] = player
+            appearances = data.rows(
+                "SELECT DISTINCT a.team_id, a.player_id, p.name FROM appearances a "
+                "JOIN players_observations p USING(player_id) "
+                "WHERE a.match_id=? AND p.name IS NOT NULL AND p.retrieved_at<=? "
+                "AND a.retrieved_at<=?",
+                [key, record["retrieved_at"], record["retrieved_at"]],
+            )
         rows, identities = [], []
         for side, team in [("h", f["home_team_id"]), ("a", f["away_team_id"])]:
             for r in body["rosters"][side].values():
@@ -133,6 +202,10 @@ def ingest(root, record, payload):
                         "shots": int(r["shots"]),
                     }
                 )
-        return publish(root, record, {"player_process": rows, "players": identities})
+        result = publish(root, record, {"player_process": rows, "players": identities})
+        if context is not None:
+            context.record(identities, retrieved)
+        return result
     finally:
-        data.close()
+        if data is not None:
+            data.close()

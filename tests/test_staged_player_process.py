@@ -34,7 +34,9 @@ def test_staged_publication_preserves_retrieval_time_and_respects_writer(tmp_pat
         {"kind": "players", "match_id": "m"},
     )
     captured = []
-    monkeypatch.setattr(module, "ingest", lambda root, request, payload: captured.append(request))
+    monkeypatch.setattr(
+        module, "ingest", lambda root, request, payload, context: captured.append(request)
+    )
     argv = [
         "stage_player_process",
         "capture",

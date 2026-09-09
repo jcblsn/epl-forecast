@@ -83,3 +83,131 @@ def test_understat_uses_retained_exact_names_without_future_or_ambiguous_links(t
         )
     finally:
         data.close()
+
+
+def _understat_payload(match_id):
+    return json.dumps(
+        {
+            "rosters": {
+                "h": {
+                    "1": {
+                        "player_id": "9001",
+                        "player": "Kai Havertz",
+                        "position": "FW",
+                        "time": "90",
+                        "xG": "0.7",
+                        "xA": "0.1",
+                        "shots": "3",
+                    }
+                },
+                "a": {
+                    "2": {
+                        "player_id": "9002",
+                        "player": "Cole Palmer",
+                        "position": "AMC",
+                        "time": "80",
+                        "xG": "0.3",
+                        "xA": "0.4",
+                        "shots": "2",
+                    }
+                },
+            }
+        }
+    ).encode()
+
+
+def _seed(root, matches):
+    from epl_forecast.datasets import publish
+
+    request = {
+        "provider": "api_football",
+        "retrieved_at": "2026-01-01T00:00:00+00:00",
+        "evidence_basis": "retrospective",
+        "source_sha256": "b" * 64,
+        "context": {"endpoint": "fixtures"},
+    }
+    fixtures, appearances, names = [], [], {}
+    for index, (match_id, home, away) in enumerate(matches):
+        fixtures.append(
+            {
+                "match_id": match_id,
+                "competition_id": "eng-premier-league",
+                "season_id": "2023-2024",
+                "stage": "regular",
+                "home_team_id": home,
+                "away_team_id": away,
+                "match_date": f"2024-01-{index + 1:02d}",
+                "status": "finished",
+                "home_goals": 1,
+                "away_goals": 0,
+            }
+        )
+        for team, player, name in (
+            (home, "p1", "Kai Havertz"),
+            (away, "p2", "Cole Palmer"),
+        ):
+            appearances.append(
+                {
+                    "match_id": match_id,
+                    "player_id": player,
+                    "team_id": team,
+                    "competition_id": "eng-premier-league",
+                    "season_id": "2023-2024",
+                    "kickoff_time": f"2024-01-{index + 1:02d}T15:00:00+00:00",
+                    "position": "FWD",
+                    "starts": 1,
+                    "minutes": 90,
+                }
+            )
+            names[player] = name
+    publish(
+        root,
+        request,
+        {
+            "fixtures": fixtures,
+            "appearances": appearances,
+            "players": [{"player_id": k, "name": v} for k, v in sorted(names.items())],
+        },
+    )
+
+
+def test_shared_ingest_context_matches_one_dataset_read_per_match(tmp_path):
+    from epl_forecast.data.understat_ingest import IngestContext, ingest
+    from epl_forecast.datasets import Dataset
+
+    matches = [
+        (f"eng-premier-league:2023-2024:arsenal:chelsea-{i}", "arsenal", "chelsea")
+        for i in range(4)
+    ]
+    records = [
+        {
+            "provider": "understat",
+            "url": f"https://understat.com/getMatchData/{i}",
+            "retrieved_at": f"2026-02-0{i + 1}T00:00:00+00:00",
+            "evidence_basis": "retrospective",
+            "source_sha256": f"{i}" * 64,
+            "raw_path": "raw/understat/x.json",
+            "context": {"kind": "players", "match_id": match_id},
+        }
+        for i, (match_id, _, _) in enumerate(matches)
+    ]
+
+    def run(root, shared):
+        _seed(root, matches)
+        context = IngestContext(root) if shared else None
+        for record in records:
+            ingest(root, record, _understat_payload(record["context"]["match_id"]), context)
+        data = Dataset(root)
+        try:
+            return data.rows(
+                "SELECT match_id, understat_id, player_id, minutes, xg, xa, shots "
+                "FROM player_process ORDER BY match_id, understat_id"
+            )
+        finally:
+            data.close()
+
+    direct = run(tmp_path / "direct", False)
+    shared = run(tmp_path / "shared", True)
+    assert direct == shared
+    assert len(direct) == 8
+    assert all(row["player_id"] is not None for row in direct)

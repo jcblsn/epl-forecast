@@ -6,7 +6,7 @@ from pathlib import Path
 
 from epl_forecast.artifacts import retain_execution
 from epl_forecast.data.capture import Fetcher, retain, writer_lock
-from epl_forecast.data.understat_ingest import ingest
+from epl_forecast.data.understat_ingest import IngestContext, ingest
 from epl_forecast.research.readiness import frozen_dataset
 from epl_forecast.storage import file_hash, json_bytes, write_immutable, write_json
 
@@ -71,6 +71,7 @@ def main():
                 raise ValueError("Complete capture before publication")
             selected = matches[: args.limit] if args.limit else matches
             with writer_lock(args.data):
+                shared = IngestContext(args.data)
                 for index, match in enumerate(selected):
                     url = f"https://understat.com/getMatchData/{match['source_match_id']}"
                     record = fetcher.latest[url]
@@ -87,7 +88,7 @@ def main():
                         record["evidence_basis"],
                         record["context"],
                     )
-                    ingest(args.data, retained, payload)
+                    ingest(args.data, retained, payload, shared)
                     if (index + 1) % 25 == 0:
                         print(f"Published {index + 1}/{len(selected)}", flush=True)
             write_json(

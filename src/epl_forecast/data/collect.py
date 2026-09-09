@@ -574,6 +574,7 @@ def normalize(root):
 
     with tempfile.TemporaryDirectory(prefix=".normalize-", dir=root) as temporary:
         staging = Path(temporary)
+        understat_context = None
         for record in sorted(requests, key=order):
             payload = (root / record["raw_path"]).read_bytes()
             if sha256_bytes(payload) != record["source_sha256"]:
@@ -583,6 +584,10 @@ def normalize(root):
             if record["provider"] == "api_football":
                 if record["context"]["endpoint"] != "status":
                     api.normalize(record, json.loads(payload), staging)
+            elif record["provider"] == "understat" and record["context"]["kind"] == "players":
+                if understat_context is None:
+                    understat_context = understat_ingest.IngestContext(staging)
+                understat_ingest.ingest(staging, record, payload, understat_context)
             else:
                 modules[record["provider"]].ingest(staging, record, payload)
         data = Dataset(staging)
