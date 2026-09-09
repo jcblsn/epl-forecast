@@ -1,6 +1,9 @@
-# M8 team-process batch
+# Historical M8 team-process proposal
 
-The September 2026 steering memo freezes M7-xg-v1 and keeps M2 operational.
+This retained proposal documents the parked M8 experiment and its generative
+assumptions. Current architecture and work ordering live in the
+[architecture work plan](architecture_next_phase.md). The earlier September 2026
+batch froze M7-xg-v1 and kept M2 operational.
 M7-v1 is the retained xG research model; M8 was the next team-process research
 candidate. M8-v1 is now parked; [the report](experiments/m8_process.md) records why. M6-v1 is the retained first player-information formulation, not the
 architectural parent. Existing M7 predictions, source pins, references and

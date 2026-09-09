@@ -1,13 +1,17 @@
-# Second attacking-player formulation: M7 oracle gate
+# Historical attacking-player allocation proposal
 
-M6-v1 remains the retained first player-information experiment. Its static,
-goals-based player Quality coefficients are not the next architectural parent.
-M7 remains the team xG parent; M8 remains parked. The current steering memo
-supersedes the earlier requirement to settle M8 before this gate. The
-[uncertainty budget](experiments/uncertainty_budget.md) and
-[promotion-prior comparison](experiments/promotion_transition.md) now provide
-the requested team-level evidence. They do not establish player gains or justify
-adaptive dynamics.
+This document retains the earlier M7 allocation-likelihood proposal and sample
+identity evidence for interpreting the M8 batch. It is superseded as an active
+design by the [architecture work plan](architecture_next_phase.md): freeze the
+standalone player traits, then fit an attacking roster-delta bridge on saved M2
+and M7 rates with their team states held fixed. No joint player/team allocation
+likelihood is required to run that diagnostic.
+
+The [uncertainty budget](experiments/uncertainty_budget.md) and
+[promotion-prior comparison](experiments/promotion_transition.md) retain the
+team-level evidence. They do not establish player gains or justify adaptive
+dynamics. M6's following implementation constraint remains relevant when reusing
+its machinery.
 
 The existing M6 `PlayerQualityFilter._augment_design` assigns each scalar player
 coefficient to both home and away score rates with opposite signs. Its oracle

@@ -1,6 +1,11 @@
 # Data architecture migration
 
-Status: implementation in progress. Accepted September 8, 2026.
+Accepted September 8, 2026. Canonical ingestion and consumer cutover are
+implemented; archive/readiness requirements below remain open until verified.
+This document owns data migration only. The
+[architecture work plan](architecture_next_phase.md) owns current model work.
+Dated checkpoints below retain their original evidence and are not claims about
+current job status or coverage; inspect the canonical audits for current state.
 
 ## Objective
 
@@ -94,7 +99,7 @@ nullable missing minutes, cross-season identity/transfers, contradictions and ha
 Test pagination, HTTP-200 API errors, quota/retries, interrupted publication, idempotence,
 complete empty snapshots versus failure, and actual cutoff handling. Future and same-day
 outcomes cannot change earlier features. Preserve numerical-model tests and identical-input
-predictions; document M6 data coverage changes. Run uv run ruff check . and pytest.
+predictions; document M6 data coverage changes. Run `scripts/verify.sh` (format, lint, then tests with all extras).
 
 Keep this file active until every checklist item is complete. Then move it to
 .archive/data_architecture_migration.md and remove its README link. Local historical

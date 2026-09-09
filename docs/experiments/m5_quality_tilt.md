@@ -144,4 +144,4 @@ Commands require fresh output directories. The original tail diagnostics used
 columns; all three proper-score results agree to displayed precision.
 [Input hashes](m5/inputs.json) identify the original retained prediction files.
 M2 remains the reference while M6 design and the specific M5 findings guide the
-[next work](../next_experiments.md).
+[next work](../architecture_next_phase.md).

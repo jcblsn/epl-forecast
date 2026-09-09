@@ -1,5 +1,10 @@
 # Forecasting and simulation conventions
 
+This document describes the retained baseline conventions. Individual research
+model specifications describe their additional state and observation mechanics;
+[the architecture work plan](architecture_next_phase.md) describes the next
+system. Existing implementations do not establish completion of that plan.
+
 ## Models and experiment settings
 
 M0–M3 refit before each prediction date using only results from earlier dates
@@ -125,15 +130,15 @@ titleholders or eligibility exclusions. The
 [Premier League's qualification explanation](https://www.premierleague.com/en/european-qualification-explained)
 shows why league ranks alone cannot determine every European place.
 
-The `forecast` command uses a captured FPL full-season schedule. It checks season,
-identities, all 380 pairs and completion statuses, cross-checks available current
-Football-Data results, and retains the observation time. Fitting excludes the
-snapshot's London date; the live table fixes all scores already full-time in the
-snapshot, including that date. The optional `results_observed_at` simulation input
+The `forecast` command reads canonical regular-season fixtures populated from
+API-Football schedules and reconciled provider results. It supports both leagues,
+with 380 PL or 552 Championship fixtures, and retains capture provenance. Fitting
+excludes the cutoff's London date; the live table fixes all captured full-time
+scores, including that date. The optional `results_observed_at` simulation input
 supports this separation; historical simulation retains its next-day cutoff.
 
-Undated/postponed fixtures keep their raw kickoff information in exports and use
-a placeholder date only inside the fixed-strength model. In-progress or overdue
-fixtures suspend the season projection while other predictions remain available.
+Undated/postponed fixtures keep their raw kickoff information in exports.
+Unresolved schedules, in-progress games and overdue results suspend the season
+projection while other predictions remain available.
 These forecasts do not constitute an in-play model. See [live operations](live.md)
 for freshness, archival behavior and the initial 2026/27 forecast.

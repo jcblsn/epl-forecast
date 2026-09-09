@@ -30,9 +30,9 @@ prior scale, lineup pseudo-counts, substitution probabilities and linear injury
 recovery remain explicit assumptions until learned or better-observed replacements
 are justified.
 
-M2 remains the unchanged operational benchmark. M5/M6 supply the research lineage:
-dynamic Quality/Tilt, propagated uncertainty, evolving season paths and player
-information. M7 first adds probabilistic team xG observations and removes common
-Tilt/scoring redundancy; player reformulation follows that stronger parent.
-Preserve prospective M5/M6 evidence throughout. Keep each batch's evidence compact:
-one report, machine-readable summaries and reproducible or prospective inputs.
+M2 remains the operational benchmark and M7 the retained xG research benchmark.
+Keep both in matched architectural comparisons. Existing dynamics, player layers
+and simulation machinery are reusable evidence, not a required model lineage.
+The [architecture work plan](architecture_next_phase.md) orders the current tests.
+Preserve prospective evidence and keep each batch compact: one report,
+machine-readable summaries and reproducible or prospective inputs.

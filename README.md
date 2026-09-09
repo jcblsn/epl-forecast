@@ -1,13 +1,16 @@
 # Premier League and Championship forecasts
 
-Active work: [data architecture migration](docs/data_architecture_migration.md).
+Product objective: [north star](docs/north_star.md). Active research:
+[joint forecasting architecture](docs/architecture_next_phase.md).
 
 Probabilistic match forecasts and season simulations for England's top two leagues,
 using locally archived provider data. Both leagues are supported forecasting targets.
-M2 remains the operational benchmark; M5–M8 are research models with distinct
-uncertainty, process and player-information assumptions. Historical experiment
-reports retain their original datasets and results; the migration changes the data
-boundary and requires renewed validation of player models.
+M2 remains the operational benchmark and M7 the retained xG research benchmark.
+Existing models and the simulator supply evidence and reusable components for a
+joint system; they do not prescribe its final architecture. The current work
+corrects the standalone player comparisons, freezes portable attacking traits,
+and tests a known-minutes roster bridge alongside one bounded dynamic-state
+candidate. Historical reports retain their original datasets and results.
 
 ## Data and forecasts
 
@@ -16,7 +19,7 @@ or an ignored `.env` file. Provider access and redistribution are subject to eac
 provider's terms; credentials and captured data are not committed.
 
 ```sh
-uv sync --locked
+uv sync --locked --all-extras
 uv run epl-forecast data collect
 uv run epl-forecast data audit
 uv run epl-forecast forecast --competition eng-premier-league
@@ -101,7 +104,8 @@ coverage with `data audit` and the recent input window with
 usable identity and minutes for each team in every finished regular fixture.
 The superseded [FPL feasibility audit](docs/player_data_audit.md) is retained
 as a record of the earlier dataset, not as a runnable pipeline. See the
-[research queue](docs/next_experiments.md) for the remaining issues.
+[architecture work plan](docs/architecture_next_phase.md) for the evidence sequence
+and outstanding requirements.
 
 ## Player-aware M6 research forecasts
 

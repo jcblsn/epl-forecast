@@ -1,8 +1,17 @@
 # API-FOOTBALL time-local player prior
 
-This research candidate adds a learned time-local prior to the existing scalar
+This retained research candidate adds a learned time-local prior to the existing scalar
 player Quality diagnostic. It has a separate evaluation path and is not wired
 into operational forecasts or season simulations.
+
+Its centered match-likelihood design is superseded for player-information
+discovery by the standalone layer and the
+[architecture work plan](architecture_next_phase.md). The specification below
+records V1, including its original provider-field interpretation. The subsequent
+[player prechecks](experiments/player_layer_prechecks.md) establish null-as-zero
+semantics for the relevant event fields and identify `pass_accuracy` as a
+completed-pass count. Those findings invalidate an unconditional-rate reading of
+V1's non-null-only denominators; they are not silently applied to its old results.
 
 For player i before London date t, the approximation is
 

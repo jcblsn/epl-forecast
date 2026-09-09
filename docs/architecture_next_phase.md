@@ -39,11 +39,46 @@ Neither fixes the final architecture. Historical player-layer conclusions in
    measurement or calibrated pool. Retain a separately measurable structural arm.
    Archive forecasts and explain material changes from the coherent state.
 
+## Bridge and state contracts
+
+For the known-minutes diagnostic, save pre-match M2 and M7 rates before applying
+any player adjustment. Fit the smallest chronological mapping B in
+
+```text
+log(rate*) = log(rate_base) + B [P(actual target minutes) - P(recent reference roster)]
+```
+
+P retains at least shooting/chance-generation and creation dimensions from the
+frozen player layer. Traits, uncertainty and reference exposure use only evidence
+eligible at the cutoff. Actual target identities/minutes are an explicitly
+nondeployable oracle input; target process statistics never become predictors.
+Player deltas affect own-team attack only. Keep baseline states fixed and use
+no player defence, player Tilt or lineup forecasting in this test.
+
+The bounded state candidate keeps each club's latent two-dimensional scoring state
+as it crosses divisions. Hierarchical league-level terms and observed transitions
+identify a common scale. Goals-only observations establish the state mechanics;
+team xG is then a noisy process measurement, with no independent double-counting
+of goals or forced equality to additive player xG. Home advantage may vary slowly.
+An attack/defence-to-Quality/Tilt rotation does not create a second model family.
+
+For season paths, draw current latent states, future innovations, personnel and
+scores in that order. Random simulated scorelines do not filter an already drawn
+latent path. Conditioning on a user's hypothetical observed result is a separate
+filtering calculation. Record path counts and Monte Carlo uncertainty for tails;
+no particular simulation count substitutes for precision evidence.
+
 ## Current checkpoint
 
-The first corrections are implemented; corrected retained-data evaluations and the
-full repository verification are in progress. No bridge or dynamic-state result is
-claimed yet. The full objective remains open.
+The player correctness changes are implemented. A provisional corrected 90-day
+evaluation completed. All three horizons are now being rerun with an additional
+gate requiring the full target window to elapse within retained process coverage;
+90-day results are expected to be unaffected but are not final until verified.
+The revised cross-horizon portability decision remains pending. Historical broad
+claims about transfer depth and API reliability must not be carried forward
+without these corrections. The research report will retain the numerical results
+and reproducible commands. No bridge or dynamic-state result is claimed here.
+The full objective remains open.
 
 The depth-matched API control uses all API appearances starting at the earliest
 eligible retained process observation at each cutoff, including role-population
@@ -51,3 +86,24 @@ estimates. It matches calendar depth, not individual provider linkage; unresolve
 process identities therefore remain a measured difference in information coverage.
 API-only means API player predictors and API evidence-depth uncertainty; Understat
 is still the supervised target and supplies the shared target-role rate offset.
+
+## Documentation and retained evidence
+
+Keep [the north star](north_star.md) limited to product outcomes. This file owns
+active architectural decisions, evidence ordering and outstanding requirements;
+update its checkpoint as retained results arrive. Model specifications describe
+implemented mechanisms and experiment reports own empirical claims. Remove stale
+plans when their useful content is retained elsewhere; Git preserves their history.
+
+- [README](../README.md): current commands, product capabilities and limitations.
+- [Research principles](research_principles.md): interpretation and comparison rules.
+- [Information and uncertainty evidence](uncertainty_work_plan.md): prior batch,
+  reusable runners, current-rule evidence and unresolved product limitations.
+- [M7 report](experiments/m7_xg_parent.md) and [M8 report](experiments/m8_process.md):
+  retained xG benchmark and parked observation candidate.
+- [Standalone player report](experiments/player_layer.md) and
+  [prechecks](experiments/player_layer_prechecks.md): original experiments; read
+  conclusions against the corrected horizon and provider-semantics evidence.
+- [Data migration](data_architecture_migration.md): remaining ingestion/archive work.
+- [Live operations](live.md) and [season evaluation](season_evaluation.md): capture,
+  point-in-time provenance, simulation outputs and product-level scoring.
