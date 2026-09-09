@@ -142,13 +142,35 @@ def compare(model, left, right, candidate, mark):
     )
     mean = float(difference @ model["beta"])
     sd = math.sqrt(mapping_variance + local_variance)
+    # The design is expressed relative to each player's own role population, so the
+    # coefficient difference compares role-relative standing. Comparing the rates
+    # themselves needs the two role populations back in.
+    offsets = [
+        math.log(
+            max(
+                state.population[mark]["by_role"].get(state.role, state.population[mark]["league"]),
+                1e-4,
+            )
+        )
+        for state in (left, right)
+    ]
+    absolute = mean + offsets[0] - offsets[1]
     return {
         "left": left.player_name or left.player_id,
         "right": right.player_name or right.player_id,
+        "left_role": left.role,
+        "right_role": right.role,
         "candidate": candidate,
         "mark": mark,
         "log_ratio": mean,
         "ratio": float(math.exp(mean)),
+        "rate_log_ratio": absolute,
+        "rate_ratio": float(math.exp(absolute)),
+        "rate_interval_95": [
+            float(math.exp(absolute - 1.96 * sd)),
+            float(math.exp(absolute + 1.96 * sd)),
+        ],
+        "rate_separated": bool(abs(absolute) > 1.96 * sd),
         "mapping_log_sd": math.sqrt(mapping_variance),
         "player_local_log_sd": math.sqrt(local_variance),
         "log_sd": sd,

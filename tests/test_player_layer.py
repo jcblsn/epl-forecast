@@ -285,3 +285,33 @@ def test_combined_candidate_reads_the_summed_mark_not_the_component():
     _, own_shooter = design(shooter, "long_run", "xg")
     _, own_creator = design(creator, "long_run", "xg")
     assert own_shooter[0] > own_creator[0]
+
+
+def test_pairwise_comparison_reports_role_relative_and_absolute_scales():
+    rows = [
+        *population(length=40),
+        *history("striker", 40, process_xg=0.7, position="FWD"),
+        *history("winger", 40, process_xg=0.35, position="MID"),
+    ]
+    layer = PlayerLayer(rows)
+    cases = build_cases(
+        layer, [date(2025, 1, 1), date(2025, 2, 1)], 120, "xg", minimum_exposure=0.5
+    )
+    names, matrix = _matrix(cases, "long_run", "xg")
+    model = fit_poisson_ridge(
+        matrix, _offset(cases, "xg"), np.array([c["target_total"] for c in cases])
+    )
+    model["names"] = names
+    cutoff = date(2025, 8, 1)
+    striker = player_state(layer, "striker", cutoff)
+    winger = player_state(layer, "winger", cutoff)
+    result = compare(model, striker, winger, "long_run", "xg")
+    assert result["left_role"] == "FWD" and result["right_role"] == "MID"
+    pools = [
+        state.population["xg"]["by_role"][state.role] for state in (striker, winger)
+    ]
+    assert result["rate_log_ratio"] - result["log_ratio"] == pytest.approx(
+        np.log(pools[0] / pools[1])
+    )
+    assert result["rate_interval_95"][0] < result["rate_ratio"] < result["rate_interval_95"][1]
+    assert result["rate_ratio"] > 1.5
