@@ -70,8 +70,8 @@ The repository's existing `player_oracle_evidence` gate is stricter than the one
 above. It requires a fixture to be *wholly* complete: every process identity linked,
 and the positive-exposure participants agreeing exactly between the two providers.
 On the frozen manifest it admits 461 of the 1,170 captured fixtures — 148 in 2023/24,
-183 in 2024/25 and 117 in 2025/26 — and 709 of the exclusions are fixtures where a
-single unlinked identity fails both conditions at once.
+183 in 2024/25, 117 in 2025/26 and 13 in 2026/27 — and 709 of the exclusions are
+fixtures where at least one unlinked identity fails both conditions at once.
 
 That gate is the right one for a future allocation likelihood, which has to divide a
 team's process among a complete set of participants and cannot tolerate a missing
