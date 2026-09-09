@@ -282,6 +282,15 @@ def summarize(scores):
         "coverage_50": float(np.mean([s["covered_50"] for s in scores])),
         "coverage_90": float(np.mean([s["covered_90"] for s in scores])),
         "mean_interval_width_90": float(np.mean([s["interval_width_90"] for s in scores])),
+        "mean_relative_width_90": float(
+            np.mean([s["interval_width_90"] / max(s["expected"], 1e-6) for s in scores])
+        ),
+        "mean_parameter_sd": float(np.mean([s["parameter_sd"] for s in scores])),
+        "mean_expected": float(np.mean([s["expected"] for s in scores])),
+        "mean_observed": float(np.mean([s["observed"] for s in scores])),
+        "mean_prior_effective_exposure": float(
+            np.mean([s["prior_effective_exposure"] for s in scores])
+        ),
     }
 
 
