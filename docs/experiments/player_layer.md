@@ -64,6 +64,26 @@ The linkage rule may only use name evidence retained at or before the process
 payload's own retrieval time, and the replay establishes that ordering consistently
 across the whole store rather than in the order the live collector happened to run.
 
+### Two different gates, and which one this layer needs
+
+The repository's existing `player_oracle_evidence` gate is stricter than the one
+above. It requires a fixture to be *wholly* complete: every process identity linked,
+and the positive-exposure participants agreeing exactly between the two providers.
+On the frozen manifest it admits 461 of the 1,170 captured fixtures — 148 in 2023/24,
+183 in 2024/25 and 117 in 2025/26 — and 709 of the exclusions are fixtures where a
+single unlinked identity fails both conditions at once.
+
+That gate is the right one for a future allocation likelihood, which has to divide a
+team's process among a complete set of participants and cannot tolerate a missing
+one. It is not the gate this layer needs. Estimating a player's own rate per 90
+requires only that his own records are correctly linked and his exposure valid; a
+teammate whose identity is unresolved reduces the evidence available about that
+teammate and about nobody else. This layer therefore drops unlinked records and keeps
+the fixture, and the 3% of unresolved records cost 3% of the evidence rather than 60%
+of the fixtures. The distinction is worth carrying forward: the same population is
+research-ready for a per-player process layer and not yet research-ready for a
+per-fixture allocation model.
+
 ## Signal audit: what the providers actually publish
 
 Two findings changed the representation and are load-bearing.
