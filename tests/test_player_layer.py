@@ -259,3 +259,29 @@ def test_chronological_evaluation_scores_every_candidate_on_identical_cases():
     }
     assert len({frozenset(v) for v in keys.values()}) == 1
     assert all(len(v) > 0 for v in scored.values())
+
+
+def test_combined_mark_is_the_sum_of_its_components():
+    values, available = _mark_values(appearance(process_xg=0.4, process_xa=0.1))
+    assert values["xg_plus_xa"] == pytest.approx(0.5)
+    assert available["xg_plus_xa"]
+    _, unavailable = _mark_values(appearance(process_records=None))
+    assert not unavailable["xg_plus_xa"]
+
+
+def test_combined_candidate_reads_the_summed_mark_not_the_component():
+    rows = [
+        *population(),
+        *history("shooter", 20, process_xg=0.8, process_xa=0.0),
+        *history("creator", 20, process_xg=0.0, process_xa=0.8),
+    ]
+    layer = PlayerLayer(rows)
+    cutoff = date(2025, 8, 1)
+    shooter = player_state(layer, "shooter", cutoff)
+    creator = player_state(layer, "creator", cutoff)
+    _, combined_shooter = design(shooter, "combined_long", "xg")
+    _, combined_creator = design(creator, "combined_long", "xg")
+    assert combined_shooter == pytest.approx(combined_creator)
+    _, own_shooter = design(shooter, "long_run", "xg")
+    _, own_creator = design(creator, "long_run", "xg")
+    assert own_shooter[0] > own_creator[0]

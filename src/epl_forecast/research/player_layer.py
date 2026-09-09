@@ -35,7 +35,7 @@ DETAILED_API_FIELDS = (
     "dribbles_successful",
 )
 DETAIL_MARKERS = ("rating", "passes_total", "duels_total", "pass_accuracy")
-PROCESS_MARKS = ("xg", "xa", "process_shots")
+PROCESS_MARKS = ("xg", "xa", "process_shots", "xg_plus_xa")
 TARGETS = ("xg", "xa")
 LEAGUE_REFERENCE_XG = 1.4
 
@@ -125,6 +125,8 @@ def _mark_values(row):
     values["xg"] = float(row["process_xg"]) if linked else 0.0
     values["xa"] = float(row["process_xa"]) if linked else 0.0
     values["process_shots"] = float(row["process_shots"]) if linked else 0.0
+    # Retained only to test whether the conventional sum carries what its parts do.
+    values["xg_plus_xa"] = values["xg"] + values["xa"]
     for mark in PROCESS_MARKS:
         available[mark] = linked
     return values, available
@@ -404,6 +406,7 @@ API_FEATURE_MARKS = ("goals", "shots", "shots_on_target", "assists", "key_passes
 
 CANDIDATES = {
     "pooled_role": (),
+    "combined_long": ("combined_rate",),
     "recent_raw": ("recent_rate",),
     "long_run": ("long_rate",),
     "recent_long": ("recent_rate", "long_rate"),
@@ -415,6 +418,7 @@ CANDIDATES = {
 }
 CANDIDATE_NOTES = {
     "pooled_role": "Role population rate only; the player contributes nothing.",
+    "combined_long": "Long-run rate of the summed xG+xA mark, testing whether the conventional aggregate carries what the separate component does.",
     "recent_raw": "Recent shrunk per-90 rate, the naive form of 'he is in form'.",
     "long_run": "Long-horizon shrunk per-90 rate.",
     "recent_long": "Both horizons, so recent information must earn its weight.",
@@ -440,6 +444,15 @@ def feature_block(state, block, mark):
         return [("recent_rate", _log_ratio(state.rate(mark, "recent"), prior_mean, config_clip))]
     if block == "long_rate":
         return [("long_rate", _log_ratio(state.rate(mark, "long"), prior_mean, config_clip))]
+    if block == "combined_rate":
+        combined = state.population["xg_plus_xa"]
+        reference = combined["by_role"].get(state.role, combined["league"])
+        return [
+            (
+                "combined_rate",
+                _log_ratio(state.rate("xg_plus_xa", "long"), reference, config_clip),
+            )
+        ]
     if block == "long_share":
         entry = state.share[mark]
         return [("long_share", _log_ratio(entry["share"], entry["pool_share"], config_clip))]

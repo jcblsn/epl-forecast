@@ -207,8 +207,14 @@ def identity_keys(root):
     thousands of cached replays dominated the run without changing any output.
     """
     root = Path(root)
-    manifests = root / "manifests"
-    stamp = manifests.stat().st_mtime_ns if manifests.exists() else None
+    # Only a teams or fixtures publication can change these maps, so watch those two
+    # partitions rather than the whole manifest directory, which every publish touches.
+    stamp = tuple(
+        (root / "parquet" / table).stat().st_mtime_ns
+        if (root / "parquet" / table).exists()
+        else None
+        for table in ("teams", "fixtures")
+    )
     cached = _IDENTITY_KEYS.get(str(root))
     if cached is not None and cached[0] == stamp:
         return cached[1]
