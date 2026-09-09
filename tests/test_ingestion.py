@@ -368,3 +368,27 @@ def test_disputed_sidelined_end_is_unknown_with_retained_issue(tmp_path):
         {"reason": "Suspended", "unknown_end": True},
     ]
     data.close()
+
+
+def test_identity_keys_are_reused_until_the_store_changes(tmp_path):
+    from epl_forecast.data import api_football
+    from epl_forecast.datasets import publish
+
+    api_football._IDENTITY_KEYS.clear()
+    (tmp_path / "manifests").mkdir(parents=True)
+    first = api_football.identity_keys(tmp_path)
+    assert api_football.identity_keys(tmp_path) is first
+    publish(
+        tmp_path,
+        {
+            "provider": "api_football",
+            "retrieved_at": "2026-01-01T00:00:00+00:00",
+            "evidence_basis": "retrospective",
+            "source_sha256": "a" * 64,
+            "context": {"endpoint": "teams"},
+        },
+        {"teams": [{"team_id": "arsenal", "name": "Arsenal", "api_id": 42}]},
+    )
+    refreshed = api_football.identity_keys(tmp_path)
+    assert refreshed is not first
+    assert refreshed[0] == {42: "arsenal"}

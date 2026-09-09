@@ -196,6 +196,42 @@ def team_key(team, required=False, known=None):
     return f"af-team-{team['id']}"
 
 
+_IDENTITY_KEYS = {}
+
+
+def identity_keys(root):
+    """API-id to canonical team and fixture maps for a published store.
+
+    Rebuilt only when the manifest directory changes. Injury and transfer records
+    are normalized one payload at a time, so reading the whole store for each of
+    thousands of cached replays dominated the run without changing any output.
+    """
+    root = Path(root)
+    manifests = root / "manifests"
+    stamp = manifests.stat().st_mtime_ns if manifests.exists() else None
+    cached = _IDENTITY_KEYS.get(str(root))
+    if cached is not None and cached[0] == stamp:
+        return cached[1]
+    data = Dataset(root)
+    try:
+        keys = (
+            {
+                r["api_id"]: r["team_id"]
+                for r in data.rows("SELECT * FROM teams WHERE api_id IS NOT NULL")
+            },
+            {
+                r["api_id"]: r["match_id"]
+                for r in data.rows(
+                    "SELECT DISTINCT api_id, match_id FROM fixtures WHERE api_id IS NOT NULL"
+                )
+            },
+        )
+    finally:
+        data.close()
+    _IDENTITY_KEYS[str(root)] = (stamp, keys)
+    return keys
+
+
 def normalize(record, body, root):
     endpoint, context = record["context"]["endpoint"], record["context"]
     if endpoint == "fixtures":
@@ -204,20 +240,7 @@ def normalize(record, body, root):
     issues = []
     fixture_keys, team_keys = {}, {}
     if endpoint in ("injuries", "transfers"):
-        data = Dataset(root)
-        try:
-            team_keys = {
-                r["api_id"]: r["team_id"]
-                for r in data.rows("SELECT * FROM teams WHERE api_id IS NOT NULL")
-            }
-            fixture_keys = {
-                r["api_id"]: r["match_id"]
-                for r in data.rows(
-                    "SELECT DISTINCT api_id, match_id FROM fixtures WHERE api_id IS NOT NULL"
-                )
-            }
-        finally:
-            data.close()
+        team_keys, fixture_keys = identity_keys(root)
 
     def add(table, row):
         tables.setdefault(table, []).append(row)
