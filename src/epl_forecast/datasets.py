@@ -10,7 +10,10 @@ import duckdb
 from epl_forecast.schema import Fixture, Match
 from epl_forecast.storage import file_hash, json_bytes, sha256_bytes, write_immutable
 
-COMMON = "provider VARCHAR, retrieved_at TIMESTAMPTZ, evidence_basis VARCHAR, source_sha256 VARCHAR"
+COMMON = (
+    "provider VARCHAR, retrieved_at TIMESTAMPTZ, evidence_basis VARCHAR, source_sha256 VARCHAR, "
+    "normalization_version INTEGER"
+)
 SCHEMAS = {
     "competition_seasons": "competition_id VARCHAR, season_id VARCHAR, team_ids VARCHAR[], "
     "expected_matches INTEGER, coverage VARCHAR",
@@ -27,7 +30,10 @@ SCHEMAS = {
     "season_id VARCHAR, kickoff_time TIMESTAMPTZ, position VARCHAR, "
     "starts INTEGER, minutes INTEGER, "
     "goals INTEGER, assists INTEGER, shots INTEGER, shots_on_target INTEGER, saves INTEGER, "
-    "yellow_cards INTEGER, red_cards INTEGER",
+    "yellow_cards INTEGER, red_cards INTEGER, rating DOUBLE, passes_total INTEGER, "
+    "key_passes INTEGER, pass_accuracy VARCHAR, tackles INTEGER, interceptions INTEGER, "
+    "duels_total INTEGER, duels_won INTEGER, dribbles_attempted INTEGER, "
+    "dribbles_successful INTEGER, fouls_drawn INTEGER, fouls_committed INTEGER",
     "availability": "player_id VARCHAR, fpl_code VARCHAR, team_id VARCHAR, competition_id VARCHAR, "
     "season_id VARCHAR, match_id VARCHAR, scope VARCHAR, status VARCHAR, reason VARCHAR, "
     "start_date DATE, end_date DATE, chance_this_round INTEGER, chance_next_round INTEGER, "
@@ -83,6 +89,7 @@ def publish(root, request, tables):
                 k: request[k]
                 for k in ("provider", "retrieved_at", "evidence_basis", "source_sha256")
             }
+            common["normalization_version"] = request.get("normalization_version", 1)
             values = [{**common, **r} for r in rows]
             for row in values:
                 unknown = set(row) - set(columns)
@@ -181,8 +188,13 @@ class Dataset:
                 if f["table"] == table
             ]
             if paths:
-                self.con.read_parquet(paths, hive_partitioning=False).create_view(
-                    f"{table}_observations"
+                self.con.execute(f"CREATE TABLE {table}_empty ({schema}, {COMMON})")
+                self.con.read_parquet(
+                    paths, hive_partitioning=False, union_by_name=True
+                ).create_view(f"{table}_retained")
+                self.con.execute(
+                    f"CREATE VIEW {table}_observations AS SELECT * FROM {table}_retained "
+                    f"UNION ALL BY NAME SELECT * FROM {table}_empty"
                 )
             else:
                 self.con.execute(f"CREATE TABLE {table}_observations ({schema}, {COMMON})")
@@ -208,7 +220,8 @@ class Dataset:
                 self.con.execute(
                     f"CREATE VIEW {table} AS SELECT * FROM {table}_observations "
                     f"QUALIFY row_number() OVER (PARTITION BY {keys} "
-                    "ORDER BY retrieved_at DESC, source_sha256 DESC)=1"
+                    "ORDER BY retrieved_at DESC, source_sha256 DESC, "
+                    "normalization_version DESC NULLS LAST)=1"
                 )
 
     def close(self):

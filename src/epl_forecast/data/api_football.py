@@ -2,6 +2,7 @@
 
 import csv
 import json
+import math
 import re
 import unicodedata
 from datetime import datetime
@@ -25,6 +26,65 @@ ROLES = {
     "Midfielder": "MID",
     "Attacker": "FWD",
 }
+
+PLAYER_STAT_FIELDS = {
+    "rating": ("games", "rating"),
+    "passes_total": ("passes", "total"),
+    "key_passes": ("passes", "key"),
+    "tackles": ("tackles", "total"),
+    "interceptions": ("tackles", "interceptions"),
+    "duels_total": ("duels", "total"),
+    "duels_won": ("duels", "won"),
+    "dribbles_attempted": ("dribbles", "attempts"),
+    "dribbles_successful": ("dribbles", "success"),
+    "fouls_drawn": ("fouls", "drawn"),
+    "fouls_committed": ("fouls", "committed"),
+}
+
+
+def match_player_statistics(statistics, identity, issues):
+    result = {}
+    for field, (group, key) in PLAYER_STAT_FIELDS.items():
+        raw = (statistics.get(group) or {}).get(key)
+        value = None
+        if raw is not None:
+            try:
+                number = float(raw)
+                valid = math.isfinite(number) and number >= 0
+                valid &= number <= 10 if field == "rating" else number.is_integer()
+                if valid:
+                    value = number if field == "rating" else int(number)
+            except (TypeError, ValueError):
+                pass
+            if value is None:
+                issues.append(
+                    {
+                        **identity,
+                        "field": field,
+                        "reported_value": raw,
+                        "resolution": "unknown: invalid statistic",
+                    }
+                )
+        result[field] = value
+    for total, successful in (
+        ("passes_total", "key_passes"),
+        ("duels_total", "duels_won"),
+        ("dribbles_attempted", "dribbles_successful"),
+    ):
+        if result[total] is not None and result[successful] is not None:
+            if result[successful] > result[total]:
+                issues.append(
+                    {
+                        **identity,
+                        "field": [total, successful],
+                        "reported_values": [result[total], result[successful]],
+                        "resolution": "unknown: successful count exceeds total",
+                    }
+                )
+                result[total] = result[successful] = None
+    raw_accuracy = (statistics.get("passes") or {}).get("accuracy")
+    result["pass_accuracy"] = str(raw_accuracy) if raw_accuracy is not None else None
+    return result
 
 
 with Path(__file__).with_name("api_player_aliases.csv").open() as stream:
@@ -138,7 +198,10 @@ def team_key(team, required=False, known=None):
 
 def normalize(record, body, root):
     endpoint, context = record["context"]["endpoint"], record["context"]
+    if endpoint == "fixtures":
+        record = {**record, "normalization_version": 2}
     tables = {}
+    issues = []
     fixture_keys, team_keys = {}, {}
     if endpoint in ("injuries", "transfers"):
         data = Dataset(root)
@@ -288,6 +351,13 @@ def normalize(record, body, root):
                                 "red_cards": s["cards"]["red"],
                             }
                         )
+                        row.update(
+                            match_player_statistics(
+                                s,
+                                {"table": "appearances", "match_id": key, "player_id": pid},
+                                issues,
+                            )
+                        )
                     add(
                         "players",
                         {"player_id": pid, "api_id": canonical_api_id(p["id"]), "name": p["name"]},
@@ -420,7 +490,6 @@ def normalize(record, body, root):
                         "transfer_type": t["type"],
                     },
                 )
-    issues = []
     for table, rows in tables.items():
         if table == "players":
             merged = {}
