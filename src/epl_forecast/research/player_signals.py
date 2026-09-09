@@ -289,3 +289,113 @@ def signal_audit(data, seasons=None):
         "zero_encoding": zero_encoding(process, appearances),
         "publication_gap": publication_gap(appearances),
     }
+
+
+def player_population_audit(data, competitions=("eng-premier-league",)):
+    """Identity, exposure and coverage gate for the published player-process population.
+
+    Reports what is unresolved instead of resolving it by guesswork: an Understat
+    record with no canonical link stays unlinked and named, and two records that
+    reach the same canonical player in one match are a collision, never a sum.
+    """
+    placeholders = ",".join("?" * len(competitions))
+    process = data.rows(
+        f"SELECT * FROM player_process WHERE competition_id IN ({placeholders})",
+        list(competitions),
+    )
+    appearances = data.rows(
+        f"SELECT * FROM appearances WHERE competition_id IN ({placeholders})",
+        list(competitions),
+    )
+    names = {r["player_id"]: r["name"] for r in data.rows("SELECT player_id, name FROM players")}
+    fixtures = {
+        r["match_id"]: r
+        for r in data.rows(
+            f"SELECT DISTINCT match_id, season_id, home_team_id, away_team_id, status "
+            f"FROM fixtures WHERE competition_id IN ({placeholders}) AND stage='regular'",
+            list(competitions),
+        )
+    }
+    by_season = defaultdict(
+        lambda: {
+            "records": 0,
+            "linked": 0,
+            "matches": set(),
+            "players": set(),
+            "unlinked_records": 0,
+            "invalid_exposure": 0,
+            "missing_marks": 0,
+        }
+    )
+    collisions, unlinked = [], defaultdict(lambda: {"appearances": 0, "seasons": set()})
+    seen = defaultdict(list)
+    for row in process:
+        season = row["season_id"]
+        cell = by_season[season]
+        cell["records"] += 1
+        cell["matches"].add(row["match_id"])
+        minutes = row["minutes"]
+        if minutes is None or minutes < 0 or minutes > 120:
+            cell["invalid_exposure"] += 1
+        if row["xg"] is None or row["xa"] is None or row["shots"] is None:
+            cell["missing_marks"] += 1
+        if row["player_id"] is None:
+            cell["unlinked_records"] += 1
+            entry = unlinked[row["understat_id"]]
+            entry["appearances"] += 1
+            entry["seasons"].add(season)
+            continue
+        cell["linked"] += 1
+        cell["players"].add(row["player_id"])
+        seen[(row["match_id"], row["player_id"])].append(row["understat_id"])
+    for (match_id, player_id), ids in sorted(seen.items()):
+        if len(ids) > 1:
+            collisions.append(
+                {
+                    "match_id": match_id,
+                    "player_id": player_id,
+                    "player_name": names.get(player_id),
+                    "understat_ids": sorted(ids),
+                }
+            )
+    active = defaultdict(set)
+    for row in appearances:
+        if row["minutes"] and row["minutes"] > 0:
+            active[row["match_id"]].add(row["player_id"])
+    positive = defaultdict(set)
+    for row in process:
+        if row["player_id"] and row["minutes"] and row["minutes"] > 0:
+            positive[row["match_id"]].add(row["player_id"])
+    disagreements = []
+    for match_id, players in sorted(positive.items()):
+        missing = sorted(players - active[match_id])
+        if missing:
+            disagreements.append({"match_id": match_id, "process_only_players": missing})
+    expected = defaultdict(set)
+    for match_id, fixture in fixtures.items():
+        if fixture["status"] == "finished":
+            expected[fixture["season_id"]].add(match_id)
+    return {
+        "scope": "Identity, exposure and coverage of the published player-process population. A necessary gate, not validation of any model.",
+        "by_season": {
+            season: {
+                "finished_fixtures": len(expected.get(season, ())),
+                "fixtures_with_process": len(cell["matches"]),
+                "records": cell["records"],
+                "linked_records": cell["linked"],
+                "linked_share": cell["linked"] / cell["records"] if cell["records"] else None,
+                "unlinked_records": cell["unlinked_records"],
+                "linked_players": len(cell["players"]),
+                "invalid_exposure": cell["invalid_exposure"],
+                "records_missing_marks": cell["missing_marks"],
+                "fixtures_without_process": sorted(expected.get(season, set()) - cell["matches"]),
+            }
+            for season, cell in sorted(by_season.items())
+        },
+        "many_to_one_collisions": collisions,
+        "unlinked_understat_ids": {
+            uid: {"appearances": entry["appearances"], "seasons": sorted(entry["seasons"])}
+            for uid, entry in sorted(unlinked.items(), key=lambda kv: -kv[1]["appearances"])
+        },
+        "positive_exposure_disagreements": disagreements,
+    }
