@@ -76,13 +76,15 @@ def decompose(model, state, candidate, mark, exposure=1.0):
         )
         if block is None:
             continue
-        source = mark if name in ("long_rate", "recent_rate", "long_share", "recent_share") else name.split("_", 2)[-1]
+        source = (
+            mark
+            if name in ("long_rate", "recent_rate", "long_share", "recent_share")
+            else name.split("_", 2)[-1]
+        )
         if source not in state.population:
             source = mark
         scaled = beta[index + 1] / model["scale"][index]
-        local_variance += float(
-            (scaled * local_log_sd(state, source, block)) ** 2
-        )
+        local_variance += float((scaled * local_log_sd(state, source, block)) ** 2)
     log_mean = float(vector @ beta) + offset
     return {
         "player_id": state.player_id,
@@ -156,9 +158,7 @@ def compare(model, left, right, candidate, mark):
 def estimate_table(model, states, candidate, mark):
     if not states:
         return []
-    _, matrix = _matrix(
-        [{"state": s, "target_exposure": 1.0} for s in states], candidate, mark
-    )
+    _, matrix = _matrix([{"state": s, "target_exposure": 1.0} for s in states], candidate, mark)
     offset = np.array(
         [
             math.log(

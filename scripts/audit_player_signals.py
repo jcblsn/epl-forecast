@@ -20,9 +20,7 @@ def main():
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
     retain_execution(args.output)
-    data = (
-        frozen_dataset(args.data, args.manifest) if args.manifest else Dataset(args.data)
-    )
+    data = frozen_dataset(args.data, args.manifest) if args.manifest else Dataset(args.data)
     try:
         report = signal_audit(data, args.seasons)
     finally:

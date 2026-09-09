@@ -5,8 +5,6 @@ import json
 from datetime import date, timedelta
 from pathlib import Path
 
-import numpy as np
-
 from epl_forecast.artifacts import new_run_directory, provenance, write_csv
 from epl_forecast.datasets import Dataset
 from epl_forecast.research.player_layer import (
@@ -91,14 +89,14 @@ def main():
     finally:
         data.close()
     layer = PlayerLayer(rows)
-    cutoffs = month_starts(date.fromisoformat(args.first_cutoff), date.fromisoformat(args.last_cutoff))
+    cutoffs = month_starts(
+        date.fromisoformat(args.first_cutoff), date.fromisoformat(args.last_cutoff)
+    )
     first_scored = date.fromisoformat(args.first_scored)
     summary = {"horizon_days": args.horizon_days, "marks": {}, "candidate_notes": CANDIDATE_NOTES}
     for mark in args.marks:
         print(f"Evaluating {mark}", flush=True)
-        evaluation = chronological_evaluation(
-            layer, mark, cutoffs, args.horizon_days, first_scored
-        )
+        evaluation = chronological_evaluation(layer, mark, cutoffs, args.horizon_days, first_scored)
         scored = evaluation["scored"]
         episodes = transfer_episodes(layer, mark)
         transfers = evaluate_transfers(

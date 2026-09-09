@@ -10,7 +10,12 @@ import numpy as np
 
 from epl_forecast.artifacts import new_run_directory, provenance, write_csv
 from epl_forecast.datasets import Dataset
-from epl_forecast.research.player_layer import CANDIDATES, PlayerLayer, observation_rows, player_state
+from epl_forecast.research.player_layer import (
+    CANDIDATES,
+    PlayerLayer,
+    observation_rows,
+    player_state,
+)
 from epl_forecast.research.player_layer_evaluation import (
     _matrix,
     _offset,
@@ -23,14 +28,12 @@ from epl_forecast.storage import write_json
 
 
 def normalized(value):
-    return (
-        unicodedata.normalize("NFKD", value.lower()).encode("ascii", "ignore").decode()
-    )
+    return unicodedata.normalize("NFKD", value.lower()).encode("ascii", "ignore").decode()
 
 
 def resolve(layer, wanted):
     names = {}
-    for index, row in enumerate(layer.rows):
+    for row in layer.rows:
         if row.get("player_name"):
             names.setdefault(row["player_id"], row["player_name"])
     resolved, unresolved = {}, []
@@ -123,15 +126,12 @@ def main():
         response = np.array([c["target_total"] for c in cases])
         offset = _offset(cases, mark)
         states = {
-            label: player_state(layer, player_id, cutoff)
-            for label, player_id in resolved.items()
+            label: player_state(layer, player_id, cutoff) for label, player_id in resolved.items()
         }
         eligible = [
             player_state(layer, pid, cutoff)
             for pid, indices in layer.by_player.items()
-            if layer.available[mark][
-                indices[layer.eligible[indices] <= cutoff.toordinal()]
-            ].sum()
+            if layer.available[mark][indices[layer.eligible[indices] <= cutoff.toordinal()]].sum()
             >= 5
         ]
         for candidate in CANDIDATES:

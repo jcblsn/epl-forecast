@@ -213,9 +213,9 @@ def test_crps_rewards_a_sharper_correct_forecast():
 
 
 def test_paired_bootstrap_clusters_by_player():
-    left = [
-        {"player_id": "a", "cutoff": str(i), "crps": 1.0} for i in range(50)
-    ] + [{"player_id": f"p{i}", "cutoff": "0", "crps": 1.0} for i in range(10)]
+    left = [{"player_id": "a", "cutoff": str(i), "crps": 1.0} for i in range(50)] + [
+        {"player_id": f"p{i}", "cutoff": "0", "crps": 1.0} for i in range(10)
+    ]
     right = [dict(row, crps=0.0) for row in left]
     result = paired_bootstrap(left, right)
     assert result["players"] == 11 and result["cases"] == 60
@@ -234,7 +234,9 @@ def test_pairwise_comparison_separates_mapping_and_player_uncertainty():
         layer, [date(2025, 1, 1), date(2025, 2, 1)], 120, "xg", minimum_exposure=0.5
     )
     names, matrix = _matrix(cases, "long_run", "xg")
-    model = fit_poisson_ridge(matrix, _offset(cases, "xg"), np.array([c["target_total"] for c in cases]))
+    model = fit_poisson_ridge(
+        matrix, _offset(cases, "xg"), np.array([c["target_total"] for c in cases])
+    )
     model["names"] = names
     deep = player_state(layer, "deep", cutoff)
     thin = player_state(layer, "thin", cutoff)
@@ -252,6 +254,8 @@ def test_chronological_evaluation_scores_every_candidate_on_identical_cases():
     cutoffs = [date(2024, m, 1) for m in range(2, 13)]
     result = chronological_evaluation(layer, "xg", cutoffs, 60, date(2024, 8, 1))
     scored = result["scored"]
-    keys = {name: {(s["player_id"], s["cutoff"]) for s in values} for name, values in scored.items()}
+    keys = {
+        name: {(s["player_id"], s["cutoff"]) for s in values} for name, values in scored.items()
+    }
     assert len({frozenset(v) for v in keys.values()}) == 1
     assert all(len(v) > 0 for v in scored.values())

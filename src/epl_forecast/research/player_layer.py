@@ -187,7 +187,9 @@ class PlayerLayer:
         self.team_match_index = defaultdict(list)
         for (team, _), i in sorted(team_matches.items(), key=lambda kv: kv[1]):
             self.team_match_index[team].append(i)
-        self.team_match_index = {k: np.array(v, dtype=int) for k, v in self.team_match_index.items()}
+        self.team_match_index = {
+            k: np.array(v, dtype=int) for k, v in self.team_match_index.items()
+        }
         self._pools, self._team = {}, {}
 
     def _weights(self, indices, cutoff, half_life):
@@ -323,16 +325,18 @@ def player_state(layer, player_id, cutoff, target_club=None):
         pool = layer.population(day, mark)
         population[mark] = pool
         prior_mean = pool["by_role"].get(role, pool["league"])
-        for window, half_life, store in (
-            ("recent", config.recent_half_life, recent),
-            ("long", config.long_half_life, long),
+        for half_life, store in (
+            (config.recent_half_life, recent),
+            (config.long_half_life, long),
         ):
             aggregate = layer.aggregate(player_id, day, mark, half_life)
             strength = config.rate_prior_matches
             store[mark] = {
                 **aggregate,
                 "prior_mean": float(prior_mean),
-                "rate": float(_shrunk(aggregate["total"], aggregate["exposure"], prior_mean, strength)),
+                "rate": float(
+                    _shrunk(aggregate["total"], aggregate["exposure"], prior_mean, strength)
+                ),
                 "raw_rate": float(aggregate["total"] / aggregate["exposure"])
                 if aggregate["exposure"] > 0
                 else None,
@@ -464,11 +468,7 @@ def feature_block(state, block, mark):
             ("log_exposure", float(np.log1p(exposure) - np.log1p(10.0))),
             (
                 "process_coverage",
-                float(
-                    state.long["xg"]["exposure"] / exposure
-                    if exposure > 0
-                    else 0.0
-                ),
+                float(state.long["xg"]["exposure"] / exposure if exposure > 0 else 0.0),
             ),
         ]
     if block == "staleness":

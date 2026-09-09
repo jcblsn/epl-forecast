@@ -14,12 +14,9 @@ import numpy as np
 
 from epl_forecast.research.player_layer import (
     CANDIDATES,
-    PROCESS_MARKS,
-    TARGETS,
     design,
     player_state,
 )
-from epl_forecast.research.player_prior import london_date
 
 DRAWS = 512
 RIDGE = 1.0
@@ -68,14 +65,11 @@ def build_cases(layer, cutoffs, horizon_days, mark, minimum_exposure=2.0):
                     "cutoff": cutoff,
                     "role": state.role,
                     "state": state,
-                    "prior_exposure": float(
-                        (layer.exposure[prior]).sum()
-                    ),
+                    "prior_exposure": float((layer.exposure[prior]).sum()),
                     "prior_effective_exposure": state.long[mark]["exposure"],
                     "club_before": state.club,
                     "club_after": outcome["clubs"][0],
-                    "changed_club": state.club is not None
-                    and outcome["clubs"][0] != state.club,
+                    "changed_club": state.club is not None and outcome["clubs"][0] != state.club,
                     "target_exposure": outcome["exposure"],
                     "target_total": outcome["total"],
                     "target_appearances": outcome["appearances"],
@@ -132,9 +126,9 @@ def fit_poisson_ridge(matrix, offset, response, ridge=RIDGE, iterations=60):
     mean = np.exp(np.clip(eta, -20, 20))
     dof = max(n - p - 1, 1)
     dispersion = float(((response - mean) ** 2 / np.maximum(mean, 1e-6)).sum() / dof)
-    covariance = np.linalg.inv(
-        designed.T @ (designed * mean[:, None]) + penalty
-    ) * max(dispersion, 1e-6)
+    covariance = np.linalg.inv(designed.T @ (designed * mean[:, None]) + penalty) * max(
+        dispersion, 1e-6
+    )
     return {
         "beta": beta,
         "centre": centre,
