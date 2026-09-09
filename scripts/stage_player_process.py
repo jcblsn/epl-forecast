@@ -18,6 +18,8 @@ def main():
     parser.add_argument("--manifest", type=Path, required=True)
     parser.add_argument("--stage", type=Path, required=True)
     parser.add_argument("--seasons", nargs="+", type=int, default=[2023, 2024, 2025])
+    parser.add_argument("--marker", default="publish_complete.json")
+    parser.add_argument("--limit", type=int)
     args = parser.parse_args()
     if (
         args.stage.resolve() == args.data.resolve()
@@ -67,8 +69,9 @@ def main():
         else:
             if not (args.stage / "capture_complete.json").exists():
                 raise ValueError("Complete capture before publication")
+            selected = matches[: args.limit] if args.limit else matches
             with writer_lock(args.data):
-                for index, match in enumerate(matches):
+                for index, match in enumerate(selected):
                     url = f"https://understat.com/getMatchData/{match['source_match_id']}"
                     record = fetcher.latest[url]
                     raw = args.stage / record["raw_path"]
@@ -86,11 +89,12 @@ def main():
                     )
                     ingest(args.data, retained, payload)
                     if (index + 1) % 25 == 0:
-                        print(f"Published {index + 1}/{len(matches)}", flush=True)
+                        print(f"Published {index + 1}/{len(selected)}", flush=True)
             write_json(
-                args.stage / "publish_complete.json",
+                args.stage / args.marker,
                 {
-                    "matches": len(matches),
+                    "data_root": str(args.data.resolve()),
+                    "matches": len(selected),
                     "manifest_sha256": file_hash(args.stage / "manifest.json"),
                 },
             )
