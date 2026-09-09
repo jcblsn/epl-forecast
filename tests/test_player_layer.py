@@ -307,9 +307,7 @@ def test_pairwise_comparison_reports_role_relative_and_absolute_scales():
     winger = player_state(layer, "winger", cutoff)
     result = compare(model, striker, winger, "long_run", "xg")
     assert result["left_role"] == "FWD" and result["right_role"] == "MID"
-    pools = [
-        state.population["xg"]["by_role"][state.role] for state in (striker, winger)
-    ]
+    pools = [state.population["xg"]["by_role"][state.role] for state in (striker, winger)]
     assert result["rate_log_ratio"] - result["log_ratio"] == pytest.approx(
         np.log(pools[0] / pools[1])
     )
