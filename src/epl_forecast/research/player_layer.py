@@ -337,33 +337,34 @@ def player_state(layer, player_id, cutoff, target_club=None):
                 if aggregate["exposure"] > 0
                 else None,
             }
-        if mark in PROCESS_MARKS:
-            aggregate = long[mark]
-            pool_share = prior_mean / LEAGUE_REFERENCE_XG
-            strength = config.rate_prior_matches * LEAGUE_REFERENCE_XG
-            share[mark] = {
-                "share": float(
-                    _shrunk(aggregate["total"], aggregate["opportunity"], pool_share, strength)
-                ),
-                "raw_share": float(aggregate["total"] / aggregate["opportunity"])
-                if aggregate["opportunity"] > 0
-                else None,
-                "pool_share": float(pool_share),
-                "opportunity": float(aggregate["opportunity"]),
-            }
-            recent_aggregate = recent[mark]
-            share[f"recent_{mark}"] = {
-                "share": float(
-                    _shrunk(
-                        recent_aggregate["total"],
-                        recent_aggregate["opportunity"],
-                        pool_share,
-                        strength,
-                    )
-                ),
-                "pool_share": float(pool_share),
-                "opportunity": float(recent_aggregate["opportunity"]),
-            }
+        # The opportunity share generalises to any mark: how much of the attacking
+        # process the club generated while he played does this player account for.
+        aggregate = long[mark]
+        pool_share = prior_mean / LEAGUE_REFERENCE_XG
+        strength = config.rate_prior_matches * LEAGUE_REFERENCE_XG
+        share[mark] = {
+            "share": float(
+                _shrunk(aggregate["total"], aggregate["opportunity"], pool_share, strength)
+            ),
+            "raw_share": float(aggregate["total"] / aggregate["opportunity"])
+            if aggregate["opportunity"] > 0
+            else None,
+            "pool_share": float(pool_share),
+            "opportunity": float(aggregate["opportunity"]),
+        }
+        recent_aggregate = recent[mark]
+        share[f"recent_{mark}"] = {
+            "share": float(
+                _shrunk(
+                    recent_aggregate["total"],
+                    recent_aggregate["opportunity"],
+                    pool_share,
+                    strength,
+                )
+            ),
+            "pool_share": float(pool_share),
+            "opportunity": float(recent_aggregate["opportunity"]),
+        }
     environment = {
         "player": float(
             long["xg"]["opportunity"] / long["xg"]["environment_exposure"]
