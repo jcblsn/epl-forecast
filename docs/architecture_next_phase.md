@@ -89,9 +89,23 @@ exposure/staleness uncertainty. Its Gamma latent-rate uncertainty is explicitly
 uncalibrated; the standalone future-process interval scores do not establish this
 interface's coverage.
 
-The next empirical gate is the attacking-only known-minutes bridge on fixed M2
-and M7 rates. It is not implemented yet. No bridge or dynamic-state result is
-claimed here; the full objective remains open.
+Gate 3 is in progress. `research/roster_bridge.py` and
+`scripts/evaluate_roster_bridge.py` implement an attacking-only known-minutes
+bridge on the exact saved M2 and M7 forecast distributions, with baseline states
+held fixed. The mapping fits exactly two coefficients, no intercept, and ridge 1
+using a chronological Poisson mean estimating equation. Actual target minutes
+are compared with the previous eight eligible team matches, requiring at least
+three reference matches. Scoring begins on 2024-08-01 after at least 200 training
+fixtures.
+
+This first bridge uses expected portable traits as plug-in inputs. It exports a
+trait-variance audit but does not integrate that uncertainty into forecasts.
+Whole-population and transfer, injury, large-lineup-change (at least two player
+match equivalents), opening (first five matches) and promoted slices are required
+in the retained report. Reconstruction covered all 1,140 saved baseline matches;
+M7 likelihood agreement was within 8.9e-16. Five synthetic bridge tests pass.
+The empirical run `runs/roster-bridge-v1` is preparing; no empirical bridge result
+or dynamic-state result is claimed here. The full objective remains open.
 
 The depth-matched API control uses all API appearances starting at the earliest
 eligible retained process observation at each cutoff, including role-population
