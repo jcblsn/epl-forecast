@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Temporal player prior preview</title>
+<style>
+  :root { font: 16px/1.5 system-ui, sans-serif; color: #172c3e; background: #f6f7f8; }
+  body { max-width: 1040px; margin: 32px auto; padding: 0 20px 40px; }
+  h1 { font-size: 26px; font-weight: 550; margin-bottom: 8px; }
+  h2 { font-size: 19px; font-weight: 550; }
+  p { max-width: 850px; }
+  .muted { color: #576875; font-size: 14px; }
+  .controls, .legend { display: flex; gap: 24px; flex-wrap: wrap; align-items: center; }
+  label { display: block; }
+  select, input { font: inherit; padding: 6px; max-width: 100%; }
+  select { min-width: 280px; }
+  #cutoff { width: 100%; padding: 0; }
+  section { background: white; border: 1px solid #dde2e6; border-radius: 6px; padding: 18px; margin: 20px 0; }
+  #chart { width: 100%; height: auto; display: block; cursor: crosshair; }
+  .legend { font-size: 13px; gap: 16px; }
+  .legend span::before { display: inline-block; content: ''; width: 20px; border-top: 3px solid; margin-right: 6px; vertical-align: middle; }
+  .main { color: #235a91; } .control { color: #167963; } .legacy { color: #996437; } .rating { color: #8b559d; }
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 18px; margin-top: 20px; }
+  .value { font-size: 25px; font-variant-numeric: tabular-nums; }
+  table { border-collapse: collapse; width: 100%; }
+  td { border-bottom: 1px solid #edf0f2; padding: 8px 4px; text-align: right; }
+  td:first-child { text-align: left; }
+  summary { cursor: pointer; }
+  code { overflow-wrap: anywhere; font-size: 12px; }
+</style>
+<body>
+<h1>Temporal player prior preview</h1>
+<p class="muted">API-FOOTBALL research estimates at successive forecast cutoffs. The mean combines learned match-statistic features and a persistent player residual. The band includes their uncertainty and the fixed exposure/staleness error model. These are conditional model estimates, not causal player grades.</p>
+<div class="controls">
+  <label>Player<br><select id="player" aria-label="Player"></select></label>
+  <label>Uncertainty band<br><select id="band" aria-label="Uncertainty band"><option value="1">±1 standard deviation</option><option value="2">±2 standard deviations</option><option value="0">Mean only</option></select></label>
+  <label><input type="checkbox" id="show-rating"> Show rating ablation</label>
+</div>
+<section>
+  <div id="caption" class="muted"></div>
+  <svg id="chart" viewBox="0 0 960 330" role="img" aria-label="Player prior mean and uncertainty across forecast cutoffs"></svg>
+  <div class="legend"><span class="main">Time-local prior</span><span class="control">Centered control</span><span class="legacy">Existing M6</span><span class="rating" id="rating-legend" hidden>Rating ablation</span></div>
+  <p class="muted">The centered control uses the same residual and local uncertainty law with the feature mapping disabled. Existing M6 has its original absolute, static player layer; its scale is a contextual comparison.</p>
+  <label for="cutoff">Inspect cutoff: <output id="date"></output></label>
+  <input type="range" id="cutoff" min="0" step="1" value="0">
+  <div class="stats">
+    <div><div class="muted">Prior mean</div><div class="value" id="mean"></div></div>
+    <div><div class="muted">Prior SD</div><div class="value" id="sd"></div></div>
+    <div><div class="muted">Feature contribution</div><div class="value" id="feature"></div></div>
+    <div><div class="muted">Persistent residual</div><div class="value" id="residual"></div></div>
+  </div>
+</section>
+<section>
+  <h2>Evidence at the selected cutoff</h2>
+  <table id="evidence"></table>
+  <p class="muted">Effective minutes use a 240-day half-life. A meaningful appearance is at least 30 minutes. The model centers a sampled lineup against the club’s prior five-match minute shares. A full-match player usually occupies about 1/11 of team minutes. Calendar gaps contain no interpolated observations.</p>
+</section>
+<details><summary>Provenance and scope</summary><p id="scope" class="muted"></p><p class="muted">Only earlier London dates inform each deployable prior. Target actual minutes and target statistics are absent from this preview’s inputs. The separate evaluation report labels actual-minute oracles as nondeployable. Historical publication timing remains unknown. Profile names are display labels; they are not model features.</p><p class="muted">Input manifest: <code id="input-hash"></code><br>Retained estimates: <code id="estimate-hash"></code></p></details>
+<script id="prior-data" type="application/json">__PRIOR_DATA__</script>
+<script>
+const data = JSON.parse(document.querySelector('#prior-data').textContent);
+const el = id => document.getElementById(id);
+const playerSelect = el('player'), slider = el('cutoff'), svg = el('chart');
+const NS = 'http://www.w3.org/2000/svg';
+let player, rows, xScale, selected = 0;
+const fmt = (value, digits=3) => value == null ? 'Unknown' : Number(value).toFixed(digits);
+for (const [i, p] of data.players.entries()) {
+  const option = document.createElement('option'); option.value = i;
+  option.textContent = `${p.name} (${p.id}) · ${p.rows.length} cutoffs`; playerSelect.append(option);
+}
+const preferred = data.players.findIndex(p => /saka/i.test(p.name) && p.rows.length > 5);
+playerSelect.value = preferred >= 0 ? preferred : data.players.reduce((best, p, i) => p.rows.length > data.players[best].rows.length ? i : best, 0);
+function node(tag, attributes, text) {
+  const n = document.createElementNS(NS, tag);
+  for (const [key,value] of Object.entries(attributes)) n.setAttribute(key, value);
+  if (text != null) n.textContent = text;
+  svg.append(n); return n;
+}
+function render() {
+  const band = Number(el('band').value), showRating = el('show-rating').checked;
+  selected = Math.min(Number(slider.value), rows.length-1); const current = rows[selected];
+  svg.replaceChildren();
+  const left=62, right=940, top=18, bottom=280;
+  const times = rows.map(r => Date.parse(`${r.date}T12:00:00Z`));
+  const first=times[0], last=times.at(-1), span=Math.max(last-first, 86400000);
+  xScale = t => left + (t-first)/span*(right-left);
+  const all = rows.flatMap(r => [r.mean-band*r.sd, r.mean+band*r.sd, r.centered_control_mean, r.legacy_mean, ...(showRating ? [r.rating_mean] : []), 0]);
+  const lo=Math.min(...all), hi=Math.max(...all), pad=Math.max((hi-lo)*.12, .035);
+  const y = v => bottom-(v-lo+pad)/(hi-lo+2*pad)*(bottom-top);
+  for (let i=0; i<=4; i++) {
+    const v=lo-pad+(hi-lo+2*pad)*i/4;
+    node('line', {x1:left,x2:right,y1:y(v),y2:y(v),stroke:'#e6eaee'});
+    node('text', {x:left-10,y:y(v)+4,'text-anchor':'end',fill:'#576875','font-size':12}, fmt(v,2));
+    const index=Math.round((rows.length-1)*i/4), x=xScale(times[index]);
+    node('text', {x,y:bottom+25,'text-anchor':'middle',fill:'#576875','font-size':12}, rows[index].date);
+  }
+  node('line', {x1:left,x2:right,y1:y(0),y2:y(0),stroke:'#a8b4bf','stroke-dasharray':'3 4'});
+  if (band) {
+    const points = [...rows.map((r,i)=>`${xScale(times[i])},${y(r.mean+band*r.sd)}`), ...rows.map((r,i)=>`${xScale(times[i])},${y(r.mean-band*r.sd)}`).reverse()];
+    node('polygon', {points:points.join(' '),fill:'#235a91','fill-opacity':'.11'});
+  }
+  for (const [field,color,dash] of [['legacy_mean','#996437','3 4'],['centered_control_mean','#167963','7 4'],['mean','#235a91',''],...(showRating ? [['rating_mean','#8b559d','4 3']] : [])]) {
+    node('polyline',{points:rows.map((r,i)=>`${xScale(times[i])},${y(r[field])}`).join(' '),fill:'none',stroke:color,'stroke-width':field==='mean'?2.8:1.7,'stroke-dasharray':dash});
+  }
+  node('line',{x1:xScale(times[selected]),x2:xScale(times[selected]),y1:top,y2:bottom,stroke:'#172c3e','stroke-dasharray':'2 4'});
+  node('circle',{cx:xScale(times[selected]),cy:y(current.mean),r:4,fill:'#235a91'});
+  el('rating-legend').hidden = !showRating;
+  el('date').textContent=current.date;
+  el('caption').textContent=`${player.name} · ${player.id} · ${rows[0].date} to ${rows.at(-1).date} · ${rows.length} recorded cutoffs`;
+  for (const [id,field] of [['mean','mean'],['sd','sd'],['feature','feature_mean'],['residual','residual_mean']]) el(id).textContent=fmt(current[field]);
+  const details=[['Club whose lineup/reference includes this player',current.team],['Role from prior appearances',current.role],['Most recent eligible fixture',current.latest_evidence_date || 'None'],['Effective minutes',fmt(current.effective_minutes,0)],['Days since meaningful minutes',fmt(current.days_since_meaningful_minutes,0)],['Expected lineup minutes',fmt(current.expected_minutes,1)],['Reference lineup minutes',fmt(current.reference_minutes,1)],['Local error SD',fmt(current.local_sd)],['Mean change from centered control',fmt(current.mean-current.centered_control_mean)],['Mean with rating ablation',fmt(current.rating_mean)]];
+  el('evidence').replaceChildren();
+  for (const [label,value] of details) { const tr=document.createElement('tr'); for(const t of [label,value]) { const td=document.createElement('td'); td.textContent=t; tr.append(td); } el('evidence').append(tr); }
+}
+function changePlayer() { player=data.players[Number(playerSelect.value)]; rows=player.rows; slider.max=rows.length-1; slider.value=rows.length-1; render(); }
+playerSelect.addEventListener('change',changePlayer);
+slider.addEventListener('input',render); el('band').addEventListener('change',render); el('show-rating').addEventListener('change',render);
+svg.addEventListener('click',event=>{const rect=svg.getBoundingClientRect(), x=(event.clientX-rect.left)/rect.width*960; let best=0; for(let i=1;i<rows.length;i++) if(Math.abs(xScale(Date.parse(`${rows[i].date}T12:00:00Z`))-x)<Math.abs(xScale(Date.parse(`${rows[best].date}T12:00:00Z`))-x)) best=i; slider.value=best; render();});
+el('scope').textContent=`Season ${data.season}. Evaluation status: ${data.evaluation_status}. ${data.players.length} players with recorded estimates. All curves use forecast-time priors; this page does not display an oracle forecast.`;
+el('input-hash').textContent=data.input_manifest_sha256; el('estimate-hash').textContent=data.estimates_sha256;
+changePlayer();
+</script>
+</body>
+</html>
