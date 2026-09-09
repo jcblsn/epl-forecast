@@ -17,6 +17,7 @@ from epl_forecast.research.player_layer_evaluation import (
     chronological_evaluation,
     evaluate_transfers,
     paired_bootstrap,
+    residual_persistence,
     summarize,
     transfer_episodes,
 )
@@ -112,6 +113,9 @@ def main():
                 name: paired_bootstrap(values, scored[reference])
                 for name, values in scored.items()
                 if name != reference
+            },
+            "residual_persistence": {
+                name: residual_persistence(values) for name, values in scored.items()
             },
             "transfer_episodes": len(episodes),
             "transfer": {name: summarize(values) for name, values in transfers.items()},

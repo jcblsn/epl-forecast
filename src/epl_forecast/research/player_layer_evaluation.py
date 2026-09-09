@@ -294,6 +294,61 @@ def summarize(scores):
     }
 
 
+def residual_persistence(scores, minimum_cases=4, seed=2, draws=2000):
+    """Is there player information the fitted mapping does not already carry?
+
+    Each player's scored cases are split chronologically in half and the mean log
+    residual of each half compared. A correlation near zero means the features
+    already absorb what persists about the player; a clearly positive one means an
+    identified residual the mapping is missing. Half-sample means are noisy, so the
+    reported interval comes from resampling players.
+    """
+    by_player = defaultdict(list)
+    for score in scores:
+        by_player[score["player_id"]].append(score)
+    early, late = [], []
+    for _, values in sorted(by_player.items()):
+        values = sorted(values, key=lambda s: s["cutoff"])
+        if len(values) < minimum_cases:
+            continue
+        half = len(values) // 2
+
+        def residual(rows):
+            return float(
+                np.mean(
+                    [
+                        math.log((r["observed"] + 0.05) / max(r["expected"] + 0.05, 1e-6))
+                        for r in rows
+                    ]
+                )
+            )
+
+        early.append(residual(values[:half]))
+        late.append(residual(values[half:]))
+    if len(early) < 30:
+        return None
+    early, late = np.array(early), np.array(late)
+    generator = np.random.default_rng(seed)
+    samples = []
+    for _ in range(draws):
+        picked = generator.integers(0, len(early), size=len(early))
+        matrix = np.corrcoef(early[picked], late[picked])
+        if np.isfinite(matrix[0, 1]):
+            samples.append(float(matrix[0, 1]))
+    lower, upper = np.quantile(samples, [0.025, 0.975]) if samples else (None, None)
+    observed = float(np.corrcoef(early, late)[0, 1])
+    within = float(np.mean((early - late) ** 2) / 2)
+    between = float(np.var(np.concatenate([early, late])))
+    return {
+        "players": int(len(early)),
+        "half_split_correlation": observed,
+        "interval": [float(lower), float(upper)],
+        "residual_sd_all": float(np.sqrt(max(between, 0.0))),
+        "persistent_sd": float(np.sqrt(max(between - within, 0.0))),
+        "noise_sd": float(np.sqrt(max(within, 0.0))),
+    }
+
+
 def paired_bootstrap(left, right, draws=2000, seed=1):
     """Cluster the resample by player so one ever-present player is not many cases."""
     index = {(s["player_id"], s["cutoff"]): s for s in right}
