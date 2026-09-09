@@ -107,6 +107,8 @@ def main():
         reference = "long_run"
         summary["marks"][mark] = {
             "cases": evaluation["cases"],
+            "scored_cutoffs": evaluation["scored_cutoffs"],
+            "skipped_cutoffs": evaluation["skipped_cutoffs"],
             "chronological": {name: slices(values) for name, values in scored.items()},
             "chronological_paired_vs_long_run": {
                 name: paired_bootstrap(values, scored[reference])

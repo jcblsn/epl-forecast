@@ -237,12 +237,13 @@ def chronological_evaluation(layer, mark, cutoffs, horizon_days, first_scored, s
         return {"cases": 0, "scored": [], "candidates": {}}
     scored_cutoffs = sorted({c["cutoff"] for c in cases if c["cutoff"] >= first_scored})
     results = {name: [] for name in CANDIDATES}
-    fitted = {}
+    fitted, skipped = {}, []
     for cutoff in scored_cutoffs:
         closed = cutoff - timedelta(days=horizon_days)
         training = [c for c in cases if c["cutoff"] <= closed]
         evaluation = [c for c in cases if c["cutoff"] == cutoff]
         if len(training) < 200:
+            skipped.append({"cutoff": str(cutoff), "training_cases": len(training)})
             continue
         for candidate in CANDIDATES:
             names, train_matrix = _matrix(training, candidate, mark)
@@ -257,7 +258,14 @@ def chronological_evaluation(layer, mark, cutoffs, horizon_days, first_scored, s
             )
             results[candidate].extend(scores)
             fitted[candidate] = model
-    return {"cases": len(cases), "scored": results, "models": fitted, "all_cases": cases}
+    return {
+        "cases": len(cases),
+        "scored": results,
+        "models": fitted,
+        "all_cases": cases,
+        "scored_cutoffs": [str(c) for c in scored_cutoffs],
+        "skipped_cutoffs": skipped,
+    }
 
 
 def summarize(scores):
