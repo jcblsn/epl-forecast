@@ -202,19 +202,17 @@ _IDENTITY_KEYS = {}
 def identity_keys(root):
     """API-id to canonical team and fixture maps for a published store.
 
-    Rebuilt only when the manifest directory changes. Injury and transfer records
-    are normalized one payload at a time, so reading the whole store for each of
-    thousands of cached replays dominated the run without changing any output.
+    Injury and transfer payloads are normalized one at a time, and each of them
+    publishes team rows, so watching any partition these writes touch makes the cache
+    invalidate on every record and a full replay spends its time rebuilding the store.
+    The fixture partition is the one input a transfer or injury normalization cannot
+    change, so it alone decides when a rebuild is needed; team rows those payloads
+    publish are folded back in by `record_identity`, which keeps the map exactly as
+    fresh as a rebuild would.
     """
     root = Path(root)
-    # Only a teams or fixtures publication can change these maps, so watch those two
-    # partitions rather than the whole manifest directory, which every publish touches.
-    stamp = tuple(
-        (root / "parquet" / table).stat().st_mtime_ns
-        if (root / "parquet" / table).exists()
-        else None
-        for table in ("teams", "fixtures")
-    )
+    fixtures = root / "parquet" / "fixtures"
+    stamp = fixtures.stat().st_mtime_ns if fixtures.exists() else None
     cached = _IDENTITY_KEYS.get(str(root))
     if cached is not None and cached[0] == stamp:
         return cached[1]
@@ -236,6 +234,16 @@ def identity_keys(root):
         data.close()
     _IDENTITY_KEYS[str(root)] = (stamp, keys)
     return keys
+
+
+def record_identity(root, tables):
+    """Fold freshly published team rows into the cached map; latest publication wins."""
+    cached = _IDENTITY_KEYS.get(str(Path(root)))
+    if cached is None:
+        return
+    for row in tables.get("teams", ()):
+        if row.get("api_id") is not None:
+            cached[1][0][row["api_id"]] = row["team_id"]
 
 
 def normalize(record, body, root):
@@ -562,4 +570,6 @@ def normalize(record, body, root):
             tables[table] = list({json.dumps(r, sort_keys=True): r for r in rows}.values())
     if issues:
         record = {**record, "normalization_issues": issues}
-    return publish(root, record, tables)
+    result = publish(root, record, tables)
+    record_identity(root, tables)
+    return result

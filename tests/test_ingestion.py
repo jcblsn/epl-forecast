@@ -370,7 +370,7 @@ def test_disputed_sidelined_end_is_unknown_with_retained_issue(tmp_path):
     data.close()
 
 
-def test_identity_keys_are_reused_until_the_store_changes(tmp_path):
+def test_identity_keys_are_reused_until_a_fixture_publication(tmp_path):
     from epl_forecast.data import api_football
     from epl_forecast.datasets import publish
 
@@ -385,10 +385,62 @@ def test_identity_keys_are_reused_until_the_store_changes(tmp_path):
             "retrieved_at": "2026-01-01T00:00:00+00:00",
             "evidence_basis": "retrospective",
             "source_sha256": "a" * 64,
-            "context": {"endpoint": "teams"},
+            "context": {"endpoint": "fixtures"},
         },
-        {"teams": [{"team_id": "arsenal", "name": "Arsenal", "api_id": 42}]},
+        {
+            "fixtures": [
+                {
+                    "match_id": "eng-premier-league:2025-2026:arsenal:chelsea",
+                    "competition_id": "eng-premier-league",
+                    "season_id": "2025-2026",
+                    "stage": "regular",
+                    "home_team_id": "arsenal",
+                    "away_team_id": "chelsea",
+                    "status": "finished",
+                    "home_goals": 1,
+                    "away_goals": 0,
+                    "api_id": 5150,
+                }
+            ]
+        },
     )
     refreshed = api_football.identity_keys(tmp_path)
     assert refreshed is not first
-    assert refreshed[0] == {42: "arsenal"}
+    assert refreshed[1] == {5150: "eng-premier-league:2025-2026:arsenal:chelsea"}
+
+
+def test_identity_cache_matches_a_rebuild_after_a_transfer_publishes_a_team(tmp_path):
+    from epl_forecast.data import api_football
+
+    request = {
+        "provider": "api_football",
+        "retrieved_at": "2026-01-01T00:00:00+00:00",
+        "evidence_basis": "retrospective",
+        "source_sha256": "c" * 64,
+        "context": {"endpoint": "transfers"},
+    }
+    body = {
+        "response": [
+            {
+                "player": {"id": 700, "name": "A Player"},
+                "transfers": [
+                    {
+                        "date": "2025-01-05",
+                        "type": "Loan",
+                        "teams": {
+                            "in": {"id": 9001, "name": "Unmapped In"},
+                            "out": {"id": 9002, "name": "Unmapped Out"},
+                        },
+                    }
+                ],
+            }
+        ]
+    }
+    api_football._IDENTITY_KEYS.clear()
+    (tmp_path / "manifests").mkdir(parents=True)
+    api_football.normalize(request, body, tmp_path)
+    cached = api_football.identity_keys(tmp_path)[0]
+    api_football._IDENTITY_KEYS.clear()
+    rebuilt = api_football.identity_keys(tmp_path)[0]
+    assert cached == rebuilt
+    assert rebuilt[9001] == "af-team-9001"
