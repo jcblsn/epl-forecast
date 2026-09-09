@@ -181,9 +181,7 @@ def main():
             block = latest.setdefault(player_id, {})
             block["role"] = state.role
             block["club"] = state.club
-            results = {
-                name: decompose(model, state, name, mark) for name, model in models.items()
-            }
+            results = {name: decompose(model, state, name, mark) for name, model in models.items()}
             reference = next(iter(results.values()))
             # Exposure, staleness and the share are properties of the player and mark,
             # so they are stored once rather than repeated for every representation.
@@ -294,7 +292,12 @@ def _compact(result):
         "local_sd": round(result["uncertainty"]["player_local_log_sd"], 4),
         "total_sd": round(result["uncertainty"]["total_log_sd"], 4),
         "contributions": [
-            [c["feature"], round(c["raw_value"], 3), round(c["coefficient"], 3), round(c["log_contribution"], 3)]
+            [
+                c["feature"],
+                round(c["raw_value"], 3),
+                round(c["coefficient"], 3),
+                round(c["log_contribution"], 3),
+            ]
             for c in result["contributions"]
         ],
     }

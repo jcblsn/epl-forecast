@@ -7,6 +7,7 @@ still carry no portable information.
 """
 
 from collections import defaultdict
+from pathlib import Path
 
 import numpy as np
 
@@ -291,7 +292,34 @@ def signal_audit(data, seasons=None):
     }
 
 
-def player_population_audit(data, competitions=("eng-premier-league",)):
+def provider_names(stage):
+    """Provider-side names for Understat ids, read from retained staged payloads.
+
+    An unlinked process record keeps no canonical name, so the unresolved mappings
+    can only be named from the evidence they came from. This is for the audit; it
+    never feeds identity resolution.
+    """
+    import gzip
+    import json as _json
+
+    stage = Path(stage)
+    names = {}
+    for request in sorted((stage / "requests").glob("*.json")):
+        record = _json.loads(request.read_text())
+        if record.get("provider") != "understat" or record["context"].get("kind") != "players":
+            continue
+        raw = stage / record["raw_path"]
+        if not raw.is_file():
+            continue
+        payload = raw.read_bytes()
+        body = _json.loads(gzip.decompress(payload) if payload.startswith(b"\x1f\x8b") else payload)
+        for side in body.get("rosters", {}).values():
+            for entry in side.values():
+                names.setdefault(str(entry["player_id"]), entry.get("player"))
+    return names
+
+
+def player_population_audit(data, competitions=("eng-premier-league",), stage=None):
     """Identity, exposure and coverage gate for the published player-process population.
 
     Reports what is unresolved instead of resolving it by guesswork: an Understat
@@ -375,6 +403,7 @@ def player_population_audit(data, competitions=("eng-premier-league",)):
     for match_id, fixture in fixtures.items():
         if fixture["status"] == "finished":
             expected[fixture["season_id"]].add(match_id)
+    provider = provider_names(stage) if stage else {}
     return {
         "scope": "Identity, exposure and coverage of the published player-process population. A necessary gate, not validation of any model.",
         "by_season": {
@@ -394,7 +423,11 @@ def player_population_audit(data, competitions=("eng-premier-league",)):
         },
         "many_to_one_collisions": collisions,
         "unlinked_understat_ids": {
-            uid: {"appearances": entry["appearances"], "seasons": sorted(entry["seasons"])}
+            uid: {
+                "appearances": entry["appearances"],
+                "seasons": sorted(entry["seasons"]),
+                "provider_name": provider.get(uid),
+            }
             for uid, entry in sorted(unlinked.items(), key=lambda kv: -kv[1]["appearances"])
         },
         "positive_exposure_disagreements": disagreements,
