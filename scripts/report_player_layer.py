@@ -14,6 +14,7 @@ CANDIDATE_ORDER = (
     "context_share_recent",
     "combined_long",
     "api_only",
+    "api_depth_matched",
     "api_rating",
 )
 MARK_TITLES = {

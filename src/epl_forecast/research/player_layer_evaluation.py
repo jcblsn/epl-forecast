@@ -28,12 +28,18 @@ def _bin(value, edges):
     return int(np.searchsorted(np.asarray(edges), value, side="right"))
 
 
+def observation_end(layer, mark):
+    return layer.observation_ends[mark]
+
+
 def target_window(layer, player_id, cutoff, horizon_days, mark):
     """Realized exposure and process mark over the horizon, from eligible appearances."""
     indices = layer.by_player.get(player_id)
     if indices is None:
         return None
     start, end = cutoff.toordinal(), (cutoff + timedelta(days=horizon_days)).toordinal()
+    if end > observation_end(layer, mark):
+        return None
     selected = indices[(layer.days[indices] >= start) & (layer.days[indices] < end)]
     selected = selected[layer.available[mark][selected]]
     if not len(selected):
@@ -395,6 +401,7 @@ def transfer_episodes(layer, mark, minimum_prior=8.0, minimum_target=4.0, horizo
     club, not a claim that a transfer was known to a forecaster at the cutoff.
     """
     episodes = []
+    end = observation_end(layer, mark)
     for player_id, indices in layer.by_player.items():
         usable = indices[layer.available[mark][indices]]
         if len(usable) < 5:
@@ -404,6 +411,8 @@ def transfer_episodes(layer, mark, minimum_prior=8.0, minimum_target=4.0, horizo
         for position in changes:
             first = usable[position]
             cutoff = date.fromordinal(int(layer.days[first]))
+            if cutoff.toordinal() + horizon_days > end:
+                continue
             before = usable[:position]
             before = before[layer.eligible[before] <= cutoff.toordinal()]
             if not len(before):

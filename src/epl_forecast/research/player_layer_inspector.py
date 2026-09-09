@@ -15,6 +15,7 @@ from epl_forecast.research.player_layer import (
     CANDIDATES,
     LEAGUE_REFERENCE_XG,
     PROCESS_MARKS,
+    candidate_state,
     design,
 )
 from epl_forecast.research.player_layer_evaluation import _apply, _matrix
@@ -43,6 +44,7 @@ def local_log_sd(state, mark, block):
 
 def decompose(model, state, candidate, mark, exposure=1.0):
     """Feature contributions and the uncertainty budget for one player at one cutoff."""
+    state = candidate_state(state, candidate)
     names, values = design(state, candidate, mark)
     standardized = (values - model["centre"]) / model["scale"] if len(names) else values
     vector = np.concatenate([[1.0], standardized])

@@ -176,6 +176,10 @@ class PlayerLayer:
         marks = [_mark_values(r) for r in self.rows]
         self.values = {m: np.array([v[m] for v, _ in marks]) for m in ALL_MARKS}
         self.available = {m: np.array([a[m] for _, a in marks]) for m in ALL_MARKS}
+        self.observation_ends = {
+            mark: int(self.days[mask].max()) + 1 if mask.any() else 0
+            for mark, mask in self.available.items()
+        }
         self.roles = np.array([r["position"] or "UNK" for r in self.rows], dtype=object)
         self.teams = np.array([r["team_id"] for r in self.rows], dtype=object)
         self.team_xg = np.array(
@@ -394,9 +398,10 @@ def player_state(layer, player_id, cutoff, target_club=None):
     name = layer.rows[indices[-1]].get("player_name") if len(indices) else None
     process_indices = np.flatnonzero(layer.available["xg"] & (layer.eligible <= day))
     process_start = int(layer.days[process_indices[0]]) if len(process_indices) else day
-    matched = {"long": {}, "recent": {}}
+    matched = {"long": {}, "recent": {}, "population": {}}
     for mark in API_FEATURE_MARKS:
         pool = layer.population(day, mark, start_day=process_start)
+        matched["population"][mark] = pool
         prior_mean = pool["by_role"].get(role, pool["league"])
         for window, half_life in (
             ("long", config.long_half_life),
@@ -535,13 +540,20 @@ def feature_block(state, block, mark):
     raise ValueError(f"Unknown feature block: {block}")
 
 
+def candidate_state(state, candidate):
+    if candidate != "api_depth_matched":
+        return state
+    matched = state.api["depth_matched"]
+    return replace(
+        state,
+        long=state.long | matched["long"],
+        recent=state.recent | matched["recent"],
+        population=state.population | matched["population"],
+    )
+
+
 def design(state, candidate, mark):
-    if candidate == "api_depth_matched":
-        state = replace(
-            state,
-            long=state.api["depth_matched"]["long"],
-            recent=state.api["depth_matched"]["recent"],
-        )
+    state = candidate_state(state, candidate)
     blocks = CANDIDATES[candidate]
     features = []
     for block in blocks:

@@ -127,7 +127,7 @@ def test_estimates_use_only_evidence_before_the_cutoff():
     future = history("p1", 4, date(2025, 1, 1), process_xg=9.0)
     later = PlayerLayer([*rows, *future])
     assert player_state(later, "p1", cutoff).long["xg"] == before.long["xg"]
-    assert target_window(later, "p1", cutoff, 400, "xg")["total"] > 0
+    assert target_window(later, "p1", cutoff, 120, "xg")["total"] > 0
 
 
 def test_prospective_evidence_waits_for_its_capture_date():
@@ -164,7 +164,9 @@ def test_identity_and_estimate_survive_a_club_change():
     state = player_state(layer, "mover", date(2025, 3, 5))
     assert state.club == "chelsea"
     assert state.long["xg"]["appearances"] == 11
-    episodes = transfer_episodes(layer, "xg", minimum_prior=5.0, minimum_target=2.0)
+    episodes = transfer_episodes(
+        layer, "xg", minimum_prior=5.0, minimum_target=2.0, horizon_days=60
+    )
     moves = [e for e in episodes if e["player_id"] == "mover"]
     assert len(moves) == 1
     assert moves[0]["club_before"] == "arsenal" and moves[0]["club_after"] == "chelsea"
@@ -380,3 +382,15 @@ def test_signal_reliability_includes_sparse_zeros_and_excludes_missing_detail():
         row.update(rating=None, passes_total=None, duels_total=None, pass_accuracy=None)
     audit = appearance_coverage(rows)
     assert "key_passes" not in audit["reliability"]
+
+
+def test_targets_do_not_treat_a_truncated_horizon_as_complete():
+    layer = PlayerLayer(
+        [
+            *history("mover", 12, date(2024, 8, 1), team="arsenal"),
+            *history("mover", 10, date(2025, 1, 1), team="chelsea"),
+        ]
+    )
+    assert target_window(layer, "mover", date(2025, 1, 1), 60, "xg") is not None
+    assert target_window(layer, "mover", date(2025, 1, 1), 90, "xg") is None
+    assert transfer_episodes(layer, "xg", horizon_days=90) == []

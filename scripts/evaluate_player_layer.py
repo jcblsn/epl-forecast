@@ -16,6 +16,7 @@ from epl_forecast.research.player_layer import (
 from epl_forecast.research.player_layer_evaluation import (
     chronological_evaluation,
     evaluate_transfers,
+    observation_end,
     paired_bootstrap,
     residual_persistence,
     summarize,
@@ -105,6 +106,8 @@ def main():
         )
         reference = "long_run"
         summary["marks"][mark] = {
+            "observation_end_exclusive": str(date.fromordinal(observation_end(layer, mark))),
+            "target_window_policy": "Only fully elapsed calendar horizons enter chronological or transfer scores; target exposure still conditions on observed minutes.",
             "cases": evaluation["cases"],
             "scored_cutoffs": evaluation["scored_cutoffs"],
             "skipped_cutoffs": evaluation["skipped_cutoffs"],
