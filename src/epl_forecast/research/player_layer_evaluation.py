@@ -38,11 +38,16 @@ def target_window(layer, player_id, cutoff, horizon_days, mark):
     selected = selected[layer.available[mark][selected]]
     if not len(selected):
         return None
+    clubs = []
+    for index in selected:
+        club = str(layer.teams[index])
+        if club not in clubs:
+            clubs.append(club)
     return {
         "exposure": float(layer.exposure[selected].sum()),
         "total": float(layer.values[mark][selected].sum()),
         "appearances": int(len(selected)),
-        "clubs": sorted({str(layer.teams[i]) for i in selected}),
+        "clubs": clubs,
     }
 
 
@@ -82,7 +87,11 @@ def _matrix(cases, candidate, mark):
     names = None
     rows = []
     for case in cases:
-        feature_names, values = design(case["state"], candidate, mark)
+        cached = case.setdefault("designs", {}).get(candidate)
+        if cached is None:
+            cached = design(case["state"], candidate, mark)
+            case["designs"][candidate] = cached
+        feature_names, values = cached
         if names is None:
             names = feature_names
         elif names != feature_names:

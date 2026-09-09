@@ -2,6 +2,7 @@
 
 import argparse
 import json
+import re
 import unicodedata
 from datetime import date, timedelta
 from pathlib import Path
@@ -27,25 +28,29 @@ from epl_forecast.research.readiness import frozen_dataset
 from epl_forecast.storage import write_json
 
 
-def normalized(value):
-    return unicodedata.normalize("NFKD", value.lower()).encode("ascii", "ignore").decode()
+def tokens(value):
+    plain = unicodedata.normalize("NFKD", value.lower()).encode("ascii", "ignore").decode()
+    return set(re.findall("[a-z]+", plain))
 
 
 def resolve(layer, wanted):
+    """Match every requested token against a retained name; never guess a partial match."""
     names = {}
     for row in layer.rows:
         if row.get("player_name"):
             names.setdefault(row["player_id"], row["player_name"])
-    resolved, unresolved = {}, []
+    resolved, unresolved, ambiguous = {}, [], {}
     for target in wanted:
-        needle = normalized(target)
-        matches = [pid for pid, name in names.items() if needle in normalized(name)]
-        matches.sort(key=lambda pid: -len(layer.by_player[pid]))
-        if matches:
-            resolved[target] = matches[0]
-        else:
+        needle = tokens(target)
+        matches = [pid for pid, name in names.items() if needle <= tokens(name)]
+        matches.sort(key=lambda pid: (-len(layer.by_player[pid]), pid))
+        if not matches:
             unresolved.append(target)
-    return resolved, unresolved
+            continue
+        resolved[target] = matches[0]
+        if len(matches) > 1:
+            ambiguous[target] = [names[pid] for pid in matches]
+    return resolved, unresolved, ambiguous
 
 
 def timeline(layer, player_id, cutoff):
@@ -102,7 +107,7 @@ def main():
     finally:
         data.close()
     layer = PlayerLayer(rows)
-    resolved, unresolved = resolve(layer, args.players)
+    resolved, unresolved, ambiguous = resolve(layer, args.players)
     closed = cutoff - timedelta(days=args.horizon_days)
     training_cutoffs = []
     current = closed
@@ -114,6 +119,7 @@ def main():
         "cutoff": str(cutoff),
         "resolved_players": resolved,
         "unresolved_players": unresolved,
+        "ambiguous_players": ambiguous,
         "training_cutoffs": [str(c) for c in training_cutoffs],
         "marks": {},
     }

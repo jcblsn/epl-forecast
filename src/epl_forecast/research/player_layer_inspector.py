@@ -69,7 +69,7 @@ def decompose(model, state, candidate, mark, exposure=1.0):
             else "recent_share"
             if name == "recent_share"
             else "long_rate"
-            if name.startswith(("long", "api_long"))
+            if name.startswith(("long", "combined", "api_long"))
             else "recent_rate"
             if name.startswith(("recent", "api_recent"))
             else None
@@ -79,6 +79,8 @@ def decompose(model, state, candidate, mark, exposure=1.0):
         source = (
             mark
             if name in ("long_rate", "recent_rate", "long_share", "recent_share")
+            else "xg_plus_xa"
+            if name == "combined_rate"
             else name.split("_", 2)[-1]
         )
         if source not in state.population:
