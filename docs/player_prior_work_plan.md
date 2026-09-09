@@ -38,3 +38,21 @@ from the leaderboard or from an implementation test.
 - Implementing schema compatibility and deterministic replay into an isolated
   research dataset. Passing accuracy will remain the provider's raw string:
   bare numbers have ambiguous units and will be audited and excluded from V1.
+
+## Superseded for discovery
+
+The [standalone player-process layer](experiments/player_layer.md) supersedes this
+plan as the mechanism for discovering how much portable information belongs to a
+player. Club centring is unchanged and still solves the downstream double-counting
+problem; it is simply no longer where player information is learned, because an
+ever-present player produces almost no lineup-share variation for it to learn from.
+The V1 prior, its evaluation contract and its retained evidence stand as they are.
+
+Two findings from that batch bear on V1 directly. API-FOOTBALL writes a null for zero
+on `goals`, `shots`, `shots_on_target`, `key_passes` and `saves`, so V1's treatment of
+those nulls as missing computes each rate over only the exposure in which the event
+occurred, inflating every player and compressing the differences between them. And
+the retained `pass_accuracy` string is a completed-pass count, not a percentage: it
+never exceeds `passes_total` across 164,106 paired appearances, correlates with it at
+0.980, and exceeds 100 only where the total does. Excluding it was correct under the
+earlier evidence; the unit is now resolved.

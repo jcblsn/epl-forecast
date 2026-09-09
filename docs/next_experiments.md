@@ -1,8 +1,19 @@
 # Research queue
 
-The active batch is the [information and uncertainty work plan](uncertainty_work_plan.md).
-It supersedes queue ordering below: establish matched uncertainty attribution and
-sensor information value, then apply the evidence to promotion/offseason priors.
+The active batch is the [standalone player-process layer](experiments/player_layer.md),
+which treats the player layer as an independent research product and is deliberately
+not wired into any team, match or season model. Its decision is Refine: portable
+player information is credible and large, survives observed club changes, and is
+recognized without any club term, but persistent player residuals remain identified
+after fitting, the creation component is poorly represented by its own source, and
+context adjustment failed. Do not rescue context adjustment by raising player prior
+variance, weakening shrinkage or removing centring and judging from a leaderboard.
+Do not revive a single combined attacking scalar: the summed xG+xA mark predicts each
+component worse than that component's own history everywhere it was tested.
+
+Its predecessor, the [information and uncertainty work plan](uncertainty_work_plan.md),
+supplies the matched uncertainty attribution and sensor information value that the
+queue ordering below assumes.
 
 M2 is the operational benchmark. M7-v1 is the retained xG research model and
 preferred research parent. M8 was the next team-process research candidate;
@@ -24,12 +35,11 @@ with its cross-division uncertainty; keep the operational bridge unchanged.
 No new Championship xG feed is needed to pursue this evidence.
 
 The [second-player design](player_process_model.md) explains how strongly pooled
-attacking-process contributions could extend a settled team observation layer.
-The pinned sample now has explicit Understat/FPL identity and role evidence;
-unresolved links and the relation between league-match and additive player/shot
-xG remain visible. Complete the mapping for the intended fitting population
-before operational reliance. Preserve actual-minutes oracle versus forecast-
-minutes comparisons. Failure with known minutes calls for reassessing the
+attacking-process contributions could extend a settled team observation layer. Its
+data gate is now met: the 2023/24-2025/26 Understat player-process population is
+published and audited, 380 of 380 fixtures per season, with no many-to-one identity
+collapse and 36 named unresolved mappings. Preserve actual-minutes oracle versus
+forecast-minutes comparisons. Failure with known minutes calls for reassessing the
 representation, not adding player Tilt or symmetric defensive effects.
 
 Use the [local recurring collector](live.md#recurring-prospective-capture) to

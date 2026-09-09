@@ -80,8 +80,10 @@ adding complexity. Report opening/promoted, large lineup-change and unseen-playe
 slices, and verify directional responses and coefficient identification.
 
 The earlier batch supplied the mapping audit, role rules, representation and
-decision protocol. The current batch is capturing the bounded 2023/24–2025/26
-canonical process population. Exact retained provider names may establish
+decision protocol. The bounded 2023/24–2025/26 canonical process population is now
+captured, published and audited; the
+[standalone player-process layer](experiments/player_layer.md) records what it
+supports and what it does not. Exact retained provider names may establish
 unambiguous links within the same fixture/team; future name and stable-ID
 evidence is excluded. The old 36-match sample above remains historical evidence,
 not the current experiment's cohort.
