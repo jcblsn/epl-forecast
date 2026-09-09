@@ -7,10 +7,12 @@ Probabilistic match forecasts and season simulations for England's top two leagu
 using locally archived provider data. Both leagues are supported forecasting targets.
 M2 remains the operational benchmark and M7 the retained xG research benchmark.
 Existing models and the simulator supply evidence and reusable components for a
-joint system; they do not prescribe its final architecture. The current work
-corrects the standalone player comparisons, freezes portable attacking traits,
-and tests a known-minutes roster bridge alongside one bounded dynamic-state
-candidate. Historical reports retain their original datasets and results.
+joint system; they do not prescribe its final architecture. The
+[corrected player comparisons](docs/experiments/player_layer_corrections.md)
+support a small [portable attacking-trait interface](docs/portable_player_interface.md).
+The next empirical gate is a known-minutes roster bridge, alongside one bounded
+dynamic-state candidate. Historical reports retain their original datasets and
+results.
 
 ## Data and forecasts
 

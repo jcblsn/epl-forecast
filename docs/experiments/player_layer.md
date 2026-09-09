@@ -1,5 +1,11 @@
 # Standalone player-process layer
 
+Historical report: the [corrected player evidence](player_layer_corrections.md)
+supersedes this report's horizon, reliability and API-control claims, including
+their portability interpretation. The original body and results below are
+preserved as the record of that experiment. Use the corrected report and
+[portable-player interface](../portable_player_interface.md) for subsequent work.
+
 This batch treats the player layer as an independent research product. It asks
 whether a cutoff-safe, time-varying, uncertain representation of player contribution
 can be estimated from retained evidence in a form that survives a change of club and

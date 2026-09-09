@@ -46,7 +46,9 @@ use a fresh coverage audit rather than treat unknown histories as unchanged squa
 The player oracle gate additionally checks team xG, usable starter minutes,
 linked identities, matching positive-exposure participants and identity collisions.
 It does not validate a proposed player/team likelihood. The subsequent standalone
-player report supersedes the old staging-session and sparse-sample checkpoints.
+player report supersedes the old staging-session and sparse-sample checkpoints;
+its [corrected evidence](experiments/player_layer_corrections.md) supplies the
+current transfer and API-control interpretation.
 Raw team xG and additive player process remain different provider measurements.
 
 Shared forecast/evaluation provenance records code state, lockfile and runner

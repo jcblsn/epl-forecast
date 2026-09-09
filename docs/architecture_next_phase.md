@@ -2,8 +2,9 @@
 
 This work follows the steering memo supplied on 2026-09-09, starting from
 `1999ec0`. M2 remains the operational benchmark and M7 the retained xG benchmark.
-Neither fixes the final architecture. Historical player-layer conclusions in
-`experiments/player_layer.md` must be read against the corrected experiments below.
+Neither fixes the final architecture. The
+[corrected player evidence](experiments/player_layer_corrections.md) supersedes
+the original horizon, reliability and API-control claims.
 
 ## Evidence sequence and completion requirements
 
@@ -70,15 +71,27 @@ no particular simulation count substitutes for precision evidence.
 
 ## Current checkpoint
 
-The player correctness changes are implemented. A provisional corrected 90-day
-evaluation completed. All three horizons are now being rerun with an additional
-gate requiring the full target window to elapse within retained process coverage;
-90-day results are expected to be unaffected but are not final until verified.
-The revised cross-horizon portability decision remains pending. Historical broad
-claims about transfer depth and API reliability must not be carried forward
-without these corrections. The research report will retain the numerical results
-and reproducible commands. No bridge or dynamic-state result is claimed here.
-The full objective remains open.
+The player correctness gate is complete. The
+[corrected 90/180/240-day evaluations](experiments/player_layer_corrections.md)
+use fully elapsed target windows and retain 61, 76 and 70 transfer episodes,
+respectively. Shooting remains portable across all three horizons. Creation has
+weaker support, with the 240-day transfer interval including zero. API creation
+gains on chronological targets do not establish transfer gains; matching calendar
+depth performs worse on longer-horizon transfers. These findings support freezing
+the small trait vector without reopening general feature tuning.
+
+The [portable-player interface](portable_player_interface.md) is implemented and
+verified: the full repository check passes 278 tests, and a
+[retained sample export](experiments/player_layer_corrections/portable_example.json)
+records its distribution and provenance. Gate 2 is complete. The interface
+preserves separate long-run shooting and creation sufficient statistics and
+exposure/staleness uncertainty. Its Gamma latent-rate uncertainty is explicitly
+uncalibrated; the standalone future-process interval scores do not establish this
+interface's coverage.
+
+The next empirical gate is the attacking-only known-minutes bridge on fixed M2
+and M7 rates. It is not implemented yet. No bridge or dynamic-state result is
+claimed here; the full objective remains open.
 
 The depth-matched API control uses all API appearances starting at the earliest
 eligible retained process observation at each cutoff, including role-population
@@ -101,9 +114,13 @@ plans when their useful content is retained elsewhere; Git preserves their histo
   reusable runners, current-rule evidence and unresolved product limitations.
 - [M7 report](experiments/m7_xg_parent.md) and [M8 report](experiments/m8_process.md):
   retained xG benchmark and parked observation candidate.
-- [Standalone player report](experiments/player_layer.md) and
-  [prechecks](experiments/player_layer_prechecks.md): original experiments; read
-  conclusions against the corrected horizon and provider-semantics evidence.
+- [Corrected player evidence](experiments/player_layer_corrections.md): completed
+  horizon, reliability and API-control comparisons, with archived per-case scores.
+- [Portable-player interface](portable_player_interface.md): trait distribution,
+  chronology, provenance and downstream consumption contract.
+- [Original player report](experiments/player_layer.md) and
+  [prechecks](experiments/player_layer_prechecks.md): historical experiments;
+  superseded claims are identified by the corrected evidence.
 - [Data migration](data_architecture_migration.md): remaining ingestion/archive work.
 - [Live operations](live.md) and [season evaluation](season_evaluation.md): capture,
   point-in-time provenance, simulation outputs and product-level scoring.
