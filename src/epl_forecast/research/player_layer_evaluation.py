@@ -157,6 +157,14 @@ def _apply(model, matrix, offset):
     return np.exp(np.clip(eta, -20, 20)), np.sqrt(np.maximum(variance, 0.0))
 
 
+def evidence_exposure(case, candidate):
+    if candidate == "api_depth_matched":
+        return case["state"].api["depth_matched"]["long"]["assists"]["exposure"]
+    if candidate in {"api_only", "api_rating"}:
+        return case["state"].long["assists"]["exposure"]
+    return case["prior_effective_exposure"]
+
+
 def residual_pool(model, cases, matrix, offset, response):
     """Empirical multiplicative residuals, stratified by target exposure and evidence depth.
 
@@ -171,7 +179,7 @@ def residual_pool(model, cases, matrix, offset, response):
             continue
         key = (
             _bin(case["target_exposure"], EXPOSURE_BINS),
-            _bin(case["prior_effective_exposure"], EVIDENCE_BINS),
+            _bin(evidence_exposure(case, model.get("candidate")), EVIDENCE_BINS),
         )
         pools[key].append(float(observed / expected))
         pools["all"].append(float(observed / expected))
@@ -203,7 +211,7 @@ def score_cases(model, pools, cases, matrix, offset, seed=0):
     for case, expected, sd in zip(cases, mean, parameter_sd, strict=True):
         key = (
             _bin(case["target_exposure"], EXPOSURE_BINS),
-            _bin(case["prior_effective_exposure"], EVIDENCE_BINS),
+            _bin(evidence_exposure(case, model.get("candidate")), EVIDENCE_BINS),
         )
         samples = predictive_samples(pools, key, expected, float(sd), generator)
         observed = case["target_total"]
@@ -254,6 +262,7 @@ def chronological_evaluation(layer, mark, cutoffs, horizon_days, first_scored, s
             response = np.array([c["target_total"] for c in training])
             model = fit_poisson_ridge(train_matrix, train_offset, response)
             model["names"] = names
+            model["candidate"] = candidate
             pools = residual_pool(model, training, train_matrix, train_offset, response)
             _, evaluation_matrix = _matrix(evaluation, candidate, mark)
             scores = score_cases(
@@ -424,6 +433,7 @@ def transfer_episodes(layer, mark, minimum_prior=8.0, minimum_target=4.0, horizo
                     "target_exposure": target_exposure,
                     "target_total": float(layer.values[mark][window].sum()),
                     "target_appearances": int(len(window)),
+                    "horizon_days": horizon_days,
                 }
             )
     return episodes
@@ -437,6 +447,8 @@ def evaluate_transfers(layer, mark, episodes, training_cases, horizon_days=90, s
     """
     buckets = defaultdict(list)
     for episode in episodes:
+        if episode["horizon_days"] != horizon_days:
+            raise ValueError("Transfer target and training horizons must agree")
         buckets[episode["cutoff"].replace(day=1)].append(episode)
     results = {name: [] for name in CANDIDATES}
     for origin, group in sorted(buckets.items()):
@@ -450,6 +462,7 @@ def evaluate_transfers(layer, mark, episodes, training_cases, horizon_days=90, s
             names, matrix = _matrix(training, candidate, mark)
             model = fit_poisson_ridge(matrix, offset, response)
             model["names"] = names
+            model["candidate"] = candidate
             pools = residual_pool(model, training, matrix, offset, response)
             _, episode_matrix = _matrix(group, candidate, mark)
             results[candidate].extend(

@@ -11,6 +11,8 @@ from pathlib import Path
 
 import numpy as np
 
+from epl_forecast.research.player_layer import api_mark_values
+
 APPEARANCE_FIELDS = (
     "minutes",
     "goals",
@@ -75,6 +77,7 @@ def appearance_coverage(rows):
             continue
         role = _role(row.get("position"))
         key = (row["competition_id"], row["season_id"])
+        values, available = api_mark_values(row)
         for field in APPEARANCE_FIELDS:
             value = row.get(field)
             observed = value is not None
@@ -85,9 +88,11 @@ def appearance_coverage(rows):
             season_cell = seasons[field][key]
             season_cell["rows"] += 1
             season_cell["observed"] += int(observed)
-            if observed and field not in {"minutes", "rating", "pass_accuracy"}:
+            usable = available.get(field, observed)
+            signal = values.get(field, value)
+            if usable and field not in {"minutes", "rating", "pass_accuracy"}:
                 per_player[field][(row["player_id"], row["season_id"])].append(
-                    float(value) * 90 / float(minutes)
+                    float(signal) * 90 / float(minutes)
                 )
             elif observed and field == "rating":
                 per_player[field][(row["player_id"], row["season_id"])].append(float(value))
@@ -114,6 +119,7 @@ def appearance_coverage(rows):
             }
             for field, cells in sorted(seasons.items())
         },
+        "reliability_semantics": "Model API count fields use provider-null-as-zero; unpublished detailed fields remain unavailable. Raw coverage is unchanged.",
         "reliability": dict(sorted(reliability.items())),
     }
 

@@ -13,7 +13,7 @@ percentage.
 """
 
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import date
 
 import numpy as np
@@ -95,7 +95,7 @@ def observation_rows(data, competitions=("eng-premier-league",)):
     return result
 
 
-def _mark_values(row):
+def api_mark_values(row):
     """Marks and their availability, applying the resolved zero-versus-missing rule."""
     detailed = any(row.get(field) is not None for field in DETAIL_MARKERS)
     values, available = {}, {}
@@ -119,6 +119,11 @@ def _mark_values(row):
     # Stored as rating x exposure so that total/exposure is a minutes-weighted mean.
     values["rating"] = float(rating) * float(row["minutes"]) / 90.0 if rating is not None else 0.0
     available["rating"] = rating is not None
+    return values, available
+
+
+def _mark_values(row):
+    values, available = api_mark_values(row)
     # More than one Understat record mapped to the same canonical player in one match is
     # an unresolved identity, not evidence to be summed.
     linked = row.get("process_records") == 1
@@ -200,12 +205,14 @@ class PlayerLayer:
     def _eligible_indices(self, indices, cutoff):
         return indices[self.eligible[indices] <= cutoff]
 
-    def population(self, cutoff, mark):
+    def population(self, cutoff, mark, start_day=0):
         """Role-level rate per 90 and dispersion from every earlier eligible appearance."""
-        key = cutoff, mark
+        key = cutoff, mark, start_day
         if key in self._pools:
             return self._pools[key]
-        indices = np.flatnonzero((self.eligible <= cutoff) & self.available[mark])
+        indices = np.flatnonzero(
+            (self.eligible <= cutoff) & self.available[mark] & (self.days >= start_day)
+        )
         weights = self._weights(indices, cutoff, self.config.long_half_life)
         exposure = weights * self.exposure[indices]
         counts = weights * self.values[mark][indices]
@@ -249,11 +256,11 @@ class PlayerLayer:
         self._team[key] = result
         return result
 
-    def aggregate(self, player_id, cutoff, mark, half_life):
+    def aggregate(self, player_id, cutoff, mark, half_life, start_day=0):
         """Exponentially weighted exposure, mark total and opportunity for one player."""
         indices = self.by_player.get(player_id, np.array([], dtype=int))
         indices = self._eligible_indices(indices, cutoff)
-        indices = indices[self.available[mark][indices]]
+        indices = indices[self.available[mark][indices] & (self.days[indices] >= start_day)]
         weights = self._weights(indices, cutoff, half_life)
         exposure = float((weights * self.exposure[indices]).sum())
         total = float((weights * self.values[mark][indices]).sum())
@@ -385,6 +392,29 @@ def player_state(layer, player_id, cutoff, target_club=None):
         layer.by_player.get(player_id, np.array([], dtype=int)), day
     )
     name = layer.rows[indices[-1]].get("player_name") if len(indices) else None
+    process_indices = np.flatnonzero(layer.available["xg"] & (layer.eligible <= day))
+    process_start = int(layer.days[process_indices[0]]) if len(process_indices) else day
+    matched = {"long": {}, "recent": {}}
+    for mark in API_FEATURE_MARKS:
+        pool = layer.population(day, mark, start_day=process_start)
+        prior_mean = pool["by_role"].get(role, pool["league"])
+        for window, half_life in (
+            ("long", config.long_half_life),
+            ("recent", config.recent_half_life),
+        ):
+            aggregate = layer.aggregate(player_id, day, mark, half_life, start_day=process_start)
+            matched[window][mark] = {
+                **aggregate,
+                "prior_mean": float(prior_mean),
+                "rate": float(
+                    _shrunk(
+                        aggregate["total"],
+                        aggregate["exposure"],
+                        prior_mean,
+                        config.rate_prior_matches,
+                    )
+                ),
+            }
     return PlayerState(
         player_id=player_id,
         player_name=name,
@@ -396,7 +426,11 @@ def player_state(layer, player_id, cutoff, target_club=None):
         long=long,
         share=share,
         environment=environment,
-        api={"appearances": int(len(indices))},
+        api={
+            "appearances": int(len(indices)),
+            "depth_matched": matched,
+            "process_window_start": str(date.fromordinal(process_start)),
+        },
         population=population,
         staleness=float(day - last_day) if last_day else None,
     )
@@ -413,8 +447,9 @@ CANDIDATES = {
     "long_plus_env": ("long_rate", "target_environment"),
     "context_share": ("long_share", "target_environment"),
     "context_share_recent": ("long_share", "recent_share", "target_environment"),
-    "api_only": ("api_long", "api_recent", "exposure", "staleness"),
-    "api_rating": ("api_long", "api_recent", "exposure", "staleness", "rating"),
+    "api_only": ("api_long", "api_recent", "api_exposure", "api_staleness"),
+    "api_depth_matched": ("api_long", "api_recent", "api_exposure", "api_staleness"),
+    "api_rating": ("api_long", "api_recent", "api_exposure", "api_staleness", "rating"),
 }
 CANDIDATE_NOTES = {
     "pooled_role": "Role population rate only; the player contributes nothing.",
@@ -426,6 +461,7 @@ CANDIDATE_NOTES = {
     "context_share": "Portable share of team attacking process times the target club environment.",
     "context_share_recent": "Share on both horizons times the target club environment.",
     "api_only": "The V1 API-only feature family: no Understat process evidence.",
+    "api_depth_matched": "API-only features and uncertainty restricted to the calendar window with retained process history; identical evaluation cases.",
     "api_rating": "The V1 API-only family plus the proprietary rating, as an ablation.",
 }
 
@@ -475,17 +511,14 @@ def feature_block(state, block, mark):
                 )
             )
         return features
-    if block == "exposure":
+    if block == "api_exposure":
         exposure = state.long["assists"]["exposure"]
         return [
             ("log_exposure", float(np.log1p(exposure) - np.log1p(10.0))),
-            (
-                "process_coverage",
-                float(state.long["xg"]["exposure"] / exposure if exposure > 0 else 0.0),
-            ),
         ]
-    if block == "staleness":
-        stale = state.staleness
+    if block == "api_staleness":
+        last_day = state.long["assists"]["last_day"]
+        stale = state.cutoff.toordinal() - last_day if last_day is not None else None
         return [("staleness", float(min(stale, 270) / 90) if stale is not None else 0.0)]
     if block == "rating":
         return [
@@ -503,6 +536,12 @@ def feature_block(state, block, mark):
 
 
 def design(state, candidate, mark):
+    if candidate == "api_depth_matched":
+        state = replace(
+            state,
+            long=state.api["depth_matched"]["long"],
+            recent=state.api["depth_matched"]["recent"],
+        )
     blocks = CANDIDATES[candidate]
     features = []
     for block in blocks:

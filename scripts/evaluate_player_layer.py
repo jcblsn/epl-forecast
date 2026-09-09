@@ -99,7 +99,7 @@ def main():
         print(f"Evaluating {mark}", flush=True)
         evaluation = chronological_evaluation(layer, mark, cutoffs, args.horizon_days, first_scored)
         scored = evaluation["scored"]
-        episodes = transfer_episodes(layer, mark)
+        episodes = transfer_episodes(layer, mark, horizon_days=args.horizon_days)
         transfers = evaluate_transfers(
             layer, mark, episodes, evaluation.get("all_cases", []), args.horizon_days
         )

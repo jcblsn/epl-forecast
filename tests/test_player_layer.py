@@ -313,3 +313,70 @@ def test_pairwise_comparison_reports_role_relative_and_absolute_scales():
     )
     assert result["rate_interval_95"][0] < result["rate_ratio"] < result["rate_interval_95"][1]
     assert result["rate_ratio"] > 1.5
+
+
+@pytest.mark.parametrize("horizon", [90, 180, 240])
+def test_transfer_target_uses_explicit_horizon(horizon):
+    start = date(2025, 1, 1)
+    rows = [
+        *history("mover", 12, date(2024, 8, 1), team="arsenal"),
+        *history("mover", 40, start, team="chelsea"),
+    ]
+    episodes = transfer_episodes(PlayerLayer(rows), "xg", horizon_days=horizon)
+    assert len(episodes) == 1
+    episode = episodes[0]
+    count = len(range(0, horizon, 7))
+    assert episode["target_appearances"] == count
+    assert episode["target_total"] == pytest.approx(count * 0.4)
+    assert episode["horizon_days"] == horizon
+
+
+def test_transfer_evaluator_rejects_mismatched_horizons():
+    from epl_forecast.research.player_layer_evaluation import evaluate_transfers
+
+    with pytest.raises(ValueError, match="horizons must agree"):
+        evaluate_transfers(None, "xg", [{"horizon_days": 240}], [], horizon_days=90)
+
+
+def test_api_design_and_uncertainty_ignore_player_process_coverage():
+    from epl_forecast.research.player_layer_evaluation import evidence_exposure
+
+    rows = [*population(), *history("p1", 30)]
+    stripped = [dict(row, process_records=None, team_xg=None) for row in rows]
+    cutoff = date(2025, 8, 1)
+    states = [player_state(PlayerLayer(values), "p1", cutoff) for values in (rows, stripped)]
+    for candidate in ("api_only", "api_rating"):
+        left, right = [design(state, candidate, "xg") for state in states]
+        assert left[0] == right[0]
+        assert left[1] == pytest.approx(right[1])
+        assert "process_coverage" not in left[0]
+        assert evidence_exposure({"state": states[0]}, candidate) == evidence_exposure(
+            {"state": states[1]}, candidate
+        )
+
+
+def test_depth_matched_api_excludes_older_history_but_full_api_retains_it():
+    old = history("p1", 20, date(2023, 1, 1), shots=20, process_records=None)
+    current = [*population(), *history("p1", 20)]
+    cutoff = date(2025, 1, 1)
+    states = [player_state(PlayerLayer(rows), "p1", cutoff) for rows in (current, [*old, *current])]
+    matched = [design(state, "api_depth_matched", "xg")[1] for state in states]
+    assert matched[0] == pytest.approx(matched[1])
+    full = [design(state, "api_only", "xg")[1] for state in states]
+    assert not np.allclose(full[0], full[1])
+    assert states[1].api["process_window_start"] == "2024-08-01"
+
+
+def test_signal_reliability_includes_sparse_zeros_and_excludes_missing_detail():
+    from epl_forecast.research.player_signals import appearance_coverage
+
+    rows = history(count=8, shots=None, key_passes=None)
+    rows[0]["shots"] = 2
+    audit = appearance_coverage(rows)
+    assert audit["by_role"]["shots"]["FWD"]["observed"] == 1
+    assert audit["reliability"]["shots"]["player_seasons"] == 1
+    assert audit["reliability"]["key_passes"]["player_seasons"] == 1
+    for row in rows:
+        row.update(rating=None, passes_total=None, duels_total=None, pass_accuracy=None)
+    audit = appearance_coverage(rows)
+    assert "key_passes" not in audit["reliability"]
