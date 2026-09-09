@@ -364,6 +364,9 @@ function start() {
   fill($("mark"), marks); fill($("head-mark"), marks); fill($("score-mark"), Object.keys((DATA.evaluation || { marks: {} }).marks).map((m) => ({ value: m, label: MARK_LABEL[m] || m })));
   fill($("candidate"), DATA.candidates);
   $("candidate").value = state.candidate;
+  $("mark").value = state.mark;
+  $("head-mark").value = state.mark;
+  if ([...$("score-mark").options].some((o) => o.value === state.mark)) $("score-mark").value = state.mark;
   const clubs = [...new Set(DATA.players.map((p) => p.club).filter(Boolean))].sort();
   fill($("club"), [{ value: "", label: "All" }, ...clubs.map((c) => ({ value: c, label: c }))]);
   const people = DATA.players.map((p) => ({ value: p.id, label: `${p.name} — ${p.role}` }));
