@@ -1,0 +1,244 @@
+{
+  "audits": [
+    {
+      "changed_match_equivalents": {
+        "median": 3.077430555555556,
+        "share_at_least_2": 0.8736842105263158,
+        "share_at_least_4": 0.19539473684210526,
+        "share_at_least_6": 0.013157894736842105
+      },
+      "delta_mean": [
+        0.007574029555862808,
+        0.001043732099097606
+      ],
+      "delta_sd": [
+        0.15284912591271033,
+        0.08350591683476563
+      ],
+      "fixtures": 760,
+      "model_id": "M2-attack-defense-v1",
+      "strata": [
+        {
+          "beta": [
+            0.08689841404144115,
+            0.10778250374187821
+          ],
+          "design_condition": 2.0752339825102513,
+          "design_rank": 2,
+          "draws": 400,
+          "gain": 0.423308674162854,
+          "minimum_changed_match_equivalents": 0.0,
+          "null_95th": 2.5070665602837687,
+          "p_value": 0.6325,
+          "residual_correlation": [
+            0.022280461642903492,
+            0.025456944194416454
+          ],
+          "share_of_team_matches": 1.0,
+          "standard_error": [
+            0.1413086270182788,
+            0.24881944289956584
+          ],
+          "team_matches": 1520
+        },
+        {
+          "beta": [
+            0.002258195607988975,
+            0.07204027807546931
+          ],
+          "design_condition": 2.044510357151269,
+          "design_rank": 2,
+          "draws": 400,
+          "gain": 0.035065251683363385,
+          "minimum_changed_match_equivalents": 3.0,
+          "null_95th": 2.6009525358978114,
+          "p_value": 0.9625,
+          "residual_correlation": [
+            0.012175779574195928,
+            0.0227559259217104
+          ],
+          "share_of_team_matches": 0.531578947368421,
+          "standard_error": [
+            0.17499543840961515,
+            0.3015669197611179
+          ],
+          "team_matches": 808
+        },
+        {
+          "beta": [
+            0.16781571527665426,
+            -0.4692464884805544
+          ],
+          "design_condition": 1.9651822909698986,
+          "design_rank": 2,
+          "draws": 400,
+          "gain": 0.8656648283552499,
+          "minimum_changed_match_equivalents": 4.0,
+          "null_95th": 2.502987338768579,
+          "p_value": 0.39,
+          "residual_correlation": [
+            0.03872956871405044,
+            -0.06872342975822518
+          ],
+          "share_of_team_matches": 0.19539473684210526,
+          "standard_error": [
+            0.24926243541948304,
+            0.41885024346907723
+          ],
+          "team_matches": 297
+        },
+        {
+          "beta": [
+            0.9556941838917861,
+            0.0772043376986749
+          ],
+          "design_condition": 1.8576076985017953,
+          "design_rank": 2,
+          "draws": 400,
+          "gain": 2.9490516584655495,
+          "minimum_changed_match_equivalents": 5.0,
+          "null_95th": 2.7992830335432353,
+          "p_value": 0.035,
+          "residual_correlation": [
+            0.263247814278119,
+            0.03951022671016732
+          ],
+          "share_of_team_matches": 0.05394736842105263,
+          "standard_error": [
+            0.4269850338715126,
+            0.6129925438897599
+          ],
+          "team_matches": 82
+        }
+      ]
+    },
+    {
+      "changed_match_equivalents": {
+        "median": 3.077430555555556,
+        "share_at_least_2": 0.8736842105263158,
+        "share_at_least_4": 0.19539473684210526,
+        "share_at_least_6": 0.013157894736842105
+      },
+      "delta_mean": [
+        0.007574029555862808,
+        0.001043732099097606
+      ],
+      "delta_sd": [
+        0.15284912591271033,
+        0.08350591683476563
+      ],
+      "fixtures": 760,
+      "model_id": "M7-xg-v1",
+      "strata": [
+        {
+          "beta": [
+            0.01007749356813903,
+            0.018424936594877168
+          ],
+          "design_condition": 2.0752339825102513,
+          "design_rank": 2,
+          "draws": 400,
+          "gain": 0.008442183103170464,
+          "minimum_changed_match_equivalents": 0.0,
+          "null_95th": 2.342690101146794,
+          "p_value": 0.985,
+          "residual_correlation": [
+            0.010925352956155676,
+            0.010494524115794648
+          ],
+          "share_of_team_matches": 1.0,
+          "standard_error": [
+            0.13823280993340778,
+            0.2440500744768509
+          ],
+          "team_matches": 1520
+        },
+        {
+          "beta": [
+            -0.06632217426381116,
+            -0.04250122020579116
+          ],
+          "design_condition": 2.044510357151269,
+          "design_rank": 2,
+          "draws": 400,
+          "gain": 0.11502190892042563,
+          "minimum_changed_match_equivalents": 3.0,
+          "null_95th": 2.6521005014613364,
+          "p_value": 0.8725,
+          "residual_correlation": [
+            -0.0035881985284841214,
+            -0.0009439720074968697
+          ],
+          "share_of_team_matches": 0.531578947368421,
+          "standard_error": [
+            0.17180125867597798,
+            0.29790895914994375
+          ],
+          "team_matches": 808
+        },
+        {
+          "beta": [
+            0.16895657514892493,
+            -0.6869352545852456
+          ],
+          "design_condition": 1.9651822909698986,
+          "design_rank": 2,
+          "draws": 400,
+          "gain": 1.6586476602144558,
+          "minimum_changed_match_equivalents": 4.0,
+          "null_95th": 2.4235208350276474,
+          "p_value": 0.1325,
+          "residual_correlation": [
+            0.0338761419567786,
+            -0.104123073466657
+          ],
+          "share_of_team_matches": 0.19539473684210526,
+          "standard_error": [
+            0.24933133017641063,
+            0.4165062780363563
+          ],
+          "team_matches": 297
+        },
+        {
+          "beta": [
+            0.9001883995425892,
+            -0.1891185388322894
+          ],
+          "design_condition": 1.8576076985017953,
+          "design_rank": 2,
+          "draws": 400,
+          "gain": 2.626590729002544,
+          "minimum_changed_match_equivalents": 5.0,
+          "null_95th": 2.827219137389098,
+          "p_value": 0.07,
+          "residual_correlation": [
+            0.26171248643919814,
+            -0.025172857525542342
+          ],
+          "share_of_team_matches": 0.05394736842105263,
+          "standard_error": [
+            0.4269353656709012,
+            0.6110721991097301
+          ],
+          "team_matches": 82
+        }
+      ]
+    }
+  ],
+  "config": {
+    "bridge_config": {
+      "baselines_sha256": "9dcb2ab1395b10de2a35ddda4cd8eea02c4906807d1bc2fa64272bf086ed0a22",
+      "first_scored": "2024-08-01",
+      "forecast": "fixed baseline distribution with plug-in expected player trait shift; player uncertainty retained as an audit",
+      "mapping": "two coefficients, no intercept, ridge=1, Poisson mean estimating equation",
+      "minimum_training": 200,
+      "oracle": "actual target identities and minutes",
+      "reference_matches": 8
+    },
+    "cases_sha256": "17590bad3ef2cf1c35506692eea25c886b995e145a7f138feb86eef1fadd3558",
+    "first_scored": "2024-08-01",
+    "permutation_draws": 400,
+    "question": "Can any coefficient choice for this design improve the fixed baselines?"
+  },
+  "scored_fixtures": 760
+}

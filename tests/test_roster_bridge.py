@@ -6,9 +6,13 @@ import pytest
 
 from epl_forecast.research.roster_bridge import (
     BASELINES,
+    attainable_gain,
     chronological_bridge,
+    design,
     distribution,
     fit_mapping,
+    permuted_gain,
+    representation_audit,
     roster_delta,
 )
 
@@ -55,8 +59,14 @@ def cases(count, seed=0):
                 "match_id": str(day),
                 "match_date": day,
                 "cutoff": day,
-                "home": {"mean": changes[0]},
-                "away": {"mean": changes[1]},
+                "home": {
+                    "mean": changes[0],
+                    "changed_match_equivalents": float(np.abs(changes[0]).sum()),
+                },
+                "away": {
+                    "mean": changes[1],
+                    "changed_match_equivalents": float(np.abs(changes[1]).sum()),
+                },
                 "baselines": {m: baseline(day, *goals, model_id=m) for m in BASELINES},
                 "slices": {},
             }
@@ -107,3 +117,36 @@ def test_future_outcomes_cannot_change_an_earlier_mapping_or_prediction():
     assert actual["mappings"][:2] == expected["mappings"][:2]
     assert actual["predictions"][1]["p_home"] == expected["predictions"][1]["p_home"]
     assert actual["mappings"][0]["last_training_match"] < str(first)
+
+
+def test_attainable_gain_bounds_any_chronological_mapping_on_the_same_design():
+    history = cases(600)
+    matrix, response, offset, _ = design(history, BASELINES[0])
+    ceiling = attainable_gain(matrix, response, offset)
+    fitted = fit_mapping(history, BASELINES[0])
+    eta = offset + matrix @ np.asarray(fitted["beta"])
+    chronological = float(np.sum(response * eta - np.exp(eta)))
+    reference = float(np.sum(response * offset - np.exp(offset)))
+    assert ceiling["gain"] >= chronological - reference
+    assert ceiling["team_matches"] == 1200
+
+
+def test_permutation_null_rejects_a_design_carrying_no_fixture_signal():
+    history = cases(400)
+    matrix, response, offset, _ = design(history, BASELINES[0])
+    generator = np.random.default_rng(3)
+    scrambled = generator.normal(0, 0.5, size=matrix.shape)
+    assert permuted_gain(matrix, response, offset, draws=60)["p_value"] < 0.1
+    assert permuted_gain(scrambled, response, offset, draws=60)["p_value"] > 0.1
+
+
+def test_representation_audit_reports_strata_by_personnel_change():
+    history = cases(200)
+    for index, case in enumerate(history):
+        for side in ("home", "away"):
+            case[side]["changed_match_equivalents"] = float(index % 8)
+    audit = representation_audit(history, BASELINES[0], thresholds=(0.0, 4.0), draws=20)
+    assert [s["minimum_changed_match_equivalents"] for s in audit["strata"]] == [0.0, 4.0]
+    assert audit["strata"][0]["share_of_team_matches"] == 1.0
+    assert audit["strata"][1]["team_matches"] < audit["strata"][0]["team_matches"]
+    assert audit["changed_match_equivalents"]["share_at_least_2"] == pytest.approx(0.75)

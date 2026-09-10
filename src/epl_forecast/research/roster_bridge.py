@@ -301,3 +301,118 @@ def prepare_cases(
         if progress is not None and index % 50 == 0:
             progress(index, len(ordered), len(prepared))
     return prepared, excluded
+
+
+def design(cases, model_id):
+    """Stacked team-match design, observed goals and fixed baseline log-rate offset."""
+    matrix = np.array([case[side]["mean"] for case in cases for side in ("home", "away")])
+    response = np.array(
+        [
+            float(case["baselines"][model_id][f"{side}_goals"])
+            for case in cases
+            for side in ("home", "away")
+        ]
+    )
+    offset = np.array(
+        [
+            math.log(float(case["baselines"][model_id][f"expected_{side}_goals"]))
+            for case in cases
+            for side in ("home", "away")
+        ]
+    )
+    change = np.array(
+        [case[side]["changed_match_equivalents"] for case in cases for side in ("home", "away")]
+    )
+    return matrix, response, offset, change
+
+
+def attainable_gain(matrix, response, offset, ridge=1.0):
+    """The best in-sample Poisson log-likelihood this design can add to a fixed offset.
+
+    No chronological mapping can beat a fit that already saw its own evaluation
+    window, so a negligible value here rejects the representation rather than the
+    coefficient estimates.
+    """
+
+    def objective(beta):
+        eta = offset + matrix @ beta
+        mean = np.exp(eta)
+        return float(np.sum(mean - response * eta) + 0.5 * ridge * beta @ beta), matrix.T @ (
+            mean - response
+        ) + ridge * beta
+
+    result = minimize(
+        objective, np.zeros(matrix.shape[1]), jac=True, method="BFGS", options={"gtol": 1e-9}
+    )
+    if not result.success and np.linalg.norm(result.jac) > 1e-4:
+        raise RuntimeError(f"Attainable-gain fit failed: {result.message}")
+
+    def log_likelihood(beta):
+        eta = offset + matrix @ beta
+        return float(np.sum(response * eta - np.exp(eta)))
+
+    mean = np.exp(offset + matrix @ result.x)
+    hessian = (matrix.T * mean) @ matrix + ridge * np.eye(matrix.shape[1])
+    return {
+        "beta": result.x.tolist(),
+        "standard_error": np.sqrt(np.diag(np.linalg.inv(hessian))).tolist(),
+        "gain": log_likelihood(result.x) - log_likelihood(np.zeros(matrix.shape[1])),
+        "team_matches": int(len(response)),
+        "design_rank": int(np.linalg.matrix_rank(matrix)),
+        "design_condition": float(np.linalg.cond(matrix)),
+    }
+
+
+def permuted_gain(matrix, response, offset, ridge=1.0, draws=400, seed=11):
+    """Break the roster-to-fixture link while holding both margins fixed."""
+    generator = np.random.default_rng(seed)
+    observed = attainable_gain(matrix, response, offset, ridge)["gain"]
+    null = np.array(
+        [
+            attainable_gain(matrix[generator.permutation(len(response))], response, offset, ridge)[
+                "gain"
+            ]
+            for _ in range(draws)
+        ]
+    )
+    return {
+        "gain": observed,
+        "draws": int(draws),
+        "null_95th": float(np.quantile(null, 0.95)),
+        "p_value": float(np.mean(null >= observed)),
+    }
+
+
+def representation_audit(cases, model_id, thresholds=(0.0, 3.0, 4.0, 5.0), draws=400, ridge=1.0):
+    """Identification and representation check for a failed bridge mapping."""
+    matrix, response, offset, change = design(cases, model_id)
+    mean = np.exp(offset)
+    residual = (response - mean) / np.sqrt(mean)
+    strata = []
+    for threshold in thresholds:
+        mask = change >= threshold
+        if mask.sum() <= matrix.shape[1]:
+            continue
+        strata.append(
+            {
+                "minimum_changed_match_equivalents": float(threshold),
+                "share_of_team_matches": float(mask.mean()),
+                **attainable_gain(matrix[mask], response[mask], offset[mask], ridge),
+                **permuted_gain(matrix[mask], response[mask], offset[mask], ridge, draws),
+                "residual_correlation": [
+                    float(np.corrcoef(matrix[mask, column], residual[mask])[0, 1])
+                    for column in range(matrix.shape[1])
+                ],
+            }
+        )
+    return {
+        "model_id": model_id,
+        "fixtures": int(len(cases)),
+        "delta_mean": matrix.mean(axis=0).tolist(),
+        "delta_sd": matrix.std(axis=0).tolist(),
+        "changed_match_equivalents": {
+            "median": float(np.median(change)),
+            **{f"share_at_least_{t:g}": float((change >= t).mean()) for t in (2.0, 4.0, 6.0)},
+        },
+        "strata": strata,
+    }
