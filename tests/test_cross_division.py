@@ -196,3 +196,74 @@ def test_quality_tilt_and_attack_defence_are_one_state_in_two_coordinates():
 
     assert design @ attack_mean == pytest.approx(quality_mean, abs=1e-12)
     assert design @ attack_covariance @ design.T == pytest.approx(quality_covariance, abs=1e-12)
+
+
+def _forward_rate_moments(model, fixture, size=40000, seed=7):
+    sampled = model.sample_forecast_state(np.random.default_rng(seed), size)
+    home, away = sampled.rates(fixture, np.random.default_rng(seed + 1))
+    logs = np.log(np.column_stack([home, away]))
+    return logs.mean(axis=0), np.cov(logs, rowvar=False)
+
+
+def test_sampled_championship_states_reproduce_the_direct_forecast():
+    """The forward simulator must load every leading league slot, not only two."""
+    matches, _ = two_division_history()
+    cutoff = date(2021, 8, 1)
+    model = CrossDivisionQualityTilt(independent_poisson=True).fit(matches, cutoff)
+    for competition in (PL, CHAMPIONSHIP):
+        fixture = Fixture(
+            fixture_id(competition, "2021-2022", "pl0", "pl1"),
+            competition,
+            "2021-2022",
+            cutoff,
+            "pl0",
+            "pl1",
+        )
+        mean, covariance = model.forecast_moments(fixture)
+        sampled_mean, sampled_covariance = _forward_rate_moments(model, fixture)
+        assert sampled_mean == pytest.approx(mean, abs=0.02)
+        assert sampled_covariance == pytest.approx(np.asarray(covariance), abs=0.02)
+
+
+def test_the_championship_offsets_actually_move_the_sampled_rates():
+    matches, _ = two_division_history()
+    cutoff = date(2021, 8, 1)
+    model = CrossDivisionQualityTilt(independent_poisson=True).fit(matches, cutoff)
+    rates = {}
+    for competition in (PL, CHAMPIONSHIP):
+        fixture = Fixture(
+            fixture_id(competition, "2021-2022", "pl0", "pl1"),
+            competition,
+            "2021-2022",
+            cutoff,
+            "pl0",
+            "pl1",
+        )
+        rates[competition] = _forward_rate_moments(model, fixture)[0]
+    shift = rates[CHAMPIONSHIP] - rates[PL]
+    expected = np.array(
+        [model.division_level + model.division_home_advantage, model.division_level]
+    )
+    assert shift == pytest.approx(expected, abs=0.02)
+
+
+def test_a_new_season_entrant_is_evolved_with_club_dynamics_not_league_dynamics():
+    matches, _ = two_division_history()
+    cutoff = date(2021, 8, 1)
+    model = CrossDivisionQualityTilt(independent_poisson=True).fit(matches, cutoff)
+    later = date(2022, 3, 1)
+    fixture = Fixture(
+        fixture_id(PL, "2021-2022", "pl0", "pl1"), PL, "2021-2022", later, "pl0", "pl1"
+    )
+    mean, covariance = model.forecast_moments(fixture)
+    sampled_mean, sampled_covariance = _forward_rate_moments(model, fixture)
+    assert sampled_mean == pytest.approx(mean, abs=0.03)
+    assert sampled_covariance == pytest.approx(np.asarray(covariance), abs=0.03)
+
+
+def test_the_declared_league_prior_reaches_the_initial_state():
+    model = CrossDivisionQualityTilt(
+        division_level_sd=0.31, division_home_sd=0.07, independent_poisson=True
+    )
+    assert np.sqrt(np.diag(model.covariance)) == pytest.approx([0.25, 0.25, 0.31, 0.07])
+    assert model.mean[2:] == pytest.approx([0.0, 0.0])

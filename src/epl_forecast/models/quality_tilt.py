@@ -84,6 +84,16 @@ class QualityTiltFilter(DynamicAttackDefense):
         """Annual random-walk scale for each slot of the leading league block."""
         return np.array([self.annual_league_sd, self.annual_home_sd])
 
+    def team_transition(self, years):
+        """Decay and innovation variance for one club's two state slots.
+
+        This deliberately uses the club dynamics rather than any subclass
+        augmentation of the state vector, such as appended player slots.
+        """
+        leading = self.league_dimensions
+        decay, variance = QualityTiltFilter.transition(self, years, leading + 2)
+        return decay[leading:], variance[leading:]
+
     def _advance(self, day):
         if self._state_date is not None:
             decay, variance = self.transition(
@@ -291,50 +301,57 @@ class ForwardQualityTiltStates:
     def sample_scores(self, fixture, rng):
         home, away = np.empty(self.size, dtype=int), np.empty(self.size, dtype=int)
         for group in self.groups:
-            positions, model, values, day, entries, unknown = group
-            model.validate_fixture(fixture)
-            if fixture.match_date < day:
-                raise ValueError("Forward simulation requires chronological fixtures")
-            # New-season entrants are drawn at the forecast cutoff, then evolved to kickoff.
-            for team in (fixture.home_team_id, fixture.away_team_id):
-                if not model._uses_fitted_state(team, fixture.season_id):
-                    key = team, fixture.season_id
-                    if key not in entries:
-                        prior = model.team_state(team, fixture.season_id)
-                        decay, variance = QualityTiltFilter.transition(
-                            model, (day - self.as_of).days / 365.25, 4
-                        )
-                        entry_mean = prior.mean * decay[2:]
-                        entry_cov = prior.covariance * np.outer(decay[2:], decay[2:]) + np.diag(
-                            variance[2:]
-                        )
-                        entries[key] = entry_mean + self.rng.standard_normal(
-                            (len(positions), 2)
-                        ) @ (np.linalg.cholesky(entry_cov).T)
-            years = (fixture.match_date - day).days / 365.25
-            if years:
-                decay, variance = model.transition(years, values.shape[1])
-                values *= decay
-                values += self.rng.standard_normal(values.shape) * np.sqrt(variance)
-                decay, variance = QualityTiltFilter.transition(model, years, 4)
-                for entry in entries.values():
-                    entry *= decay[2:]
-                    entry += self.rng.standard_normal(entry.shape) * np.sqrt(variance[2:])
-            group[3] = fixture.match_date
-
-            def team_value(team, entries=entries, model=model, values=values):
-                key = team, fixture.season_id
-                if key in entries:
-                    return entries[key]
-                index = model.league_dimensions + 2 * model.team_index[team]
-                return values[:, index : index + 2]
-
-            h, a = team_value(fixture.home_team_id), team_value(fixture.away_team_id)
-            quality, tilt = h[:, 0] - a[:, 0], h[:, 1] + a[:, 1]
-            quality += model.player_quality_difference(fixture, values, rng, unknown)
-            home[positions], away[positions] = model.sample_goal_rates(
-                np.exp(values[:, 0] + values[:, 1] + quality + tilt),
-                np.exp(values[:, 0] - quality + tilt),
-                rng,
-            )
+            positions, model = group[0], group[1]
+            home_rate, away_rate = self._group_rates(group, fixture, rng)
+            home[positions], away[positions] = model.sample_goal_rates(home_rate, away_rate, rng)
         return home, away
+
+    def rates(self, fixture, rng=None):
+        """Latent rates for this fixture, advancing the forward state as usual."""
+        home, away = np.empty(self.size), np.empty(self.size)
+        for group in self.groups:
+            home[group[0]], away[group[0]] = self._group_rates(group, fixture, rng)
+        return home, away
+
+    def _group_rates(self, group, fixture, rng):
+        """Advance one specification group to the fixture and return its latent rates."""
+        positions, model, values, day, entries, unknown = group
+        model.validate_fixture(fixture)
+        if fixture.match_date < day:
+            raise ValueError("Forward simulation requires chronological fixtures")
+        # New-season entrants are drawn at the forecast cutoff, then evolved to kickoff.
+        for team in (fixture.home_team_id, fixture.away_team_id):
+            if not model._uses_fitted_state(team, fixture.season_id):
+                key = team, fixture.season_id
+                if key not in entries:
+                    prior = model.team_state(team, fixture.season_id)
+                    decay, variance = model.team_transition((day - self.as_of).days / 365.25)
+                    entry_mean = prior.mean * decay
+                    entry_cov = prior.covariance * np.outer(decay, decay) + np.diag(variance)
+                    entries[key] = entry_mean + self.rng.standard_normal((len(positions), 2)) @ (
+                        np.linalg.cholesky(entry_cov).T
+                    )
+        years = (fixture.match_date - day).days / 365.25
+        if years:
+            decay, variance = model.transition(years, values.shape[1])
+            values *= decay
+            values += self.rng.standard_normal(values.shape) * np.sqrt(variance)
+            decay, variance = model.team_transition(years)
+            for entry in entries.values():
+                entry *= decay
+                entry += self.rng.standard_normal(entry.shape) * np.sqrt(variance)
+        group[3] = fixture.match_date
+
+        def team_value(team):
+            key = team, fixture.season_id
+            if key in entries:
+                return entries[key]
+            index = model.league_dimensions + 2 * model.team_index[team]
+            return values[:, index : index + 2]
+
+        home, away = team_value(fixture.home_team_id), team_value(fixture.away_team_id)
+        quality, tilt = home[:, 0] - away[:, 0], home[:, 1] + away[:, 1]
+        quality += model.player_quality_difference(fixture, values, rng, unknown)
+        # Every leading league slot must reach the simulated rate, not only the first two.
+        league = values[:, : model.league_dimensions] @ model._league_design(fixture).T
+        return np.exp(league[:, 0] + quality + tilt), np.exp(league[:, 1] - quality + tilt)

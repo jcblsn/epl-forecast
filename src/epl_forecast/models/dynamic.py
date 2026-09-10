@@ -60,15 +60,15 @@ class DynamicAttackDefense(BaseModel):
         self._last_season = {}
         self.entry_priors = {}
         self.appearances = Counter()
-        self.mean = np.r_[np.log(1.2), np.log(1.3), np.zeros(self.league_dimensions - 2)]
-        self.covariance = np.diag(
-            np.r_[0.25**2, 0.25**2, np.full(self.league_dimensions - 2, self.initial_league_sd**2)]
-        )
+        mean, variance = self.league_prior()
+        if len(mean) != self.league_dimensions or len(variance) != self.league_dimensions:
+            raise ValueError("The league prior must cover every leading state dimension")
+        self.mean, self.covariance = np.asarray(mean, dtype=float), np.diag(variance)
         self.updates = 0
 
-    @property
-    def initial_league_sd(self) -> float:
-        return 0.25
+    def league_prior(self) -> tuple[np.ndarray, np.ndarray]:
+        """Prior mean and variance for each slot of the leading league block."""
+        return np.array([np.log(1.2), np.log(1.3)]), np.array([0.25**2, 0.25**2])
 
     def _team_slice(self, team: str) -> slice:
         index = self.league_dimensions + 2 * self.team_index[team]
