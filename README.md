@@ -6,6 +6,8 @@ Product objective: [north star](docs/north_star.md). Active research:
 Probabilistic match forecasts and season simulations for England's top two leagues,
 using locally archived provider data. Both leagues are supported forecasting targets.
 M7 is the active structural MVP model and M2 remains its operational benchmark.
+The [pinned 2026/27 projection](docs/experiments/current_season_projection_2026-09-10/report.md)
+records the current two-league rank distributions and matched uncertainty sensitivity.
 The [matched research scoreboard](docs/experiments/research_scoreboard.md) keeps
 their outcome, score and calibration metrics beside M5 and market comparators.
 The [chronological market pool](docs/experiments/market_pool.md) now publishes a

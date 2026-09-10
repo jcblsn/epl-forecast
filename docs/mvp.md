@@ -14,6 +14,9 @@ single-model choice because it combines the best retained match score, strong ra
 distributions, posterior state uncertainty and the best later-origin points scores.
 The tradeoff remains recorded in the season artifacts.
 
+The [2026/27 snapshot](experiments/current_season_projection_2026-09-10/report.md)
+is the current durable M7 season-distribution product for both leagues.
+
 Every current M7 archive contains:
 
 - structural H/D/A probabilities and a structural exact-score matrix;
