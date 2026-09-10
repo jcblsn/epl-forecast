@@ -15,7 +15,6 @@ from epl_forecast.cli import save_rows
 from epl_forecast.season_evaluation import summarize
 
 ORIGINS = ["preseason", "MW6", "MW12", "MW19", "MW30"]
-MODELS = ["M2", "M4", "M5", "M7"]
 
 
 def read_rows(path):
@@ -28,23 +27,23 @@ def paired_comparisons(rows, seed=20260908, samples=10000):
     if len(lookup) != len(rows):
         raise ValueError("Duplicate club-season origins")
     baseline_keys = {(o, s, t) for m, o, s, t in lookup if m == "M2"}
-    for model in MODELS:
+    models = ["M2", *sorted({r["model_id"] for r in rows} - {"M2"})]
+    for model in models:
         if {(o, s, t) for m, o, s, t in lookup if m == model} != baseline_keys:
             raise ValueError("Models must have matched club-season origins")
+    event_metrics = sorted(
+        key
+        for key in rows[0]
+        if key.endswith("_brier") and all(row.get(key) not in (None, "") for row in rows)
+    )
     rng = np.random.default_rng(seed)
     output = []
     for origin in ORIGINS:
         baseline = [r for r in rows if r["model_id"] == "M2" and r["origin"] == origin]
         seasons = sorted({r["season_id"] for r in baseline})
         indices = rng.integers(0, len(seasons), size=(samples, len(seasons)))
-        for model in MODELS[1:]:
-            for metric in (
-                "rank_rps",
-                "points_crps",
-                "title_brier",
-                "top_four_brier",
-                "relegation_brier",
-            ):
+        for model in models[1:]:
+            for metric in ("rank_rps", "points_crps", *event_metrics):
                 grouped = []
                 for season in seasons:
                     differences = [
@@ -53,7 +52,10 @@ def paired_comparisons(rows, seed=20260908, samples=10000):
                         for r in baseline
                         if r["season_id"] == season
                     ]
-                    if len(differences) != 20:
+                    expected = sum(
+                        r["season_id"] == season and r["origin"] == origin for r in baseline
+                    )
+                    if len(differences) != expected or expected not in (20, 24):
                         raise ValueError("Paired comparisons require complete seasons")
                     grouped.append(np.mean(differences))
                 delta = np.array(grouped)
@@ -83,6 +85,7 @@ def main():
     rows = read_rows(args.evaluation / "club_seasons.csv")
     calibration = read_rows(args.evaluation / "calibration.csv")
     summary = read_rows(args.evaluation / "summary.csv")
+    models = ["M2", *sorted({r["model_id"] for r in rows} - {"M2"})]
     numeric_rows = []
     for row in rows:
         converted = {}
@@ -96,22 +99,33 @@ def main():
                 "season_id",
                 "team_id",
                 "as_of",
+                "entry_cohort",
             ):
                 converted[key] = value
             else:
                 converted[key] = float(value)
         numeric_rows.append(converted)
     subgroup_scores = []
-    for promoted in (True, False):
-        scores, _ = summarize([r for r in numeric_rows if r["promoted"] == promoted])
-        subgroup_scores.extend(
-            {"subgroup": "promoted" if promoted else "incumbent", **r} for r in scores
-        )
+    subgroups = sorted({r.get("entry_cohort", "") for r in numeric_rows} - {""})
+    if not subgroups:
+        subgroups = [True, False]
+    for subgroup in subgroups:
+        selected = [
+            r
+            for r in numeric_rows
+            if r.get("entry_cohort") == subgroup
+            or (not r.get("entry_cohort") and r["promoted"] == subgroup)
+        ]
+        scores, _ = summarize(selected)
+        label = subgroup if isinstance(subgroup, str) else "promoted" if subgroup else "incumbent"
+        subgroup_scores.extend({"subgroup": label, **r} for r in scores)
     save_rows(args.output / "subgroups.csv", subgroup_scores)
     save_rows(args.output / "paired_comparisons.csv", paired_comparisons(rows))
-    fig, axes = plt.subplots(5, 4, figsize=(15, 15), sharex=True, sharey=True)
+    fig, axes = plt.subplots(
+        5, len(models), figsize=(4 * len(models), 15), sharex=True, sharey=True
+    )
     for i, origin in enumerate(ORIGINS):
-        for j, model in enumerate(MODELS):
+        for j, model in enumerate(models):
             ax = axes[i, j]
             selected = [
                 r
@@ -135,9 +149,11 @@ def main():
     fig.tight_layout()
     fig.savefig(args.output / "points_pit.png", dpi=150)
     plt.close(fig)
-    fig, axes = plt.subplots(5, 4, figsize=(15, 15), sharex=True, sharey=True)
+    fig, axes = plt.subplots(
+        5, len(models), figsize=(4 * len(models), 15), sharex=True, sharey=True
+    )
     for i, origin in enumerate(ORIGINS):
-        for j, model in enumerate(MODELS):
+        for j, model in enumerate(models):
             ax = axes[i, j]
             selected = [
                 r
@@ -160,12 +176,17 @@ def main():
     fig.tight_layout()
     fig.savefig(args.output / "rank_pit.png", dpi=150)
     plt.close(fig)
-    fig, axes = plt.subplots(5, 3, figsize=(13, 18), sharex=True, sharey=True)
+    events = sorted(
+        {r["event"] for r in calibration if r["event"] not in {"points_pit", "rank_pit"}}
+    )
+    fig, axes = plt.subplots(
+        5, len(events), figsize=(4 * len(events), 18), sharex=True, sharey=True, squeeze=False
+    )
     for i, origin in enumerate(ORIGINS):
-        for j, event in enumerate(("title", "top_four", "relegation")):
+        for j, event in enumerate(events):
             ax = axes[i, j]
             ax.plot([0, 1], [0, 1], "k--", linewidth=1)
-            for model in MODELS:
+            for model in models:
                 selected = [
                     r
                     for r in calibration
@@ -192,7 +213,7 @@ def main():
     plt.close(fig)
     fig, axes = plt.subplots(1, 4, figsize=(16, 4), sharey=True)
     for ax, level in zip(axes, (50, 80, 90, 95), strict=True):
-        for model in MODELS:
+        for model in models:
             selected = {r["origin"]: r for r in summary if r["model_id"] == model}
             ax.plot(
                 ORIGINS,
@@ -211,7 +232,7 @@ def main():
     plt.close(fig)
     fig, axes = plt.subplots(1, 3, figsize=(13, 4), sharey=True)
     for ax, level in zip(axes, (50, 80, 90), strict=True):
-        for model in MODELS:
+        for model in models:
             selected = {r["origin"]: r for r in summary if r["model_id"] == model}
             ax.plot(
                 ORIGINS,
