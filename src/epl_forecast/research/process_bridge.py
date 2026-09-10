@@ -104,10 +104,8 @@ def process_cohorts(matches, records, sources):
                 "source_matches": source["teams"][team]["matches"],
             }
             for i, dimension in enumerate(("attack", "defense")):
-                row[f"championship_{dimension}"] = float(source["teams"][team]["mean"][i])
-                row[f"championship_{dimension}_variance"] = float(
-                    source["teams"][team]["variance"][i]
-                )
+                row[f"source_{dimension}"] = float(source["teams"][team]["mean"][i])
+                row[f"source_{dimension}_variance"] = float(source["teams"][team]["variance"][i])
                 row[f"entry_{dimension}"] = float(target[i])
                 row[f"entry_{dimension}_variance"] = float(variance[i])
             result.append(row)

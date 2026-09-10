@@ -12,8 +12,8 @@ def test_future_bridge_targets_do_not_change_prior():
         for dimension in ("attack", "defense"):
             row.update(
                 {
-                    f"championship_{dimension}": 0.2,
-                    f"championship_{dimension}_variance": 0.02,
+                    f"source_{dimension}": 0.2,
+                    f"source_{dimension}_variance": 0.02,
                     f"entry_{dimension}": -0.3,
                     f"entry_{dimension}_variance": 0.02,
                 }

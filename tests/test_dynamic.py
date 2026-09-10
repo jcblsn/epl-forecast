@@ -10,7 +10,7 @@ from epl_forecast.evaluation import rolling_predictions
 from epl_forecast.models.dynamic import DynamicAttackDefense
 from epl_forecast.models.gaussian import poisson_laplace_update
 from epl_forecast.models.poisson import IndependentPoisson, PoissonMixture
-from epl_forecast.models.promotion import CHAMPIONSHIP, PL, PromotionBridge
+from epl_forecast.models.promotion import CHAMPIONSHIP, PL, PromotionBridge, RelegationBridge
 from epl_forecast.schema import Fixture, Match, fixture_id
 
 
@@ -266,3 +266,30 @@ def test_a_returning_championship_club_keeps_its_fitted_championship_state(bridg
     assert state.source == "previous league state"
     population = model._entry_prior("c0", "2020-2021", cutoff)
     assert not np.allclose(state.covariance, population.covariance)
+
+
+def test_the_relegation_bridge_translates_premier_league_strength_into_the_championship():
+    history = (
+        season_matches(2018, PL, [f"a{i}" for i in range(3)] + [f"p{i}" for i in range(17)], 11)
+        + season_matches(
+            2019, CHAMPIONSHIP, [f"a{i}" for i in range(3)] + [f"c{i}" for i in range(21)], 12
+        )
+        + season_matches(2019, PL, [f"b{i}" for i in range(3)] + [f"p{i}" for i in range(17)], 13)
+    )
+    cutoff = date(2020, 8, 1)
+    bridge = RelegationBridge(history, cutoff, "2020-2021")
+    assert bridge.diagnostics()["cohorts"] == 3
+    assert bridge.prior("c0") is None
+    prior = bridge.prior("b0")
+    assert prior is not None and prior.source == "Premier League relegation bridge"
+    assert np.linalg.eigvalsh(prior.covariance).min() > 0
+    generic = bridge.prior("b0", use_performance=False)
+    assert not np.allclose(generic.mean, prior.mean)
+    slope = bridge.diagnostics()["dimensions"]["attack"]["slope"]
+    relegated = ["b0", "b1", "b2"]
+    sources = [bridge.source.teams[t].mean[0] for t in relegated]
+    priors = [bridge.prior(t).mean[0] for t in relegated]
+    assert np.corrcoef(sources, priors)[0, 1] == pytest.approx(np.sign(slope))
+    assert all(
+        abs(p - generic.mean[0]) < abs(s - np.mean(sources)) for s, p in zip(sources, priors)
+    )

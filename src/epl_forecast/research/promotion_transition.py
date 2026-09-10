@@ -13,7 +13,7 @@ from epl_forecast.models.promotion import (
     PL,
     TeamPrior,
     completed_seasons,
-    promotion_cohort,
+    division_cohort,
 )
 from epl_forecast.models.quality_tilt import QT_FROM_AD
 
@@ -97,7 +97,7 @@ def transition_cohorts(matches, sources):
         champ = seasons.get((CHAMPIONSHIP, source_season))
         if champ is None:
             continue
-        for target in promotion_cohort(champ, premier):
+        for target in division_cohort(champ, premier):
             source = sources.get((source_season, target["team_id"]))
             if source is not None:
                 result.append({**target, "source_season": source_season, "source": source})

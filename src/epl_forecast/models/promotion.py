@@ -91,6 +91,11 @@ def completed_seasons(
     return result
 
 
+def preceding_season(season: str) -> str:
+    year = int(season[:4])
+    return f"{year - 1}-{year}"
+
+
 def early_strength(goals: int, exposure: float, defense: bool = False) -> tuple[float, float]:
     """Scalar log-relative scoring rate with a weak N(0, 1) prior."""
     value = 0.0
@@ -103,14 +108,21 @@ def early_strength(goals: int, exposure: float, defense: bool = False) -> tuple[
     return (-value if defense else value), float(1 / (exposure * np.exp(value) + 1))
 
 
-@lru_cache(maxsize=96)
-def promotion_cohort(champ: tuple[Match, ...], premier: tuple[Match, ...]) -> tuple[dict, ...]:
-    source, target = season_strengths(champ), season_strengths(premier)
+@lru_cache(maxsize=192)
+def division_cohort(
+    source_matches: tuple[Match, ...], target_matches: tuple[Match, ...]
+) -> tuple[dict, ...]:
+    """Clubs in both seasons: their source-division summary beside their first ten target matches.
+
+    Direction lives entirely in the two arguments, so the same summary serves
+    promotion into the Premier League and relegation into the Championship.
+    """
+    source, target = season_strengths(source_matches), season_strengths(target_matches)
     rows = []
     for team in sorted(source.teams.keys() & target.teams.keys()):
-        games = [m for m in premier if team in (m.fixture.home_team_id, m.fixture.away_team_id)][
-            :10
-        ]
+        games = [
+            m for m in target_matches if team in (m.fixture.home_team_id, m.fixture.away_team_id)
+        ][:10]
         scored, conceded, points, exposure_for, exposure_against = 0, 0, 0, 0.0, 0.0
         for match in games:
             home = match.fixture.home_team_id == team
@@ -138,10 +150,10 @@ def promotion_cohort(champ: tuple[Match, ...], premier: tuple[Match, ...]) -> tu
                 "team_id": team,
                 "season_id": target.season_id,
                 "available_on": str(max(source.available_on, target.available_on)),
-                "championship_attack": float(source.teams[team].mean[0]),
-                "championship_defense": float(source.teams[team].mean[1]),
-                "championship_attack_variance": float(source.teams[team].covariance[0, 0]),
-                "championship_defense_variance": float(source.teams[team].covariance[1, 1]),
+                "source_attack": float(source.teams[team].mean[0]),
+                "source_defense": float(source.teams[team].mean[1]),
+                "source_attack_variance": float(source.teams[team].covariance[0, 0]),
+                "source_defense_variance": float(source.teams[team].covariance[1, 1]),
                 "entry_attack": float(attack),
                 "entry_defense": float(defense),
                 "entry_attack_variance": attack_var,
@@ -167,8 +179,8 @@ def fit_bridge_regression(rows: list[dict], dimension: str) -> BridgeRegression:
     beta_prior = np.diag([0.6**2, 1.0])
     if not rows:
         return BridgeRegression(np.zeros(2), beta_prior, 0.3)
-    x = np.array([r[f"championship_{dimension}"] for r in rows])
-    xv = np.array([r[f"championship_{dimension}_variance"] for r in rows])
+    x = np.array([r[f"source_{dimension}"] for r in rows])
+    xv = np.array([r[f"source_{dimension}_variance"] for r in rows])
     y = np.array([r[f"entry_{dimension}"] for r in rows])
     yv = np.array([r[f"entry_{dimension}_variance"] for r in rows])
     design = np.column_stack([np.ones(len(rows)), x])
@@ -204,20 +216,30 @@ def fit_bridge_regression(rows: list[dict], dimension: str) -> BridgeRegression:
     )
 
 
-class PromotionBridge:
+class DivisionBridge:
+    """Empirical-Bayes entry prior for a club crossing one division boundary.
+
+    A subclass names the direction. The regression is fitted on earlier realized
+    cohorts that crossed the same boundary, so it estimates how the source
+    division's relative attack and defence translate into the target division
+    rather than asserting that a club keeps its strength across the divide.
+    """
+
+    source_competition = CHAMPIONSHIP
+    target_competition = PL
+    label = "Championship promotion bridge"
+
     def __init__(self, matches: list[Match], as_of: date, target_season: str) -> None:
         self.as_of, self.target_season = as_of, target_season
         seasons = completed_seasons(matches, as_of)
         self.cohorts = []
         for (competition, season), rows in sorted(seasons.items()):
-            if competition != PL or season >= target_season:
+            if competition != self.target_competition or season >= target_season:
                 continue
-            year = int(season[:4])
-            champ = seasons.get((CHAMPIONSHIP, f"{year - 1}-{year}"))
-            if champ:
-                self.cohorts.extend(promotion_cohort(champ, rows))
-        year = int(target_season[:4])
-        source = seasons.get((CHAMPIONSHIP, f"{year - 1}-{year}"))
+            source = seasons.get((self.source_competition, preceding_season(season)))
+            if source:
+                self.cohorts.extend(division_cohort(source, rows))
+        source = seasons.get((self.source_competition, preceding_season(target_season)))
         self.source = season_strengths(source) if source else None
         self.regressions = [fit_bridge_regression(self.cohorts, d) for d in ("attack", "defense")]
 
@@ -231,7 +253,7 @@ class PromotionBridge:
         ):
             x, xv = source.mean[i], source.covariance[i, i]
             if not use_performance and self.cohorts:
-                values = np.array([r[f"championship_{dimension}"] for r in self.cohorts])
+                values = np.array([r[f"source_{dimension}"] for r in self.cohorts])
                 x, xv = float(values.mean()), float(values.var())
             design = np.array([1.0, x])
             means.append(float(design @ regression.coefficients))
@@ -242,12 +264,14 @@ class PromotionBridge:
                     + xv * (regression.coefficients[1] ** 2 + regression.covariance[1, 1])
                 )
             )
-        return TeamPrior(np.array(means), np.diag(variances), "Championship promotion bridge")
+        return TeamPrior(np.array(means), np.diag(variances), self.label)
 
     def diagnostics(self) -> dict:
         return {
             "as_of": str(self.as_of),
             "target_season": self.target_season,
+            "source_competition": self.source_competition,
+            "target_competition": self.target_competition,
             "cohorts": len(self.cohorts),
             "last_target_season": max((r["season_id"] for r in self.cohorts), default=None),
             "dimensions": {
@@ -261,3 +285,15 @@ class PromotionBridge:
                 for d, r in zip(("attack", "defense"), self.regressions, strict=True)
             },
         }
+
+
+class PromotionBridge(DivisionBridge):
+    """Championship season summaries into a promoted club's first Premier League matches."""
+
+
+class RelegationBridge(DivisionBridge):
+    """Premier League season summaries into a relegated club's first Championship matches."""
+
+    source_competition = PL
+    target_competition = CHAMPIONSHIP
+    label = "Premier League relegation bridge"
