@@ -59,6 +59,15 @@ def _two_leg_winner(model, higher, lower, first_day, second_day, season, rng):
     return np.where(higher_wins, higher, lower)
 
 
+def _playoff_days(season, last_regular_day):
+    day = date.fromisoformat(str(last_regular_day))
+    season_end = date(int(season[5:]), 7, 31)
+    available = max((season_end - day).days, 0)
+    scale = min(1.0, available / 29)
+    offsets = [round(offset * scale) for offset in (7, 8, 14, 15, 21, 22, 29)]
+    return day, [day + timedelta(days=offset) for offset in offsets], scale
+
+
 def simulate_championship_playoffs(model, orders, teams, season, last_regular_day, rng):
     """Return one playoff winner per regular-season path.
 
@@ -72,7 +81,7 @@ def simulate_championship_playoffs(model, orders, teams, season, last_regular_da
     if order.ndim != 2 or order.shape[1] != len(teams):
         raise ValueError("Playoff simulation requires one complete order per path")
     ids = np.asarray(teams)
-    day = date.fromisoformat(str(last_regular_day))
+    _, playoff_days, date_scale = _playoff_days(season, last_regular_day)
 
     def team_ids(indices):
         return ids[np.asarray(indices, dtype=int)]
@@ -82,7 +91,7 @@ def simulate_championship_playoffs(model, orders, teams, season, last_regular_da
             model,
             team_ids(order[:, 4]),
             team_ids(order[:, 7]),
-            day + timedelta(days=7),
+            playoff_days[0],
             season,
             rng,
         )
@@ -90,7 +99,7 @@ def simulate_championship_playoffs(model, orders, teams, season, last_regular_da
             model,
             team_ids(order[:, 5]),
             team_ids(order[:, 6]),
-            day + timedelta(days=8),
+            playoff_days[1],
             season,
             rng,
         )
@@ -113,8 +122,8 @@ def simulate_championship_playoffs(model, orders, teams, season, last_regular_da
         model,
         semi1_high,
         semi1_low,
-        day + timedelta(days=14),
-        day + timedelta(days=21),
+        playoff_days[2],
+        playoff_days[4],
         season,
         rng,
     )
@@ -122,8 +131,8 @@ def simulate_championship_playoffs(model, orders, teams, season, last_regular_da
         model,
         semi2_high,
         semi2_low,
-        day + timedelta(days=15),
-        day + timedelta(days=22),
+        playoff_days[3],
+        playoff_days[5],
         season,
         rng,
     )
@@ -131,7 +140,7 @@ def simulate_championship_playoffs(model, orders, teams, season, last_regular_da
         model,
         finalist1,
         finalist2,
-        day + timedelta(days=29),
+        playoff_days[6],
         season,
         rng,
         neutral=True,
@@ -143,4 +152,11 @@ def simulate_championship_playoffs(model, orders, teams, season, last_regular_da
         "semi_final_home_order": "higher regular-season seed at home in the second leg",
         "final_site": "neutral via an equal mixture of virtual home designations",
         "tied_knockout_scores": "equal advancement chance after modeled regulation scores",
+        "synthetic_match_dates": [str(value) for value in playoff_days],
+        "date_offset_scale": date_scale,
+        "date_treatment": (
+            "default 7/8/14/15/21/22/29-day offsets after the regular season"
+            if date_scale == 1
+            else "offsets compressed proportionally to remain inside the season schema"
+        ),
     }

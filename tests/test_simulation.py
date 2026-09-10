@@ -304,6 +304,22 @@ def test_six_team_playoff_bracket_respects_seed_paths():
     assert details["format"] == "2026-six-team-seven-match"
 
 
+def test_delayed_season_playoff_dates_stay_inside_schema():
+    teams = [f"club-{i}" for i in range(24)]
+    orders = np.tile(np.arange(24), (20, 1))
+    winners, details = simulate_championship_playoffs(
+        FixedModel(date(2020, 7, 1)),
+        orders,
+        teams,
+        "2019-2020",
+        date(2020, 7, 22),
+        np.random.default_rng(12),
+    )
+    assert len(winners) == 20
+    assert details["synthetic_match_dates"][-1] == "2020-07-31"
+    assert details["date_offset_scale"] == pytest.approx(9 / 29)
+
+
 @pytest.mark.parametrize(
     "season,boundary", [("2025-2026", 2), ("2025-2026", 6), ("2026-2027", 8), ("2026-2027", 21)]
 )
