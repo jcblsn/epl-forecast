@@ -102,19 +102,63 @@ the evaluation window itself, the entire attainable Poisson log-likelihood gain
 is 0.42 nats for M2 and 0.01 for M7 over 1,520 team-matches, both coefficients
 sit under one standard error from zero, and a permutation null is not rejected.
 The design is well conditioned throughout, so no coefficient choice for this
-contrast could have helped. Averaging the reference over eight matches removes
-lineup identity, leaving a delta that measures rotation: 87.4% of team-matches
-already exceed the plan's two-equivalent threshold, which is why the required
-large-lineup-change and injury slices cover 97.4% and 94.5% of fixtures and
-separate no distinct population. A positive shooting coefficient appears only in
-the 5.4% of team-matches with the largest personnel change; that stratum is
-in-sample on a post hoc threshold and is a direction, not evidence.
+contrast could have helped. Averaging the reference over eight matches diffuses it
+across so many players that ordinary rotation registers as a large personnel
+change: 87.4% of team-matches already exceed the plan's two-equivalent threshold,
+which is why the required large-lineup-change and injury slices cover 97.4% and
+94.5% of fixtures and separate no distinct population. A positive shooting
+coefficient appears only in the 5.4% of team-matches with the largest personnel
+change; that stratum is in-sample on a post hoc threshold and is a direction, not
+evidence.
 
-The channel is parked with at most one bounded second formulation available under
-the research principles, against an identity-preserving recent-lineup reference
-on a population where personnel actually change. The frozen portable interface is
-unaffected. Gate 6 is conditional on bridge evidence and therefore stays closed
-until such a contrast produces some. Gate 4 is not blocked by this result.
+This is negative evidence about the tested contrast, not about the player-
+information hypothesis. The channel is parked with one bounded second formulation
+available under the research principles: an identity-preserving normal-XI or
+core-roster reference on a genuinely discontinuous population. That work waits on
+the cross-division club-state results, which define what the club state is already
+meant to have absorbed. The frozen portable interface is unaffected, and Gate 6
+stays closed until such a contrast produces evidence.
+
+Gate 4 is complete and negative on forecasts. The
+[cross-division club-state candidate](experiments/cross_division.md) keeps one
+Quality/Tilt state per club across both divisions, adds Championship scoring-level
+and home offsets as slow random walks, and reuses the M7 opportunity likelihood
+for team xG. Its mechanics hold: planted scoring level and home advantage are
+recovered at nominal coverage, crossings rather than the prior identify the common
+scale, xG sharpens the state, and the attack/defence rotation reproduces forecasts
+to 5.6e-17, confirming a coordinate choice rather than a second model family.
+
+On 760 matched validation fixtures it loses +0.01413 [+0.00890, +0.01943] against
+an uncentered bridge control that differs only in resetting promoted clubs, and
++0.00778 [+0.00454, +0.01148] against M7. The loss concentrates on the promoted
+slice at +0.05179, roughly four times the whole-population effect, which is the
+population the hierarchy was meant to serve. Within M9 team xG still gains
+-0.01042 [-0.01856, -0.00210]: the observation channel works, the state structure
+does not.
+
+Two diagnostics say why. The retained promotion bridge's realized cohorts give a
+Championship-to-Premier-League slope of 0.539 (SD 0.317) in attack and 0.074 (SD
+0.250) in defence, against the unit slope a carried state assumes; the transition
+is a compression, not a translation. Independently, a synthetic regime with a
+planted absolute strength gap and preserved club identity overstates promoted
+clubs by +0.0465 (SE 0.0059) in log rate while a zero-gap regime is unbiased, so
+an additive-only division level cannot absorb a population difference even when
+identity truly persists.
+
+Two properties of the run constrain interpretation. The hierarchy's sensors are
+asymmetric: Understat covers 75.1% of Premier League matches and no Championship
+match, so promoted clubs always arrive with goals-only states. And in the
+uncentered coordinate the Championship scoring level is prior-dependent, moving
+1.25 to 1.49 posterior SD across a prior grid, driven almost entirely by the Tilt
+innovation scale; it is a working coordinate, not a settled latent quantity. Home
+advantage is unaffected, moving 0.0003 across the same grid, and its decline from
+about +0.25 in 2017 to about +0.20 in 2026 is retained.
+
+The next state formulation is stated in the report: a division map that compresses
+club states toward the division population, with the coordinate settled so league
+terms own the corresponding means, judged on the promoted slice and the planted-gap
+calibration rather than whole-population loss. Gate 5 is independent of this
+outcome.
 
 The depth-matched API control uses all API appearances starting at the earliest
 eligible retained process observation at each cutoff, including role-population
@@ -141,6 +185,8 @@ plans when their useful content is retained elsewhere; Git preserves their histo
   horizon, reliability and API-control comparisons, with archived per-case scores.
 - [Known-minutes roster bridge](experiments/roster_bridge.md): the negative Gate 3
   result and the identification and representation check that closed it.
+- [Cross-division club states](experiments/cross_division.md): the Gate 4 state
+  candidate, its promoted-slice failure and the scoring-level identification audit.
 - [Portable-player interface](portable_player_interface.md): trait distribution,
   chronology, provenance and downstream consumption contract.
 - [Original player report](experiments/player_layer.md) and
