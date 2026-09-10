@@ -1,33 +1,149 @@
 {
   "coordinates": {
-    "covariance_max_absolute_difference": 5.204170427930421e-18,
+    "covariance_max_absolute_difference": 1.734723475976807e-18,
     "interpretation": "one state in two coordinates, not a second model family",
-    "mean_max_absolute_difference": 0.0
+    "mean_max_absolute_difference": 5.551115123125783e-17
   },
   "crossing_sensitivity": [
     {
       "crossings_per_season": 0,
-      "level_posterior_sd": 0.10547817839982715,
-      "level_root_mean_squared_error": 0.12209297445936206,
+      "level_posterior_sd": 0.10426803927950913,
+      "level_root_mean_squared_error": 0.11684218849252273,
       "replicates": 12
     },
     {
       "crossings_per_season": 1,
-      "level_posterior_sd": 0.10103612747597988,
-      "level_root_mean_squared_error": 0.06949704203264576,
+      "level_posterior_sd": 0.09913763437690343,
+      "level_root_mean_squared_error": 0.07184599745668176,
       "replicates": 12
     },
     {
       "crossings_per_season": 3,
-      "level_posterior_sd": 0.09351016151173099,
-      "level_root_mean_squared_error": 0.06860882852759785,
+      "level_posterior_sd": 0.09049278048034785,
+      "level_root_mean_squared_error": 0.06644172992645248,
       "replicates": 12
     },
     {
       "crossings_per_season": 5,
-      "level_posterior_sd": 0.08776662858193518,
-      "level_root_mean_squared_error": 0.0699987740014622,
+      "level_posterior_sd": 0.0838417883418483,
+      "level_root_mean_squared_error": 0.06680769955793064,
       "replicates": 12
+    }
+  ],
+  "promotion_calibration": [
+    {
+      "first_matches_after_transition": 10,
+      "interpretation": "a positive promoted error means the carried state overstates the club's strength in its new division",
+      "quality_gap": 0.0,
+      "replicates": 8,
+      "results": [
+        {
+          "mean_log_rate_error": -0.009332189288653437,
+          "model": "goals_only",
+          "root_mean_squared_error": 0.17060788630259557,
+          "slice": "all_transitions",
+          "standard_error": 0.004052566390242511,
+          "team_matches": 1768
+        },
+        {
+          "mean_log_rate_error": -0.004426677199007859,
+          "model": "goals_only",
+          "root_mean_squared_error": 0.17253448334460983,
+          "slice": "promoted",
+          "standard_error": 0.005640623516940125,
+          "team_matches": 936
+        },
+        {
+          "mean_log_rate_error": -0.014850890389504719,
+          "model": "goals_only",
+          "root_mean_squared_error": 0.16841412250756557,
+          "slice": "relegated",
+          "standard_error": 0.005819462730155434,
+          "team_matches": 832
+        },
+        {
+          "mean_log_rate_error": 0.012411098437273194,
+          "model": "goals_xg",
+          "root_mean_squared_error": 0.12705166733671125,
+          "slice": "all_transitions",
+          "standard_error": 0.0030080152131770187,
+          "team_matches": 1768
+        },
+        {
+          "mean_log_rate_error": 0.0015240175185924733,
+          "model": "goals_xg",
+          "root_mean_squared_error": 0.12629728563445358,
+          "slice": "promoted",
+          "standard_error": 0.004130062180422199,
+          "team_matches": 936
+        },
+        {
+          "mean_log_rate_error": 0.024659064470789006,
+          "model": "goals_xg",
+          "root_mean_squared_error": 0.12789502810604822,
+          "slice": "relegated",
+          "standard_error": 0.004353383506962273,
+          "team_matches": 832
+        }
+      ],
+      "scope": "planted absolute club-strength gap between divisions, identities preserved"
+    },
+    {
+      "first_matches_after_transition": 10,
+      "interpretation": "a positive promoted error means the carried state overstates the club's strength in its new division",
+      "quality_gap": 0.45,
+      "replicates": 8,
+      "results": [
+        {
+          "mean_log_rate_error": 0.019230596751660754,
+          "model": "goals_only",
+          "root_mean_squared_error": 0.19012753943340396,
+          "slice": "all_transitions",
+          "standard_error": 0.0044998060323898,
+          "team_matches": 1768
+        },
+        {
+          "mean_log_rate_error": 0.04648191317519277,
+          "model": "goals_only",
+          "root_mean_squared_error": 0.18585550910142362,
+          "slice": "promoted",
+          "standard_error": 0.00588496698166769,
+          "team_matches": 936
+        },
+        {
+          "mean_log_rate_error": -0.011427134224812773,
+          "model": "goals_only",
+          "root_mean_squared_error": 0.19482163281347434,
+          "slice": "relegated",
+          "standard_error": 0.0067466521729030605,
+          "team_matches": 832
+        },
+        {
+          "mean_log_rate_error": 0.037794519198812354,
+          "model": "goals_xg",
+          "root_mean_squared_error": 0.1447159647190342,
+          "slice": "all_transitions",
+          "standard_error": 0.003323211976370638,
+          "team_matches": 1768
+        },
+        {
+          "mean_log_rate_error": 0.056970969081432996,
+          "model": "goals_xg",
+          "root_mean_squared_error": 0.1412064134213796,
+          "slice": "promoted",
+          "standard_error": 0.004225408232437521,
+          "team_matches": 936
+        },
+        {
+          "mean_log_rate_error": 0.016221013080864148,
+          "model": "goals_xg",
+          "root_mean_squared_error": 0.1485651443120015,
+          "slice": "relegated",
+          "standard_error": 0.0051228565520419714,
+          "team_matches": 832
+        }
+      ],
+      "scope": "planted absolute club-strength gap between divisions, identities preserved"
     }
   ],
   "recovery": {
@@ -35,49 +151,49 @@
     "crossings_per_season": 3,
     "results": [
       {
-        "home_covered": 0.9333333333333333,
-        "home_covered_replicate_se": 0.046320555585310084,
-        "home_error": 0.003065318177689643,
-        "home_error_replicate_se": 0.011679740848157847,
-        "level_covered": 0.9666666666666667,
-        "level_covered_replicate_se": 0.03333333333333333,
-        "level_error": 0.02498334723721117,
-        "level_error_replicate_se": 0.01361286568653334,
-        "level_sd": 0.09302404987131804,
-        "level_sd_replicate_se": 0.0002197386403249572,
+        "home_covered": 0.9,
+        "home_covered_replicate_se": 0.055708601453115555,
+        "home_error": -0.00034528614239495806,
+        "home_error_replicate_se": 0.010794166174973571,
+        "level_covered": 1.0,
+        "level_covered_replicate_se": 0.0,
+        "level_error": 0.016408637551965626,
+        "level_error_replicate_se": 0.01332856618011695,
+        "level_sd": 0.09007960200367698,
+        "level_sd_replicate_se": 0.00018510770301376867,
         "model": "goals_only",
-        "quality_correlation": 0.9246726117889963,
-        "quality_correlation_replicate_se": 0.007231794207486309,
-        "quality_mse": 0.007563684098556238,
-        "quality_mse_replicate_se": 0.00048694705607364724,
+        "quality_correlation": 0.9246943124834183,
+        "quality_correlation_replicate_se": 0.007235678383944874,
+        "quality_mse": 0.007561997189359165,
+        "quality_mse_replicate_se": 0.00048731660520020647,
         "replicates": 30
       },
       {
         "home_covered": 1.0,
         "home_covered_replicate_se": 0.0,
-        "home_error": 0.0017778437706697902,
-        "home_error_replicate_se": 0.006661675948402343,
-        "level_covered": 0.9666666666666667,
-        "level_covered_replicate_se": 0.03333333333333333,
-        "level_error": 0.019572073964109846,
-        "level_error_replicate_se": 0.011475408044505458,
-        "level_sd": 0.0729656406642405,
-        "level_sd_replicate_se": 0.00013650692858196037,
+        "home_error": 0.001367962748042138,
+        "home_error_replicate_se": 0.006298905597496373,
+        "level_covered": 1.0,
+        "level_covered_replicate_se": 0.0,
+        "level_error": 0.016508536425616352,
+        "level_error_replicate_se": 0.011010049568483395,
+        "level_sd": 0.07228591305213761,
+        "level_sd_replicate_se": 0.00012454118795997645,
         "model": "goals_xg",
-        "quality_correlation": 0.9600137362263328,
-        "quality_correlation_replicate_se": 0.004133532808590831,
-        "quality_mse": 0.004448686125340247,
-        "quality_mse_replicate_se": 0.00025385208927646767,
+        "quality_correlation": 0.9600126076078136,
+        "quality_correlation_replicate_se": 0.004133085792384898,
+        "quality_mse": 0.004448448778121681,
+        "quality_mse_replicate_se": 0.00025362110842204287,
         "replicates": 30
       }
     ],
     "scope": "synthetic two-division opportunity process with a known common club scale",
     "seasons": 4,
-    "true_division_level": -0.2,
+    "true_division_scoring_level": -0.2,
     "true_home_advantage": 0.24,
     "xg_minus_goals_quality_mse": {
-      "mean": -0.003114997973215991,
-      "replicate_standard_error": 0.0003758149686123561
+      "mean": -0.003113548411237484,
+      "replicate_standard_error": 0.000375961576441716
     }
   }
 }

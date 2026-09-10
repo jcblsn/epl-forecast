@@ -81,48 +81,48 @@
       "season_id": "2024-2025"
     },
     {
-      "brier": 0.55593521374954,
-      "classwise_ece": 0.04454729672929833,
-      "log_loss": 0.9430603585987737,
+      "brier": 0.5559356716660317,
+      "classwise_ece": 0.0445608420024661,
+      "log_loss": 0.9430635383044114,
       "matches": 380,
       "model_id": "M9-cross-division-goals",
       "score_matches": 380,
-      "score_nll": 3.081948375699381,
+      "score_nll": 3.081935795084801,
       "season_id": "2023-2024"
     },
     {
-      "brier": 0.5971333002270021,
-      "classwise_ece": 0.04253842579049458,
-      "log_loss": 0.9990371678080425,
+      "brier": 0.5971236634942545,
+      "classwise_ece": 0.04252021680590733,
+      "log_loss": 0.9990250779421941,
       "matches": 380,
       "model_id": "M9-cross-division-goals",
       "score_matches": 380,
-      "score_nll": 2.98152396816795,
+      "score_nll": 2.9815026918705096,
       "season_id": "2024-2025"
     },
     {
-      "brier": 0.5547655487830568,
-      "classwise_ece": 0.03387291490959083,
-      "log_loss": 0.9419651327926474,
+      "brier": 0.5547648941547734,
+      "classwise_ece": 0.03387067905253922,
+      "log_loss": 0.9419652007021072,
       "matches": 380,
       "model_id": "M9-cross-division-xg",
       "score_matches": 380,
-      "score_nll": 3.0629925512500953,
+      "score_nll": 3.0629902347628395,
       "season_id": "2023-2024"
     },
     {
-      "brier": 0.5827210324773285,
-      "classwise_ece": 0.05940332882917638,
-      "log_loss": 0.979285407762894,
+      "brier": 0.5827179581206895,
+      "classwise_ece": 0.060100401572204844,
+      "log_loss": 0.9792815468355196,
       "matches": 380,
       "model_id": "M9-cross-division-xg",
       "score_matches": 380,
-      "score_nll": 2.972555533369028,
+      "score_nll": 2.9725516734994932,
       "season_id": "2024-2025"
     },
     {
-      "brier": 0.5331233730163928,
-      "classwise_ece": 0.03847765093724288,
+      "brier": 0.5331233730163929,
+      "classwise_ece": 0.038477650937242876,
       "log_loss": 0.9092124760895899,
       "matches": 380,
       "model_id": "market:bet365_preclosing",
@@ -132,8 +132,8 @@
     },
     {
       "brier": 0.5786638026588309,
-      "classwise_ece": 0.04040828444055508,
-      "log_loss": 0.9707576734366714,
+      "classwise_ece": 0.040408284440555074,
+      "log_loss": 0.9707576734366715,
       "matches": 380,
       "model_id": "market:bet365_preclosing",
       "score_matches": 0,
@@ -142,8 +142,8 @@
     },
     {
       "brier": 0.5267458308911198,
-      "classwise_ece": 0.03338474736686772,
-      "log_loss": 0.9007013128279796,
+      "classwise_ece": 0.03338474736686775,
+      "log_loss": 0.9007013128279793,
       "matches": 380,
       "model_id": "market:market_average_closing",
       "score_matches": 0,
@@ -151,8 +151,8 @@
       "season_id": "2023-2024"
     },
     {
-      "brier": 0.5751877511794847,
-      "classwise_ece": 0.039349864869337454,
+      "brier": 0.5751877511794848,
+      "classwise_ece": 0.03934986486933747,
       "log_loss": 0.9667334134817074,
       "matches": 380,
       "model_id": "market:market_average_closing",
@@ -162,8 +162,8 @@
     },
     {
       "brier": 0.5331180210631138,
-      "classwise_ece": 0.033781062870014596,
-      "log_loss": 0.9092502625018823,
+      "classwise_ece": 0.0337810628700146,
+      "log_loss": 0.9092502625018826,
       "matches": 380,
       "model_id": "market:market_average_preclosing",
       "score_matches": 0,
@@ -1275,7 +1275,7 @@
       "bin_lower": 0.1,
       "bin_upper": 0.2,
       "count": 36,
-      "mean_prediction": 0.16020561854999676,
+      "mean_prediction": 0.16014635455371798,
       "model_id": "M9-cross-division-goals",
       "observed_frequency": 0.1388888888888889,
       "outcome": "H"
@@ -1284,7 +1284,7 @@
       "bin_lower": 0.2,
       "bin_upper": 0.3,
       "count": 99,
-      "mean_prediction": 0.24962375532454045,
+      "mean_prediction": 0.24954964165488516,
       "model_id": "M9-cross-division-goals",
       "observed_frequency": 0.15151515151515152,
       "outcome": "H"
@@ -1293,7 +1293,7 @@
       "bin_lower": 0.3,
       "bin_upper": 0.4,
       "count": 159,
-      "mean_prediction": 0.35523810891853425,
+      "mean_prediction": 0.3551518176848722,
       "model_id": "M9-cross-division-goals",
       "observed_frequency": 0.3270440251572327,
       "outcome": "H"
@@ -1302,7 +1302,7 @@
       "bin_lower": 0.4,
       "bin_upper": 0.5,
       "count": 182,
-      "mean_prediction": 0.45050979613180453,
+      "mean_prediction": 0.4504210875512114,
       "model_id": "M9-cross-division-goals",
       "observed_frequency": 0.4230769230769231,
       "outcome": "H"
@@ -1311,7 +1311,7 @@
       "bin_lower": 0.5,
       "bin_upper": 0.6,
       "count": 137,
-      "mean_prediction": 0.5472925602946318,
+      "mean_prediction": 0.5471977519826305,
       "model_id": "M9-cross-division-goals",
       "observed_frequency": 0.5693430656934306,
       "outcome": "H"
@@ -1320,7 +1320,7 @@
       "bin_lower": 0.6,
       "bin_upper": 0.7,
       "count": 95,
-      "mean_prediction": 0.6393630693041946,
+      "mean_prediction": 0.639275725320491,
       "model_id": "M9-cross-division-goals",
       "observed_frequency": 0.6105263157894737,
       "outcome": "H"
@@ -1329,7 +1329,7 @@
       "bin_lower": 0.7,
       "bin_upper": 0.8,
       "count": 41,
-      "mean_prediction": 0.7424217449215156,
+      "mean_prediction": 0.7423414506521565,
       "model_id": "M9-cross-division-goals",
       "observed_frequency": 0.8292682926829268,
       "outcome": "H"
@@ -1338,7 +1338,7 @@
       "bin_lower": 0.8,
       "bin_upper": 0.9,
       "count": 11,
-      "mean_prediction": 0.828648785157977,
+      "mean_prediction": 0.8285825039904168,
       "model_id": "M9-cross-division-goals",
       "observed_frequency": 1.0,
       "outcome": "H"
@@ -1356,7 +1356,7 @@
       "bin_lower": 0.0,
       "bin_upper": 0.1,
       "count": 3,
-      "mean_prediction": 0.09599774211459305,
+      "mean_prediction": 0.09602853623446322,
       "model_id": "M9-cross-division-goals",
       "observed_frequency": 0.0,
       "outcome": "D"
@@ -1365,7 +1365,7 @@
       "bin_lower": 0.1,
       "bin_upper": 0.2,
       "count": 138,
-      "mean_prediction": 0.17224881696441097,
+      "mean_prediction": 0.17226841955643746,
       "model_id": "M9-cross-division-goals",
       "observed_frequency": 0.15942028985507245,
       "outcome": "D"
@@ -1374,7 +1374,7 @@
       "bin_lower": 0.2,
       "bin_upper": 0.3,
       "count": 619,
-      "mean_prediction": 0.23184394911099668,
+      "mean_prediction": 0.2318426615829488,
       "model_id": "M9-cross-division-goals",
       "observed_frequency": 0.24717285945072698,
       "outcome": "D"
@@ -1446,7 +1446,7 @@
       "bin_lower": 0.0,
       "bin_upper": 0.1,
       "count": 25,
-      "mean_prediction": 0.07666177046616263,
+      "mean_prediction": 0.07669894379432969,
       "model_id": "M9-cross-division-goals",
       "observed_frequency": 0.04,
       "outcome": "A"
@@ -1455,7 +1455,7 @@
       "bin_lower": 0.1,
       "bin_upper": 0.2,
       "count": 136,
-      "mean_prediction": 0.15884483326139048,
+      "mean_prediction": 0.15890489802073465,
       "model_id": "M9-cross-division-goals",
       "observed_frequency": 0.11029411764705882,
       "outcome": "A"
@@ -1464,7 +1464,7 @@
       "bin_lower": 0.2,
       "bin_upper": 0.3,
       "count": 191,
-      "mean_prediction": 0.2514755440876633,
+      "mean_prediction": 0.25155357953677854,
       "model_id": "M9-cross-division-goals",
       "observed_frequency": 0.2094240837696335,
       "outcome": "A"
@@ -1473,7 +1473,7 @@
       "bin_lower": 0.3,
       "bin_upper": 0.4,
       "count": 195,
-      "mean_prediction": 0.3471463649241855,
+      "mean_prediction": 0.34723755819901175,
       "model_id": "M9-cross-division-goals",
       "observed_frequency": 0.4,
       "outcome": "A"
@@ -1482,7 +1482,7 @@
       "bin_lower": 0.4,
       "bin_upper": 0.5,
       "count": 103,
-      "mean_prediction": 0.4427104633889127,
+      "mean_prediction": 0.4428097729859575,
       "model_id": "M9-cross-division-goals",
       "observed_frequency": 0.44660194174757284,
       "outcome": "A"
@@ -1491,7 +1491,7 @@
       "bin_lower": 0.5,
       "bin_upper": 0.6,
       "count": 77,
-      "mean_prediction": 0.5426602863114292,
+      "mean_prediction": 0.5427569637925275,
       "model_id": "M9-cross-division-goals",
       "observed_frequency": 0.6363636363636364,
       "outcome": "A"
@@ -1500,7 +1500,7 @@
       "bin_lower": 0.6,
       "bin_upper": 0.7,
       "count": 27,
-      "mean_prediction": 0.6380856326640599,
+      "mean_prediction": 0.6381847750342885,
       "model_id": "M9-cross-division-goals",
       "observed_frequency": 0.8148148148148148,
       "outcome": "A"
@@ -1509,7 +1509,7 @@
       "bin_lower": 0.7,
       "bin_upper": 0.8,
       "count": 6,
-      "mean_prediction": 0.7240542046636932,
+      "mean_prediction": 0.7241387949110124,
       "model_id": "M9-cross-division-goals",
       "observed_frequency": 0.6666666666666666,
       "outcome": "A"
@@ -1536,7 +1536,7 @@
       "bin_lower": 0.0,
       "bin_upper": 0.1,
       "count": 1,
-      "mean_prediction": 0.09138420477312201,
+      "mean_prediction": 0.09137215017440138,
       "model_id": "M9-cross-division-xg",
       "observed_frequency": 0.0,
       "outcome": "H"
@@ -1545,7 +1545,7 @@
       "bin_lower": 0.1,
       "bin_upper": 0.2,
       "count": 39,
-      "mean_prediction": 0.15930668673438297,
+      "mean_prediction": 0.15929210844830807,
       "model_id": "M9-cross-division-xg",
       "observed_frequency": 0.10256410256410256,
       "outcome": "H"
@@ -1554,7 +1554,7 @@
       "bin_lower": 0.2,
       "bin_upper": 0.3,
       "count": 93,
-      "mean_prediction": 0.24976823350145866,
+      "mean_prediction": 0.24974913117536252,
       "model_id": "M9-cross-division-xg",
       "observed_frequency": 0.16129032258064516,
       "outcome": "H"
@@ -1563,7 +1563,7 @@
       "bin_lower": 0.3,
       "bin_upper": 0.4,
       "count": 140,
-      "mean_prediction": 0.3498078493164091,
+      "mean_prediction": 0.34978603134583164,
       "model_id": "M9-cross-division-xg",
       "observed_frequency": 0.2785714285714286,
       "outcome": "H"
@@ -1572,7 +1572,7 @@
       "bin_lower": 0.4,
       "bin_upper": 0.5,
       "count": 175,
-      "mean_prediction": 0.45035382302909005,
+      "mean_prediction": 0.45033104755999237,
       "model_id": "M9-cross-division-xg",
       "observed_frequency": 0.3942857142857143,
       "outcome": "H"
@@ -1580,26 +1580,26 @@
     {
       "bin_lower": 0.5,
       "bin_upper": 0.6,
-      "count": 134,
-      "mean_prediction": 0.543174910442135,
+      "count": 135,
+      "mean_prediction": 0.5435720024628947,
       "model_id": "M9-cross-division-xg",
-      "observed_frequency": 0.6119402985074627,
+      "observed_frequency": 0.6148148148148148,
       "outcome": "H"
     },
     {
       "bin_lower": 0.6,
       "bin_upper": 0.7,
-      "count": 110,
-      "mean_prediction": 0.6476617304746075,
+      "count": 109,
+      "mean_prediction": 0.648076683222062,
       "model_id": "M9-cross-division-xg",
-      "observed_frequency": 0.6090909090909091,
+      "observed_frequency": 0.6055045871559633,
       "outcome": "H"
     },
     {
       "bin_lower": 0.7,
       "bin_upper": 0.8,
       "count": 49,
-      "mean_prediction": 0.7341873655890013,
+      "mean_prediction": 0.7341672026107238,
       "model_id": "M9-cross-division-xg",
       "observed_frequency": 0.7142857142857143,
       "outcome": "H"
@@ -1608,7 +1608,7 @@
       "bin_lower": 0.8,
       "bin_upper": 0.9,
       "count": 18,
-      "mean_prediction": 0.8353197960784662,
+      "mean_prediction": 0.8353041675702707,
       "model_id": "M9-cross-division-xg",
       "observed_frequency": 1.0,
       "outcome": "H"
@@ -1617,7 +1617,7 @@
       "bin_lower": 0.9,
       "bin_upper": 1.0,
       "count": 1,
-      "mean_prediction": 0.9003966716777272,
+      "mean_prediction": 0.9003886763423888,
       "model_id": "M9-cross-division-xg",
       "observed_frequency": 1.0,
       "outcome": "H"
@@ -1626,7 +1626,7 @@
       "bin_lower": 0.0,
       "bin_upper": 0.1,
       "count": 8,
-      "mean_prediction": 0.09013169405671415,
+      "mean_prediction": 0.09013860532158235,
       "model_id": "M9-cross-division-xg",
       "observed_frequency": 0.0,
       "outcome": "D"
@@ -1635,7 +1635,7 @@
       "bin_lower": 0.1,
       "bin_upper": 0.2,
       "count": 195,
-      "mean_prediction": 0.171224612826016,
+      "mean_prediction": 0.17122843004735155,
       "model_id": "M9-cross-division-xg",
       "observed_frequency": 0.2205128205128205,
       "outcome": "D"
@@ -1644,7 +1644,7 @@
       "bin_lower": 0.2,
       "bin_upper": 0.3,
       "count": 557,
-      "mean_prediction": 0.22629380623120138,
+      "mean_prediction": 0.22629296107620184,
       "model_id": "M9-cross-division-xg",
       "observed_frequency": 0.236983842010772,
       "outcome": "D"
@@ -1716,7 +1716,7 @@
       "bin_lower": 0.0,
       "bin_upper": 0.1,
       "count": 30,
-      "mean_prediction": 0.06932770393631618,
+      "mean_prediction": 0.06933626276140847,
       "model_id": "M9-cross-division-xg",
       "observed_frequency": 0.03333333333333333,
       "outcome": "A"
@@ -1725,7 +1725,7 @@
       "bin_lower": 0.1,
       "bin_upper": 0.2,
       "count": 153,
-      "mean_prediction": 0.15524899027544187,
+      "mean_prediction": 0.15526438314056412,
       "model_id": "M9-cross-division-xg",
       "observed_frequency": 0.12418300653594772,
       "outcome": "A"
@@ -1734,7 +1734,7 @@
       "bin_lower": 0.2,
       "bin_upper": 0.3,
       "count": 183,
-      "mean_prediction": 0.2547127000854345,
+      "mean_prediction": 0.2547328361195369,
       "model_id": "M9-cross-division-xg",
       "observed_frequency": 0.2185792349726776,
       "outcome": "A"
@@ -1743,7 +1743,7 @@
       "bin_lower": 0.3,
       "bin_upper": 0.4,
       "count": 171,
-      "mean_prediction": 0.34632328592626616,
+      "mean_prediction": 0.346346999303152,
       "model_id": "M9-cross-division-xg",
       "observed_frequency": 0.38596491228070173,
       "outcome": "A"
@@ -1752,7 +1752,7 @@
       "bin_lower": 0.4,
       "bin_upper": 0.5,
       "count": 109,
-      "mean_prediction": 0.4431902507815966,
+      "mean_prediction": 0.44321537538619055,
       "model_id": "M9-cross-division-xg",
       "observed_frequency": 0.47706422018348627,
       "outcome": "A"
@@ -1761,7 +1761,7 @@
       "bin_lower": 0.5,
       "bin_upper": 0.6,
       "count": 75,
-      "mean_prediction": 0.5445898580691599,
+      "mean_prediction": 0.5446159487731554,
       "model_id": "M9-cross-division-xg",
       "observed_frequency": 0.6533333333333333,
       "outcome": "A"
@@ -1770,7 +1770,7 @@
       "bin_lower": 0.6,
       "bin_upper": 0.7,
       "count": 32,
-      "mean_prediction": 0.6437503639227288,
+      "mean_prediction": 0.6437752274761529,
       "model_id": "M9-cross-division-xg",
       "observed_frequency": 0.71875,
       "outcome": "A"
@@ -1779,7 +1779,7 @@
       "bin_lower": 0.7,
       "bin_upper": 0.8,
       "count": 7,
-      "mean_prediction": 0.7383578566693776,
+      "mean_prediction": 0.7383796451082432,
       "model_id": "M9-cross-division-xg",
       "observed_frequency": 0.7142857142857143,
       "outcome": "A"
@@ -1806,7 +1806,7 @@
       "bin_lower": 0.0,
       "bin_upper": 0.1,
       "count": 11,
-      "mean_prediction": 0.07492993716972159,
+      "mean_prediction": 0.0749299371697216,
       "model_id": "market:bet365_preclosing",
       "observed_frequency": 0.0,
       "outcome": "H"
@@ -1815,7 +1815,7 @@
       "bin_lower": 0.1,
       "bin_upper": 0.2,
       "count": 83,
-      "mean_prediction": 0.15499359777684582,
+      "mean_prediction": 0.1549935977768458,
       "model_id": "market:bet365_preclosing",
       "observed_frequency": 0.08433734939759036,
       "outcome": "H"
@@ -1833,7 +1833,7 @@
       "bin_lower": 0.3,
       "bin_upper": 0.4,
       "count": 144,
-      "mean_prediction": 0.35410028866333515,
+      "mean_prediction": 0.3541002886633351,
       "model_id": "market:bet365_preclosing",
       "observed_frequency": 0.3472222222222222,
       "outcome": "H"
@@ -1842,7 +1842,7 @@
       "bin_lower": 0.4,
       "bin_upper": 0.5,
       "count": 126,
-      "mean_prediction": 0.45241937102202473,
+      "mean_prediction": 0.4524193710220248,
       "model_id": "market:bet365_preclosing",
       "observed_frequency": 0.46825396825396826,
       "outcome": "H"
@@ -1860,7 +1860,7 @@
       "bin_lower": 0.6,
       "bin_upper": 0.7,
       "count": 90,
-      "mean_prediction": 0.6510312109988955,
+      "mean_prediction": 0.6510312109988954,
       "model_id": "market:bet365_preclosing",
       "observed_frequency": 0.6333333333333333,
       "outcome": "H"
@@ -1869,7 +1869,7 @@
       "bin_lower": 0.7,
       "bin_upper": 0.8,
       "count": 60,
-      "mean_prediction": 0.7420554803752751,
+      "mean_prediction": 0.7420554803752754,
       "model_id": "market:bet365_preclosing",
       "observed_frequency": 0.6166666666666667,
       "outcome": "H"
@@ -1986,7 +1986,7 @@
       "bin_lower": 0.0,
       "bin_upper": 0.1,
       "count": 58,
-      "mean_prediction": 0.07020905536738332,
+      "mean_prediction": 0.07020905536738334,
       "model_id": "market:bet365_preclosing",
       "observed_frequency": 0.06896551724137931,
       "outcome": "A"
@@ -2013,7 +2013,7 @@
       "bin_lower": 0.3,
       "bin_upper": 0.4,
       "count": 147,
-      "mean_prediction": 0.3510030156924021,
+      "mean_prediction": 0.35100301569240205,
       "model_id": "market:bet365_preclosing",
       "observed_frequency": 0.3741496598639456,
       "outcome": "A"
@@ -2031,7 +2031,7 @@
       "bin_lower": 0.5,
       "bin_upper": 0.6,
       "count": 69,
-      "mean_prediction": 0.5516891703463906,
+      "mean_prediction": 0.5516891703463905,
       "model_id": "market:bet365_preclosing",
       "observed_frequency": 0.5217391304347826,
       "outcome": "A"
@@ -2049,7 +2049,7 @@
       "bin_lower": 0.7,
       "bin_upper": 0.8,
       "count": 18,
-      "mean_prediction": 0.7373282876197861,
+      "mean_prediction": 0.737328287619786,
       "model_id": "market:bet365_preclosing",
       "observed_frequency": 0.8333333333333334,
       "outcome": "A"
@@ -2085,7 +2085,7 @@
       "bin_lower": 0.1,
       "bin_upper": 0.2,
       "count": 76,
-      "mean_prediction": 0.1554023464706313,
+      "mean_prediction": 0.15540234647063128,
       "model_id": "market:market_average_closing",
       "observed_frequency": 0.10526315789473684,
       "outcome": "H"
@@ -2094,7 +2094,7 @@
       "bin_lower": 0.2,
       "bin_upper": 0.3,
       "count": 108,
-      "mean_prediction": 0.25274863183918095,
+      "mean_prediction": 0.2527486318391809,
       "model_id": "market:market_average_closing",
       "observed_frequency": 0.2037037037037037,
       "outcome": "H"
@@ -2103,7 +2103,7 @@
       "bin_lower": 0.3,
       "bin_upper": 0.4,
       "count": 136,
-      "mean_prediction": 0.34908992444660886,
+      "mean_prediction": 0.3490899244466089,
       "model_id": "market:market_average_closing",
       "observed_frequency": 0.34558823529411764,
       "outcome": "H"
@@ -2139,7 +2139,7 @@
       "bin_lower": 0.7,
       "bin_upper": 0.8,
       "count": 71,
-      "mean_prediction": 0.7491069909754953,
+      "mean_prediction": 0.7491069909754952,
       "model_id": "market:market_average_closing",
       "observed_frequency": 0.6901408450704225,
       "outcome": "H"
@@ -2148,7 +2148,7 @@
       "bin_lower": 0.8,
       "bin_upper": 0.9,
       "count": 32,
-      "mean_prediction": 0.8433710872072293,
+      "mean_prediction": 0.8433710872072292,
       "model_id": "market:market_average_closing",
       "observed_frequency": 0.9375,
       "outcome": "H"
@@ -2184,7 +2184,7 @@
       "bin_lower": 0.2,
       "bin_upper": 0.3,
       "count": 562,
-      "mean_prediction": 0.25146629437934337,
+      "mean_prediction": 0.25146629437934326,
       "model_id": "market:market_average_closing",
       "observed_frequency": 0.2597864768683274,
       "outcome": "D"
@@ -2256,7 +2256,7 @@
       "bin_lower": 0.0,
       "bin_upper": 0.1,
       "count": 75,
-      "mean_prediction": 0.070669570542637,
+      "mean_prediction": 0.07066957054263702,
       "model_id": "market:market_average_closing",
       "observed_frequency": 0.09333333333333334,
       "outcome": "A"
@@ -2265,7 +2265,7 @@
       "bin_lower": 0.1,
       "bin_upper": 0.2,
       "count": 162,
-      "mean_prediction": 0.15560556024202896,
+      "mean_prediction": 0.1556055602420289,
       "model_id": "market:market_average_closing",
       "observed_frequency": 0.15432098765432098,
       "outcome": "A"
@@ -2283,7 +2283,7 @@
       "bin_lower": 0.3,
       "bin_upper": 0.4,
       "count": 138,
-      "mean_prediction": 0.3477181260884484,
+      "mean_prediction": 0.34771812608844843,
       "model_id": "market:market_average_closing",
       "observed_frequency": 0.3695652173913043,
       "outcome": "A"
@@ -2292,7 +2292,7 @@
       "bin_lower": 0.4,
       "bin_upper": 0.5,
       "count": 103,
-      "mean_prediction": 0.4477901197921901,
+      "mean_prediction": 0.44779011979219024,
       "model_id": "market:market_average_closing",
       "observed_frequency": 0.4563106796116505,
       "outcome": "A"
@@ -2301,7 +2301,7 @@
       "bin_lower": 0.5,
       "bin_upper": 0.6,
       "count": 68,
-      "mean_prediction": 0.5536737546587872,
+      "mean_prediction": 0.553673754658787,
       "model_id": "market:market_average_closing",
       "observed_frequency": 0.5882352941176471,
       "outcome": "A"
@@ -2310,7 +2310,7 @@
       "bin_lower": 0.6,
       "bin_upper": 0.7,
       "count": 38,
-      "mean_prediction": 0.6480346973578917,
+      "mean_prediction": 0.6480346973578915,
       "model_id": "market:market_average_closing",
       "observed_frequency": 0.7631578947368421,
       "outcome": "A"
@@ -2319,7 +2319,7 @@
       "bin_lower": 0.7,
       "bin_upper": 0.8,
       "count": 22,
-      "mean_prediction": 0.7345337868158246,
+      "mean_prediction": 0.7345337868158244,
       "model_id": "market:market_average_closing",
       "observed_frequency": 1.0,
       "outcome": "A"
@@ -2355,7 +2355,7 @@
       "bin_lower": 0.1,
       "bin_upper": 0.2,
       "count": 78,
-      "mean_prediction": 0.1531939817466561,
+      "mean_prediction": 0.15319398174665613,
       "model_id": "market:market_average_preclosing",
       "observed_frequency": 0.08974358974358974,
       "outcome": "H"
@@ -2373,7 +2373,7 @@
       "bin_lower": 0.3,
       "bin_upper": 0.4,
       "count": 146,
-      "mean_prediction": 0.3546880847192873,
+      "mean_prediction": 0.35468808471928726,
       "model_id": "market:market_average_preclosing",
       "observed_frequency": 0.3424657534246575,
       "outcome": "H"
@@ -2382,7 +2382,7 @@
       "bin_lower": 0.4,
       "bin_upper": 0.5,
       "count": 121,
-      "mean_prediction": 0.4496064851824267,
+      "mean_prediction": 0.44960648518242663,
       "model_id": "market:market_average_preclosing",
       "observed_frequency": 0.4628099173553719,
       "outcome": "H"
@@ -2400,7 +2400,7 @@
       "bin_lower": 0.6,
       "bin_upper": 0.7,
       "count": 85,
-      "mean_prediction": 0.6523859401266829,
+      "mean_prediction": 0.652385940126683,
       "model_id": "market:market_average_preclosing",
       "observed_frequency": 0.6235294117647059,
       "outcome": "H"
@@ -2409,7 +2409,7 @@
       "bin_lower": 0.7,
       "bin_upper": 0.8,
       "count": 66,
-      "mean_prediction": 0.7449167565335697,
+      "mean_prediction": 0.7449167565335698,
       "model_id": "market:market_average_preclosing",
       "observed_frequency": 0.6515151515151515,
       "outcome": "H"
@@ -2436,7 +2436,7 @@
       "bin_lower": 0.0,
       "bin_upper": 0.1,
       "count": 13,
-      "mean_prediction": 0.0832176947823764,
+      "mean_prediction": 0.08321769478237641,
       "model_id": "market:market_average_preclosing",
       "observed_frequency": 0.0,
       "outcome": "D"
@@ -2454,7 +2454,7 @@
       "bin_lower": 0.2,
       "bin_upper": 0.3,
       "count": 571,
-      "mean_prediction": 0.24942745373071676,
+      "mean_prediction": 0.2494274537307167,
       "model_id": "market:market_average_preclosing",
       "observed_frequency": 0.2504378283712785,
       "outcome": "D"
@@ -2526,7 +2526,7 @@
       "bin_lower": 0.0,
       "bin_upper": 0.1,
       "count": 64,
-      "mean_prediction": 0.06882580545202802,
+      "mean_prediction": 0.06882580545202799,
       "model_id": "market:market_average_preclosing",
       "observed_frequency": 0.078125,
       "outcome": "A"
@@ -2657,29 +2657,29 @@
       "score_nll": 3.0155552356711874
     },
     {
-      "brier": 0.576534256988271,
-      "classwise_ece": 0.03565720486335506,
-      "log_loss": 0.9710487632034083,
+      "brier": 0.5765296675801431,
+      "classwise_ece": 0.03563937529262279,
+      "log_loss": 0.9710443081233028,
       "market_subset": "market:bet365_preclosing",
       "matches": 760,
       "model_id": "M9-cross-division-goals",
       "score_matches": 760,
-      "score_nll": 3.031736171933665
+      "score_nll": 3.031719243477656
     },
     {
-      "brier": 0.5687432906301927,
-      "classwise_ece": 0.0428690256127295,
-      "log_loss": 0.9606252702777708,
+      "brier": 0.5687414261377315,
+      "classwise_ece": 0.04321436540444441,
+      "log_loss": 0.9606233737688135,
       "market_subset": "market:bet365_preclosing",
       "matches": 760,
       "model_id": "M9-cross-division-xg",
       "score_matches": 760,
-      "score_nll": 3.017774042309561
+      "score_nll": 3.0177709541311666
     },
     {
       "brier": 0.5558935878376119,
-      "classwise_ece": 0.027268103790075923,
-      "log_loss": 0.9399850747631308,
+      "classwise_ece": 0.02726810379007592,
+      "log_loss": 0.9399850747631305,
       "market_subset": "market:bet365_preclosing",
       "matches": 760,
       "model_id": "market:bet365_preclosing",
@@ -2727,28 +2727,28 @@
       "score_nll": 3.0155552356711874
     },
     {
-      "brier": 0.576534256988271,
-      "classwise_ece": 0.03565720486335506,
-      "log_loss": 0.9710487632034083,
+      "brier": 0.5765296675801431,
+      "classwise_ece": 0.03563937529262279,
+      "log_loss": 0.9710443081233028,
       "market_subset": "market:market_average_closing",
       "matches": 760,
       "model_id": "M9-cross-division-goals",
       "score_matches": 760,
-      "score_nll": 3.031736171933665
+      "score_nll": 3.031719243477656
     },
     {
-      "brier": 0.5687432906301927,
-      "classwise_ece": 0.0428690256127295,
-      "log_loss": 0.9606252702777708,
+      "brier": 0.5687414261377315,
+      "classwise_ece": 0.04321436540444441,
+      "log_loss": 0.9606233737688135,
       "market_subset": "market:market_average_closing",
       "matches": 760,
       "model_id": "M9-cross-division-xg",
       "score_matches": 760,
-      "score_nll": 3.017774042309561
+      "score_nll": 3.0177709541311666
     },
     {
-      "brier": 0.5509667910353023,
-      "classwise_ece": 0.028330532886332842,
+      "brier": 0.5509667910353022,
+      "classwise_ece": 0.028330532886332867,
       "log_loss": 0.9337173631548434,
       "market_subset": "market:market_average_closing",
       "matches": 760,
@@ -2797,28 +2797,28 @@
       "score_nll": 3.0155552356711874
     },
     {
-      "brier": 0.576534256988271,
-      "classwise_ece": 0.03565720486335506,
-      "log_loss": 0.9710487632034083,
+      "brier": 0.5765296675801431,
+      "classwise_ece": 0.03563937529262279,
+      "log_loss": 0.9710443081233028,
       "market_subset": "market:market_average_preclosing",
       "matches": 760,
       "model_id": "M9-cross-division-goals",
       "score_matches": 760,
-      "score_nll": 3.031736171933665
+      "score_nll": 3.031719243477656
     },
     {
-      "brier": 0.5687432906301927,
-      "classwise_ece": 0.0428690256127295,
-      "log_loss": 0.9606252702777708,
+      "brier": 0.5687414261377315,
+      "classwise_ece": 0.04321436540444441,
+      "log_loss": 0.9606233737688135,
       "market_subset": "market:market_average_preclosing",
       "matches": 760,
       "model_id": "M9-cross-division-xg",
       "score_matches": 760,
-      "score_nll": 3.017774042309561
+      "score_nll": 3.0177709541311666
     },
     {
       "brier": 0.5560083125002399,
-      "classwise_ece": 0.024202291993804692,
+      "classwise_ece": 0.024202291993804713,
       "log_loss": 0.9399011937564766,
       "market_subset": "market:market_average_preclosing",
       "matches": 760,
@@ -2865,35 +2865,35 @@
       "score_nll": 3.0155552356711874
     },
     {
-      "brier": 0.576534256988271,
-      "classwise_ece": 0.03565720486335506,
-      "log_loss": 0.9710487632034083,
+      "brier": 0.5765296675801431,
+      "classwise_ece": 0.03563937529262279,
+      "log_loss": 0.9710443081233028,
       "matches": 760,
       "model_id": "M9-cross-division-goals",
       "score_matches": 760,
-      "score_nll": 3.031736171933665
+      "score_nll": 3.031719243477656
     },
     {
-      "brier": 0.5687432906301927,
-      "classwise_ece": 0.0428690256127295,
-      "log_loss": 0.9606252702777708,
+      "brier": 0.5687414261377315,
+      "classwise_ece": 0.04321436540444441,
+      "log_loss": 0.9606233737688135,
       "matches": 760,
       "model_id": "M9-cross-division-xg",
       "score_matches": 760,
-      "score_nll": 3.017774042309561
+      "score_nll": 3.0177709541311666
     },
     {
       "brier": 0.5558935878376119,
-      "classwise_ece": 0.027268103790075923,
-      "log_loss": 0.9399850747631308,
+      "classwise_ece": 0.02726810379007592,
+      "log_loss": 0.9399850747631305,
       "matches": 760,
       "model_id": "market:bet365_preclosing",
       "score_matches": 0,
       "score_nll": null
     },
     {
-      "brier": 0.5509667910353023,
-      "classwise_ece": 0.028330532886332842,
+      "brier": 0.5509667910353022,
+      "classwise_ece": 0.028330532886332867,
       "log_loss": 0.9337173631548434,
       "matches": 760,
       "model_id": "market:market_average_closing",
@@ -2902,7 +2902,7 @@
     },
     {
       "brier": 0.5560083125002399,
-      "classwise_ece": 0.024202291993804692,
+      "classwise_ece": 0.024202291993804713,
       "log_loss": 0.9399011937564766,
       "matches": 760,
       "model_id": "market:market_average_preclosing",
@@ -2910,5 +2910,336 @@
       "score_nll": null
     }
   ],
-  "paired_comparisons": []
+  "paired_comparisons": [
+    {
+      "blocks": 22,
+      "candidate": "M5-centered-poisson-control",
+      "ci_lower": -0.006000950076618753,
+      "ci_upper": 0.005116373893006435,
+      "delta_log_loss": -0.0004273358352231804,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M2-attack-defense-v1"
+    },
+    {
+      "blocks": 22,
+      "candidate": "M7-xg-v1",
+      "ci_lower": -0.016821072612473495,
+      "ci_upper": 0.007805225992061017,
+      "delta_log_loss": -0.004496714935492184,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M2-attack-defense-v1"
+    },
+    {
+      "blocks": 22,
+      "candidate": "M5-uncentered-bridge-control",
+      "ci_lower": -0.00600095007661873,
+      "ci_upper": 0.005116373893006508,
+      "delta_log_loss": -0.00042733583522312974,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M2-attack-defense-v1"
+    },
+    {
+      "blocks": 22,
+      "candidate": "M9-cross-division-goals",
+      "ci_lower": 0.006400828561080282,
+      "ci_upper": 0.021644489597069765,
+      "delta_log_loss": 0.013699761004030062,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M2-attack-defense-v1"
+    },
+    {
+      "blocks": 22,
+      "candidate": "M9-cross-division-xg",
+      "ci_lower": -0.009461180374738198,
+      "ci_upper": 0.016662439446479504,
+      "delta_log_loss": 0.0032788266495406594,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M2-attack-defense-v1"
+    },
+    {
+      "blocks": 22,
+      "candidate": "M7-xg-v1",
+      "ci_lower": -0.012207701943946617,
+      "ci_upper": 0.004360599315227518,
+      "delta_log_loss": -0.004069379100269005,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M5-centered-poisson-control"
+    },
+    {
+      "blocks": 22,
+      "candidate": "M5-uncentered-bridge-control",
+      "ci_lower": -9.904188248245214e-18,
+      "ci_upper": 1.0817504604332554e-16,
+      "delta_log_loss": 5.045306278025177e-17,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M5-centered-poisson-control"
+    },
+    {
+      "blocks": 22,
+      "candidate": "M9-cross-division-goals",
+      "ci_lower": 0.00890312118005886,
+      "ci_upper": 0.0194318114549473,
+      "delta_log_loss": 0.014127096839253242,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M5-centered-poisson-control"
+    },
+    {
+      "blocks": 22,
+      "candidate": "M9-cross-division-xg",
+      "ci_lower": -0.005663678672621824,
+      "ci_upper": 0.013844509319640428,
+      "delta_log_loss": 0.003706162484763841,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M5-centered-poisson-control"
+    },
+    {
+      "blocks": 22,
+      "candidate": "M5-uncentered-bridge-control",
+      "ci_lower": -0.004360599315227468,
+      "ci_upper": 0.01220770194394672,
+      "delta_log_loss": 0.004069379100269054,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M7-xg-v1"
+    },
+    {
+      "blocks": 22,
+      "candidate": "M9-cross-division-goals",
+      "ci_lower": 0.00911466193800505,
+      "ci_upper": 0.027185630981664873,
+      "delta_log_loss": 0.01819647593952225,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M7-xg-v1"
+    },
+    {
+      "blocks": 22,
+      "candidate": "M9-cross-division-xg",
+      "ci_lower": 0.004539671247574936,
+      "ci_upper": 0.011482134171347186,
+      "delta_log_loss": 0.007775541585032843,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M7-xg-v1"
+    },
+    {
+      "blocks": 22,
+      "candidate": "M9-cross-division-goals",
+      "ci_lower": 0.008903121180058883,
+      "ci_upper": 0.01943181145494726,
+      "delta_log_loss": 0.014127096839253192,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M5-uncentered-bridge-control"
+    },
+    {
+      "blocks": 22,
+      "candidate": "M9-cross-division-xg",
+      "ci_lower": -0.00566367867262188,
+      "ci_upper": 0.013844509319640378,
+      "delta_log_loss": 0.0037061624847637893,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M5-uncentered-bridge-control"
+    },
+    {
+      "blocks": 22,
+      "candidate": "M9-cross-division-xg",
+      "ci_lower": -0.01856093938611849,
+      "ci_upper": -0.002097702641509841,
+      "delta_log_loss": -0.010420934354489403,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M9-cross-division-goals"
+    },
+    {
+      "blocks": 22,
+      "candidate": "market:bet365_preclosing",
+      "ci_lower": -0.026969266409980416,
+      "ci_upper": -0.008164296748254887,
+      "delta_log_loss": -0.017359472356142065,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M2-attack-defense-v1"
+    },
+    {
+      "blocks": 22,
+      "candidate": "market:market_average_closing",
+      "ci_lower": -0.036334586930822005,
+      "ci_upper": -0.011525511809239938,
+      "delta_log_loss": -0.023627183964429307,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M2-attack-defense-v1"
+    },
+    {
+      "blocks": 22,
+      "candidate": "market:market_average_preclosing",
+      "ci_lower": -0.027415697323295803,
+      "ci_upper": -0.007918644689700622,
+      "delta_log_loss": -0.017443353362796135,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M2-attack-defense-v1"
+    },
+    {
+      "blocks": 22,
+      "candidate": "market:bet365_preclosing",
+      "ci_lower": -0.025912027315325818,
+      "ci_upper": -0.00885876006596103,
+      "delta_log_loss": -0.016932136520918885,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M5-centered-poisson-control"
+    },
+    {
+      "blocks": 22,
+      "candidate": "market:market_average_closing",
+      "ci_lower": -0.036434947408624394,
+      "ci_upper": -0.011889194805129982,
+      "delta_log_loss": -0.02319984812920613,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M5-centered-poisson-control"
+    },
+    {
+      "blocks": 22,
+      "candidate": "market:market_average_preclosing",
+      "ci_lower": -0.02620328045154861,
+      "ci_upper": -0.008681256450472291,
+      "delta_log_loss": -0.017016017527572952,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M5-centered-poisson-control"
+    },
+    {
+      "blocks": 22,
+      "candidate": "market:bet365_preclosing",
+      "ci_lower": -0.02490679465129991,
+      "ci_upper": -0.0014445005903122123,
+      "delta_log_loss": -0.012862757420649884,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M7-xg-v1"
+    },
+    {
+      "blocks": 22,
+      "candidate": "market:market_average_closing",
+      "ci_lower": -0.03388080800593257,
+      "ci_upper": -0.005132456811073809,
+      "delta_log_loss": -0.019130469028937124,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M7-xg-v1"
+    },
+    {
+      "blocks": 22,
+      "candidate": "market:market_average_preclosing",
+      "ci_lower": -0.02496497805397693,
+      "ci_upper": -0.0010013965021153663,
+      "delta_log_loss": -0.012946638427303949,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M7-xg-v1"
+    },
+    {
+      "blocks": 22,
+      "candidate": "market:bet365_preclosing",
+      "ci_lower": -0.02591202731532589,
+      "ci_upper": -0.008858760065961108,
+      "delta_log_loss": -0.016932136520918933,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M5-uncentered-bridge-control"
+    },
+    {
+      "blocks": 22,
+      "candidate": "market:market_average_closing",
+      "ci_lower": -0.036434947408624505,
+      "ci_upper": -0.011889194805129996,
+      "delta_log_loss": -0.02319984812920618,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M5-uncentered-bridge-control"
+    },
+    {
+      "blocks": 22,
+      "candidate": "market:market_average_preclosing",
+      "ci_lower": -0.02620328045154869,
+      "ci_upper": -0.008681256450472368,
+      "delta_log_loss": -0.017016017527573007,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M5-uncentered-bridge-control"
+    },
+    {
+      "blocks": 22,
+      "candidate": "market:bet365_preclosing",
+      "ci_lower": -0.0400732264664011,
+      "ci_upper": -0.023443898251450383,
+      "delta_log_loss": -0.031059233360172127,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M9-cross-division-goals"
+    },
+    {
+      "blocks": 22,
+      "candidate": "market:market_average_closing",
+      "ci_lower": -0.05003467546998611,
+      "ci_upper": -0.02656175720805162,
+      "delta_log_loss": -0.03732694496845937,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M9-cross-division-goals"
+    },
+    {
+      "blocks": 22,
+      "candidate": "market:market_average_preclosing",
+      "ci_lower": -0.040156915720956594,
+      "ci_upper": -0.023132441066654363,
+      "delta_log_loss": -0.031143114366826197,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M9-cross-division-goals"
+    },
+    {
+      "blocks": 22,
+      "candidate": "market:bet365_preclosing",
+      "ci_lower": -0.032655489639238776,
+      "ci_upper": -0.009320396524082378,
+      "delta_log_loss": -0.020638299005682724,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M9-cross-division-xg"
+    },
+    {
+      "blocks": 22,
+      "candidate": "market:market_average_closing",
+      "ci_lower": -0.04173939418994937,
+      "ci_upper": -0.013110306181258765,
+      "delta_log_loss": -0.02690601061396997,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M9-cross-division-xg"
+    },
+    {
+      "blocks": 22,
+      "candidate": "market:market_average_preclosing",
+      "ci_lower": -0.03299369906064468,
+      "ci_upper": -0.009141178400789957,
+      "delta_log_loss": -0.02072218001233679,
+      "matches": 760,
+      "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+      "reference": "M9-cross-division-xg"
+    }
+  ]
 }

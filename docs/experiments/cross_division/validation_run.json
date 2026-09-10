@@ -1,7 +1,7 @@
 {
-  "code_sha256": "366a19597e6930f2552342a9e4215e812ffe886fc61d6ac66634536f8f123d4d",
+  "code_sha256": "1f38330e5b7e451e389418cdb10fd6731b8537eac26203da9729912360ce525b",
   "config": {
-    "bootstrap_samples": 0,
+    "bootstrap_samples": 2000,
     "calibration_bins": 10,
     "competition_id": "eng-premier-league",
     "development_end": "2023-07-01",
@@ -110,7 +110,7 @@
     "validation_end": "2025-07-01",
     "validation_start": "2023-08-01"
   },
-  "config_sha256": "a8e55e9618e32593eb2f2901392cd73c84c6dbba6d129e4bb18c82afc0c47213",
+  "config_sha256": "45374ca7a6ff27eb8b55434b316845239b47b06c2e72100a34219390cf576751",
   "data_manifest": {
     "batches": [
       "00017e220e72d3e6e11f946b0f7761336156af1f39e00dfb369ad96ceb85bebb",
@@ -73425,11 +73425,11 @@
       "--data",
       "data",
       "--output",
-      "runs/m9-validation-v2",
+      "runs/m9-validation-v3",
       "--split",
       "validation"
     ],
-    "commit": "8e0848d3d24e914bf3afef1d55f7f1b0c203fe93",
+    "commit": "70fc07353df845a6a0f704c7e4eb07d44166a617",
     "dependencies": {
       "Pygments": "2.21.0",
       "contourpy": "1.3.3",
@@ -73464,12 +73464,14 @@
       "pyproject.toml": "6e074bd4c9ee20a4f4785fcf2bf57bb79b9078de2aaaa4bc41829945b3637979",
       "scripts/audit_player_population.py": "4a1bf8ec30b3e7fedc2463d53d1f3e6e30706854a2f61c6529feaf607e515cf8",
       "scripts/audit_player_signals.py": "ae4d857243f1b6b451261a682ff90e5f708a2e7ffd2696eea6d12320a3fe3c7b",
+      "scripts/audit_promotion_slope.py": "89f2ec5740337da2738c978d518f78cf6395860887e97eb522ee39ceface4d68",
       "scripts/audit_roster_transition.py": "147a733b97de157f43082efeffdd495fa46d1a7d565cfa2ecc056ad6ef8e5ee8",
+      "scripts/audit_scoring_level_identification.py": "7eacff2b06960c74807293a5e7c720dacecf03771c677f828a135857ce3693f9",
       "scripts/capture_prospective.py": "30b815fc65069cba8a8c8b89c6d160f30cd6154e3dc980aff1daebd22f780569",
       "scripts/check_player_quality_posterior.py": "e1ac3d546789df276508e599524ed374234b598c347ce68c31fa319efaa69c09",
       "scripts/check_player_quality_response.py": "a3ffa75588801f0ca191dd8afe164d6fbbc0bc9855a105f76a4b1a7fc893f28b",
       "scripts/check_quality_tilt_posterior.py": "49a17fd27b822254424d712d7617eb517f2a4ba35b942c094b9cd510276c591c",
-      "scripts/diagnose_cross_division.py": "822d60deba848b15f33f664d2292f7f93894d0d74c6a452ba28b99dc3c59658c",
+      "scripts/diagnose_cross_division.py": "4e51ae3d70c78315920528e90b103c808b69a487520ddeca42f0af336b5ca980",
       "scripts/diagnose_dynamic.py": "df2339f9f2c0c2adb8a6d86fe9482173507edc58722f64bf0141e13add72dcd9",
       "scripts/diagnose_player_quality.py": "bb8ad7a8a4331e2da82de187c7e56adcdca6a333c86adf2eafb867c93ba878d0",
       "scripts/diagnose_process.py": "a55e60d35c5f761ab11487b4fd70a39896f1611baa87faadecf34d1ba550a407",
@@ -73494,7 +73496,7 @@
       "scripts/preview_player_layer.py": "56e0d5fd13070e4c99b0a2656363e143e40acd508e778f61b1983c714fcfe5f3",
       "scripts/preview_player_prior.py": "e67b8cfbd7d276c5fdc5e1d4f96398d6e6c6ee2166a0ef861cb87cf3365e812e",
       "scripts/report_cross_division.py": "1d2aaae8fc5cd8b1e9a61884effab09958de701ffcfe7ddf4a13b93c2523079f",
-      "scripts/report_cross_division_states.py": "bc251580fca1abfacfaafe75d660230e242ecd6027cf3f9143407c0176f649d2",
+      "scripts/report_cross_division_states.py": "2b7369323bf1e4e064799b3c84aebc17eaae28a4f9a5e395fe6e29c37638483d",
       "scripts/report_player_corrections.py": "3f38f46bd8439860b750a7a86dd77bd83113e99d87196cda29d6741c37ace02d",
       "scripts/report_player_layer.py": "7bfb809b308b3a10179d554ca9a26dce15f3b41cbe6eacecb913cbc86ba77bcc",
       "scripts/report_seasons.py": "d91f096fe40ca2fe0742e1396cc200b5175eee3eb6d28248ea14cabbecec4ad1",
@@ -73507,7 +73509,7 @@
       "scripts/verify_player_quality_batch.py": "05ddd70a8716227bef3053f68d49d3e41070bb722d3ea7ab1a6cd60f67d8d0d4",
       "uv.lock": "254e33f368133c189a48c4a60e4c46393b461643cc48fe3709c99225066adff7"
     },
-    "git_status": " M configs/cross_division.toml\n?? scripts/report_cross_division.py\n?? scripts/report_cross_division_states.py",
+    "git_status": " M docs/experiments/roster_bridge.md\n M src/epl_forecast/research/cross_division_diagnostics.py\n M tests/test_cross_division_diagnostics.py\n?? scripts/audit_scoring_level_identification.py",
     "interpreter_argv": [
       "/Users/jacobeliason/Files/code/epl-forecast/.venv/bin/python3",
       "-m",
@@ -73518,13 +73520,13 @@
       "--data",
       "data",
       "--output",
-      "runs/m9-validation-v2",
+      "runs/m9-validation-v3",
       "--split",
       "validation"
     ],
     "invoked_file_sha256": "af4d5a708b5b7945be19c024a71a0453e9ed9e53011219326cd87cae0f1baa24",
     "lockfile_sha256": "254e33f368133c189a48c4a60e4c46393b461643cc48fe3709c99225066adff7",
-    "package_code_sha256": "366a19597e6930f2552342a9e4215e812ffe886fc61d6ac66634536f8f123d4d",
+    "package_code_sha256": "1f38330e5b7e451e389418cdb10fd6731b8537eac26203da9729912360ce525b",
     "python": "3.12.7",
     "python_executable": "/Users/jacobeliason/Files/code/epl-forecast/.venv/bin/python3",
     "working_directory": "/Users/jacobeliason/Files/code/epl-forecast"

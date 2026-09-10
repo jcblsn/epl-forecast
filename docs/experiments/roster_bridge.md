@@ -91,9 +91,12 @@ for M7). Pearson residual correlations with the delta are +0.022 and +0.026 (M2)
 and +0.011 and +0.011 (M7). The oracle roster delta carries no measurable
 information about the goals these baselines missed.
 
-The contrast is the likely cause. Averaging the reference over eight matches
-removes lineup identity, so the delta measures routine rotation rather than a
-change in personnel quality. Median personnel change is 3.1 player match
+The contrast is the likely cause. Player identity is still present in the
+weighted reference vector; what averaging over eight matches does is diffuse the
+reference across so many players that ordinary rotation registers as a large
+personnel change. The delta therefore measures routine rotation rather than the
+composition discontinuity the architecture cares about. Median personnel change
+is 3.1 player match
 equivalents, and 87.4% of team-matches already exceed the plan's two-equivalent
 threshold. That is why the required large-lineup-change slice is 97.4% of
 fixtures and the injury slice 94.5%: both are retained as specified, and both are
@@ -121,10 +124,16 @@ not evidence.
 ## Decision
 
 Gate 3 is closed with a structurally inadequate mapping and no improvement on
-either baseline. Under the research principles the channel earns at most one
-bounded, materially different second formulation, and only against a sharper
-contrast: a recent-lineup reference that preserves identity instead of an
-eight-match average, evaluated on a population where personnel actually change.
-That formulation is not started here and does not block Gate 4. Gate 6, which is
-conditional on bridge evidence, has no supporting evidence to build on and stays
-closed until such a contrast produces one.
+either baseline. This is negative evidence about this contrast, not about the
+player-information hypothesis: the diagnosis says the tested reference measured
+ubiquitous rotation rather than the composition discontinuity the architecture
+cares about.
+
+Under the research principles the channel earns one bounded, materially different
+second formulation against a sharper contrast: an identity-preserving normal-XI
+or core-roster reference instead of an eight-match average, evaluated on a
+genuinely discontinuous population. That formulation is not started here and does
+not block Gate 4. It should wait until the cross-division club-state results are
+understood, because those define what the club state is already meant to have
+absorbed and give the bridge a cleaner baseline. Gate 6, which is conditional on
+bridge evidence, stays closed until such a contrast produces some.

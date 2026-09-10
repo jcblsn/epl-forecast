@@ -1,3 +1,5 @@
+from datetime import date
+
 import numpy as np
 import pytest
 
@@ -8,6 +10,7 @@ from epl_forecast.research.cross_division_diagnostics import (
     crossing_sensitivity,
     promotion_calibration,
     recovery_checks,
+    scoring_level_prior_sensitivity,
     two_division_history,
 )
 from epl_forecast.schema import Fixture, fixture_id
@@ -103,3 +106,12 @@ def test_a_carried_state_overstates_promoted_clubs_when_the_divisions_differ():
 
     assert promoted(gapped) > promoted(flat)
     assert promoted(gapped) > 0
+
+
+def test_prior_sensitivity_reports_the_scoring_level_range_against_its_posterior_sd():
+    history = two_division_history(0, seasons=2, clubs=6, crossings=2)
+    report = scoring_level_prior_sensitivity(history.matches, date(2020, 8, 1))
+    assert len(report["grid"]) == 27
+    assert report["championship_scoring_level_range"] >= 0
+    assert report["championship_scoring_level_range_in_posterior_sd"] >= 0
+    assert report["observations"] == "goals only"

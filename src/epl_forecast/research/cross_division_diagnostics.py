@@ -370,3 +370,75 @@ def promotion_calibration(
         ),
         "results": rows,
     }
+
+
+def scoring_level_prior_sensitivity(matches, as_of, observations=None, chance_probability=0.2):
+    """How much does the fitted division scoring level depend on its own prior?
+
+    The uncentered representation leaves the mean of club Tilt able to trade off
+    against a league scoring level, so this reports the posterior's movement under
+    deliberately different priors rather than assuming the quantity is pinned.
+    """
+    eligible = [
+        m
+        for m in matches
+        if m.fixture.competition_id in (PL, CHAMPIONSHIP) and m.available_on <= as_of
+    ]
+    rows = []
+    # Tilt enters both teams' rates with the same sign, so its population mean is the
+    # quantity that trades off against a league scoring level. Vary that prior too.
+    for level_sd in (0.15, 0.30, 0.60):
+        for team_sd in (0.25, 0.40, 0.60):
+            for tilt_sd in (0.035, 0.07, 0.14):
+                dynamics = {**DYNAMICS, "tilt_sd": tilt_sd}
+                if observations is None:
+                    model = CrossDivisionQualityTilt(
+                        division_scoring_level_sd=level_sd,
+                        initial_team_sd=team_sd,
+                        independent_poisson=True,
+                        **dynamics,
+                    )
+                else:
+                    model = CrossDivisionXG(
+                        observations,
+                        chance_probability,
+                        division_scoring_level_sd=level_sd,
+                        initial_team_sd=team_sd,
+                        **dynamics,
+                    )
+                model.fit(eligible, as_of)
+                summary = model.division_summary()
+                rows.append(
+                    {
+                        "division_scoring_level_sd": level_sd,
+                        "initial_team_sd": team_sd,
+                        "tilt_sd": tilt_sd,
+                        "championship_scoring_level": summary["championship_scoring_level"],
+                        "championship_scoring_level_sd": summary["championship_scoring_level_sd"],
+                        "home_advantage": summary["home_advantage"],
+                        "mean_club_tilt": float(
+                            np.mean(model.mean[model.league_dimensions + 1 :: 2])
+                        ),
+                    }
+                )
+    levels = np.array([row["championship_scoring_level"] for row in rows])
+    posterior_sd = float(np.mean([row["championship_scoring_level_sd"] for row in rows]))
+    home = np.array([row["home_advantage"] for row in rows])
+    return {
+        "as_of": str(as_of),
+        "observations": "goals only" if observations is None else "goals and xG",
+        "grid": rows,
+        "championship_scoring_level_range": float(levels.max() - levels.min()),
+        "championship_scoring_level_range_in_posterior_sd": float(
+            (levels.max() - levels.min()) / posterior_sd
+        ),
+        "home_advantage_range": float(home.max() - home.min()),
+        "mean_club_tilt_range": float(
+            max(r["mean_club_tilt"] for r in rows) - min(r["mean_club_tilt"] for r in rows)
+        ),
+        "interpretation": (
+            "a range comparable to or larger than the reported posterior SD means the "
+            "quantity is prior-dependent in this coordinate and should not be read "
+            "as a settled latent value"
+        ),
+    }
