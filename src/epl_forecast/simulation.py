@@ -337,9 +337,7 @@ def simulate_season(
             weights[start:end, start:end] = 1 / (end - start)
         position_counts[order] += weights
         if europe is not None:
-            for tournament, qualified in european_places(
-                [teams[i] for i in order], europe
-            ).items():
+            for tournament, qualified in european_places([teams[i] for i in order], europe).items():
                 for team in qualified & team_index.keys():
                     qualification[tournament][team_index[team]] += 1
 
