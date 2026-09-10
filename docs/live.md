@@ -39,6 +39,20 @@ manual run, omit `--install-launch-agent`; use `--force --simulations 20` for
 a small operational smoke check. Installation should follow a successful manual
 run. The active migration plan records whether this cutover has been verified.
 
+## Sanctions in the live product
+
+Collection refreshes the provider's league table alongside fixtures. A club whose
+standings points differ from the points its archived results imply carries a
+sanction, and a live capture is contemporaneous evidence that the sanction was in
+force when the table was published, so current forecasts apply it to both the
+current table and the projection. Retrospective backfills say only when this archive
+learned of a sanction and never date one. Reviewed announcement dates, where a
+registry has them, take precedence over either.
+
+`scripts/verify_forecast_product.py` re-checks a published archive against the MVP
+contract, including that the sanctions in force at the cutoff were applied and that
+the Championship bracket used each simulated path's own latent states.
+
 ## Observation boundaries
 
 `--cutoff` filters by actual provider retrieval time. Historical backfills are
