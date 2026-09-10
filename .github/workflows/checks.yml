@@ -17,3 +17,4 @@ jobs:
       - run: uv run --all-extras ruff format --check .
       - run: uv run --all-extras ruff check .
       - run: uv run --all-extras pytest
+      - run: uv run --all-extras python scripts/check_publishable.py --site site

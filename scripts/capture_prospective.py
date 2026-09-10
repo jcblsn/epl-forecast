@@ -2,14 +2,13 @@
 
 import argparse
 import os
-import plistlib
 import shutil
 import subprocess
 from pathlib import Path
 
 from epl_forecast.data.capture import SourceAccessError, writer_lock
 from epl_forecast.data.collect import collect
-from epl_forecast.prospective import capture_attempt
+from epl_forecast.prospective import capture_attempt, install_launch_agent
 
 
 def main():
@@ -27,81 +26,46 @@ def main():
     if args.simulations < 1 or args.backfill_requests < 0:
         parser.error("Invalid simulation or backfill request budget")
     if args.install_launch_agent:
-        repo = Path(__file__).resolve().parents[1]
         uv = shutil.which("uv")
         if uv is None:
             raise ValueError("uv must be installed")
-        label = "org.epl-forecast.prospective"
-        path = Path.home() / "Library/LaunchAgents" / f"{label}.plist"
-        args.root.mkdir(parents=True, exist_ok=True)
-        command = [
-            uv,
-            "run",
-            "--locked",
-            "python",
-            str(Path(__file__).resolve()),
-            "--root",
-            str(args.root.resolve()),
-            "--data",
-            str(args.data.resolve()),
-            "--simulations",
-            str(args.simulations),
-            "--backfill-requests",
-            "0",
-        ]
-        config = {
-            "Label": label,
-            "ProgramArguments": command,
-            "WorkingDirectory": str(repo),
-            "StartInterval": 12 * 3600,
-            "RunAtLoad": True,
-            "ProcessType": "Background",
-            "StandardOutPath": str(args.root.resolve() / "launchd.log"),
-            "StandardErrorPath": str(args.root.resolve() / "launchd-errors.log"),
-            "EnvironmentVariables": {"OPENBLAS_NUM_THREADS": "1"},
-        }
-        domain = f"gui/{os.getuid()}"
-        subprocess.run(
-            ["launchctl", "bootout", f"{domain}/{label}"], capture_output=True, check=False
+        worker = [uv, "run", "--locked", "python", str(Path(__file__).resolve())]
+        install_launch_agent(
+            "org.epl-forecast.collect",
+            [*worker, "--data", str(args.data.resolve()), "--collect-only"],
+            args.root,
+            12 * 3600,
+            logs="collection",
         )
-        path.parent.mkdir(parents=True, exist_ok=True)
-        config["ProgramArguments"].append("--forecast-only")
-        path.write_bytes(plistlib.dumps(config))
-        capture_label = "org.epl-forecast.collect"
-        capture_path = path.with_name(capture_label + ".plist")
-        capture_config = {
-            **config,
-            "Label": capture_label,
-            "ProgramArguments": [
-                uv,
-                "run",
-                "--locked",
-                "python",
-                str(Path(__file__).resolve()),
+        path = install_launch_agent(
+            "org.epl-forecast.prospective",
+            [
+                *worker,
+                "--root",
+                str(args.root.resolve()),
                 "--data",
                 str(args.data.resolve()),
-                "--collect-only",
+                "--simulations",
+                str(args.simulations),
+                "--backfill-requests",
+                "0",
+                "--forecast-only",
             ],
-            "StandardOutPath": str(args.root.resolve() / "collection.log"),
-            "StandardErrorPath": str(args.root.resolve() / "collection-errors.log"),
-        }
-        subprocess.run(
-            ["launchctl", "bootout", f"{domain}/{capture_label}"], capture_output=True, check=False
+            args.root,
+            12 * 3600,
+            logs="launchd",
         )
-        capture_path.write_bytes(plistlib.dumps(capture_config))
-        subprocess.run(["launchctl", "bootstrap", domain, str(capture_path)], check=True)
-        subprocess.run(["launchctl", "bootstrap", domain, str(path)], check=True)
         backfill_label = "org.epl-forecast.backfill"
         subprocess.run(
-            ["launchctl", "bootout", f"{domain}/{backfill_label}"], capture_output=True, check=False
+            ["launchctl", "bootout", f"gui/{os.getuid()}/{backfill_label}"],
+            capture_output=True,
+            check=False,
         )
         backfill_path = path.with_name(backfill_label + ".plist")
         if args.backfill_requests:
-            backfill_config = {
-                **config,
-                "Label": backfill_label,
-                "StartInterval": 3600,
-                "ProgramArguments": [
+            install_launch_agent(
+                backfill_label,
+                [
                     uv,
                     "run",
                     "--locked",
@@ -113,11 +77,10 @@ def main():
                     "--max-requests",
                     str(args.backfill_requests),
                 ],
-                "StandardOutPath": str(args.root.resolve() / "backfill.log"),
-                "StandardErrorPath": str(args.root.resolve() / "backfill-errors.log"),
-            }
-            backfill_path.write_bytes(plistlib.dumps(backfill_config))
-            subprocess.run(["launchctl", "bootstrap", domain, str(backfill_path)], check=True)
+                args.root,
+                3600,
+                logs="backfill",
+            )
         else:
             backfill_path.unlink(missing_ok=True)
         print(f"Installed twelve-hour collector: {path}")

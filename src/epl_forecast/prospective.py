@@ -139,3 +139,31 @@ def capture_attempt(
         with writer_lock(data_root):
             result["backfill"] = backfill(data_root, max_requests=backfill_requests)
     return result
+
+
+def install_launch_agent(label, arguments, root, interval_seconds, logs=None):
+    """Install and start a per-user launchd job, replacing any earlier one."""
+    import os
+    import plistlib
+
+    root = Path(root).resolve()
+    root.mkdir(parents=True, exist_ok=True)
+    logs = logs or label.rsplit(".", 1)[-1]
+    path = Path.home() / "Library/LaunchAgents" / f"{label}.plist"
+    config = {
+        "Label": label,
+        "ProgramArguments": list(arguments),
+        "WorkingDirectory": str(Path(__file__).resolve().parents[2]),
+        "StartInterval": int(interval_seconds),
+        "RunAtLoad": True,
+        "ProcessType": "Background",
+        "StandardOutPath": str(root / f"{logs}.log"),
+        "StandardErrorPath": str(root / f"{logs}-errors.log"),
+        "EnvironmentVariables": {"OPENBLAS_NUM_THREADS": "1"},
+    }
+    domain = f"gui/{os.getuid()}"
+    subprocess.run(["launchctl", "bootout", f"{domain}/{label}"], capture_output=True, check=False)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(plistlib.dumps(config))
+    subprocess.run(["launchctl", "bootstrap", domain, str(path)], check=True)
+    return path

@@ -306,8 +306,40 @@ def forecast_command(args) -> None:
 
 
 def operate_command(args) -> None:
-    from epl_forecast.pipeline import operate
+    import shutil
 
+    from epl_forecast.pipeline import operate
+    from epl_forecast.prospective import install_launch_agent
+
+    if args.install_launch_agent:
+        uv = shutil.which("uv")
+        if uv is None:
+            raise ValueError("uv must be installed")
+        path = install_launch_agent(
+            "org.epl-forecast.operate",
+            [
+                uv,
+                "run",
+                "--locked",
+                "epl-forecast",
+                "operate",
+                "--data",
+                str(args.data.resolve()),
+                "--site",
+                str(args.site.resolve()),
+                "--runs",
+                str(args.runs.resolve()),
+                "--simulations",
+                str(args.simulations),
+                "--interval-hours",
+                str(args.interval_hours),
+            ],
+            args.runs,
+            args.interval_hours * 3600,
+            logs="operate",
+        )
+        print(f"Installed the product pipeline agent: {path}")
+        return
     result = operate(
         args.data,
         args.site,
@@ -357,6 +389,7 @@ def parser() -> argparse.ArgumentParser:
     operate.add_argument("--interval-hours", type=float, default=12)
     operate.add_argument("--force", action="store_true")
     operate.add_argument("--no-collect", action="store_true")
+    operate.add_argument("--install-launch-agent", action="store_true")
     operate.set_defaults(func=operate_command)
     for name in ("evaluate", "simulate", "predict"):
         command = commands.add_parser(name)

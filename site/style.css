@@ -1,0 +1,20 @@
+:root { color-scheme: light dark; }
+body { margin: 0; font: 13px/1.4 system-ui, sans-serif; }
+header { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; padding: 8px 12px; border-bottom: 1px solid #8884; position: sticky; top: 0; background: Canvas; }
+nav button { font: inherit; padding: 3px 8px; }
+nav button[aria-current="true"] { font-weight: 600; text-decoration: underline; }
+#meta { margin-left: auto; opacity: 0.7; font-variant-numeric: tabular-nums; }
+main { padding: 12px; overflow-x: auto; }
+table { border-collapse: collapse; font-variant-numeric: tabular-nums; }
+th, td { padding: 2px 7px; text-align: right; border-bottom: 1px solid #8883; white-space: nowrap; }
+th:first-child, td:first-child, th.name, td.name { text-align: left; }
+thead th { position: sticky; top: 41px; background: Canvas; cursor: pointer; }
+tbody tr:hover { background: #8882; }
+td.cell { text-align: center; padding: 2px 4px; color: #000; }
+.bar { display: inline-block; height: 9px; background: #4477cc; vertical-align: middle; }
+.muted { opacity: 0.55; }
+h2 { font-size: 14px; margin: 16px 0 6px; }
+select, button { font: inherit; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+.card { border: 1px solid #8884; padding: 8px; }
+.error { color: #c33; }
