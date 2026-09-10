@@ -11,6 +11,13 @@ records the current two-league rank distributions and matched uncertainty sensit
 [what it says and how far to trust it](docs/season_projection.md) reads it back.
 The [matched research scoreboard](docs/experiments/research_scoreboard.md) keeps
 their outcome, score and calibration metrics beside M5 and market comparators.
+M7 is frozen as the structural season model for both leagues; the product path is
+now prospective operation rather than further architecture. Realized tables carry
+every sanction in force and forecasts carry only the sanctions knowable at their
+cutoff, the Championship bracket runs on each simulated path's own latent states
+([validation](docs/experiments/playoff_conditioning.md)), and
+`scripts/verify_forecast_product.py` re-checks a published archive against the
+[MVP contract](docs/mvp.md).
 The [Championship season panel](docs/experiments/season_scoring_championship.md)
 establishes M7 as the season product in the second league as well, and the
 [relegation entry-state comparison](docs/experiments/relegation_entry.md) keeps
@@ -24,7 +31,10 @@ support a small [portable attacking-trait interface](docs/portable_player_interf
 The [MVP contract and model choice](docs/mvp.md) describe the current product.
 The [short discovery sprint](docs/experiments/discovery_sprint.md) finds no new
 model family ready for confirmation and keeps the draw/low-score miss as the most
-useful narrow follow-up.
+useful narrow follow-up. The
+[current-strength study](docs/experiments/current_strength.md) validates the
+newly normalized API-Football team statistics, including the first Championship
+xG in this archive, and records them as a post-MVP lead rather than a build.
 Historical reports retain their original datasets and results.
 
 ## Data and forecasts
@@ -49,9 +59,9 @@ OPENBLAS_NUM_THREADS=1 uv run python scripts/project_current_seasons.py \
   --cutoff <ISO-timestamp> --output <new-artifact-directory>
 ```
 
-API-Football supplies schedules and player data. Football-Data supplies results,
-odds and basic match statistics. Understat supplies Premier League xG; Championship
-xG is unavailable. FPL is retained only for captured availability/news and playing
+API-Football supplies schedules, player data, per-match team statistics and league
+standings. Football-Data supplies results, odds and basic match statistics.
+Understat supplies Premier League xG; no Championship xG enters any model. FPL is retained only for captured availability/news and playing
 probabilities. Canonical Parquet tables under `data/parquet/` are queried through
 embedded DuckDB. Immutable request records and publication manifests retain raw
 hashes, provenance and actual retrieval timestamps.

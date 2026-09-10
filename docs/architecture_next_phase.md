@@ -226,6 +226,25 @@ process identities therefore remain a measured difference in information coverag
 API-only means API player predictors and API evidence-depth uncertainty; Understat
 is still the supervised target and supplies the shared target-role rate offset.
 
+## MVP freeze
+
+Structural-model improvement work is closed. The remaining batch corrections are
+complete: season truth in both leagues is the sanctioned final table rather than a
+results-only table, forecasts apply only the sanctions knowable at their cutoff, and
+the Championship bracket runs on each simulated path's own latent states with the
+[matched validation](experiments/playoff_conditioning.md) confirming that points and
+rank distributions do not move. The
+[current-strength study](experiments/current_strength.md) completed the memo's cheap
+test of API-Football team signals and returned a small, unstable result, which is
+recorded as a post-MVP lead and followed by no further features, lags,
+transformations, model variants or architecture work.
+
+The product path from here is vertical, not architectural: operate both leagues
+prospectively, accumulate immutable forecasts, and contextualize them against public
+models, bookmaker outrights and liquid prediction markets. Prospective operation
+identifies the next modeling bottleneck. Player, current-strength and cross-division
+work resumes from an observed product deficiency, not from this list.
+
 ## Documentation and retained evidence
 
 Keep [the north star](north_star.md) limited to product outcomes. This file owns
@@ -253,6 +272,11 @@ plans when their useful content is retained elsewhere; Git preserves their histo
 - [Original player report](experiments/player_layer.md) and
   [prechecks](experiments/player_layer_prechecks.md): historical experiments;
   superseded claims are identified by the corrected evidence.
+- [Current-strength study](experiments/current_strength.md): the validated
+  API-Football team statistics, the Championship xG they add, and why the
+  incremental test does not license further current-state work.
+- [Playoff conditioning](experiments/playoff_conditioning.md): the matched check
+  that carrying latent states into the bracket moves only the bracket.
 - [Data migration](data_architecture_migration.md): remaining ingestion/archive work.
 - [Live operations](live.md) and [season evaluation](season_evaluation.md): capture,
   point-in-time provenance, simulation outputs and product-level scoring.
