@@ -5,6 +5,10 @@ from datetime import timedelta
 
 import numpy as np
 
+from epl_forecast.models.baselines import AttackDefensePoisson
+from epl_forecast.models.promotion import CHAMPIONSHIP, PL
+from epl_forecast.simulation import simulate_season
+
 
 def rank_scores(probabilities, observed_categories):
     """Per-team TRPS contributions; categories may represent grouped partial ranks."""
@@ -244,3 +248,46 @@ def summarize(rows):
 
 def final_cutoff(matches):
     return max(m.fixture.match_date for m in matches) + timedelta(days=1)
+
+
+def season_teams(matches, competition, season):
+    return {
+        team
+        for match in matches
+        if match.fixture.competition_id == competition and match.fixture.season_id == season
+        for team in (match.fixture.home_team_id, match.fixture.away_team_id)
+    }
+
+
+def championship_playoff_winner(matches, season, final_order):
+    """The club promoted through the playoffs, read off the next Premier League field."""
+    year = int(season[:4])
+    current = season_teams(matches, PL, season)
+    following = season_teams(matches, PL, f"{year + 1}-{year + 2}")
+    winners = (following - current) - set(final_order[:2])
+    if len(winners) != 1:
+        raise ValueError(f"Cannot identify observed Championship playoff winner for {season}")
+    return next(iter(winners))
+
+
+def championship_season_truth(matches, season, season_matches, teams, seed):
+    """Realized Championship table, with the observed playoff winner as promotion truth."""
+    cutoff = final_cutoff(season_matches)
+    truth_model = AttackDefensePoisson()
+    truth_model.as_of = cutoff
+    truth = simulate_season(
+        truth_model, season_matches, [], teams, cutoff, 1, seed, [], playoff_winner=teams[0]
+    )
+    final_order = [
+        row["team_id"] for row in sorted(truth["teams"], key=lambda row: row["mean_position"])
+    ]
+    winner = championship_playoff_winner(matches, season, final_order)
+    truth["playoff_model"] = {"format": "observed", "winner": winner}
+    for row in truth["teams"]:
+        row["playoff_promotion_probability"] = float(row["team_id"] == winner)
+        row["promotion_probability"] = (
+            row["automatic_promotion_probability"] + row["playoff_promotion_probability"]
+        )
+    if truth.get("competition_id", CHAMPIONSHIP) != CHAMPIONSHIP:
+        raise ValueError("Championship truth requires Championship matches")
+    return truth

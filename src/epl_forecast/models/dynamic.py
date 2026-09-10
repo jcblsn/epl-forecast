@@ -14,16 +14,21 @@ from epl_forecast.models.promotion import (
     CHAMPIONSHIP,
     PL,
     PromotionBridge,
+    RelegationBridge,
     TeamPrior,
     completed_seasons,
 )
 from epl_forecast.schema import Fixture, Match
+
+RELEGATION_ENTRY = ("retained", "generic", "mapped")
+BRIDGE_LABELS = frozenset({PromotionBridge.label, RelegationBridge.label})
 
 
 class DynamicAttackDefense(BaseModel):
     """The state holds a leading league block, then two slots per club."""
 
     league_dimensions = 2
+    relegation_entry = "retained"
 
     def __init__(
         self,
@@ -79,23 +84,42 @@ class DynamicAttackDefense(BaseModel):
         """Rows are home and away log rates; columns are the leading league block."""
         return np.array([[1.0, 1.0], [1.0, 0.0]])
 
-    def _bridge(self, season: str, as_of: date) -> PromotionBridge:
+    def _bridge(self, season: str, as_of: date, kind=PromotionBridge):
         available = {
             key: rows
             for key, rows in self._seasons.items()
             if key[1] < season and rows[-1].available_on <= as_of
         }
-        key = season, tuple(sorted(available))
+        key = kind.__name__, season, tuple(sorted(available))
         if key not in self._bridges:
-            self._bridges[key] = PromotionBridge(
+            self._bridges[key] = kind(
                 [m for rows in available.values() for m in rows], as_of, season
             )
         return self._bridges[key]
 
+    def _boundary_bridge(self, season: str, as_of: date):
+        """The division boundary a club can cross into this competition, when one is modeled.
+
+        Clubs enter the Premier League from the Championship. The reverse
+        boundary is off by default, so a relegated club keeps whatever
+        Championship state it last had.
+        """
+        if self.primary_competition == PL:
+            return self._bridge(season, as_of, PromotionBridge)
+        if self.relegation_entry == "retained":
+            return None
+        return self._bridge(season, as_of, RelegationBridge)
+
     def _entry_prior(self, team: str, season: str, as_of: date) -> TeamPrior:
-        if self.primary_competition == CHAMPIONSHIP:
+        bridge = self._boundary_bridge(season, as_of)
+        if bridge is None:
             return TeamPrior(np.zeros(2), np.eye(2) * self.initial_team_sd**2, "league population")
-        prior = self._bridge(season, as_of).prior(team, self.promotion_performance)
+        performance = (
+            self.promotion_performance
+            if self.primary_competition == PL
+            else self.relegation_entry == "mapped"
+        )
+        prior = bridge.prior(team, performance)
         if prior is not None:
             return prior
         return TeamPrior(np.zeros(2), np.eye(2) * self.initial_team_sd**2, "league population")
@@ -110,7 +134,7 @@ class DynamicAttackDefense(BaseModel):
             self.mean = np.r_[self.mean, prior.mean]
             self.covariance = np.pad(self.covariance, ((0, 2), (0, 2)))
             self.covariance[-2:, -2:] = prior.covariance
-        elif prior.source == "Championship promotion bridge":
+        elif prior.source in BRIDGE_LABELS:
             index = self.league_dimensions + 2 * self.team_index[team]
             self.mean[index : index + 2] = prior.mean
             self.covariance[index : index + 2, :] = 0
@@ -252,12 +276,11 @@ class DynamicAttackDefense(BaseModel):
         return self.mean[self.league_dimensions + 1 :: 2]
 
     def _uses_fitted_state(self, team: str, season: str) -> bool:
-        """The bridge resets a club entering the PL, never one returning to its own division."""
-        return team in self.team_index and (
-            self._last_season[team] == season
-            or self.primary_competition != PL
-            or self._bridge(season, self.as_of).prior(team) is None
-        )
+        """Only a club the boundary bridge recognizes gives up its fitted state."""
+        if team not in self.team_index or self._last_season[team] == season:
+            return team in self.team_index
+        bridge = self._boundary_bridge(season, self.as_of)
+        return bridge is None or bridge.prior(team) is None
 
     def team_state(self, team: str, season: str) -> TeamPrior:
         if self.as_of is None:

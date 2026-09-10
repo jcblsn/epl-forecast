@@ -4,7 +4,7 @@ from epl_forecast.models.baselines import AttackDefensePoisson, LeagueFrequency,
 from epl_forecast.models.centered_quality_tilt import CenteredQualityTiltFilter
 from epl_forecast.models.cross_division import CrossDivisionQualityTilt, CrossDivisionXG
 from epl_forecast.models.division_map import DivisionMapQualityTilt, DivisionMapXG
-from epl_forecast.models.dynamic import DynamicAttackDefense
+from epl_forecast.models.dynamic import RELEGATION_ENTRY, DynamicAttackDefense
 from epl_forecast.models.elo import EloOrderedLogit
 from epl_forecast.models.process_quality_tilt import BayesianProcessQualityTilt
 from epl_forecast.models.quality_tilt import BayesianQualityTilt, QualityTiltFilter
@@ -35,6 +35,7 @@ def make_model(spec: dict):
         raise ValueError(f"Unknown model kind: {spec.get('kind')}") from error
     parameters = dict(spec.get("parameters", {}))
     competition = parameters.pop("competition_id", "eng-premier-league")
+    relegation_entry = parameters.pop("relegation_entry", None)
     data_root = parameters.pop("data_root", None)
     if data_root is not None:
         from epl_forecast.datasets import Dataset
@@ -49,6 +50,10 @@ def make_model(spec: dict):
         for member in getattr(model, "members", [model]):
             if hasattr(member, "primary_competition"):
                 member.primary_competition = competition
+            if relegation_entry is not None and hasattr(member, "relegation_entry"):
+                if relegation_entry not in RELEGATION_ENTRY:
+                    raise ValueError(f"Unknown relegation entry treatment: {relegation_entry}")
+                member.relegation_entry = relegation_entry
         return model
     except TypeError as error:
         raise ValueError(f"Invalid parameters for {spec['kind']}: {error}") from error
