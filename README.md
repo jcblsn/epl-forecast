@@ -6,6 +6,8 @@ Product objective: [north star](docs/north_star.md). Active research:
 Probabilistic match forecasts and season simulations for England's top two leagues,
 using locally archived provider data. Both leagues are supported forecasting targets.
 M2 remains the operational benchmark and M7 the retained xG research benchmark.
+The [matched research scoreboard](docs/experiments/research_scoreboard.md) keeps
+their outcome, score and calibration metrics beside M5 and market comparators.
 Existing models and the simulator supply evidence and reusable components for a
 joint system; they do not prescribe its final architecture. The
 [corrected player comparisons](docs/experiments/player_layer_corrections.md)

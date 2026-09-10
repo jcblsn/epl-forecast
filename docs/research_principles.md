@@ -1,5 +1,25 @@
 # Research judgment
 
+## Discovery and confirmation
+
+Research has two explicit modes. Discovery asks whether a signal or representation
+is large enough to matter. It may use retrospective outcomes, oracle inputs,
+flexible regressions, trees and multiple cheap specifications. Its normal output is
+a small script, a saved comparison table and a short note. Discovery results guide
+the next mechanism; they are not evidence for deployment.
+
+Confirmation starts only after discovery identifies a candidate worth retaining.
+It uses chronological fitting, frozen information cutoffs, proper scores,
+calibration, season-clustered uncertainty and prospective forecasts. Claims of
+forecast improvement belong here. Leakage, probability conservation, chronology
+and numerical correctness remain required in both modes.
+
+Before implementing a substantial model family, run a descriptive or ceiling test
+of its proposed mechanism when one is available. Prefer the sequence: inspect
+signal, estimate attainable size, prototype cheaply, confirm seriously, integrate.
+Do not use an arbitrary significance threshold to screen discovery results; report
+the size, uncertainty, failure mode and implementation cost together.
+
 Separate three questions when evaluating a new information layer:
 
 1. Is the information source or latent concept plausibly useful?
@@ -30,9 +50,10 @@ prior scale, lineup pseudo-counts, substitution probabilities and linear injury
 recovery remain explicit assumptions until learned or better-observed replacements
 are justified.
 
-M2 remains the operational benchmark and M7 the retained xG research benchmark.
-Keep both in matched architectural comparisons. Existing dynamics, player layers
-and simulation machinery are reusable evidence, not a required model lineage.
-The [architecture work plan](architecture_next_phase.md) orders the current tests.
-Preserve prospective evidence and keep each batch compact: one report,
-machine-readable summaries and reproducible or prospective inputs.
+M2 remains the operational match benchmark and M7 the retained xG research
+benchmark until the combined match and season scoreboard supports a product
+choice. Keep both in matched comparisons. Existing dynamics, player layers and
+simulation machinery are reusable evidence, not a required model lineage. The
+[architecture roadmap](architecture_next_phase.md) records candidate mechanisms;
+it is not a serial gate before a usable product. Preserve prospective evidence and
+keep confirmation batches auditable. Keep discovery batches compact.

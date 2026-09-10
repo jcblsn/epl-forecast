@@ -1,0 +1,4 @@
+candidate,matched_fixtures,best_retained_structural_model,candidate_minus_m2_log_loss,candidate_minus_best_retained_structural_log_loss,preclosing_market_minus_m2_log_loss,closing_market_minus_m2_log_loss,fraction_m2_to_preclosing_market_gap_closed,fraction_m2_to_closing_market_gap_closed,geometric_realized_probability_change_vs_m2
+M2-attack-defense-v1,1140,M7-xg-v1,0.0,0.0021225878422238553,-0.015375851481995939,-0.020660241982323857,-0.0,-0.0,-0.0
+M5-quality-tilt-poisson,1140,M7-xg-v1,0.002105676676789403,0.004228264519013258,-0.015375851481995939,-0.020660241982323857,-0.13694699635041382,-0.10191926496267288,-0.002103461294887964
+M7-xg-v1,1140,M7-xg-v1,-0.0021225878422238553,0.0,-0.015375851481995939,-0.020660241982323857,0.1380468486385459,0.10273780162109734,0.002124842126487795

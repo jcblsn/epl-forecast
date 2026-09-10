@@ -1,4 +1,4 @@
-# Joint forecasting architecture: next phase
+# Joint forecasting architecture: research roadmap
 
 This work follows the steering memo supplied on 2026-09-09, starting from
 `1999ec0`. M2 remains the operational benchmark and M7 the retained xG benchmark.
@@ -6,7 +6,14 @@ Neither fixes the final architecture. The
 [corrected player evidence](experiments/player_layer_corrections.md) supersedes
 the original horizon, reliability and API-control claims.
 
-## Evidence sequence and completion requirements
+## MVP priority and research roadmap
+
+The numbered mechanisms below are retained research directions, not serial product
+gates. The immediate product path is to publish structural and market-assisted
+match forecasts for both leagues, select an existing simulator from the combined
+match/season scoreboard, and expose full points, rank and event distributions with
+timestamped archives. A new compression-state model must first earn implementation
+through cheap exploratory evidence.
 
 1. Correct the standalone player controls: explicit 90/180/240-day transfer
    horizons; provider-null-as-zero reliability; API-only features and uncertainty;
@@ -36,9 +43,9 @@ the original horizon, reliability and API-control claims.
    report points and every position, title/Europe/relegation, automatic promotion,
    playoffs and promotion. Do not filter states on randomly simulated scores.
    Validate season calibration and Monte Carlo precision, including parameter risk.
-8. Once the structural core is stable, compare a chronological de-vigged market
-   measurement or calibrated pool. Retain a separately measurable structural arm.
-   Archive forecasts and explain material changes from the coherent state.
+8. Compare a chronological de-vigged market measurement or calibrated pool now.
+   Retain a separately measurable structural arm. Archive both forecasts and keep
+   season simulation independent of markets.
 
 ## Bridge and state contracts
 
@@ -154,11 +161,11 @@ innovation scale; it is a working coordinate, not a settled latent quantity. Hom
 advantage is unaffected, moving 0.0003 across the same grid, and its decline from
 about +0.25 in 2017 to about +0.20 in 2026 is retained.
 
-The next state formulation is stated in the report: a division map that compresses
-club states toward the division population, with the coordinate settled so league
-terms own the corresponding means, judged on the promoted slice and the planted-gap
-calibration rather than whole-population loss. Gate 5 is independent of this
-outcome.
+The report identifies a possible next state formulation: a division map that
+compresses club states toward the division population, with league terms owning
+the corresponding means. It is a roadmap candidate, not the next automatic build.
+Simple empirical transition maps and flexible scouting diagnostics should first
+show that the attainable signal justifies the implementation.
 
 Gate 5 is complete and negative. The
 [shared Gamma score law](experiments/score_law.md) tests one Gamma match

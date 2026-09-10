@@ -1,0 +1,23 @@
+{
+  "best_retained_structural_model": "M7-xg-v1",
+  "calibration_bins": 10,
+  "candidate_ids": [
+    "M2-attack-defense-v1",
+    "M5-quality-tilt-poisson",
+    "M7-xg-v1"
+  ],
+  "closing_market_id": "market:market_average_closing",
+  "interpretation": "Historical descriptive scoreboard; gap fractions are scale, not targets or deployment evidence.",
+  "markets": "docs/experiments/m8/chronological_market_predictions.csv.gz",
+  "markets_sha256": "ca82794698e5ce965941f49c8cea47aaccfac12d4f9c92523578cfd47ff5e308",
+  "matched_fixtures": 1140,
+  "preclosing_market_id": "market:market_average_preclosing",
+  "predictions": "docs/experiments/m8/chronological_predictions.csv.gz",
+  "predictions_sha256": "9dcb2ab1395b10de2a35ddda4cd8eea02c4906807d1bc2fa64272bf086ed0a22",
+  "reference_id": "M2-attack-defense-v1",
+  "retained_structural_ids": [
+    "M2-attack-defense-v1",
+    "M5-quality-tilt-poisson",
+    "M7-xg-v1"
+  ]
+}
