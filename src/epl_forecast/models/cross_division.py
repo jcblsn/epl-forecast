@@ -13,7 +13,7 @@ from types import MappingProxyType
 import numpy as np
 
 from epl_forecast.models.gaussian import likelihood_laplace_update
-from epl_forecast.models.promotion import CHAMPIONSHIP, PL, TeamPrior
+from epl_forecast.models.promotion import CHAMPIONSHIP, PL, TeamPrior, completed_seasons
 from epl_forecast.models.quality_tilt import QualityTiltFilter
 from epl_forecast.models.xg_observation import ChanceObservation, chance_rows
 from epl_forecast.schema import Match
@@ -136,6 +136,7 @@ class CrossDivisionQualityTilt(QualityTiltFilter):
         ):
             self._reset()
         new = ordered[len(self._history) :]
+        self._seasons = completed_seasons(ordered, as_of)
         try:
             for day, games in groupby(new, key=lambda m: m.fixture.match_date):
                 games = list(games)

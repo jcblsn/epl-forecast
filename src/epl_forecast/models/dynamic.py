@@ -55,6 +55,7 @@ class DynamicAttackDefense(BaseModel):
         self.as_of = None
         self._state_date = None
         self._history = []
+        self._seasons = {}
         self._bridges = {}
         self.team_index = {}
         self._last_season = {}

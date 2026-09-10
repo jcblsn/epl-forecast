@@ -21,47 +21,43 @@ from epl_forecast.models.cross_division import (
     ChanceObservations,
     CrossDivisionQualityTilt,
 )
-from epl_forecast.models.promotion import TeamPrior
-from epl_forecast.models.quality_tilt import AD_FROM_QT, QT_FROM_AD
+from epl_forecast.models.promotion import PL, TeamPrior
+from epl_forecast.models.quality_tilt import AD_FROM_QT, QT_FROM_AD, QualityTiltFilter
 
 
 class DivisionMap(NamedTuple):
     """Attack and defence compression applied when a club changes division.
 
-    Slopes below one shrink a club toward the destination division's population
-    and the residual scales are the spread the mapping cannot predict. Defaults
-    are the retained promotion-bridge cohorts, measured rather than assumed.
+    A slope of zero resets an arriving club to what its new division expects of
+    it, which is what the operational promotion bridge already does; a slope of
+    one carries its whole deviation across, which is what M9 does. Defaults are
+    the retained promotion-bridge cohort slopes, measured rather than assumed.
 
-    Both directions shrink toward the population they arrive in, so the same
+    Both directions compress toward the population they arrive in, so the same
     slopes serve promotion and relegation. Inverting a measured slope would
-    amplify instead, and a near-zero slope means the source says little about the
-    destination in either direction. No relegation cohort has been measured; the
+    amplify instead, and a near-zero slope says the source tells you little about
+    the destination either way. No relegation cohort has been measured, so the
     symmetry is an explicit assumption.
     """
 
     attack_slope: float = 0.539
     defense_slope: float = 0.074
-    attack_residual_sd: float = 0.074
-    defense_residual_sd: float = 0.102
 
     def validated(self):
         for value in self:
-            if not np.isfinite(value) or value <= 0:
-                raise ValueError("Division map slopes and residual scales must be positive")
-        if max(self.attack_slope, self.defense_slope) > 1:
+            if not np.isfinite(value) or value < 0:
+                raise ValueError("Division map slopes must be finite and nonnegative")
+        if max(self) > 1:
             raise ValueError("A division map compresses toward the destination population")
         return self
 
     @property
     def slopes(self):
-        return np.array([self.attack_slope, self.defense_slope])
-
-    @property
-    def residual_variance(self):
-        return np.array([self.attack_residual_sd, self.defense_residual_sd]) ** 2
+        return np.array(self)
 
 
-IDENTITY = DivisionMap(1.0, 1.0, 1e-9, 1e-9)
+CARRIED = DivisionMap(1.0, 1.0)
+RESET = DivisionMap(0.0, 0.0)
 
 
 class DivisionMapPopulation(CrossDivisionQualityTilt):
@@ -87,7 +83,7 @@ class DivisionMapPopulation(CrossDivisionQualityTilt):
         self._division_means = None
         super()._advance(day)
 
-    def _population_attack_defense(self):
+    def _population_moments(self):
         """Attack and defence means over the clubs in each division, once per day."""
         if self._division_means is None:
             self._division_means = {}
@@ -98,23 +94,54 @@ class DivisionMapPopulation(CrossDivisionQualityTilt):
                     self._division_means[competition] = np.mean(states, axis=0)
         return self._division_means
 
-    def _map_state(self, team, competition):
-        means = self._population_attack_defense()
-        source = means.get(self.divisions[team])
-        destination = means.get(competition)
-        if source is None or destination is None:
+    def _destination_prior(self, team, season, day, competition):
+        """Where the destination division expects an arriving club to sit.
+
+        Promotion has a measured answer already: the retained promotion bridge's
+        promoted-club prior, which is what M2, M5 and M7 reset to. Relegation has
+        no measured cohort, so the Championship population stands in for it.
+        """
+        if competition == PL:
+            prior = QualityTiltFilter._entry_prior(self, team, season, day)
+            if prior.source != "league population":
+                return AD_FROM_QT @ prior.mean, AD_FROM_QT @ prior.covariance @ AD_FROM_QT.T
+        mean = self._population_moments().get(competition)
+        if mean is None:
+            return None
+        return mean, np.eye(2) * self.initial_team_sd**2
+
+    def _map_state(self, team, season, day, competition):
+        """Compress a crossing club from its own division toward the one it enters."""
+        destination = self._destination_prior(team, season, day, competition)
+        source = self._population_moments().get(self.divisions[team])
+        if destination is None or source is None:
             return
+        anchor, anchor_covariance = destination
         slopes = self.division_map.slopes
         block = self._team_slice(team)
+        state = AD_FROM_QT @ self.mean[block]
+        covariance = AD_FROM_QT @ self.covariance[block, block] @ AD_FROM_QT.T
+        mapped = anchor + slopes * (state - source)
+        # Total variance interpolates between carrying the club and resetting it.
+        mapped_covariance = (
+            np.outer(slopes, slopes) * covariance
+            + (1 - np.outer(slopes, slopes)) * anchor_covariance
+        )
         transform = QT_FROM_AD @ np.diag(slopes) @ AD_FROM_QT
-        offset = QT_FROM_AD @ (destination - slopes * source)
-        self.mean[block] = transform @ self.mean[block] + offset
         self.covariance[block, :] = transform @ self.covariance[block, :]
         self.covariance[:, block] = self.covariance[:, block] @ transform.T
-        self.covariance[block, block] += (
-            QT_FROM_AD @ np.diag(self.division_map.residual_variance) @ QT_FROM_AD.T
+        self.mean[block] = QT_FROM_AD @ mapped
+        self.covariance[block, block] = QT_FROM_AD @ mapped_covariance @ QT_FROM_AD.T
+        self.crossings.append(
+            {
+                "team_id": team,
+                "season_id": season,
+                "to": competition,
+                "anchor": anchor.tolist(),
+                "carried": state.tolist(),
+                "mapped": mapped.tolist(),
+            }
         )
-        self.crossings.append({"team_id": team, "to": competition, "offset": offset.tolist()})
 
     def _ensure_team(self, team, season, day, competition=None):
         crossing = (
@@ -123,12 +150,13 @@ class DivisionMapPopulation(CrossDivisionQualityTilt):
             and self.divisions.get(team) not in (None, competition)
         )
         if crossing:
-            self._map_state(team, competition)
+            self._map_state(team, season, day, competition)
         super()._ensure_team(team, season, day, competition)
         if crossing:
+            block = self._team_slice(team)
             self.entry_priors[team, season] = TeamPrior(
-                self.mean[self._team_slice(team)].copy(),
-                self.covariance[self._team_slice(team), self._team_slice(team)].copy(),
+                self.mean[block].copy(),
+                self.covariance[block, block].copy(),
                 "mapped across divisions",
             )
         if competition in DIVISIONS:
