@@ -7,7 +7,8 @@ Probabilistic match forecasts and season simulations for England's top two leagu
 using locally archived provider data. Both leagues are supported forecasting targets.
 M7 is the active structural MVP model and M2 remains its operational benchmark.
 The [pinned 2026/27 projection](docs/experiments/current_season_projection_2026-09-10/report.md)
-records the current two-league rank distributions and matched uncertainty sensitivity.
+records the current two-league rank distributions and matched uncertainty sensitivity;
+[what it says and how far to trust it](docs/season_projection.md) reads it back.
 The [matched research scoreboard](docs/experiments/research_scoreboard.md) keeps
 their outcome, score and calibration metrics beside M5 and market comparators.
 The [Championship season panel](docs/experiments/season_scoring_championship.md)
