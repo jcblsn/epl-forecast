@@ -1,0 +1,21 @@
+{
+  "files": {
+    "data_provenance.json": "6f1c710a6a407bee9fef903eefe695850cd27295de5d5c87ec6af737983a5df0",
+    "eng-championship-heatmap.png": "38425d6ee270de44535c49a52a8e477fd2bd3fc923ca9c4072af8680d3c55b58",
+    "eng-premier-league-heatmap.png": "2b0dc83dae0bb0a5eca9e859f07b48998b680c37d6d714e2c061969aa3983cbd",
+    "forecasts/eng-championship-full_m7.json": "f63c39c9c2e630763b3a99c80747bbf50206ec9bb2b5026f13c5ed04b7a09703",
+    "forecasts/eng-championship-no_future_innovations.json": "47f8fc9ea61403f51c6be40479686cd901ccb777b1e8c1910209f16d4d0876cb",
+    "forecasts/eng-championship-posterior_mean.json": "4bd88d43f8693c1343e5c79198bb68b09b61ca356fccf8059d918943c256ffc9",
+    "forecasts/eng-premier-league-full_m7.json": "3f41f2cf4102f56ef67f2f093004281091da90a244d5b8ad3ebfd447a33a7d3b",
+    "forecasts/eng-premier-league-no_future_innovations.json": "522076c8a473aacef4de829a8d6447eb9ad1ba2df32b45570c3a61256af74237",
+    "forecasts/eng-premier-league-posterior_mean.json": "2619a5249f8a09ae02b850a00b30377cb964e504d63c1886f7fe7b1575530104",
+    "forecasts/eng-premier-league-promoted_posterior_mean.json": "ee5ac78773cfd596621142d9ed7eb1f3c650de33817c5bd3d382a15769da8561",
+    "manifest.json": "6c15bdb64dcc542e037cb82442e596d3e3835547a9a1b06998dd4ee014aab81f",
+    "mc_noise.csv": "28a07e22ef09728eabee0f1034a6f9ad482b32f9e1dfd67838272edad8f011f6",
+    "rank_probabilities.csv": "f45d2c9ad05d635228463f30a3890f5ad7c28ce2a58b4880bf9d7e90eff3ecff",
+    "report.md": "3ae3cade8e54ecf43db7e442ca5128ccf3385afb692607da1a35095b99e5a3b6",
+    "sensitivity.csv": "54614eb88c3be10063e48092e0a190f0eeefef06246faebda566e360691651d1",
+    "snapshot.json": "9b64281bc3b498709209ece2a2bf042654da3a1dc2faeaa69aad3e08f99a5b2b",
+    "table.csv": "e42a55c39f740d76ac12a71259f949e6993e17998538cfea166059a45c950fb1"
+  }
+}

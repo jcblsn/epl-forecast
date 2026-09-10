@@ -124,7 +124,11 @@ forecast's `playoff_model` block.
 ## What has changed since this artifact was pinned
 
 The pinned projection predates two corrections that landed later on 10 September
-2026, and it is not regenerated: it remains what was published at its cutoff.
+2026, and it is not regenerated: it remains what was published at its cutoff. The
+[17:30Z snapshot](experiments/current_season_projection_2026-09-10T18/report.md)
+of the same day carries both corrections and is the current one; it moves
+Southampton's Championship promotion probability from 54.8% to 41.6%, most of that
+the deduction. Premier League figures are unaffected by either correction.
 
 Its Championship bracket resamples each tie from the common forecast distribution
 rather than carrying each path's own latent states. The

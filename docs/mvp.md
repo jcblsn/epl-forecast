@@ -22,8 +22,11 @@ histograms are close to uniform where M2's are U-shaped. One model serves both
 leagues. In the Championship, M7's Understat channel contributes no evidence, so
 what carries over is its dynamics and entry handling, not its observation model.
 
-The [2026/27 snapshot](experiments/current_season_projection_2026-09-10/report.md)
-is the current durable M7 season-distribution product for both leagues.
+The [2026/27 snapshot](experiments/current_season_projection_2026-09-10T18/report.md)
+is the current durable M7 season-distribution product for both leagues; the
+[earlier snapshot](experiments/current_season_projection_2026-09-10/report.md) from
+the same day is retained as published and predates the sanction and playoff
+corrections.
 
 M7 is frozen as the structural season model for both leagues. Structural-model
 improvement work is closed for now: the product path is prospective operation,
