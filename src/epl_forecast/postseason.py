@@ -25,9 +25,12 @@ class _MarginalLegs:
 class _PathLegs:
     """Postseason scores from the same latent state that produced the path's table.
 
-    A club that reached the playoffs on a path where it was drawn strong keeps that
-    strength into the bracket, so promotion probability reflects the joint uncertainty
-    the regular season already resolved rather than the league-wide marginal again.
+    A club enters the bracket at the strength its own path gave it, so qualifying is
+    evidence about that path rather than a reset to the league-wide marginal. The
+    effect is a selection one and runs in either direction: a club whose marginal
+    state is weak only reaches the playoffs on paths where it was drawn strong, while
+    one strong enough to go up automatically on a good path arrives having been drawn
+    worse than average.
     """
 
     conditioning = "path-specific latent team states carried from the regular season"

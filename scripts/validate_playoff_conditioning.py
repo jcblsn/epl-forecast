@@ -8,11 +8,13 @@ draws they are supposed to share and the comparison is invalid.
 
 What may move is promotion. Under the old behaviour every tie was resampled from the
 league-wide forecast distribution, which discards the strength that put a club in the
-playoffs in the first place; under the correction a club that qualified because it
-was drawn strong plays the bracket strong. The expected direction is that promotion
-mass concentrates on clubs whose playoff qualification comes with high strength. A
-very large move is worth reading as a possible defect rather than a result, so the
-biggest are listed.
+playoffs in the first place; under the correction a club plays the bracket at the
+strength its own path gave it. Which way that pushes a given club is a selection
+question, not a strength question: reaching the playoffs is evidence about the draw,
+and it is favourable evidence for a club whose marginal state is weak and unfavourable
+for one strong enough that the same path usually ends in automatic promotion. A very
+large move is worth reading as a possible defect rather than a result, so the biggest
+are listed.
 """
 
 import argparse
