@@ -234,3 +234,15 @@ def test_state_uncertainty_alone_predicts_positive_covariance():
         - math.exp(0.45 + 0.015) * math.exp(0.05 + 0.01),
         rel=1e-6,
     )
+
+
+def test_a_reference_shape_overrides_the_fitted_one():
+    rows = [row(day, day % 3, day % 2) for day in range(1, 21)]
+    block = chronological_score_law(rows, "2024-08-15", minimum_training=8)
+    fitted = event_calibration(rows, block["predictions"])[BASELINES[2]]
+    reference = event_calibration(rows, block["predictions"], 6.0)[BASELINES[2]]
+    assert reference["events"]["scoreless"]["poisson"] == fitted["events"]["scoreless"]["poisson"]
+    assert (
+        reference["events"]["scoreless"]["shared_gamma"]
+        > fitted["events"]["scoreless"]["shared_gamma"]
+    )

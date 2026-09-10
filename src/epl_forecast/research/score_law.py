@@ -225,10 +225,14 @@ def summarize(predictions, model_id):
     return result
 
 
-def event_calibration(rows, predictions):
-    """Match-level tail events: predicted mass, observed frequency and paired Brier."""
+def event_calibration(rows, predictions, shape=None):
+    """Match-level tail events: predicted mass, observed frequency and paired Brier.
+
+    The Gamma arm uses each fixture's chronologically fitted shape unless one
+    fixed reference shape is supplied instead.
+    """
     dispersions = {
-        (row["model_id"], row["match_id"]): row["dispersion"]
+        (row["model_id"], row["match_id"]): shape or row["dispersion"]
         for row in predictions
         if row["variant"] == "shared_gamma"
     }

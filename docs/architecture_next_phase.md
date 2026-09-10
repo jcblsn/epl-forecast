@@ -160,6 +160,41 @@ terms own the corresponding means, judged on the promoted slice and the planted-
 calibration rather than whole-population loss. Gate 5 is independent of this
 outcome.
 
+Gate 5 is complete and negative. The
+[shared Gamma score law](experiments/score_law.md) tests one Gamma match
+intensity multiplying both teams' rates against the independent Poisson control,
+on identical saved M2, M5-control and M7 states. The chronologically refit shape
+reaches its upper bound at 223 of 223 cutoffs on all three baselines, so the
+fitted law is the control: across 2,280 scored pairs the two laws differ by at
+most 1.7e-05 in any H/D/A probability, and every paired difference is of order
+1e-05 nats or smaller.
+
+Refitting the shape in sample on the 760 scored fixtures reaches the same bound,
+and the attainable in-sample gain is negative at every shape tried, so no
+chronological shape choice was available. The moments say why. The family adds
+score dispersion and positive home/away dependence, and both are already too
+large: predicted total variance is 2.950, 3.084 and 3.235 against observed mean
+squared residuals of 2.601, 2.569 and 2.654, and total goals on the window have
+sample variance 2.547 at sample mean 2.842, where independent Poisson implies
+2.842. Raw home and away goals correlate -0.092, which is what the states are
+for; the residual covariance after removing predicted means is +0.007, +0.001
+and +0.035 against the +0.09 to +0.11 a shape of 20 would impose.
+
+The window does have a tail miss, and it is the opposite of what this family
+corrects. Draws are underpredicted by 3.1 points for M2 and 4.2 for M7 while
+six-or-more-goal matches are overpredicted by 3.1 and 5.2; a shape of 20 gains a
+little draw mass and loses more on the high-scoring and scoreless shares. Season
+products agree: the matched [uncertainty budget](experiments/uncertainty_budget.md)
+scores this switch at a fixed shape of 20 across 220 club-seasons, where points
+distributions narrow (points SD -0.08638 [-0.10473, -0.06652], 90% width -0.341
+[-0.441, -0.241]), 90% coverage falls on a product already short of nominal, and
+TRPS, points CRPS and all three event Brier intervals span zero.
+
+Independent Poisson remains the retained score law. The plan's stopping condition
+applies: no complexity follows from this gate, and a second score-law formulation
+would need a mechanism able to produce underdispersion or draw inflation, with its
+own stated hypothesis, cutoff and stopping condition.
+
 The depth-matched API control uses all API appearances starting at the earliest
 eligible retained process observation at each cutoff, including role-population
 estimates. It matches calendar depth, not individual provider linkage; unresolved
@@ -187,6 +222,8 @@ plans when their useful content is retained elsewhere; Git preserves their histo
   result and the identification and representation check that closed it.
 - [Cross-division club states](experiments/cross_division.md): the Gate 4 state
   candidate, its promoted-slice failure and the scoring-level identification audit.
+- [Shared Gamma score law](experiments/score_law.md): the negative Gate 5 result,
+  its boundary fit and the dispersion and dependence moments that explain it.
 - [Portable-player interface](portable_player_interface.md): trait distribution,
   chronology, provenance and downstream consumption contract.
 - [Original player report](experiments/player_layer.md) and

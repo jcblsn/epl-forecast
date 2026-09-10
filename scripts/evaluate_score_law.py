@@ -33,6 +33,7 @@ def main():
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--first-scored", type=date.fromisoformat, default=date(2024, 8, 1))
     parser.add_argument("--minimum-training", type=int, default=200)
+    parser.add_argument("--reference-dispersion", type=float, default=20.0)
     args = parser.parse_args()
     new_run_directory(args.output)
     with gzip.open(args.baselines, "rt") as stream:
@@ -51,6 +52,7 @@ def main():
         "baselines_sha256": file_hash(args.baselines),
         "first_scored": str(args.first_scored),
         "minimum_training": args.minimum_training,
+        "reference_dispersion": args.reference_dispersion,
         "control": "independent Poisson conditional on the same saved state",
         "candidate": "one shared Gamma match intensity, shape refit chronologically",
     }
@@ -91,6 +93,7 @@ def main():
         "dispersion": {model_id: dispersion_summary(model_id) for model_id in BASELINES},
         "comparisons": {model_id: summarize(predictions, model_id) for model_id in BASELINES},
         "events": event_calibration(rows, predictions),
+        "reference_events": event_calibration(rows, predictions, args.reference_dispersion),
         "identification": {
             model_id: {
                 "in_sample_fit": fit_dispersion(scored[model_id]),
@@ -119,6 +122,7 @@ def main():
             )
     print(json.dumps(summary["dispersion"], indent=2), flush=True)
     print(json.dumps(summary["events"], indent=2), flush=True)
+    print(json.dumps(summary["reference_events"], indent=2), flush=True)
     print(json.dumps(summary["identification"], indent=2), flush=True)
 
 
