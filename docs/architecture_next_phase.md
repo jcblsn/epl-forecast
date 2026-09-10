@@ -203,6 +203,22 @@ applies: no complexity follows from this gate, and a second score-law formulatio
 would need a mechanism able to produce underdispersion or draw inflation, with its
 own stated hypothesis, cutoff and stopping condition.
 
+## MVP discovery checkpoint
+
+The [short discovery sprint](experiments/discovery_sprint.md) tests the five
+highest-value residual-signal questions before any further architecture work. The
+identity-preserving core-XI oracle reduces later team-xG residual MSE by only 0.67%
+against M2 and 0.28% against M7. The empirical promoted-cohort map strongly favors
+compression over unit persistence but remains uncertain. A chronological low-score
+correction improves M7 H/D/A loss by 0.00110, while a within-window oracle reaches
+0.00541 and exposes material time variation. Market disagreement is most
+predictable for draws, and a flexible structural scouting model trails M7 by
+0.01542 across two rolling seasons.
+
+No result earns another substantial model family. Keep M7 and the market-assisted
+arm active, keep independent Poisson for structural scores, and limit the next
+research step to cheap stability analysis of draw/low-score disagreement.
+
 The depth-matched API control uses all API appearances starting at the earliest
 eligible retained process observation at each cutoff, including role-population
 estimates. It matches calendar depth, not individual provider linkage; unresolved

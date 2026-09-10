@@ -1,0 +1,92 @@
+{
+  "interpretation": "Retrospective discovery diagnostics; candidates require separate confirmation before deployment.",
+  "largest_market_disagreement_correlations": [
+    {
+      "correlation": 0.3790230416523004,
+      "matches": 1140,
+      "predictor": "structural_entropy",
+      "target": "market_minus_structural_draw"
+    },
+    {
+      "correlation": 0.22908529312453674,
+      "matches": 1140,
+      "predictor": "quality_gap",
+      "target": "market_minus_structural_home"
+    },
+    {
+      "correlation": 0.21595530913021366,
+      "matches": 1140,
+      "predictor": "expected_goal_difference",
+      "target": "market_minus_structural_home"
+    },
+    {
+      "correlation": -0.21428290191519764,
+      "matches": 1140,
+      "predictor": "expected_total_goals",
+      "target": "market_minus_structural_draw"
+    },
+    {
+      "correlation": -0.19680341471185142,
+      "matches": 1140,
+      "predictor": "quality_gap",
+      "target": "market_minus_structural_away"
+    },
+    {
+      "correlation": -0.18107486353225602,
+      "matches": 1140,
+      "predictor": "expected_goal_difference",
+      "target": "market_minus_structural_away"
+    },
+    {
+      "correlation": -0.1564967793999325,
+      "matches": 1140,
+      "predictor": "structural_entropy",
+      "target": "market_minus_structural_home"
+    },
+    {
+      "correlation": 0.13532363233131914,
+      "matches": 1140,
+      "predictor": "rate_uncertainty",
+      "target": "market_minus_structural_draw"
+    }
+  ],
+  "low_score": [
+    {
+      "baseline_log_loss": 1.0264932306876464,
+      "baseline_score_nll": 2.8935311061795788,
+      "chronological_delta_log_loss": -0.0007938145014250164,
+      "chronological_delta_score_nll": -0.0014851710205685542,
+      "chronological_rho": -0.017424443702121664,
+      "evaluation_matches": 380,
+      "model_id": "M2-attack-defense-v1",
+      "oracle_delta_log_loss": -0.0039796990144651545,
+      "oracle_delta_score_nll": -0.006490406721658459,
+      "oracle_evaluation_rho": -0.14347051056227247,
+      "training_matches": 760
+    },
+    {
+      "baseline_log_loss": 1.0291188970319591,
+      "baseline_score_nll": 2.8954712472771353,
+      "chronological_delta_log_loss": -0.0011036303848528384,
+      "chronological_delta_score_nll": -0.0016638912579183263,
+      "chronological_rho": -0.01941720972278721,
+      "evaluation_matches": 380,
+      "model_id": "M7-xg-v1",
+      "oracle_delta_log_loss": -0.005414158163907334,
+      "oracle_delta_score_nll": -0.006048897266663911,
+      "oracle_evaluation_rho": -0.1310683247464163,
+      "training_matches": 760
+    }
+  ],
+  "market_disagreement_chronological_r_squared": {
+    "market_minus_structural_away": 0.062145856296645485,
+    "market_minus_structural_draw": 0.15031528486143564,
+    "market_minus_structural_home": 0.06509789091102658
+  },
+  "markets_sha256": "ca82794698e5ce965941f49c8cea47aaccfac12d4f9c92523578cfd47ff5e308",
+  "matched_fixtures": 1140,
+  "mode": "discovery",
+  "predictions_sha256": "9dcb2ab1395b10de2a35ddda4cd8eea02c4906807d1bc2fa64272bf086ed0a22",
+  "scouting_evaluation_matches": 760,
+  "scouting_mean_log_loss": 1.0159018851859056
+}

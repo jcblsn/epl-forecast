@@ -46,3 +46,5 @@ uv run epl-forecast forecast --competition eng-championship
 The [match scoreboard](experiments/research_scoreboard.md),
 [market-pool evaluation](experiments/market_pool.md), and
 [season scoreboard](experiments/season_scoring.md) retain the selection evidence.
+The [discovery sprint](experiments/discovery_sprint.md) records why no further
+architecture build is on the MVP critical path.

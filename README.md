@@ -15,6 +15,9 @@ joint system; they do not prescribe its final architecture. The
 [corrected player comparisons](docs/experiments/player_layer_corrections.md)
 support a small [portable attacking-trait interface](docs/portable_player_interface.md).
 The [MVP contract and model choice](docs/mvp.md) describe the current product.
+The [short discovery sprint](docs/experiments/discovery_sprint.md) finds no new
+model family ready for confirmation and keeps the draw/low-score miss as the most
+useful narrow follow-up.
 Historical reports retain their original datasets and results.
 
 ## Data and forecasts

@@ -12,6 +12,7 @@ from epl_forecast.research.roster_bridge import (
     distribution,
     fit_mapping,
     permuted_gain,
+    reference_roster,
     representation_audit,
     roster_delta,
 )
@@ -24,6 +25,20 @@ def player(shooting, creation):
             SimpleNamespace(mean=creation, variance=0.1, appearances=10),
         )
     )
+
+
+def test_core_xi_reference_preserves_only_the_most_used_identities():
+    rosters = {
+        "first": {f"p{i}": 1 for i in range(11)} | {"rotation": 0.5},
+        "second": {f"p{i}": 1 for i in range(10)} | {"p10": 0.2, "rotation": 1},
+    }
+    core = reference_roster(rosters, ["first", "second"], "core_xi")
+    average = reference_roster(rosters, ["first", "second"], "average")
+    assert len(core) == 11
+    assert sum(core.values()) == 11
+    assert set(core) < set(average)
+    assert "rotation" in core
+    assert "p10" not in core
 
 
 def baseline(day, home_goals=1, away_goals=0, model_id=BASELINES[0]):

@@ -13,6 +13,24 @@ from epl_forecast.research.player_prior import london_date
 BASELINES = ("M2-attack-defense-v1", "M7-xg-v1")
 
 
+def reference_roster(rosters, reference_keys, strategy):
+    if strategy not in {"average", "core_xi"}:
+        raise ValueError("Unknown roster reference strategy")
+    reference = defaultdict(float)
+    if strategy == "core_xi":
+        exposure = defaultdict(float)
+        for key in reference_keys:
+            for pid, minutes in rosters[key].items():
+                exposure[pid] += minutes
+        for pid, _ in sorted(exposure.items(), key=lambda item: (-item[1], item[0]))[:11]:
+            reference[pid] = 1.0
+    else:
+        for key in reference_keys:
+            for pid, exposure in rosters[key].items():
+                reference[pid] += exposure / len(reference_keys)
+    return reference
+
+
 def roster_delta(target, reference, players):
     """The same cutoff-specific player distribution appears on both sides."""
     ids = sorted(set(target) | set(reference))
@@ -163,6 +181,7 @@ def prepare_cases(
     availability,
     reference_matches=8,
     minimum_reference=3,
+    reference_strategy="average",
     progress=None,
 ):
     """Actual target minutes are the only future information admitted as predictors."""
@@ -259,15 +278,13 @@ def prepare_cases(
                 reference_keys = history[-reference_matches:]
                 if not target or len(reference_keys) < minimum_reference:
                     raise ValueError("missing target minutes or insufficient reference history")
-                reference = defaultdict(float)
-                for key in reference_keys:
-                    for pid, exposure in rosters[key].items():
-                        reference[pid] += exposure / len(reference_keys)
+                reference = reference_roster(rosters, reference_keys, reference_strategy)
                 for pid in set(target) | set(reference):
                     if pid not in player_cache:
                         player_cache[pid] = portable.freeze(pid, cutoff)
                 block = roster_delta(target, reference, player_cache)
                 block["reference_matches"] = len(reference_keys)
+                block["reference_strategy"] = reference_strategy
                 block["reference_last_date"] = str(max(dates[key] for key in reference_keys))
                 block["team_id"] = team
                 case[side] = block
