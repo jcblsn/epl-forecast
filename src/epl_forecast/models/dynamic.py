@@ -99,7 +99,7 @@ class DynamicAttackDefense(BaseModel):
             return prior
         return TeamPrior(np.zeros(2), np.eye(2) * self.initial_team_sd**2, "league population")
 
-    def _ensure_team(self, team: str, season: str, day: date) -> None:
+    def _ensure_team(self, team: str, season: str, day: date, competition=None) -> None:
         if self._last_season.get(team) == season:
             return
         prior = self._entry_prior(team, season, day)
@@ -178,7 +178,9 @@ class DynamicAttackDefense(BaseModel):
                 self._advance(day)
                 for match in games:
                     for team in (match.fixture.home_team_id, match.fixture.away_team_id):
-                        self._ensure_team(team, match.fixture.season_id, day)
+                        self._ensure_team(
+                            team, match.fixture.season_id, day, match.fixture.competition_id
+                        )
                 self._prepare_observations(games)
                 design = np.zeros((2 * len(games), len(self.mean)))
                 goals = []
@@ -218,6 +220,10 @@ class DynamicAttackDefense(BaseModel):
 
     def _augment_design(self, design, match):
         pass
+
+    def observation_design(self, population_design):
+        """Population design expressed in this filter's own state coordinates."""
+        return population_design
 
     def _team_transforms(self, fixture=None):
         """Club loadings on the home and away log rates, optionally per fixture."""

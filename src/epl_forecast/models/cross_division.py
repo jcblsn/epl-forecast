@@ -91,7 +91,7 @@ class CrossDivisionQualityTilt(QualityTiltFilter):
     def _uses_fitted_state(self, team, season):
         return team in self.team_index
 
-    def _ensure_team(self, team, season, day):
+    def _ensure_team(self, team, season, day, competition=None):
         """A promoted or relegated club carries its state instead of being reset."""
         if self._last_season.get(team) == season:
             return
@@ -142,7 +142,9 @@ class CrossDivisionQualityTilt(QualityTiltFilter):
                 self._advance(day)
                 for match in games:
                     for team in (match.fixture.home_team_id, match.fixture.away_team_id):
-                        self._ensure_team(team, match.fixture.season_id, day)
+                        self._ensure_team(
+                            team, match.fixture.season_id, day, match.fixture.competition_id
+                        )
                 self._prepare_observations(games)
                 design = np.zeros((2 * len(games), len(self.mean)))
                 goals = []
@@ -210,8 +212,8 @@ class CrossDivisionQualityTilt(QualityTiltFilter):
         return crossed
 
 
-class CrossDivisionXG(CrossDivisionQualityTilt):
-    """The same club states, with team xG as a noisy measurement of the process.
+class ChanceObservations:
+    """Team xG as a noisy measurement of the same opportunity process.
 
     Goals stay the Binomial thinning of a Poisson opportunity process and xG its
     Gamma measurement, so xG never double-counts goals and is never forced to
@@ -258,7 +260,7 @@ class CrossDivisionXG(CrossDivisionQualityTilt):
     def _update(self, design, goals):
         likelihood = ChanceObservation(goals, self._daily_xg, self.chance_probability)
         self.mean, self.covariance, evidence = likelihood_laplace_update(
-            self.mean, self.covariance, design, likelihood
+            self.mean, self.covariance, self.observation_design(design), likelihood
         )
         self.log_evidence += evidence
 
@@ -273,3 +275,7 @@ class CrossDivisionXG(CrossDivisionQualityTilt):
             }
         )
         return self
+
+
+class CrossDivisionXG(ChanceObservations, CrossDivisionQualityTilt):
+    """M9 with team xG observations on the Premier League side of the hierarchy."""

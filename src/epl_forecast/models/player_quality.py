@@ -56,9 +56,9 @@ class PlayerQualityFilter(QualityTiltFilter):
         super()._reset()
         self.player_index = {}
 
-    def _ensure_team(self, team, season, day):
+    def _ensure_team(self, team, season, day, competition=None):
         old_teams, players = len(self.team_index), len(self.player_index)
-        super()._ensure_team(team, season, day)
+        super()._ensure_team(team, season, day, competition)
         if len(self.team_index) > old_teams and players:
             boundary = 2 + 2 * old_teams
             order = np.r_[
@@ -172,7 +172,7 @@ class PlayerQualityFilter(QualityTiltFilter):
         self.validate_fixture(fixture)
         snapshot = deepcopy(self)
         for team in (fixture.home_team_id, fixture.away_team_id):
-            snapshot._ensure_team(team, fixture.season_id, self.as_of)
+            snapshot._ensure_team(team, fixture.season_id, self.as_of, fixture.competition_id)
         snapshot._advance(fixture.match_date)
         player, unknown = snapshot.player_design(
             fixture, np.random.default_rng(self.seed), self.lineup_draws, oracle

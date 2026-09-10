@@ -55,8 +55,12 @@ class CenteredQualityTiltFilter(QualityTiltFilter):
         super().__init__(**kwargs)
 
     def _mean_tilt_absorption(self):
-        """Which league slots own the population mean of club Tilt."""
-        return (2.0, 0.0)
+        """Which league slots own the population mean of club Tilt.
+
+        Every club Tilt enters both rates once, so the shared scoring level owns
+        the whole mean unless a subclass loads Tilt differently by division.
+        """
+        return (2.0,) + (0.0,) * (self.league_dimensions - 1)
 
     def _coordinates(self):
         return tilt_coordinates(len(self.team_index), self._mean_tilt_absorption())
@@ -65,8 +69,12 @@ class CenteredQualityTiltFilter(QualityTiltFilter):
         _, inverse = self._coordinates()
         return inverse @ self.mean, inverse @ self.covariance @ inverse.T
 
+    def _population_class(self):
+        """The uncentered filter these coordinates are a transformation of."""
+        return QualityTiltFilter
+
     def population_snapshot(self):
-        snapshot = QualityTiltFilter()
+        snapshot = self._population_class()()
         snapshot.__dict__.update(self.__dict__)
         snapshot.mean, snapshot.covariance = self.population_moments()
         snapshot.team_index = self.team_index.copy()
@@ -74,11 +82,11 @@ class CenteredQualityTiltFilter(QualityTiltFilter):
         snapshot.entry_priors = self.entry_priors.copy()
         return snapshot
 
-    def _ensure_team(self, team, season, day):
+    def _ensure_team(self, team, season, day, competition=None):
         if self._last_season.get(team) == season:
             return
         self.mean, self.covariance = self.population_moments()
-        super()._ensure_team(team, season, day)
+        super()._ensure_team(team, season, day, competition)
         transform, _ = self._coordinates()
         self.mean = transform @ self.mean
         self.covariance = transform @ self.covariance @ transform.T
@@ -164,7 +172,7 @@ class CenteredQualityTiltFilter(QualityTiltFilter):
         snapshot._last_season = self._last_season.copy()
         snapshot.entry_priors = self.entry_priors.copy()
         for team in (fixture.home_team_id, fixture.away_team_id):
-            snapshot._ensure_team(team, fixture.season_id, self.as_of)
+            snapshot._ensure_team(team, fixture.season_id, self.as_of, fixture.competition_id)
         snapshot._advance(fixture.match_date)
         design = np.zeros((2, len(snapshot.mean)))
         design[:, : self.league_dimensions] = self._league_design(fixture)

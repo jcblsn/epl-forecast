@@ -125,7 +125,7 @@ class QualityTiltFilter(DynamicAttackDefense):
         snapshot._last_season = self._last_season.copy()
         snapshot.entry_priors = self.entry_priors.copy()
         for team in (fixture.home_team_id, fixture.away_team_id):
-            snapshot._ensure_team(team, fixture.season_id, self.as_of)
+            snapshot._ensure_team(team, fixture.season_id, self.as_of, fixture.competition_id)
         snapshot._advance(fixture.match_date)
         return DynamicAttackDefense.forecast_moments(snapshot, fixture)
 

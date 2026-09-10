@@ -3,6 +3,7 @@
 from epl_forecast.models.baselines import AttackDefensePoisson, LeagueFrequency, LeaguePoisson
 from epl_forecast.models.centered_quality_tilt import CenteredQualityTiltFilter
 from epl_forecast.models.cross_division import CrossDivisionQualityTilt, CrossDivisionXG
+from epl_forecast.models.division_map import DivisionMapQualityTilt, DivisionMapXG
 from epl_forecast.models.dynamic import DynamicAttackDefense
 from epl_forecast.models.elo import EloOrderedLogit
 from epl_forecast.models.process_quality_tilt import BayesianProcessQualityTilt
@@ -11,6 +12,8 @@ from epl_forecast.models.xg_quality_tilt import BayesianXGQualityTilt
 
 MODEL_TYPES = {
     "bayesian_process_quality_tilt": BayesianProcessQualityTilt,
+    "division_map_quality_tilt": DivisionMapQualityTilt,
+    "division_map_xg": DivisionMapXG,
     "cross_division_quality_tilt": CrossDivisionQualityTilt,
     "cross_division_xg": CrossDivisionXG,
     "centered_quality_tilt": CenteredQualityTiltFilter,
