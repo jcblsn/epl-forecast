@@ -291,5 +291,6 @@ def test_the_relegation_bridge_translates_premier_league_strength_into_the_champ
     priors = [bridge.prior(t).mean[0] for t in relegated]
     assert np.corrcoef(sources, priors)[0, 1] == pytest.approx(np.sign(slope))
     assert all(
-        abs(p - generic.mean[0]) < abs(s - np.mean(sources)) for s, p in zip(sources, priors)
+        abs(p - generic.mean[0]) < abs(s - np.mean(sources))
+        for s, p in zip(sources, priors, strict=True)
     )
