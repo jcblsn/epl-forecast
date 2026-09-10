@@ -7,7 +7,7 @@ from pathlib import Path
 from epl_forecast.artifacts import execution_provenance
 from epl_forecast.cli import fitted_model, load_config, save_rows
 from epl_forecast.datasets import Dataset
-from epl_forecast.sanctions import load_registry
+from epl_forecast.sanctions import REGISTRIES, load_registry
 from epl_forecast.season_evaluation import (
     championship_season_truth,
     final_cutoff,
@@ -70,7 +70,9 @@ def main():
         "configs": configs,
         "code_hashes": {str(p): file_hash(p) for p in sorted(Path("src").rglob("*.py"))},
         "runner_hash": file_hash(Path(__file__)),
-        "reviewed_adjustments_hash": file_hash(Path("src/epl_forecast/data/pl_adjustments.json")),
+        "reviewed_adjustment_hashes": {
+            name: file_hash(Path("src/epl_forecast/data") / name) for name in REGISTRIES
+        },
         "sanction_audit": [
             row for row in sanctions.audit() if row["competition_id"] == args.competition
         ],

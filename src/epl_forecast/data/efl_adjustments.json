@@ -7,6 +7,7 @@
     "announced_on": "2019-03-22",
     "known_on": "2019-03-22",
     "decision": "EFL misconduct charge upheld for a profitability and sustainability breach",
+    "source": "reviewed EFL sanction registry; decision date asserted by reviewer, no provider document retained locally",
     "evidence": "reviewer-asserted decision date; no provider document retained locally"
   },
   {
@@ -17,6 +18,7 @@
     "announced_on": null,
     "known_on": null,
     "decision": "Insolvency deduction applied to the 2019/20 season after administration",
+    "source": "reviewed EFL sanction registry; magnitude from the provider final table, decision date not established",
     "evidence": "unknown: decision date not established; excluded from every forecast origin"
   },
   {
@@ -27,6 +29,7 @@
     "announced_on": "2020-07-31",
     "known_on": "2020-07-31",
     "decision": "Profitability and sustainability sanction imposed on the 2020/21 season",
+    "source": "reviewed EFL sanction registry; decision date asserted by reviewer, no provider document retained locally",
     "evidence": "reviewer-asserted decision date; no provider document retained locally"
   },
   {
@@ -37,6 +40,7 @@
     "announced_on": "2020-11-04",
     "known_on": "2020-11-04",
     "decision": "Appeal reduced the standing deduction from twelve points to six",
+    "source": "reviewed EFL sanction registry; decision date asserted by reviewer, no provider document retained locally",
     "evidence": "reviewer-asserted decision date; no provider document retained locally"
   },
   {
@@ -47,6 +51,7 @@
     "announced_on": "2021-09-22",
     "known_on": "2021-09-22",
     "decision": "Insolvency deduction on entering administration",
+    "source": "reviewed EFL sanction registry; decision date asserted by reviewer, no provider document retained locally",
     "evidence": "reviewer-asserted decision date; no provider document retained locally"
   },
   {
@@ -57,6 +62,7 @@
     "announced_on": "2021-11-24",
     "known_on": "2021-11-24",
     "decision": "Agreed sanction for accounting breaches in earlier submitted accounts",
+    "source": "reviewed EFL sanction registry; decision date asserted by reviewer, no provider document retained locally",
     "evidence": "reviewer-asserted decision date; no provider document retained locally"
   },
   {
@@ -67,6 +73,7 @@
     "announced_on": "2021-11-15",
     "known_on": "2021-11-15",
     "decision": "Agreed sanction for a profitability and sustainability breach",
+    "source": "reviewed EFL sanction registry; decision date asserted by reviewer, no provider document retained locally",
     "evidence": "reviewer-asserted decision date; no provider document retained locally"
   },
   {
@@ -77,6 +84,7 @@
     "announced_on": null,
     "known_on": null,
     "decision": "Further profitability and sustainability sanction during 2022/23",
+    "source": "reviewed EFL sanction registry; magnitude from the provider final table, decision date not established",
     "evidence": "unknown: decision date not established; excluded from every forecast origin"
   },
   {
@@ -87,6 +95,7 @@
     "announced_on": null,
     "known_on": null,
     "decision": "Sanction for failing to pay players on time during 2022/23",
+    "source": "reviewed EFL sanction registry; magnitude from the provider final table, decision date not established",
     "evidence": "unknown: decision date not established; excluded from every forecast origin"
   },
   {
@@ -97,6 +106,7 @@
     "announced_on": null,
     "known_on": null,
     "decision": "Sanction recorded in the 2024/25 final table",
+    "source": "reviewed EFL sanction registry; magnitude from the provider final table, decision date not established",
     "evidence": "unknown: decision date not established; excluded from every forecast origin"
   },
   {
@@ -107,6 +117,7 @@
     "announced_on": null,
     "known_on": null,
     "decision": "Sanction recorded in the 2025/26 final table",
+    "source": "reviewed EFL sanction registry; magnitude from the provider final table, decision date not established",
     "evidence": "unknown: decision date not established; excluded from every forecast origin"
   },
   {
@@ -117,6 +128,7 @@
     "announced_on": null,
     "known_on": null,
     "decision": "Sanction recorded in the 2025/26 final table",
+    "source": "reviewed EFL sanction registry; magnitude from the provider final table, decision date not established",
     "evidence": "unknown: decision date not established; excluded from every forecast origin"
   },
   {
@@ -127,6 +139,7 @@
     "announced_on": null,
     "known_on": null,
     "decision": "Sanction recorded in the 2025/26 final table",
+    "source": "reviewed EFL sanction registry; magnitude from the provider final table, decision date not established",
     "evidence": "unknown: decision date not established; excluded from every forecast origin"
   },
   {
@@ -137,6 +150,7 @@
     "announced_on": null,
     "known_on": null,
     "decision": "Insolvency deduction applied during 2011/12",
+    "source": "reviewed EFL sanction registry; magnitude from the provider final table, decision date not established",
     "evidence": "unknown: decision date not established; excluded from every forecast origin"
   },
   {
@@ -147,6 +161,7 @@
     "announced_on": null,
     "known_on": null,
     "decision": "Sanction recorded in the 2014/15 final table",
+    "source": "reviewed EFL sanction registry; magnitude from the provider final table, decision date not established",
     "evidence": "unknown: decision date not established; excluded from every forecast origin"
   }
 ]
