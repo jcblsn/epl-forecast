@@ -38,13 +38,18 @@ Promotion means absence from the preceding Premier League season.
 
 ## Scores and calibration
 
-For each club, TRPS is the mean squared difference between the forecast CDF and
+For each club, rank RPS is the mean squared difference between the forecast CDF and
 the observed rank step function over ranks 1 through 19. The pool of team
-contributions equals tournament TRPS when every season has 20 clubs. Lower is
+contributions equals tournament RPS when every season has 20 clubs. Lower is
 better. The generic scorer also accepts grouped rank categories for partial
 rankings; sum probability mass into those categories first. Shared observed
 positions use expected score across the occupied ranks. This follows the
 [Tournament Rank Probability Score definition](https://arxiv.org/abs/1912.07364).
+
+Rank uncertainty is reported directly as forecast SD and central 50%, 80%, 90%
+and 95% interval coverage and width. Rank PIT uses the same randomized discrete-CDF
+construction as points PIT, with a separate seeded stream shared across models.
+Both PIT histograms and both sets of intervals are reported by forecast origin.
 
 Points CRPS is `E|X-y| - E|X-X'|/2`, computed directly from the empirical simulated
 PMF. It scores both dispersion and location in points. Bias uses forecast minus

@@ -2,7 +2,7 @@
 
 M2's preseason points intervals are materially too narrow. Across 220 club-seasons
 in 2015/16–2025/26, its nominal 90% interval covers only 73.6% of final totals.
-M4, M5 and M7 improve both preseason standings TRPS and points CRPS, with much
+M4, M5 and M7 improve both preseason rank RPS and points CRPS, with much
 better coverage. Match-level loss alone missed this product-level distinction.
 
 The complete panel contains 220 forecasts: four retained model specifications,
@@ -13,7 +13,7 @@ evidence. See the [methodology and commands](../season_evaluation.md).
 
 ## Preseason points and standings
 
-| Model | TRPS ↓ | Points CRPS ↓ | Points RMSE | Mean points SD | 90% coverage | Promoted bias |
+| Model | Rank RPS ↓ | Points CRPS ↓ | Points RMSE | Mean points SD | 90% coverage | Promoted bias |
 | --- | --- | --- | --- | --- | --- | --- |
 | M2 | 0.11049 | 6.759 | 11.61 | 7.56 | 73.6% | +6.91 |
 | M4 | 0.10720 | 6.476 | 11.42 | 10.60 | 87.7% | +1.28 |
@@ -33,7 +33,7 @@ include promoted clubs and incumbents at every origin.
 
 ## Scores across origins
 
-TRPS, lower is better:
+Rank RPS, lower is better:
 
 | Origin | M2 | M4 | M5 | M7 |
 | --- | --- | --- | --- | --- |
@@ -53,15 +53,15 @@ Points CRPS, lower is better and measured in points:
 | MW19 | 3.457 | 3.455 | 3.466 | 3.392 |
 | MW30 | 2.194 | 2.222 | 2.230 | 2.164 |
 
-M7 has the lowest measured TRPS at preseason, MW6, MW12 and MW19; M2 has the
+M7 has the lowest measured rank RPS at preseason, MW6, MW12 and MW19; M2 has the
 lowest at MW30. M4 has the lowest preseason points CRPS, while M7 has the lowest
 at every later origin. M4/M5's early improvements do not persist uniformly:
-both score worse than M2 on standings TRPS from MW12 onward.
+both score worse than M2 on rank RPS from MW12 onward.
 
 The pooled point estimates do not establish a universal winner. The paired
-season-cluster 95% bootstrap intervals for every preseason TRPS and points CRPS
+season-cluster 95% bootstrap intervals for every preseason rank RPS and points CRPS
 difference versus M2 include zero. For example, M4's points CRPS difference is
-−0.283 [−0.737, +0.147], and M7's TRPS difference is −0.00419
+−0.283 [−0.737, +0.147], and M7's rank RPS difference is −0.00419
 [−0.01522, +0.00497]. All [paired comparisons](season_scoring/paired_comparisons.csv)
 and [per-season scores](season_scoring/by_season.csv) are retained. Pooling clubs
 improves the score estimate but does not turn 11 title outcomes into 220
@@ -89,6 +89,17 @@ All 50%, 80%, 90% and 95% coverages and widths are in the
 ![Points PIT histograms](season_scoring/points_pit.png)
 
 ![Points interval coverage](season_scoring/points_coverage.png)
+
+Final-rank distributions are now scored directly. At preseason, M2's mean rank SD
+is 3.05 positions and its central 50/80/90% rank intervals cover 51.8%, 79.1% and
+89.5%, with average widths 4.28, 7.86 and 9.71 positions. M4/M5/M7 are wider and
+overcover at all three levels: their preseason 90% coverage is 93.2%, 94.1% and
+93.2%, with widths 11.69, 12.04 and 11.93. Rank RPS still improves, so the wider
+distributions buy useful calibration rather than dispersion alone.
+
+![Rank PIT histograms](season_scoring/rank_pit.png)
+
+![Rank interval coverage](season_scoring/rank_coverage.png)
 
 Preseason headline-event Brier scores, lower is better:
 
@@ -143,7 +154,7 @@ as [text](season_scoring/evaluation_runner.txt); its later formatting does not
 change its syntax tree. The final PIT randomizer uses a separate seeded stream
 from the forecast simulations.
 
-Validation: 211 tests pass; Ruff lint and formatting pass. Archive rescoring,
+Validation: the current repository verifier passes. Archive rescoring,
 complete panel sizes, probability conservation, final event counts, promotion
 counts and paired-model matching were checked. All full simulation artifacts
 remain locally under `runs/season-scoring-v1`, `runs/season-scoring-2024` and

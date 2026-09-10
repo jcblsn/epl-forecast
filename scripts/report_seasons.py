@@ -39,7 +39,7 @@ def paired_comparisons(rows, seed=20260908, samples=10000):
         indices = rng.integers(0, len(seasons), size=(samples, len(seasons)))
         for model in MODELS[1:]:
             for metric in (
-                "trps",
+                "rank_rps",
                 "points_crps",
                 "title_brier",
                 "top_four_brier",
@@ -89,7 +89,14 @@ def main():
         for key, value in row.items():
             if key == "promoted":
                 converted[key] = value == "True"
-            elif key in ("model_id", "origin", "season_id", "team_id", "as_of"):
+            elif key in (
+                "competition_id",
+                "model_id",
+                "origin",
+                "season_id",
+                "team_id",
+                "as_of",
+            ):
                 converted[key] = value
             else:
                 converted[key] = float(value)
@@ -109,7 +116,7 @@ def main():
             selected = [
                 r
                 for r in calibration
-                if r["model_id"] == model and r["origin"] == origin and r["event"] == "pit"
+                if r["model_id"] == model and r["origin"] == origin and r["event"] == "points_pit"
             ]
             ax.bar(
                 [float(r["bin_lower"]) for r in selected],
@@ -127,6 +134,31 @@ def main():
     fig.supylabel("Fraction of club-seasons")
     fig.tight_layout()
     fig.savefig(args.output / "points_pit.png", dpi=150)
+    plt.close(fig)
+    fig, axes = plt.subplots(5, 4, figsize=(15, 15), sharex=True, sharey=True)
+    for i, origin in enumerate(ORIGINS):
+        for j, model in enumerate(MODELS):
+            ax = axes[i, j]
+            selected = [
+                r
+                for r in calibration
+                if r["model_id"] == model and r["origin"] == origin and r["event"] == "rank_pit"
+            ]
+            ax.bar(
+                [float(r["bin_lower"]) for r in selected],
+                [float(r["observed_frequency"]) for r in selected],
+                width=0.1,
+                align="edge",
+                edgecolor="white",
+            )
+            ax.axhline(0.1, color="black", linestyle="--", linewidth=1)
+            ax.set_title(f"{model} · {origin}")
+            ax.set_xlim(0, 1)
+    fig.suptitle(f"Randomized rank PIT · club-seasons per panel: {counts}")
+    fig.supxlabel("PIT")
+    fig.supylabel("Fraction of club-seasons")
+    fig.tight_layout()
+    fig.savefig(args.output / "rank_pit.png", dpi=150)
     plt.close(fig)
     fig, axes = plt.subplots(5, 3, figsize=(13, 18), sharex=True, sharey=True)
     for i, origin in enumerate(ORIGINS):
@@ -176,6 +208,25 @@ def main():
     fig.supylabel("Empirical coverage")
     fig.tight_layout()
     fig.savefig(args.output / "points_coverage.png", dpi=150)
+    plt.close(fig)
+    fig, axes = plt.subplots(1, 3, figsize=(13, 4), sharey=True)
+    for ax, level in zip(axes, (50, 80, 90), strict=True):
+        for model in MODELS:
+            selected = {r["origin"]: r for r in summary if r["model_id"] == model}
+            ax.plot(
+                ORIGINS,
+                [float(selected[o][f"rank_coverage_{level}"]) for o in ORIGINS],
+                marker="o",
+                label=model,
+            )
+        ax.axhline(level / 100, color="black", linestyle="--")
+        ax.set_title(f"{level}% central rank interval")
+        ax.set_ylim(0, 1)
+        ax.tick_params(axis="x", rotation=30)
+    axes[0].legend()
+    fig.supylabel("Empirical coverage")
+    fig.tight_layout()
+    fig.savefig(args.output / "rank_coverage.png", dpi=150)
     plt.close(fig)
 
 

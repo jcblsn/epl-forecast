@@ -1,7 +1,7 @@
 import numpy as np
 import pytest
 
-from epl_forecast.season_evaluation import points_metrics, rank_scores, summarize
+from epl_forecast.season_evaluation import points_metrics, rank_metrics, rank_scores, summarize
 
 
 def test_trps_perfect_worst_and_partial_rankings():
@@ -24,6 +24,17 @@ def test_discrete_pit_crps_and_coverage():
     assert points_metrics({"7": 1}, 7, 0.3)["points_crps"] == 0
 
 
+def test_rank_pit_uncertainty_and_intervals():
+    result = rank_metrics([0.25, 0.5, 0.25], [0, 1, 0], 0.5, 0.2)
+    assert result["rank_pit"] == 0.5
+    assert result["rank_sd"] == pytest.approx(np.sqrt(0.5))
+    assert result["rank_coverage_50"] == 1
+    assert result["rank_width_50"] == 1
+    tied = rank_metrics([0.5, 0.5], [0.5, 0.5], 0.2, 0.75)
+    assert tied["actual_rank"] == 1.5
+    assert tied["rank_pit"] == pytest.approx(0.6)
+
+
 def test_crps_matches_pairwise_definition():
     p = np.array([0.2, 0.3, 0.5])
     x = np.array([-4, 2, 8])
@@ -42,6 +53,8 @@ def test_pooling_and_boundary_bins():
         "season_id": "2020-2021",
         "promoted": True,
         "trps": 0.2,
+        "rank_rps": 0.2,
+        **rank_metrics([0.5, 0.5], [1, 0], 0.2, 0.2),
         **points_metrics({"3": 1}, 5, 0.1),
     }
     for event in ("title", "top_four", "relegation"):
@@ -49,7 +62,8 @@ def test_pooling_and_boundary_bins():
     summary, calibration = summarize([row, row | {"season_id": "2021-2022"}])
     assert summary[0]["club_seasons"] == 2
     assert summary[0]["points_rmse"] == 2
-    assert sum(r["count"] for r in calibration if r["event"] == "pit") == 2
+    assert sum(r["count"] for r in calibration if r["event"] == "points_pit") == 2
+    assert sum(r["count"] for r in calibration if r["event"] == "rank_pit") == 2
     assert calibration[9]["count"] == 2
 
 

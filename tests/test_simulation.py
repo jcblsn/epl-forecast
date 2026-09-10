@@ -243,6 +243,8 @@ def test_simulation_reuses_one_joint_state_per_path(full_season):
     assert result["state_uncertainty"] == "posterior"
     assert set(result["teams"][0]["points_distribution"]) == {"0", "114"}
     assert sum(t["title_probability"] for t in result["teams"]) == pytest.approx(1)
+    assert all(t["position_sd"] >= 0 for t in result["teams"])
+    assert all(len(t["position_quantiles_05_50_95"]) == 3 for t in result["teams"])
     assert sum(t["relegation_probability"] for t in result["teams"]) == pytest.approx(3)
 
 
@@ -275,6 +277,8 @@ def test_championship_projection_conserves_promotion_and_playoff_slots():
     assert len(result["teams"]) == 24
     assert sum(r["automatic_promotion_probability"] for r in result["teams"]) == pytest.approx(2)
     assert sum(r["playoff_qualification_probability"] for r in result["teams"]) == pytest.approx(6)
+    assert sum(r["playoff_promotion_probability"] for r in result["teams"]) == pytest.approx(1)
+    assert sum(r["promotion_probability"] for r in result["teams"]) == pytest.approx(3)
     assert sum(r["relegation_probability"] for r in result["teams"]) == pytest.approx(3)
     assert all("top_four_probability" not in r for r in result["teams"])
     assert result["ranking_rules"] == "efl"

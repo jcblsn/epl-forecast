@@ -24,12 +24,66 @@ def rank_scores(probabilities, observed_categories):
     return np.mean((p.cumsum(axis=1)[:, :-1] - empirical) ** 2, axis=1)
 
 
+def rank_metrics(probabilities, observed_probabilities, pit_uniform, observed_uniform):
+    p = np.asarray(probabilities, dtype=float)
+    q = np.asarray(observed_probabilities, dtype=float)
+    if (
+        p.ndim != 1
+        or p.shape != q.shape
+        or len(p) < 2
+        or not np.isfinite(p).all()
+        or not np.isfinite(q).all()
+        or (p < 0).any()
+        or (q < 0).any()
+        or not np.isclose(p.sum(), 1, atol=1e-10, rtol=0)
+        or not np.isclose(q.sum(), 1, atol=1e-10, rtol=0)
+        or not 0 <= pit_uniform < 1
+        or not 0 <= observed_uniform < 1
+    ):
+        raise ValueError("Invalid rank distributions or PIT randomizers")
+    ranks = np.arange(1, len(p) + 1)
+    actual_index = int(np.searchsorted(q.cumsum(), observed_uniform, side="right"))
+    actual_index = min(actual_index, len(p) - 1)
+    mean = float(ranks @ p)
+    result = {
+        "actual_rank": float(ranks @ q),
+        "rank_error": mean - float(ranks @ q),
+        "rank_sd": float(np.sqrt(((ranks - mean) ** 2) @ p)),
+        "rank_pit": float(p[:actual_index].sum() + pit_uniform * p[actual_index]),
+    }
+    cdf = p.cumsum()
+    for level in (50, 80, 90, 95):
+        tail = (1 - level / 100) / 2
+        lo, hi = np.searchsorted(cdf, [tail, 1 - tail])
+        result[f"rank_coverage_{level}"] = float(q[lo : hi + 1].sum())
+        result[f"rank_width_{level}"] = int(hi - lo)
+    return result
+
+
 def season_origins(matches):
     ordered = sorted(matches, key=lambda m: (m.fixture.match_date, m.fixture.match_id))
-    if len(ordered) != 380 or len({m.fixture.match_id for m in ordered}) != 380:
-        raise ValueError("Origins require a complete 380-match season")
+    competitions = {m.fixture.competition_id for m in ordered}
+    teams = {
+        team
+        for match in ordered
+        for team in (match.fixture.home_team_id, match.fixture.away_team_id)
+    }
+    expected_teams = {
+        "eng-premier-league": 20,
+        "eng-championship": 24,
+    }
+    team_count = expected_teams.get(next(iter(competitions))) if len(competitions) == 1 else None
+    expected_matches = team_count * (team_count - 1) if team_count else None
+    if (
+        expected_matches is None
+        or len(teams) != team_count
+        or len(ordered) != expected_matches
+        or len({m.fixture.match_id for m in ordered}) != expected_matches
+    ):
+        raise ValueError("Origins require a complete supported league season")
+    matches_per_week = team_count // 2
     return {"preseason": ordered[0].fixture.match_date} | {
-        f"MW{week}": ordered[week * 10 - 1].available_on for week in (6, 12, 19, 30)
+        f"MW{week}": ordered[week * matches_per_week - 1].available_on for week in (6, 12, 19, 30)
     }
 
 
@@ -64,7 +118,8 @@ def score_forecast(forecast, truth, promoted, seed):
     actual = {r["team_id"]: r for r in truth["teams"]}
     if {r["team_id"] for r in forecast["teams"]} != set(actual):
         raise ValueError("Forecast and truth teams differ")
-    rng = np.random.default_rng(np.random.SeedSequence([seed, 0x504954]))
+    points_rng = np.random.default_rng(np.random.SeedSequence([seed, 0x504954]))
+    rank_rng = np.random.default_rng(np.random.SeedSequence([seed, 0x52414E4B]))
     rows = []
     for team in sorted(forecast["teams"], key=lambda r: r["team_id"]):
         target = actual[team["team_id"]]
@@ -72,15 +127,34 @@ def score_forecast(forecast, truth, promoted, seed):
         q = np.asarray(target["position_probabilities"])
         # Expected score over shared observed ranks preserves ties without arbitrary ordering.
         trps = sum(q[i] * rank_scores([p], np.array([i + 1]))[0] for i in np.flatnonzero(q))
+        rank = rank_metrics(p, q, rank_rng.random(), rank_rng.random())
         row = {
+            "competition_id": forecast.get("competition_id", "eng-premier-league"),
             "team_id": team["team_id"],
             "promoted": team["team_id"] in promoted,
             "actual_points": target["mean_points"],
             "mean_points": team["mean_points"],
+            "rank_rps": float(trps),
             "trps": float(trps),
-            **points_metrics(team["points_distribution"], target["mean_points"], rng.random()),
+            **rank,
+            **points_metrics(
+                team["points_distribution"], target["mean_points"], points_rng.random()
+            ),
         }
-        for event in ("title", "top_four", "relegation"):
+        events = [
+            event
+            for event in (
+                "title",
+                "top_four",
+                "top_five",
+                "relegation",
+                "automatic_promotion",
+                "playoff_qualification",
+                "promotion",
+            )
+            if f"{event}_probability" in team and f"{event}_probability" in target
+        ]
+        for event in events:
             probability = team[f"{event}_probability"]
             observed = target[f"{event}_probability"]
             row[f"{event}_probability"] = probability
@@ -93,10 +167,12 @@ def score_forecast(forecast, truth, promoted, seed):
 def summarize(rows):
     groups = defaultdict(list)
     for row in rows:
-        groups[row["model_id"], row["origin"]].append(row)
+        groups[
+            row.get("competition_id", "eng-premier-league"), row["model_id"], row["origin"]
+        ].append(row)
     summaries, calibration = [], []
-    for (model, origin), group in sorted(groups.items()):
-        base = {"model_id": model, "origin": origin}
+    for (competition, model, origin), group in sorted(groups.items()):
+        base = {"competition_id": competition, "model_id": model, "origin": origin}
         errors = np.array([r["points_error"] for r in group])
         promoted = [r["points_error"] for r in group if r["promoted"]]
         summary = base | {
@@ -109,18 +185,38 @@ def summarize(rows):
             "promoted_overpredicted": sum(e > 0 for e in promoted),
         }
         for key in (
-            ("trps", "points_crps", "points_sd")
+            ("rank_rps", "rank_sd", "points_crps", "points_sd")
             + tuple(
                 f"{prefix}_{level}"
                 for level in (50, 80, 90, 95)
                 for prefix in ("coverage", "width")
             )
-            + tuple(f"{event}_brier" for event in ("title", "top_four", "relegation"))
+            + tuple(
+                f"rank_{prefix}_{level}"
+                for level in (50, 80, 90, 95)
+                for prefix in ("coverage", "width")
+            )
         ):
             summary[key] = float(np.mean([r[key] for r in group]))
+        events = sorted(
+            key.removesuffix("_brier")
+            for key in group[0]
+            if key.endswith("_brier")
+            and all(
+                key in row and f"{key.removesuffix('_brier')}_probability" in row for row in group
+            )
+        )
+        for event in events:
+            summary[f"{event}_brier"] = float(np.mean([r[f"{event}_brier"] for r in group]))
         summaries.append(summary)
-        for event in ("pit", "title", "top_four", "relegation"):
-            key = "pit" if event == "pit" else f"{event}_probability"
+        for event in ("points_pit", "rank_pit", *events):
+            key = (
+                "pit"
+                if event == "points_pit"
+                else event
+                if event == "rank_pit"
+                else f"{event}_probability"
+            )
             for index in range(10):
                 selected = [r for r in group if min(int(r[key] * 10), 9) == index]
                 calibration.append(
@@ -135,7 +231,7 @@ def summarize(rows):
                         else None,
                         "observed_frequency": (
                             len(selected) / len(group)
-                            if event == "pit"
+                            if event in ("points_pit", "rank_pit")
                             else float(np.mean([r[f"{event}_observed"] for r in selected]))
                             if selected
                             else None

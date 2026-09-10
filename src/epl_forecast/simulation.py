@@ -344,9 +344,15 @@ def simulate_season(
     rows = []
     for index, team in enumerate(teams):
         positions = position_counts[index] / simulations
+        ranks = np.arange(1, len(teams) + 1)
+        mean_position = float(positions @ ranks)
         row = {
             "team_id": team,
-            "mean_position": float(positions @ np.arange(1, len(teams) + 1)),
+            "mean_position": mean_position,
+            "position_sd": float(np.sqrt(((ranks - mean_position) ** 2) @ positions)),
+            "position_quantiles_05_50_95": list(
+                map(int, np.searchsorted(positions.cumsum(), [0.05, 0.5, 0.95]) + 1)
+            ),
             "position_probabilities": list(positions),
             "mean_points": float(points[:, index].mean()),
             "points_quantiles_05_50_95": list(np.quantile(points[:, index], [0.05, 0.5, 0.95])),
@@ -364,6 +370,12 @@ def simulate_season(
             )
             row["playoff_qualification_probability"] = float(
                 positions[rules.automatic_promotion : rules.playoff_end].sum()
+            )
+            row["playoff_promotion_probability"] = row["playoff_qualification_probability"] / (
+                rules.playoff_end - rules.automatic_promotion
+            )
+            row["promotion_probability"] = (
+                row["automatic_promotion_probability"] + row["playoff_promotion_probability"]
             )
             row.pop("top_four_probability")
             row.pop("top_five_probability")
@@ -427,7 +439,10 @@ def simulate_season(
                 "Scenario assumes no extra English UEFA titleholders or eligibility exclusions.",
             ]
             if europe
-            else ["Playoff qualification is not promotion through the playoffs."]
+            else [
+                "Playoff promotion splits each simulated path's one playoff place equally among "
+                "the four qualifiers; a match-level playoff model is not yet estimated."
+            ]
             if championship
             else ["Top-four/five probabilities are table positions, not European qualification."]
         ),

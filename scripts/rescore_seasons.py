@@ -55,6 +55,7 @@ def main():
             "runner_sha256": file_hash(Path(__file__)),
             "forecast_cells": len(seen),
             "pit_stream": "SeedSequence([forecast seed, 0x504954]); shared across models",
+            "rank_pit_stream": "SeedSequence([forecast seed, 0x52414E4B]); shared across models",
         },
     )
     summary, calibration = summarize(rows)

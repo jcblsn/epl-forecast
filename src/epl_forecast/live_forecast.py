@@ -47,8 +47,6 @@ def render_forecast(forecast: dict) -> str:
     names = forecast["team_names"]
     simulation = forecast["simulation"]
     championship = forecast["competition_id"] == "eng-championship"
-    first_event = "automatic_promotion_probability" if championship else "top_four_probability"
-    second_event = "playoff_qualification_probability" if championship else "top_five_probability"
     uncertainty_note = (
         "These probabilities include uncertainty in current team strength and match randomness. "
         "Each simulated season holds its sampled strengths fixed; "
@@ -83,19 +81,39 @@ def render_forecast(forecast: dict) -> str:
                 escape(names[team["team_id"]]),
                 str(team["played"]),
                 str(team["current_points"]),
+                f"{team['mean_position']:.1f}",
+                f"{int(team['position_quantiles_05_50_95'][0])}–{int(team['position_quantiles_05_50_95'][2])}",
                 f"{team['mean_points']:.1f}",
+                f"{int(team['points_quantiles_05_50_95'][0])}–{int(team['points_quantiles_05_50_95'][2])}",
                 f"{team['title_probability']:.1%}",
-                f"{team[first_event]:.1%}",
-                f"{team[second_event]:.1%}",
-                f"{team['relegation_probability']:.1%}",
             ]
+            if championship:
+                cells.extend(
+                    [
+                        f"{team['automatic_promotion_probability']:.1%}",
+                        f"{team['playoff_qualification_probability']:.1%}",
+                        f"{team['promotion_probability']:.1%}",
+                    ]
+                )
+            else:
+                cells.extend(
+                    [f"{team['top_four_probability']:.1%}", f"{team['top_five_probability']:.1%}"]
+                )
+            cells.append(f"{team['relegation_probability']:.1%}")
             rows.append("<tr>" + "".join(f"<td>{cell}</td>" for cell in cells) + "</tr>")
+        event_headers = (
+            "<th>Automatic promotion</th><th>Playoffs</th><th>Promotion</th>"
+            if championship
+            else "<th>Top four</th><th>Top five</th>"
+        )
         table = (
             "<div class='scroll'><table><thead><tr><th>Team</th><th>Played</th>"
-            "<th>Points now</th><th>Expected final points</th><th>Title</th>"
-            f"<th>{'Automatic promotion' if championship else 'Top four'}</th>"
-            f"<th>{'Playoffs' if championship else 'Top five'}</th>"
-            "<th>Relegation</th></tr></thead><tbody>" + "".join(rows) + "</tbody></table></div>"
+            "<th>Points now</th><th>Expected rank</th><th>90% rank interval</th>"
+            "<th>Expected final points</th><th>90% points interval</th><th>Title</th>"
+            + event_headers
+            + "<th>Relegation</th></tr></thead><tbody>"
+            + "".join(rows)
+            + "</tbody></table></div>"
         )
     else:
         table = f"<p>{escape(forecast['simulation_unavailable_reason'])}</p>"
