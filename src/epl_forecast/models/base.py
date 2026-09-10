@@ -28,6 +28,15 @@ class Forecast:
             raise ValueError("Forecast probabilities must sum to one")
 
 
+def selected_mask(size: int, paths) -> np.ndarray | None:
+    """A boolean over all draws, or None when every draw is wanted."""
+    if paths is None:
+        return None
+    mask = np.zeros(size, dtype=bool)
+    mask[np.asarray(paths, dtype=int)] = True
+    return mask
+
+
 class ForecastModel(Protocol):
     as_of: date | None
 
@@ -37,13 +46,19 @@ class ForecastModel(Protocol):
 
 
 class SampledForecastStates(Protocol):
-    """Each array index is one joint model-state draw, reused across all fixtures."""
+    """Each array index is one joint model-state draw, reused across all fixtures.
+
+    ``paths`` selects the draws a fixture is played out for, which a postseason bracket
+    needs because each path reaches a different tie. States that evolve in calendar time
+    still advance every draw to the fixture's date, so a later selection resumes from
+    the right place; only the returned scores are restricted.
+    """
 
     as_of: date
     size: int
 
     def sample_scores(
-        self, fixture: Fixture, rng: np.random.Generator
+        self, fixture: Fixture, rng: np.random.Generator, paths: np.ndarray | None = None
     ) -> tuple[np.ndarray, np.ndarray]: ...
 
 

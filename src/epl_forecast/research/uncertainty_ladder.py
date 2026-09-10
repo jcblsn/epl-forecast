@@ -6,7 +6,7 @@ import numpy as np
 from scipy.special import ndtr
 from scipy.stats import poisson
 
-from epl_forecast.models.base import Forecast
+from epl_forecast.models.base import Forecast, selected_mask
 from epl_forecast.models.poisson import IndependentPoisson, PoissonMixture
 from epl_forecast.models.quality_tilt_scores import GammaPoissonMixture, ScoreMixture
 
@@ -101,7 +101,7 @@ class MatchedPaths:
             @ covariance_root(forecast.covariance).T
         )
 
-    def sample_scores(self, fixture, rng):
+    def sample_scores(self, fixture, rng, paths=None):
         if fixture.match_date < self.day:
             raise ValueError("Matched paths require chronological fixtures")
         design = self.forecast.design(fixture)
@@ -110,10 +110,11 @@ class MatchedPaths:
         if np.any(variance):
             self.values += rng.standard_normal(self.values.shape) * np.sqrt(variance)
         self.day = fixture.match_date
-        rates = np.exp(self.values @ design.T)
+        values = self.values if paths is None else self.values[paths]
+        rates = np.exp(values @ design.T)
         if self.forecast.dispersion is not None:
             shape = self.forecast.dispersion
-            rates *= rng.gamma(shape, 1 / shape, self.size)[:, None]
+            rates *= rng.gamma(shape, 1 / shape, len(values))[:, None]
         goals = rng.poisson(rates)
         return goals[:, 0], goals[:, 1]
 
@@ -172,12 +173,14 @@ class MatchedMixturePaths:
             if len(positions):
                 self.groups.append((positions, member.sample_forecast_state(rng, len(positions))))
 
-    def sample_scores(self, fixture, rng):
+    def sample_scores(self, fixture, rng, paths=None):
         home, away = np.empty(self.size, dtype=int), np.empty(self.size, dtype=int)
+        wanted = selected_mask(self.size, paths)
         for positions, states in self.groups:
-            sampled = states.sample_scores(fixture, rng)
-            home[positions], away[positions] = sampled
-        return home, away
+            keep = None if wanted is None else np.flatnonzero(wanted[positions])
+            target = positions if keep is None else positions[keep]
+            home[target], away[target] = states.sample_scores(fixture, rng, keep)
+        return (home, away) if paths is None else (home[paths], away[paths])
 
 
 class M2SeasonDependence:
@@ -212,17 +215,20 @@ class CopulaPaths:
         self.indices = {t: i for i, t in enumerate(forecast.teams)}
         self.factors = rng.standard_normal((size, len(self.indices), 2))
 
-    def sample_scores(self, fixture, rng):
+    def sample_scores(self, fixture, rng, paths=None):
         scores = self.forecast.predict_match(fixture).scores
         h, a = self.indices[fixture.home_team_id], self.indices[fixture.away_team_id]
+        factors = self.factors if paths is None else self.factors[paths]
         shared = np.column_stack(
             (
-                self.factors[:, h, 0] + self.factors[:, a, 1],
-                self.factors[:, a, 0] + self.factors[:, h, 1],
+                factors[:, h, 0] + factors[:, a, 1],
+                factors[:, a, 0] + factors[:, h, 1],
             )
         ) / np.sqrt(2)
         weight = self.forecast.dependence
-        z = np.sqrt(weight) * shared + np.sqrt(1 - weight) * rng.standard_normal((self.size, 2))
+        z = np.sqrt(weight) * shared + np.sqrt(1 - weight) * rng.standard_normal(
+            factors.shape[:1] + (2,)
+        )
         uniforms = np.clip(ndtr(z), np.finfo(float).eps, 1 - np.finfo(float).eps)
         goals = poisson.ppf(uniforms, [scores.home_rate, scores.away_rate]).astype(int)
         return goals[:, 0], goals[:, 1]

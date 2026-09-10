@@ -4,7 +4,7 @@ from itertools import product
 import numpy as np
 from scipy.special import logsumexp
 
-from epl_forecast.models.base import Forecast
+from epl_forecast.models.base import Forecast, selected_mask
 from epl_forecast.models.dynamic import DynamicAttackDefense
 from epl_forecast.models.gaussian import score_laplace_update
 from epl_forecast.models.poisson import PoissonMixture
@@ -298,13 +298,19 @@ class ForwardQualityTiltStates:
             )
             self.groups.append([positions, snapshot, values, self.as_of, {}, {}])
 
-    def sample_scores(self, fixture, rng):
+    def sample_scores(self, fixture, rng, paths=None):
         home, away = np.empty(self.size, dtype=int), np.empty(self.size, dtype=int)
+        wanted = selected_mask(self.size, paths)
         for group in self.groups:
             positions, model = group[0], group[1]
+            # Every group advances to the fixture date even when no selected path needs it.
             home_rate, away_rate = self._group_rates(group, fixture, rng)
-            home[positions], away[positions] = model.sample_goal_rates(home_rate, away_rate, rng)
-        return home, away
+            keep = slice(None) if wanted is None else wanted[positions]
+            target = positions if wanted is None else positions[keep]
+            home[target], away[target] = model.sample_goal_rates(
+                home_rate[keep], away_rate[keep], rng
+            )
+        return (home, away) if paths is None else (home[paths], away[paths])
 
     def rates(self, fixture, rng=None):
         """Latent rates for this fixture, advancing the forward state as usual."""

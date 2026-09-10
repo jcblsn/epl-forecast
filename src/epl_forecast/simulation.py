@@ -250,8 +250,13 @@ def simulate_season(
 
     for match in sorted(played, key=lambda m: m.fixture.match_id):
         add_result(match.fixture, match.home_goals, match.away_goals)
+    season = (played[0].fixture if played else remaining[0]).season_id
+    competition = (played[0].fixture if played else remaining[0]).competition_id
+    championship = competition == "eng-championship"
     state_sampler = getattr(model, "sample_forecast_state", None)
-    states = state_sampler(rng, size=simulations) if state_sampler and remaining else None
+    # A Championship bracket needs the same draws even when no league fixture is left.
+    needs_states = bool(remaining) or (championship and playoff_winner is None)
+    states = state_sampler(rng, size=simulations) if state_sampler and needs_states else None
     if states is not None and (states.as_of != as_of or states.size != simulations):
         raise ValueError("Sampled forecast states must match the simulation cutoff and size")
     unknown_teams = set()
@@ -301,9 +306,6 @@ def simulate_season(
         if europe is not None
         else {}
     )
-    season = (played[0].fixture if played else remaining[0]).season_id
-    competition = (played[0].fixture if played else remaining[0]).competition_id
-    championship = competition == "eng-championship"
     if championship and europe is not None:
         raise ValueError("European qualification scenarios apply to the Premier League")
     rules = league_rules(competition, season)
@@ -332,11 +334,11 @@ def simulate_season(
             weights[start:end, start:end] = 1 / (end - start)
         position_counts[order] += weights
         if europe is not None:
-            for competition, qualified in european_places(
+            for tournament, qualified in european_places(
                 [teams[i] for i in order], europe
             ).items():
                 for team in qualified & team_index.keys():
-                    qualification[competition][team_index[team]] += 1
+                    qualification[tournament][team_index[team]] += 1
 
     playoff_counts = np.zeros(len(teams))
     playoff_model = None
@@ -349,7 +351,7 @@ def simulate_season(
         else:
             last_regular_day = max(f.match_date for f in [m.fixture for m in played] + remaining)
             winners, playoff_model = simulate_championship_playoffs(
-                model, orders, teams, season, last_regular_day, rng
+                model, orders, teams, season, last_regular_day, rng, states
             )
             for winner, count in zip(*np.unique(winners, return_counts=True), strict=True):
                 playoff_counts[team_index[str(winner)]] = count
@@ -480,7 +482,8 @@ def simulate_season(
             if europe
             else [
                 "Playoff promotion simulates the applicable bracket conditional on every "
-                "regular-season path using the structural match model."
+                "regular-season path, on that path's own latent team states when the "
+                "model supplies them."
             ]
             if championship
             else ["Top-four/five probabilities are table positions, not European qualification."]

@@ -305,6 +305,76 @@ def test_six_team_playoff_bracket_respects_seed_paths():
     assert details["format"] == "2026-six-team-seven-match"
 
 
+class PathStates:
+    """One dominant club per path, so a bracket result reveals which draw it used."""
+
+    evolves_future_states = False
+
+    def __init__(self, teams, as_of, size):
+        self.as_of, self.size = as_of, size
+        self.champion = [teams[index % len(teams)] for index in range(size)]
+
+    def sample_scores(self, fixture, rng, paths=None):
+        chosen = range(self.size) if paths is None else list(paths)
+        home = [5 if self.champion[p] == fixture.home_team_id else 0 for p in chosen]
+        away = [5 if self.champion[p] == fixture.away_team_id else 0 for p in chosen]
+        return np.array(home), np.array(away)
+
+
+class PathStateModel(FixedModel):
+    def __init__(self, as_of, teams):
+        super().__init__(as_of)
+        self.teams = teams
+
+    def sample_forecast_state(self, rng, size=1):
+        return PathStates(self.teams, self.as_of, size)
+
+
+def championship_fixtures(teams, day, season="2026-2027"):
+    from epl_forecast.schema import Fixture, fixture_id
+
+    return [
+        Fixture(fixture_id("eng-championship", season, h, a), "eng-championship", season, day, h, a)
+        for h in teams
+        for a in teams
+        if h != a
+    ]
+
+
+def test_playoff_bracket_uses_each_path_own_latent_state():
+    teams = [f"club-{i}" for i in range(24)]
+    orders = np.tile(np.arange(24), (48, 1))
+    states = PathStates(teams, date(2026, 8, 1), 48)
+    winners, details = simulate_championship_playoffs(
+        FixedModel(date(2026, 8, 1)),
+        orders,
+        teams,
+        "2026-2027",
+        date(2027, 5, 1),
+        np.random.default_rng(3),
+        states,
+    )
+    bracket = set(teams[2:8])
+    for path, champion in enumerate(states.champion):
+        if champion in bracket:
+            assert winners[path] == champion
+    assert "path-specific" in details["state_conditioning"]
+
+
+def test_playoff_conditioning_leaves_the_regular_season_untouched():
+    teams = [f"club-{i}" for i in range(24)]
+    cutoff = date(2026, 8, 1)
+    remaining = championship_fixtures(teams, date(2026, 8, 10))
+    model = PathStateModel(cutoff, teams)
+    simulated = simulate_season(model, [], remaining, teams, cutoff, 24, 5)
+    observed = simulate_season(model, [], remaining, teams, cutoff, 24, 5, playoff_winner=teams[0])
+    for left, right in zip(simulated["teams"], observed["teams"], strict=True):
+        assert left["points_distribution"] == right["points_distribution"]
+        assert left["position_probabilities"] == right["position_probabilities"]
+    assert simulated["playoff_model"]["state_conditioning"].startswith("path-specific")
+    assert sum(r["playoff_promotion_probability"] for r in simulated["teams"]) == pytest.approx(1)
+
+
 def test_delayed_season_playoff_dates_stay_inside_schema():
     teams = [f"club-{i}" for i in range(24)]
     orders = np.tile(np.arange(24), (20, 1))

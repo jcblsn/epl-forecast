@@ -7,7 +7,39 @@ import numpy as np
 from epl_forecast.schema import Fixture, fixture_id
 
 
-def _sample_legs(model, home, away, day, season, rng):
+class _MarginalLegs:
+    """Postseason scores from the forecast's marginal match distribution."""
+
+    conditioning = "common forecast distribution resampled per path"
+
+    def __init__(self, model):
+        self.model = model
+
+    def sample(self, fixture, selected, rng):
+        scores = self.model.predict_match(fixture).scores
+        if scores is None:
+            raise ValueError("Championship playoffs require a score-generating model")
+        return scores.sample(rng, len(selected))
+
+
+class _PathLegs:
+    """Postseason scores from the same latent state that produced the path's table.
+
+    A club that reached the playoffs on a path where it was drawn strong keeps that
+    strength into the bracket, so promotion probability reflects the joint uncertainty
+    the regular season already resolved rather than the league-wide marginal again.
+    """
+
+    conditioning = "path-specific latent team states carried from the regular season"
+
+    def __init__(self, states):
+        self.states = states
+
+    def sample(self, fixture, selected, rng):
+        return self.states.sample_scores(fixture, rng, selected)
+
+
+def _sample_legs(legs, home, away, day, season, rng):
     home = np.asarray(home)
     away = np.asarray(away)
     home_goals = np.empty(len(home), dtype=int)
@@ -22,15 +54,11 @@ def _sample_legs(model, home, away, day, season, rng):
             str(h),
             str(a),
         )
-        scores = model.predict_match(fixture).scores
-        if scores is None:
-            raise ValueError("Championship playoffs require a score-generating model")
-        sampled = scores.sample(rng, len(selected))
-        home_goals[selected], away_goals[selected] = sampled
+        home_goals[selected], away_goals[selected] = legs.sample(fixture, selected, rng)
     return home_goals, away_goals
 
 
-def _single_match_winner(model, first, second, day, season, rng, neutral=False):
+def _single_match_winner(legs, first, second, day, season, rng, neutral=False):
     first = np.asarray(first)
     second = np.asarray(second)
     if neutral:
@@ -40,7 +68,7 @@ def _single_match_winner(model, first, second, day, season, rng, neutral=False):
     else:
         first_home = np.ones(len(first), dtype=bool)
         home, away = first, second
-    home_goals, away_goals = _sample_legs(model, home, away, day, season, rng)
+    home_goals, away_goals = _sample_legs(legs, home, away, day, season, rng)
     home_wins = home_goals > away_goals
     tied = home_goals == away_goals
     home_wins[tied] = rng.random(tied.sum()) < 0.5
@@ -48,15 +76,25 @@ def _single_match_winner(model, first, second, day, season, rng, neutral=False):
     return np.where(first_wins, first, second)
 
 
-def _two_leg_winner(model, higher, lower, first_day, second_day, season, rng):
-    first_home, first_away = _sample_legs(model, lower, higher, first_day, season, rng)
-    second_home, second_away = _sample_legs(model, higher, lower, second_day, season, rng)
-    higher_goals = first_away + second_home
-    lower_goals = first_home + second_away
-    higher_wins = higher_goals > lower_goals
-    tied = higher_goals == lower_goals
-    higher_wins[tied] = rng.random(tied.sum()) < 0.5
-    return np.where(higher_wins, higher, lower)
+def _two_leg_round(legs, ties, days, season, rng):
+    """Both semi-finals, in calendar order so a forward state advances once per date."""
+    first = [
+        _sample_legs(legs, lower, higher, day, season, rng)
+        for (higher, lower), day in zip(ties, days[:2], strict=True)
+    ]
+    second = [
+        _sample_legs(legs, higher, lower, day, season, rng)
+        for (higher, lower), day in zip(ties, days[2:], strict=True)
+    ]
+    winners = []
+    for (higher, lower), away_first, home_second in zip(ties, first, second, strict=True):
+        higher_goals = away_first[1] + home_second[0]
+        lower_goals = away_first[0] + home_second[1]
+        higher_wins = higher_goals > lower_goals
+        tied = higher_goals == lower_goals
+        higher_wins[tied] = rng.random(tied.sum()) < 0.5
+        winners.append(np.where(higher_wins, higher, lower))
+    return winners
 
 
 def _playoff_days(season, last_regular_day):
@@ -68,7 +106,9 @@ def _playoff_days(season, last_regular_day):
     return day, [day + timedelta(days=offset) for offset in offsets], scale
 
 
-def simulate_championship_playoffs(model, orders, teams, season, last_regular_day, rng):
+def simulate_championship_playoffs(
+    model, orders, teams, season, last_regular_day, rng, states=None
+):
     """Return one playoff winner per regular-season path.
 
     Team IDs are represented by their indices while sampling. The structural model
@@ -76,10 +116,18 @@ def simulate_championship_playoffs(model, orders, teams, season, last_regular_da
     are two-legged and reseeded. A 50/50 virtual home designation removes expected
     home advantage in the neutral final. Tied knockout scores use an explicit equal
     extra-time/penalty approximation because retained rules do not specify a model.
+
+    When the season simulation drew joint latent states, the bracket is played out on
+    those same draws, so a path's postseason inherits the strengths its table came
+    from. Rounds are then sampled in calendar order, because a forward-evolving state
+    cannot be asked for an earlier date once it has advanced.
     """
     order = np.asarray(orders, dtype=int)
     if order.ndim != 2 or order.shape[1] != len(teams):
         raise ValueError("Playoff simulation requires one complete order per path")
+    legs = _MarginalLegs(model) if states is None else _PathLegs(states)
+    if states is not None and states.size != len(order):
+        raise ValueError("Sampled states and regular-season paths must correspond")
     ids = np.asarray(teams)
     _, playoff_days, date_scale = _playoff_days(season, last_regular_day)
 
@@ -88,7 +136,7 @@ def simulate_championship_playoffs(model, orders, teams, season, last_regular_da
 
     if int(season[:4]) >= 2026:
         qf1 = _single_match_winner(
-            model,
+            legs,
             team_ids(order[:, 4]),
             team_ids(order[:, 7]),
             playoff_days[0],
@@ -96,7 +144,7 @@ def simulate_championship_playoffs(model, orders, teams, season, last_regular_da
             rng,
         )
         qf2 = _single_match_winner(
-            model,
+            legs,
             team_ids(order[:, 5]),
             team_ids(order[:, 6]),
             playoff_days[1],
@@ -118,26 +166,15 @@ def simulate_championship_playoffs(model, orders, teams, season, last_regular_da
         semi1_high, semi1_low = team_ids(order[:, 2]), team_ids(order[:, 5])
         semi2_high, semi2_low = team_ids(order[:, 3]), team_ids(order[:, 4])
         format_name = "legacy-four-team-five-match"
-    finalist1 = _two_leg_winner(
-        model,
-        semi1_high,
-        semi1_low,
-        playoff_days[2],
-        playoff_days[4],
-        season,
-        rng,
-    )
-    finalist2 = _two_leg_winner(
-        model,
-        semi2_high,
-        semi2_low,
-        playoff_days[3],
-        playoff_days[5],
+    finalist1, finalist2 = _two_leg_round(
+        legs,
+        [(semi1_high, semi1_low), (semi2_high, semi2_low)],
+        [playoff_days[2], playoff_days[3], playoff_days[4], playoff_days[5]],
         season,
         rng,
     )
     winners = _single_match_winner(
-        model,
+        legs,
         finalist1,
         finalist2,
         playoff_days[6],
@@ -148,6 +185,7 @@ def simulate_championship_playoffs(model, orders, teams, season, last_regular_da
     return winners, {
         "format": format_name,
         "regular_season_conditioning": "one simulated bracket per final-table path",
+        "state_conditioning": legs.conditioning,
         "match_model": "structural score distribution at synthetic postseason dates",
         "semi_final_home_order": "higher regular-season seed at home in the second leg",
         "final_site": "neutral via an equal mixture of virtual home designations",
