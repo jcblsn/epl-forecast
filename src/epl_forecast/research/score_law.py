@@ -264,3 +264,54 @@ def event_calibration(rows, predictions):
             block["events"][event] = entry
         result[model_id] = block
     return result
+
+
+def dispersion_profile(
+    rows, shapes=(2.0, 5.0, 10.0, 20.0, 50.0, 100.0, 500.0, 2000.0, 10000.0), order=9
+):
+    """In-sample profile of the whole shared-tempo family on the evaluation window.
+
+    A boundary fit is an estimation question only if some shape could have helped;
+    this measures the gain attainable on the scored fixtures themselves.
+    """
+    quadrature = Quadrature(rows, order)
+    poisson = quadrature.log_likelihood(None)
+    return {
+        "fixtures": len(rows),
+        "poisson_log_likelihood": poisson,
+        "gain": {
+            f"{shape:g}": quadrature.log_likelihood(shape) - poisson for shape in sorted(shapes)
+        },
+    }
+
+
+def dependence_moments(rows, dispersion=None, order=9):
+    """Observed against predicted score spread and home/away covariance.
+
+    A shared Gamma tempo can only add positive dependence and overdispersion, so
+    the sign of the residual miss decides whether the family can help at all.
+    """
+    quadrature = Quadrature(rows, order)
+    weights = np.exp(quadrature.log_weights)
+    home, away = quadrature.home_rates, quadrature.away_rates
+    mean_home, mean_away = home @ weights, away @ weights
+    cross = (home * away) @ weights
+    variance_home = (home**2) @ weights - mean_home**2 + mean_home
+    variance_away = (away**2) @ weights - mean_away**2 + mean_away
+    covariance = cross - mean_home * mean_away
+    if dispersion is not None:
+        variance_home = variance_home + (home**2) @ weights / dispersion
+        variance_away = variance_away + (away**2) @ weights / dispersion
+        covariance = covariance + cross / dispersion
+    observed_home = quadrature.home_goals[:, 0]
+    observed_away = quadrature.away_goals[:, 0]
+    residual_home, residual_away = observed_home - mean_home, observed_away - mean_away
+    return {
+        "fixtures": len(rows),
+        "observed_total_mean": float(np.mean(observed_home + observed_away)),
+        "predicted_total_mean": float(np.mean(mean_home + mean_away)),
+        "observed_total_variance": float(np.mean((residual_home + residual_away) ** 2)),
+        "predicted_total_variance": float(np.mean(variance_home + variance_away + 2 * covariance)),
+        "observed_covariance": float(np.mean(residual_home * residual_away)),
+        "predicted_covariance": float(np.mean(covariance)),
+    }

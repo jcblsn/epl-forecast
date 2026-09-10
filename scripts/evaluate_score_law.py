@@ -13,8 +13,11 @@ from epl_forecast.artifacts import new_run_directory, write_csv
 from epl_forecast.research.score_law import (
     BASELINES,
     chronological_score_law,
+    dependence_moments,
+    dispersion_profile,
     distribution,
     event_calibration,
+    fit_dispersion,
     summarize,
 )
 from epl_forecast.storage import file_hash, write_json
@@ -61,6 +64,15 @@ def main():
         evaluation["skipped"].extend({"model_id": model_id, **row} for row in block["skipped"])
     predictions = evaluation["predictions"]
     write_csv(args.output / "predictions.csv", list(predictions[0]), predictions)
+    forecast = {(row["model_id"], row["match_id"]) for row in predictions}
+    scored = {
+        model_id: [
+            row
+            for row in rows
+            if row["model_id"] == model_id and (model_id, row["match_id"]) in forecast
+        ]
+        for model_id in BASELINES
+    }
 
     def dispersion_summary(model_id):
         fits = [f for f in evaluation["fits"] if f["model_id"] == model_id]
@@ -79,6 +91,17 @@ def main():
         "dispersion": {model_id: dispersion_summary(model_id) for model_id in BASELINES},
         "comparisons": {model_id: summarize(predictions, model_id) for model_id in BASELINES},
         "events": event_calibration(rows, predictions),
+        "identification": {
+            model_id: {
+                "in_sample_fit": fit_dispersion(scored[model_id]),
+                "profile": dispersion_profile(scored[model_id]),
+                "moments": {
+                    "poisson": dependence_moments(scored[model_id]),
+                    "shared_gamma_20": dependence_moments(scored[model_id], 20.0),
+                },
+            }
+            for model_id in BASELINES
+        },
         "fits": evaluation["fits"],
         "skipped": evaluation["skipped"],
     }
@@ -96,6 +119,7 @@ def main():
             )
     print(json.dumps(summary["dispersion"], indent=2), flush=True)
     print(json.dumps(summary["events"], indent=2), flush=True)
+    print(json.dumps(summary["identification"], indent=2), flush=True)
 
 
 if __name__ == "__main__":

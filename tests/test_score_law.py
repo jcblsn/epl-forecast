@@ -7,6 +7,8 @@ from epl_forecast.research.score_law import (
     BASELINES,
     Quadrature,
     chronological_score_law,
+    dependence_moments,
+    dispersion_profile,
     distribution,
     event_calibration,
     fit_dispersion,
@@ -174,4 +176,61 @@ def test_event_calibration_scores_only_the_fixtures_that_were_forecast():
     assert 0.0 <= draw["poisson"] <= 1.0
     assert draw["observed"] == pytest.approx(
         np.mean([tail_events(case)["draw"] for case in rows[14:]])
+    )
+
+
+def planted(home, away, **overrides):
+    return [
+        row(1, int(h), int(a))
+        | {
+            "log_home_rate_mean": str(math.log(1.6)),
+            "log_away_rate_mean": str(math.log(1.1)),
+            "log_home_rate_variance": "0.0",
+            "log_away_rate_variance": "0.0",
+            "log_rate_covariance": "0.0",
+        }
+        | overrides
+        for h, a in zip(home, away, strict=True)
+    ]
+
+
+def test_the_profile_peaks_at_the_planted_tempo():
+    generator = np.random.default_rng(11)
+    tempo = generator.gamma(20.0, 1 / 20.0, 6000)
+    rows = planted(generator.poisson(tempo * 1.6), generator.poisson(tempo * 1.1))
+    profile = dispersion_profile(rows, shapes=(5.0, 20.0, 100.0, 10000.0))
+    best = max(profile["gain"], key=profile["gain"].get)
+    assert best == "20"
+    assert profile["gain"]["20"] > 0
+    assert profile["gain"]["10000"] == pytest.approx(0.0, abs=0.2)
+
+
+def test_the_profile_never_gains_on_independent_scores():
+    generator = np.random.default_rng(13)
+    rows = planted(generator.poisson(1.6, 6000), generator.poisson(1.1, 6000))
+    profile = dispersion_profile(rows, shapes=(5.0, 20.0, 100.0))
+    assert all(gain < 0 for gain in profile["gain"].values())
+
+
+def test_moments_recover_a_planted_shared_tempo():
+    generator = np.random.default_rng(17)
+    tempo = generator.gamma(20.0, 1 / 20.0, 20000)
+    rows = planted(generator.poisson(tempo * 1.6), generator.poisson(tempo * 1.1))
+    poisson = dependence_moments(rows)
+    assert poisson["predicted_covariance"] == pytest.approx(0.0, abs=1e-12)
+    assert poisson["observed_covariance"] > 0.05
+    assert poisson["observed_total_variance"] > poisson["predicted_total_variance"]
+    gamma = dependence_moments(rows, 20.0)
+    assert gamma["predicted_covariance"] == pytest.approx(poisson["observed_covariance"], abs=0.03)
+    assert gamma["predicted_total_variance"] == pytest.approx(
+        poisson["observed_total_variance"], rel=0.05
+    )
+
+
+def test_state_uncertainty_alone_predicts_positive_covariance():
+    moments = dependence_moments([row(1, 1, 1) | {"log_rate_covariance": "0.02"}])
+    assert moments["predicted_covariance"] == pytest.approx(
+        math.exp(0.45 + 0.05 + 0.5 * (0.03 + 0.02) + 0.02)
+        - math.exp(0.45 + 0.015) * math.exp(0.05 + 0.01),
+        rel=1e-6,
     )
