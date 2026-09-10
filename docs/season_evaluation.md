@@ -30,7 +30,19 @@ OPENBLAS_NUM_THREADS=1 uv run python scripts/evaluate_seasons.py \
 The Championship run infers the observed playoff winner from the next Premier
 League membership, distinguishes incumbents, relegated Premier League entrants and
 clubs promoted from below in `subgroups.csv`, and uses the structural postseason
-bracket in every forecast distribution.
+bracket in every forecast distribution. Results are in the
+[Championship panel](experiments/season_scoring_championship.md).
+
+Compact a completed run into a committable archive that reproduces every score
+without provider data, and rescore from it:
+
+```sh
+uv run python scripts/archive_seasons.py --evaluation runs/championship-season-scoring \
+  --output docs/experiments/season_scoring_championship/forecast_marginals.json.gz
+uv run python scripts/rescore_seasons.py \
+  --archive docs/experiments/season_scoring_championship/forecast_marginals.json.gz \
+  --output runs/championship-rescore
+```
 
 ## Origins and outcomes
 

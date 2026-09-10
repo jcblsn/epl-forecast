@@ -7,12 +7,20 @@ every metric or fixes the final architecture.
 
 The matched match scoreboard favors M7 among retained structural forecasts:
 0.97827 H/D/A log loss versus 0.98039 for M2, with better Brier and score NLL.
-The 11-season season panel favors M7 on rank RPS at preseason, MW6, MW12 and MW19,
-and on points CRPS at every evaluated origin after preseason. M4 has the best
-preseason points CRPS and slightly wider early points coverage. M7 is the practical
-single-model choice because it combines the best retained match score, strong rank
-distributions, posterior state uncertainty and the best later-origin points scores.
-The tradeoff remains recorded in the season artifacts.
+The 11-season Premier League season panel favors M7 on rank RPS at preseason, MW6,
+MW12 and MW19, and on points CRPS at every evaluated origin after preseason. M4 has
+the best preseason points CRPS and slightly wider early points coverage. M7 is the
+practical single-model choice because it combines the best retained match score,
+strong rank distributions, posterior state uncertainty and the best later-origin
+points scores. The tradeoff remains recorded in the season artifacts.
+
+The [Championship panel](experiments/season_scoring_championship.md) makes the
+second league's choice explicit rather than inherited. M7 beats M2 there on rank
+RPS at preseason, MW6, MW12 and MW19, on points CRPS through MW12, and on every
+preseason event Brier, with season-clustered intervals excluding zero, and its PIT
+histograms are close to uniform where M2's are U-shaped. One model serves both
+leagues. In the Championship, M7's Understat channel contributes no evidence, so
+what carries over is its dynamics and entry handling, not its observation model.
 
 The [2026/27 snapshot](experiments/current_season_projection_2026-09-10/report.md)
 is the current durable M7 season-distribution product for both leagues.

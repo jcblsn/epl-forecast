@@ -61,6 +61,12 @@ team prior includes residual, coefficient and source-strength uncertainty.
 The bridge used at entry contains only completed PL cohorts from earlier
 seasons, available on that entry date. An incoming club uses its immediately
 previous Championship season, including a returning club with stale PL ratings.
+The bridge applies only when the forecast competition is the Premier League. A
+Championship forecast has no boundary bridge by default, so a club returning to
+the Championship keeps its own fitted state and only a club never seen there
+draws the league population prior. Setting `relegation_entry` to `generic` or
+`mapped` turns on the reverse boundary for research; the
+[comparison](experiments/relegation_entry.md) keeps the default.
 If the Championship season is incomplete or absent, the explicit fallback is
 the broader league population prior. Before its first PL result, a club can be
 predicted from its Championship prior without adding future fixture identities

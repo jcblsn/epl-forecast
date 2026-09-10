@@ -43,6 +43,7 @@ def main():
                 archive["truth"][season],
                 set(archive["promoted"][season]),
                 forecast["seed"],
+                archive.get("entry_cohorts", {}).get(season),
             )
         )
     args.output.mkdir(parents=True, exist_ok=True)
@@ -60,6 +61,12 @@ def main():
     )
     summary, calibration = summarize(rows)
     save_rows(args.output / "club_seasons.csv", rows)
+    if archive.get("entry_cohorts"):
+        subgroups = []
+        for cohort in sorted({r["entry_cohort"] for r in rows}):
+            scores, _ = summarize([r for r in rows if r["entry_cohort"] == cohort])
+            subgroups.extend({"entry_cohort": cohort, **row} for row in scores)
+        save_rows(args.output / "subgroups.csv", subgroups)
     save_rows(args.output / "summary.csv", summary)
     save_rows(args.output / "calibration.csv", calibration)
     per_season = []

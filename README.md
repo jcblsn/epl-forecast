@@ -10,6 +10,10 @@ The [pinned 2026/27 projection](docs/experiments/current_season_projection_2026-
 records the current two-league rank distributions and matched uncertainty sensitivity.
 The [matched research scoreboard](docs/experiments/research_scoreboard.md) keeps
 their outcome, score and calibration metrics beside M5 and market comparators.
+The [Championship season panel](docs/experiments/season_scoring_championship.md)
+establishes M7 as the season product in the second league as well, and the
+[relegation entry-state comparison](docs/experiments/relegation_entry.md) keeps
+the current Championship treatment for clubs arriving from the Premier League.
 The [chronological market pool](docs/experiments/market_pool.md) now publishes a
 separate market-assisted probability when a captured pre-closing quote is available.
 Existing models and the simulator supply evidence and reusable components for a
@@ -96,7 +100,9 @@ in 2015/16–2025/26 and checks a sampled posterior on a smaller historical subs
 M5 is near M2 on aggregate outcome loss. The [season-level comparison](docs/experiments/season_scoring.md)
 now shows better early-season distribution scores and coverage for M4/M5/M7,
 with tradeoffs across origins and targets; M7 supplies the structural MVP while M2
-remains the benchmark. The finite dynamics grid concentrates heavily,
+remains the benchmark. The matching
+[Championship panel](docs/experiments/season_scoring_championship.md) favors M7 at
+every origin through MW19. The finite dynamics grid concentrates heavily,
 and synthetic league-level coverage needs improvement.
 
 ```sh
