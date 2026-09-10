@@ -19,22 +19,20 @@ Every current M7 archive contains:
 - structural H/D/A probabilities and a structural exact-score matrix;
 - market-assisted H/D/A probabilities where a captured pre-closing quote exists;
 - full final-points and final-position distributions for every club;
-- expected points and rank, their standard deviations, and central 90% intervals;
+- expected and median points and rank, plus central 50%, 80% and 90% intervals;
 - title, top-four, top-five and relegation probabilities for the Premier League;
 - title, automatic-promotion, playoff-qualification, promotion and relegation
   probabilities for the Championship;
 - the provider observation cutoff, generation timestamp, input provenance and a
   pre-kickoff archive manifest.
 
-The market-assisted arm is preferred for near-term H/D/A probabilities when its
-required quote exists. It does not alter exact scores, team states or season paths.
-When no suitable quote exists, the preferred probability fields fall back to M7.
+M7 is the primary forecast surface for near-term H/D/A probabilities, exact scores,
+team states and season paths. The market-assisted arm remains separately labeled
+comparison evidence when its required quote exists.
 
-Championship playoff promotion currently assigns the single playoff promotion
-slot equally among the qualifiers on each simulated regular-season path. This
-preserves three total promotion slots and keeps the assumption explicit. A future
-playoff match model can replace it without changing the structural regular-season
-simulation.
+Championship playoff promotion simulates the edition-specific bracket conditional
+on each regular-season path with the structural score model. Neutral-final and
+tied-knockout treatments remain explicit approximations, separate from fitting.
 
 Run both products with:
 

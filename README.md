@@ -34,6 +34,14 @@ uv run epl-forecast forecast --competition eng-premier-league
 uv run epl-forecast forecast --competition eng-championship
 ```
 
+Create a pinned two-league M7 season snapshot and matched uncertainty sensitivity
+from one retained information cutoff with:
+
+```sh
+OPENBLAS_NUM_THREADS=1 uv run python scripts/project_current_seasons.py \
+  --cutoff <ISO-timestamp> --output <new-artifact-directory>
+```
+
 API-Football supplies schedules and player data. Football-Data supplies results,
 odds and basic match statistics. Understat supplies Premier League xG; Championship
 xG is unavailable. FPL is retained only for captured availability/news and playing

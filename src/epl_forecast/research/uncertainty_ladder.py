@@ -8,7 +8,7 @@ from scipy.stats import poisson
 
 from epl_forecast.models.base import Forecast
 from epl_forecast.models.poisson import IndependentPoisson, PoissonMixture
-from epl_forecast.models.quality_tilt_scores import GammaPoissonMixture
+from epl_forecast.models.quality_tilt_scores import GammaPoissonMixture, ScoreMixture
 
 
 def covariance_root(covariance):
@@ -31,7 +31,8 @@ class MatchedStateForecast:
         fixed_teams=(),
         dispersion=None,
     ):
-        self.model = fitted.population_snapshot()
+        population_snapshot = getattr(fitted, "population_snapshot", None)
+        self.model = population_snapshot() if population_snapshot else fitted
         self.model = deepcopy(self.model)
         self.as_of = fitted.as_of
         self.season = season
@@ -115,6 +116,68 @@ class MatchedPaths:
             rates *= rng.gamma(shape, 1 / shape, self.size)[:, None]
         goals = rng.poisson(rates)
         return goals[:, 0], goals[:, 1]
+
+
+class MatchedStateMixture:
+    """Apply one uncertainty switch to every member of a Bayesian state mixture."""
+
+    def __init__(
+        self,
+        fitted,
+        teams,
+        season,
+        *,
+        posterior=True,
+        evolution=True,
+        innovations=True,
+        fixed_teams=(),
+    ):
+        if not getattr(fitted, "members", None):
+            raise ValueError("Matched state mixtures require fitted member models")
+        self.members = [
+            MatchedStateForecast(
+                member,
+                teams,
+                season,
+                posterior=posterior,
+                evolution=evolution,
+                innovations=innovations,
+                fixed_teams=fixed_teams,
+                dispersion=member.dispersion,
+            )
+            for member in fitted.members
+        ]
+        self.weights = np.asarray(fitted.weights, dtype=float)
+        self.as_of = fitted.as_of
+        self.team_index = fitted.team_index
+
+    def predict_match(self, fixture):
+        scores = ScoreMixture(
+            [member.predict_match(fixture).scores for member in self.members], self.weights
+        )
+        return Forecast(scores.outcome_probabilities(), scores)
+
+    def sample_forecast_state(self, rng, size=1):
+        return MatchedMixturePaths(self, rng, size)
+
+
+class MatchedMixturePaths:
+    def __init__(self, forecast, rng, size):
+        self.as_of, self.size = forecast.as_of, size
+        self.evolves_future_states = any(member.evolution for member in forecast.members)
+        indices = rng.choice(len(forecast.members), size=size, p=forecast.weights)
+        self.groups = []
+        for index, member in enumerate(forecast.members):
+            positions = np.flatnonzero(indices == index)
+            if len(positions):
+                self.groups.append((positions, member.sample_forecast_state(rng, len(positions))))
+
+    def sample_scores(self, fixture, rng):
+        home, away = np.empty(self.size, dtype=int), np.empty(self.size, dtype=int)
+        for positions, states in self.groups:
+            sampled = states.sample_scores(fixture, rng)
+            home[positions], away[positions] = sampled
+        return home, away
 
 
 class M2SeasonDependence:

@@ -6,7 +6,11 @@ import pytest
 
 from epl_forecast.models.baselines import AttackDefensePoisson
 from epl_forecast.models.centered_quality_tilt import CenteredQualityTiltFilter
-from epl_forecast.research.uncertainty_ladder import M2SeasonDependence, MatchedStateForecast
+from epl_forecast.research.uncertainty_ladder import (
+    M2SeasonDependence,
+    MatchedStateForecast,
+    MatchedStateMixture,
+)
 from epl_forecast.research.uncertainty_report import cluster_interval
 
 
@@ -72,3 +76,40 @@ def test_m2_copula_preserves_score_marginals_but_adds_cross_match_dependence(ful
         correlations.append(np.corrcoef(home, later)[0, 1])
     assert abs(correlations[0]) < 0.015
     assert correlations[1] > 0.3
+
+
+def test_matched_state_mixture_preserves_members_and_switches(full_season):
+    from epl_forecast.models.quality_tilt import BayesianQualityTilt
+
+    cutoff = date(2020, 8, 10)
+    teams = sorted({m.fixture.home_team_id for m in full_season})
+    specifications = [
+        dict(
+            quality_retention=0.85,
+            quality_sd=0.09,
+            tilt_retention=0.5,
+            tilt_sd=0.07,
+            dispersion=None,
+        ),
+        dict(
+            quality_retention=0.97,
+            quality_sd=0.16,
+            tilt_retention=0.85,
+            tilt_sd=0.14,
+            dispersion=None,
+        ),
+    ]
+    fitted = BayesianQualityTilt(specifications=specifications).fit(full_season[:80], cutoff)
+    mixture = MatchedStateMixture(
+        fitted, teams, "2020-2021", posterior=False, evolution=True, innovations=False
+    )
+    assert len(mixture.members) == 2
+    assert all(not member.posterior and member.evolution for member in mixture.members)
+    assert all(not member.innovations for member in mixture.members)
+    full = MatchedStateMixture(fitted, teams, "2020-2021")
+    assert full.predict_match(full_season[90].fixture).probabilities == pytest.approx(
+        fitted.predict_match(full_season[90].fixture).probabilities
+    )
+    states = mixture.sample_forecast_state(np.random.default_rng(4), 20)
+    goals = states.sample_scores(full_season[90].fixture, np.random.default_rng(5))
+    assert all(values.shape == (20,) for values in goals)

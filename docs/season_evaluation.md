@@ -18,15 +18,30 @@ Each retains its existing configuration and training window. Parameters are not
 selected using these scores. This is retrospective development evidence: existing
 specifications have already been explored using historical results.
 
+For the Championship, use the same scorer on canonical regular-season histories
+and keep the focused comparison to M7 and M2 unless additional models are needed:
+
+```sh
+OPENBLAS_NUM_THREADS=1 uv run python scripts/evaluate_seasons.py \
+  --competition eng-championship --models M2 M7 \
+  --output runs/championship-season-scoring
+```
+
+The Championship run infers the observed playoff winner from the next Premier
+League membership, distinguishes incumbents, relegated Premier League entrants and
+clubs promoted from below in `subgroups.csv`, and uses the structural postseason
+bracket in every forecast distribution.
+
 ## Origins and outcomes
 
-The panel covers 2015/16–2025/26, with 20 clubs in each season. Preseason is the
-start of the first match date. Historical normalized data has no round numbers;
-MW6, MW12, MW19 and MW30 are explicitly match-count proxies: the next calendar
-day after the 60th, 120th, 190th and 300th completed match. All results on that
-date are included, so actual counts can exceed those targets. Every row records
-the cutoff and number of played matches. These are not official fixture rounds,
-which postponements and the COVID interruption make materially different.
+The retained Premier League panel covers 2015/16–2025/26, with 20 clubs in each
+season. Preseason is the start of the first match date. Historical normalized data
+has no round numbers; MW6, MW12, MW19 and MW30 are explicitly match-count proxies:
+the next calendar day after the 60th, 120th, 190th and 300th completed Premier
+League match, or the 72nd, 144th, 228th and 360th Championship match. All results
+on that date are included, so actual counts can exceed those targets. Every row
+records the cutoff and number of played matches. These are not official fixture
+rounds, which postponements and the COVID interruption make materially different.
 
 Fitting and fixed results use next-day availability. Each origin is fitted from
 scratch, using only eligible history; future results enter only the outcome table.
@@ -34,7 +49,9 @@ The simulation receives the retrospectively recorded future schedule, not future
 scores. M7's historical xG publication dates remain reconstructed. Forecasts use
 only sanctions known at the cutoff; realized final points and positions include
 all final sanctions. Unexpected sanctions therefore contribute to forecast error.
-Promotion means absence from the preceding Premier League season.
+Premier League promotion means absence from the preceding Premier League season.
+Championship subgroup labels distinguish entry from below and relegation from the
+Premier League using preceding-season membership.
 
 ## Scores and calibration
 

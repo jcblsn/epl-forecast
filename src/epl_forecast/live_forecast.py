@@ -300,7 +300,6 @@ def export_forecast(
             if fixture.match_id in selected_quotes
             else None
         )
-        preferred = assistance or structural
         matches.append(
             {
                 **live.details[fixture.match_id],
@@ -311,12 +310,10 @@ def export_forecast(
                 "market_assisted_p_home": None if assistance is None else assistance["p_home"],
                 "market_assisted_p_draw": None if assistance is None else assistance["p_draw"],
                 "market_assisted_p_away": None if assistance is None else assistance["p_away"],
-                "preferred_probability_source": "market_assisted"
-                if assistance is not None
-                else "structural",
-                "preferred_p_home": preferred["p_home"],
-                "preferred_p_draw": preferred["p_draw"],
-                "preferred_p_away": preferred["p_away"],
+                "primary_probability_source": "structural",
+                "primary_p_home": structural["p_home"],
+                "primary_p_draw": structural["p_draw"],
+                "primary_p_away": structural["p_away"],
                 **(
                     {"player_quality": model.lineup_summary(fixture)}
                     if hasattr(model, "lineup_summary")

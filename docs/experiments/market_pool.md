@@ -31,8 +31,7 @@ uv run python scripts/fit_market_pool.py \
   --output runs/market-pool
 ```
 
-Current M7 forecast archives expose structural probabilities, market-assisted
-probabilities, the de-vigged source probabilities, raw odds, quote retrieval time,
-pool weight and an explicit preferred probability source. Matches without a quote
-fall back to structural probabilities. Exact scores and long-horizon fixtures are
-always structural.
+Current M7 forecast archives expose primary structural probabilities and separately
+labeled market-assisted probabilities, with the de-vigged source probabilities,
+raw odds, quote retrieval time and pool weight retained for provenance. Exact scores
+and long-horizon fixtures are always structural.

@@ -394,7 +394,7 @@ def simulate_season(
             "position_probabilities": list(positions),
             "mean_points": float(points[:, index].mean()),
             "points_quantiles_05_50_95": list(np.quantile(points[:, index], [0.05, 0.5, 0.95])),
-            "median_points": int(np.quantile(points[:, index], 0.5)),
+            "median_points": int(np.quantile(points[:, index], 0.5, method="inverted_cdf")),
             "points_intervals": points_intervals,
             "points_distribution": distribution(points[:, index]),
             "mean_goal_difference": float(goal_difference[:, index].mean()),
