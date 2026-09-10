@@ -27,7 +27,10 @@ class QualityTiltFilter(DynamicAttackDefense):
         initial_team_sd=0.4,
         dispersion=20.0,
         quadrature_order=9,
+        independent_poisson=False,
     ):
+        if independent_poisson:
+            dispersion = None
         for retention in (quality_retention, tilt_retention):
             if not np.isfinite(retention) or not 0 < retention <= 1:
                 raise ValueError("Retention must be in (0, 1]")

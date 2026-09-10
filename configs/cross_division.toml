@@ -42,6 +42,18 @@ train_competitions = ["eng-premier-league", "eng-championship"]
 data_root = "data"
 
 [[models]]
+id = "M5-uncentered-bridge-control"
+kind = "quality_tilt"
+train_window_days = 0
+train_competitions = ["eng-premier-league", "eng-championship"]
+[models.parameters]
+quality_retention = 0.85
+quality_sd = 0.09
+tilt_retention = 0.5
+tilt_sd = 0.07
+independent_poisson = true
+
+[[models]]
 id = "M9-cross-division-goals"
 kind = "cross_division_quality_tilt"
 train_window_days = 0
