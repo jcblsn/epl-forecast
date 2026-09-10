@@ -37,8 +37,11 @@ class CrossDivisionQualityTilt(QualityTiltFilter):
         division_home_sd=0.08,
         annual_division_sd=0.03,
         annual_division_home_sd=0.02,
+        independent_poisson=False,
         **kwargs,
     ):
+        if independent_poisson:
+            kwargs["dispersion"] = None
         for value in (
             division_level_sd,
             division_home_sd,
