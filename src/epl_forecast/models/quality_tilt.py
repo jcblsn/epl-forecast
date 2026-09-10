@@ -68,13 +68,18 @@ class QualityTiltFilter(DynamicAttackDefense):
         variance = sd**2 * np.array(
             [years if r == 1 else (1 - f**2) / (1 - r**2) for r, f in zip(rho, factor, strict=True)]
         )
+        leading = self.league_dimensions
         return (
-            np.r_[np.ones(2), np.tile(factor, (dimensions - 2) // 2)],
+            np.r_[np.ones(leading), np.tile(factor, (dimensions - leading) // 2)],
             np.r_[
-                np.array([self.annual_league_sd, self.annual_home_sd]) ** 2 * years,
-                np.tile(variance, (dimensions - 2) // 2),
+                self.league_innovation_sd() ** 2 * years,
+                np.tile(variance, (dimensions - leading) // 2),
             ],
         )
+
+    def league_innovation_sd(self):
+        """Annual random-walk scale for each slot of the leading league block."""
+        return np.array([self.annual_league_sd, self.annual_home_sd])
 
     def _advance(self, day):
         if self._state_date is not None:
@@ -93,11 +98,11 @@ class QualityTiltFilter(DynamicAttackDefense):
 
     @property
     def attack(self):
-        return self.mean[2::2] + self.mean[3::2]
+        return self.mean[self.league_dimensions :: 2] + self.mean[self.league_dimensions + 1 :: 2]
 
     @property
     def defense(self):
-        return self.mean[2::2] - self.mean[3::2]
+        return self.mean[self.league_dimensions :: 2] - self.mean[self.league_dimensions + 1 :: 2]
 
     def forecast_moments(self, fixture):
         self.validate_fixture(fixture)
@@ -318,7 +323,7 @@ class ForwardQualityTiltStates:
                 key = team, fixture.season_id
                 if key in entries:
                     return entries[key]
-                index = 2 + 2 * model.team_index[team]
+                index = model.league_dimensions + 2 * model.team_index[team]
                 return values[:, index : index + 2]
 
             h, a = team_value(fixture.home_team_id), team_value(fixture.away_team_id)

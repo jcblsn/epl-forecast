@@ -21,6 +21,10 @@ from epl_forecast.schema import Fixture, Match
 
 
 class DynamicAttackDefense(BaseModel):
+    """The state holds a leading league block, then two slots per club."""
+
+    league_dimensions = 2
+
     def __init__(
         self,
         annual_retention: float = 0.85,
@@ -56,9 +60,23 @@ class DynamicAttackDefense(BaseModel):
         self._last_season = {}
         self.entry_priors = {}
         self.appearances = Counter()
-        self.mean = np.array([np.log(1.2), np.log(1.3)])
-        self.covariance = np.diag([0.25**2, 0.25**2])
+        self.mean = np.r_[np.log(1.2), np.log(1.3), np.zeros(self.league_dimensions - 2)]
+        self.covariance = np.diag(
+            np.r_[0.25**2, 0.25**2, np.full(self.league_dimensions - 2, self.initial_league_sd**2)]
+        )
         self.updates = 0
+
+    @property
+    def initial_league_sd(self) -> float:
+        return 0.25
+
+    def _team_slice(self, team: str) -> slice:
+        index = self.league_dimensions + 2 * self.team_index[team]
+        return slice(index, index + 2)
+
+    def _league_design(self, fixture_or_match) -> np.ndarray:
+        """Rows are home and away log rates; columns are the leading league block."""
+        return np.array([[1.0, 1.0], [1.0, 0.0]])
 
     def _bridge(self, season: str, as_of: date) -> PromotionBridge:
         available = {
@@ -92,13 +110,13 @@ class DynamicAttackDefense(BaseModel):
             self.covariance = np.pad(self.covariance, ((0, 2), (0, 2)))
             self.covariance[-2:, -2:] = prior.covariance
         elif prior.source == "Championship promotion bridge":
-            index = 2 + 2 * self.team_index[team]
+            index = self.league_dimensions + 2 * self.team_index[team]
             self.mean[index : index + 2] = prior.mean
             self.covariance[index : index + 2, :] = 0
             self.covariance[:, index : index + 2] = 0
             self.covariance[index : index + 2, index : index + 2] = prior.covariance
         else:
-            index = 2 + 2 * self.team_index[team]
+            index = self.league_dimensions + 2 * self.team_index[team]
             prior = TeamPrior(
                 self.mean[index : index + 2].copy(),
                 self.covariance[index : index + 2, index : index + 2].copy(),
@@ -118,13 +136,14 @@ class DynamicAttackDefense(BaseModel):
                 if self.annual_retention == 1
                 else (1 - factor**2) / (1 - self.annual_retention**2)
             )
-            decay = np.r_[np.ones(2), np.full(len(self.mean) - 2, factor)]
+            leading = self.league_dimensions
+            decay = np.r_[np.ones(leading), np.full(len(self.mean) - leading, factor)]
             self.mean *= decay
             self.covariance *= np.outer(decay, decay)
             self.covariance += np.diag(
                 np.r_[
-                    np.full(2, self.annual_league_sd**2 * years),
-                    np.full(len(self.mean) - 2, team_variance),
+                    np.full(leading, self.annual_league_sd**2 * years),
+                    np.full(len(self.mean) - leading, team_variance),
                 ]
             )
         self._state_date = day
@@ -164,14 +183,16 @@ class DynamicAttackDefense(BaseModel):
                 design = np.zeros((2 * len(games), len(self.mean)))
                 goals = []
                 for row, match in enumerate(games):
-                    h, a = (
-                        2 + 2 * self.team_index[t]
-                        for t in (match.fixture.home_team_id, match.fixture.away_team_id)
+                    design[2 * row : 2 * row + 2, : self.league_dimensions] = self._league_design(
+                        match.fixture
                     )
-                    design[2 * row : 2 * row + 2, :2] = [[1, 1], [1, 0]]
                     home_transform, away_transform = self._team_transforms()
-                    design[2 * row : 2 * row + 2, h : h + 2] = home_transform
-                    design[2 * row : 2 * row + 2, a : a + 2] = away_transform
+                    design[2 * row : 2 * row + 2, self._team_slice(match.fixture.home_team_id)] = (
+                        home_transform
+                    )
+                    design[2 * row : 2 * row + 2, self._team_slice(match.fixture.away_team_id)] = (
+                        away_transform
+                    )
                     self._augment_design(design[2 * row : 2 * row + 2], match)
                     goals.extend([match.home_goals, match.away_goals])
                     for team in (match.fixture.home_team_id, match.fixture.away_team_id):
@@ -216,11 +237,11 @@ class DynamicAttackDefense(BaseModel):
 
     @property
     def attack(self):
-        return self.mean[2::2]
+        return self.mean[self.league_dimensions :: 2]
 
     @property
     def defense(self):
-        return self.mean[3::2]
+        return self.mean[self.league_dimensions + 1 :: 2]
 
     def _uses_fitted_state(self, team: str, season: str) -> bool:
         return team in self.team_index and (
@@ -232,10 +253,10 @@ class DynamicAttackDefense(BaseModel):
         if self.as_of is None:
             raise ValueError("Fit the model before prediction")
         if self._uses_fitted_state(team, season):
-            index = 2 + 2 * self.team_index[team]
+            block = self._team_slice(team)
             return TeamPrior(
-                self.mean[index : index + 2].copy(),
-                self.covariance[index : index + 2, index : index + 2].copy(),
+                self.mean[block].copy(),
+                self.covariance[block, block].copy(),
                 self.entry_priors[team, season].source
                 if (team, season) in self.entry_priors
                 else "previous league state",
@@ -263,15 +284,14 @@ class DynamicAttackDefense(BaseModel):
     def forecast_moments(self, fixture: Fixture) -> tuple[np.ndarray, np.ndarray]:
         self.validate_fixture(fixture)
         design = np.zeros((2, len(self.mean)))
-        design[:, :2] = [[1, 1], [1, 0]]
+        design[:, : self.league_dimensions] = self._league_design(fixture)
         extra_mean, extra_covariance = np.zeros(2), np.zeros((2, 2))
         for team, transform in (
             (fixture.home_team_id, self._team_transforms()[0]),
             (fixture.away_team_id, self._team_transforms()[1]),
         ):
             if self._uses_fitted_state(team, fixture.season_id):
-                index = 2 + 2 * self.team_index[team]
-                design[:, index : index + 2] = transform
+                design[:, self._team_slice(team)] = transform
             else:
                 prior = self.team_state(team, fixture.season_id)
                 extra_mean += transform @ prior.mean
@@ -308,8 +328,7 @@ class SampledTeamStates:
 
     def _team(self, team: str, season: str) -> np.ndarray:
         if self.model._uses_fitted_state(team, season):
-            index = 2 + 2 * self.model.team_index[team]
-            return self.values[:, index : index + 2]
+            return self.values[:, self.model._team_slice(team)]
         key = team, season
         if key not in self._entry_draws:
             prior = self.model.team_state(team, season)
@@ -323,9 +342,12 @@ class SampledTeamStates:
         self.model.validate_fixture(fixture)
         home = self._team(fixture.home_team_id, fixture.season_id)
         away = self._team(fixture.away_team_id, fixture.season_id)
+        league = (
+            self.values[:, : self.model.league_dimensions] @ self.model._league_design(fixture).T
+        )
         return (
-            np.exp(self.values[:, 0] + self.values[:, 1] + home[:, 0] - away[:, 1]),
-            np.exp(self.values[:, 0] + away[:, 0] - home[:, 1]),
+            np.exp(league[:, 0] + home[:, 0] - away[:, 1]),
+            np.exp(league[:, 1] + away[:, 0] - home[:, 1]),
         )
 
     def sample_scores(self, fixture: Fixture, rng: np.random.Generator):
