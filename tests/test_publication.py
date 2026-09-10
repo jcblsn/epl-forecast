@@ -74,7 +74,7 @@ def sample_forecast(competition="eng-premier-league", generated="2026-09-10T12:0
             },
         ],
         "simulation": {
-            "simulations": 2,
+            "simulations": 10000,
             "teams": [
                 {
                     "team_id": "arsenal",
@@ -168,6 +168,17 @@ def test_derived_forecast_keeps_the_distributional_surface():
 def test_distant_fixtures_stay_outside_the_horizon():
     document = derive_forecast(sample_forecast(), sample_run(), "2026-09-10T120000Z")
     assert [match["match_date"] for match in document["matches"]] == ["2026-09-12"]
+
+
+def test_a_thin_or_missing_projection_is_not_a_product():
+    coarse = sample_forecast()
+    coarse["simulation"]["simulations"] = 20
+    with pytest.raises(ValueError, match="product floor"):
+        derive_forecast(coarse, sample_run(), "2026-09-10T120000Z")
+    without = sample_forecast()
+    without["simulation"] = None
+    with pytest.raises(ValueError, match="without a season projection"):
+        derive_forecast(without, sample_run(), "2026-09-10T120000Z")
 
 
 def test_check_publishable_refuses_private_content():

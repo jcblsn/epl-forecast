@@ -20,7 +20,7 @@ const EVENT_ORDER = [
 
 const pct = (p) => (p === null || p === undefined ? "" : (100 * p).toFixed(1));
 const label = (key) => key.replace(/_probability$/, "").replace(/_/g, " ");
-const shade = (p) => `rgba(68, 119, 204, ${Math.min(1, Math.sqrt(p) * 1.25).toFixed(3)})`;
+const shade = (p, peak) => `rgba(68, 119, 204, ${Math.min(1, Math.sqrt(p / peak)).toFixed(3)})`;
 const when = (value) => (value ? new Date(value).toISOString().slice(0, 16).replace("T", " ") : "");
 
 function element(tag, properties = {}, children = []) {
@@ -117,12 +117,13 @@ function tableView() {
 function positionsView() {
   const teams = state.document.teams;
   const places = teams[0].position_probabilities.length;
+  const peak = Math.max(...teams.flatMap((team) => team.position_probabilities));
   const headers = ["Team", ...Array.from({ length: places }, (_, i) => String(i + 1))];
   const rows = teams.map((team) =>
     element("tr", {}, [
       element("td", { className: "name", textContent: team.name }),
       ...team.position_probabilities.map((p) =>
-        cell(p >= 0.005 ? pct(p) : "", { className: "cell", style: `background:${shade(p)}` })
+        cell(p >= 0.005 ? pct(p) : "", { className: "cell", style: `background:${shade(p, peak)}` })
       ),
     ])
   );
@@ -190,7 +191,7 @@ function fixturesView() {
       cell(match.score_probabilities ? topScores(match.score_probabilities) : "", { className: "muted" }),
     ]);
   });
-  panel.append(table(["Kickoff", "Home", "Away", "H", "D", "A", "Market-assisted", "Likeliest scores"], rows));
+  panel.append(table(["Kickoff (UTC)", "Home", "Away", "H", "D", "A", "Market-assisted", "Likeliest scores"], rows));
 }
 
 function topScores(scores) {
@@ -227,7 +228,7 @@ function ledgerView() {
     ),
     element("h2", { textContent: "Scored matches" }),
     table(
-      ["Kickoff", "Match", "Outcome", "H", "D", "A", "Snapshot"],
+      ["Kickoff (UTC)", "Match", "Outcome", "H", "D", "A", "Snapshot"],
       [...state.ledger.settled].reverse().map((row) =>
         element("tr", {}, [
           cell(when(row.kickoff_time)),

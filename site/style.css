@@ -3,12 +3,12 @@ body { margin: 0; font: 13px/1.4 system-ui, sans-serif; }
 header { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; padding: 8px 12px; border-bottom: 1px solid #8884; position: sticky; top: 0; background: Canvas; }
 nav button { font: inherit; padding: 3px 8px; }
 nav button[aria-current="true"] { font-weight: 600; text-decoration: underline; }
-#meta { margin-left: auto; opacity: 0.7; font-variant-numeric: tabular-nums; }
+#meta { flex: 1 1 320px; text-align: right; opacity: 0.7; }
 main { padding: 12px; overflow-x: auto; }
 table { border-collapse: collapse; font-variant-numeric: tabular-nums; }
 th, td { padding: 2px 7px; text-align: right; border-bottom: 1px solid #8883; white-space: nowrap; }
 th:first-child, td:first-child, th.name, td.name { text-align: left; }
-thead th { position: sticky; top: 41px; background: Canvas; cursor: pointer; }
+thead th { background: Canvas; cursor: pointer; border-bottom: 2px solid #8886; }
 tbody tr:hover { background: #8882; }
 td.cell { text-align: center; padding: 2px 4px; color: #000; }
 .bar { display: inline-block; height: 9px; background: #4477cc; vertical-align: middle; }

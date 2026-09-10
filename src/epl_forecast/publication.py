@@ -18,6 +18,7 @@ from epl_forecast.datasets import timestamp
 from epl_forecast.storage import json_bytes, write_immutable, write_json
 
 POLICY_PATH = Path("configs/publication.toml")
+MINIMUM_SIMULATIONS = 1000
 DIGEST = re.compile(r"\b[0-9a-f]{32,}\b")
 TEAM_FIELDS = (
     "team_id",
@@ -114,6 +115,10 @@ def derive_forecast(
     if simulation is None:
         raise ValueError(
             f"Refusing to publish a forecast without a season projection: {snapshot_id}"
+        )
+    if simulation["simulations"] < MINIMUM_SIMULATIONS:
+        raise ValueError(
+            f"Refusing to publish {simulation['simulations']} simulated paths; the product floor is {MINIMUM_SIMULATIONS}"
         )
     names = forecast["team_names"]
     teams = []

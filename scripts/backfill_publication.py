@@ -55,13 +55,17 @@ def main():
             )
             continue
         report = json.loads((report_directory / "verification.json").read_text())
-        document = derive_forecast(
-            json.loads((archive / "forecast.json").read_text()),
-            json.loads((archive / "run.json").read_text()),
-            snapshot_id(args.source / attempt),
-            report["archives"][str(archive)],
-        )
-        publish_document(args.site, document, policy)
+        try:
+            document = derive_forecast(
+                json.loads((archive / "forecast.json").read_text()),
+                json.loads((archive / "run.json").read_text()),
+                snapshot_id(args.source / attempt),
+                report["archives"][str(archive)],
+            )
+            publish_document(args.site, document, policy)
+        except ValueError as error:
+            skipped.append({"archive": name, "reason": str(error)})
+            continue
         published.append(f"{document['snapshot_id']}/{document['competition_id']}")
     index = rebuild_index(args.site, policy)
     dataset = Dataset(args.data)
