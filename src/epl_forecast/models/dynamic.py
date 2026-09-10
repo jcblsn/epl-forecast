@@ -252,8 +252,10 @@ class DynamicAttackDefense(BaseModel):
         return self.mean[self.league_dimensions + 1 :: 2]
 
     def _uses_fitted_state(self, team: str, season: str) -> bool:
+        """The bridge resets a club entering the PL, never one returning to its own division."""
         return team in self.team_index and (
             self._last_season[team] == season
+            or self.primary_competition != PL
             or self._bridge(season, self.as_of).prior(team) is None
         )
 

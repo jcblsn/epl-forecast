@@ -155,7 +155,7 @@ class CenteredQualityTiltFilter(QualityTiltFilter):
             return TeamPrior(
                 design @ self.mean,
                 design @ self.covariance @ design.T,
-                source.source if source is not None else "previous PL state",
+                source.source if source is not None else "previous league state",
             )
         prior = self._entry_prior(team, season, self.as_of)
         mean, covariance = prior.mean.copy(), prior.covariance.copy()

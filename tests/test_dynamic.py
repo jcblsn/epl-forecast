@@ -254,3 +254,15 @@ def test_dynamic_factory_can_forecast_championship(small_history):
     probabilities = model.predict_match(fixture).probabilities
     assert sum(probabilities) == pytest.approx(1)
     assert all(m.competition_id == "eng-championship" for m in model.members)
+
+
+def test_a_returning_championship_club_keeps_its_fitted_championship_state(bridge_history):
+    cutoff = date(2020, 8, 1)
+    model = DynamicAttackDefense()
+    model.primary_competition = CHAMPIONSHIP
+    model.fit(bridge_history, cutoff)
+    assert model._uses_fitted_state("c0", "2020-2021")
+    state = model.team_state("c0", "2020-2021")
+    assert state.source == "previous league state"
+    population = model._entry_prior("c0", "2020-2021", cutoff)
+    assert not np.allclose(state.covariance, population.covariance)
