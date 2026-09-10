@@ -15,7 +15,7 @@ from epl_forecast.live_forecast import check_freshness, export_forecast
 from epl_forecast.models import make_model
 from epl_forecast.schema import Fixture, fixture_id
 from epl_forecast.simulation import EuropeScenario, simulate_season
-from epl_forecast.storage import write_json
+from epl_forecast.storage import file_hash, write_json
 from epl_forecast.training import training_matches
 
 
@@ -222,7 +222,7 @@ def forecast_command(args) -> None:
         if "data_root" in model.get("parameters", {}):
             model["parameters"]["data_root"] = str(args.data)
             model["parameters"]["data_cutoff"] = live.observed_at.isoformat()
-    history, _, manifest = load_dataset(args.data, live.observed_at)
+    history, odds, manifest = load_dataset(args.data, live.observed_at)
     history = [
         match
         for match in history
@@ -254,6 +254,14 @@ def forecast_command(args) -> None:
     output = args.output or Path("runs/forecasts") / datetime.now(UTC).strftime(
         "%Y-%m-%dT%H%M%S.%fZ"
     )
+    market_pool = json.loads(args.market_pool.read_text()) if args.market_pool else None
+    if market_pool and market_pool["structural_model_id"] != args.model:
+        market_pool = None
+    market_quotes = [
+        quote
+        for quote in odds
+        if (quote["competition_id"], quote["season_id"]) == (live.competition_id, live.season_id)
+    ]
     result = export_forecast(
         live,
         model,
@@ -268,6 +276,9 @@ def forecast_command(args) -> None:
             "max_goals": args.max_goals,
             "europe_scenario": None if europe is None else vars(europe),
             "adjustments": adjustments,
+            "market_pool": None
+            if market_pool is None
+            else {**market_pool, "config_sha256": file_hash(args.market_pool)},
         },
         output,
         args.simulations,
@@ -275,6 +286,8 @@ def forecast_command(args) -> None:
         args.max_goals,
         adjustments,
         europe,
+        market_quotes,
+        market_pool,
     )
     print(
         f"Archived {len(result['matches'])} match forecasts and "
@@ -313,6 +326,7 @@ def parser() -> argparse.ArgumentParser:
     forecast.add_argument("--max-snapshot-age-hours", type=float, default=24)
     forecast.add_argument("--europe-scenario", type=Path)
     forecast.add_argument("--adjustments", type=Path)
+    forecast.add_argument("--market-pool", type=Path, default=Path("configs/market_pool.json"))
     forecast.set_defaults(func=forecast_command)
     for name in ("evaluate", "simulate", "predict"):
         command = commands.add_parser(name)

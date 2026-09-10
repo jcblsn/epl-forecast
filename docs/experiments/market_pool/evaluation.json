@@ -1,0 +1,46 @@
+{
+  "evaluation": {
+    "market": {
+      "brier": 0.6100247363528881,
+      "classwise_ece": 0.04001106089271399,
+      "log_loss": 1.0152523829672504,
+      "matches": 380,
+      "score_matches": 0,
+      "score_nll": null
+    },
+    "market_assisted": {
+      "brier": 0.610024736352888,
+      "classwise_ece": 0.040011060892713994,
+      "log_loss": 1.0152523829672504,
+      "matches": 380,
+      "score_matches": 0,
+      "score_nll": null
+    },
+    "structural": {
+      "brier": 0.617753649019948,
+      "classwise_ece": 0.03787566214361237,
+      "log_loss": 1.029118897031959,
+      "matches": 380,
+      "score_matches": 380,
+      "score_nll": 2.8954712472771353
+    }
+  },
+  "evaluation_start": "2025-07-01",
+  "final_fit": {
+    "log_loss": 0.9650182568267347,
+    "market_log_loss": 0.9650182568267347,
+    "market_weight": 1.0,
+    "matches": 1140,
+    "structural_log_loss": 0.9782715204665068
+  },
+  "markets_sha256": "ca82794698e5ce965941f49c8cea47aaccfac12d4f9c92523578cfd47ff5e308",
+  "predictions_sha256": "9dcb2ab1395b10de2a35ddda4cd8eea02c4906807d1bc2fa64272bf086ed0a22",
+  "status": "chronological historical confirmation; prospective scoring still required",
+  "training": {
+    "log_loss": 0.9399011937564766,
+    "market_log_loss": 0.9399011937564766,
+    "market_weight": 1.0,
+    "matches": 760,
+    "structural_log_loss": 0.9528478321837806
+  }
+}

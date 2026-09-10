@@ -18,6 +18,7 @@ def information_fingerprint(data):
         "memberships": "player_id, team_id, season_id, basis",
         "availability": "player_id, fpl_code, scope, status, reason, chance_next_round",
         "team_process": "match_id, team_id, xg",
+        "odds": "match_id, family, home_odds, draw_odds, away_odds, retrieved_at",
     }
     records = {
         table: data.rows(f"SELECT DISTINCT {columns} FROM {table} ORDER BY ALL")

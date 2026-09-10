@@ -8,6 +8,8 @@ using locally archived provider data. Both leagues are supported forecasting tar
 M2 remains the operational benchmark and M7 the retained xG research benchmark.
 The [matched research scoreboard](docs/experiments/research_scoreboard.md) keeps
 their outcome, score and calibration metrics beside M5 and market comparators.
+The [chronological market pool](docs/experiments/market_pool.md) now publishes a
+separate market-assisted probability when a captured pre-closing quote is available.
 Existing models and the simulator supply evidence and reusable components for a
 joint system; they do not prescribe its final architecture. The
 [corrected player comparisons](docs/experiments/player_layer_corrections.md)

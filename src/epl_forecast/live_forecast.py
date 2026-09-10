@@ -5,10 +5,17 @@ from pathlib import Path
 
 from epl_forecast.artifacts import new_run_directory, write_csv
 from epl_forecast.live import LiveSeason, timestamp
+from epl_forecast.market import market_assisted_probabilities
 from epl_forecast.models.base import ForecastModel
 from epl_forecast.schema import Match
 from epl_forecast.simulation import EuropeScenario, simulate_season
 from epl_forecast.storage import file_hash, write_json
+
+
+def flatten_rows(rows):
+    nested = {key for row in rows for key, value in row.items() if isinstance(value, (dict, list))}
+    flat = [{key: value for key, value in row.items() if key not in nested} for row in rows]
+    return flat, list(dict.fromkeys(key for row in flat for key in row))
 
 
 def check_freshness(live: LiveSeason, max_age_hours: float) -> None:
@@ -96,6 +103,7 @@ def render_forecast(forecast: dict) -> str:
     for match in forecast["matches"]:
         if not match["next_match_for_teams"]:
             continue
+        assisted = match["market_assisted_probabilities"]
         cells = [
             escape(match["kickoff_time"] or "To be scheduled"),
             escape(names[match["home_team_id"]]),
@@ -103,6 +111,9 @@ def render_forecast(forecast: dict) -> str:
             f"{match['p_home']:.1%}",
             f"{match['p_draw']:.1%}",
             f"{match['p_away']:.1%}",
+            "—" if assisted is None else f"{assisted['p_home']:.1%}",
+            "—" if assisted is None else f"{assisted['p_draw']:.1%}",
+            "—" if assisted is None else f"{assisted['p_away']:.1%}",
             f"{match['score_distribution']['home_rate']:.2f}",
             f"{match['score_distribution']['away_rate']:.2f}",
         ]
@@ -180,10 +191,14 @@ depends on cup results and allocated places. {escape(uncertainty_note)}</p>
 {europe}
 <h2>Next match for each team</h2>
 <div class="scroll"><table><thead><tr><th>Kickoff (UTC)</th><th>Home</th><th>Away</th>
-<th>Home win</th><th>Draw</th><th>Away win</th><th>Home goals</th><th>Away goals</th>
+<th>Structural H</th><th>Structural D</th><th>Structural A</th>
+<th>Market-assisted H</th><th>Market-assisted D</th><th>Market-assisted A</th>
+<th>Home goals</th><th>Away goals</th>
 </tr></thead><tbody>{"".join(matches)}</tbody></table></div>
-<p class="note">Goals are expected scoring rates. All remaining match probabilities and
-exact-score matrices, with their omitted tail mass, are in the JSON download.</p>
+<p class="note">Market-assisted probabilities use the latest captured pre-closing prices
+available at the forecast cutoff. A dash means no suitable quote was available. Goals and
+exact-score matrices come from the structural model; season simulation does not use markets.
+All remaining match probabilities and matrices, with omitted tail mass, are in the JSON download.</p>
 {quality_table}
 <details><summary>Current attack and defense strengths</summary>
 <p class="note">Attack above 1 raises scoring rates; defense above 1 reduces the opponent's
@@ -211,6 +226,8 @@ def export_forecast(
     max_goals: int,
     adjustments: list[dict],
     europe: EuropeScenario | None = None,
+    market_quotes: list[dict] | None = None,
+    market_pool: dict | None = None,
 ) -> dict:
     new_run_directory(output)
     in_progress = [
@@ -239,24 +256,56 @@ def export_forecast(
         for row in simulation["teams"]:
             row.update(table[row["team_id"]])
     matches = []
+    market_quotes = market_quotes or []
+    selected_quotes = {}
+    if market_pool:
+        for quote in market_quotes:
+            if quote["family"] != market_pool["market_family"]:
+                continue
+            if quote["match_id"] in selected_quotes:
+                raise ValueError(f"Duplicate current market quote: {quote['match_id']}")
+            selected_quotes[quote["match_id"]] = quote
     for fixture in live.remaining:
         if fixture.match_id in in_progress:
             continue
         prediction = model.predict_match(fixture)
         grid, tail = prediction.scores.grid(max_goals)
+        structural = {
+            "p_home": float(prediction.probabilities[0]),
+            "p_draw": float(prediction.probabilities[1]),
+            "p_away": float(prediction.probabilities[2]),
+        }
+        assistance = (
+            market_assisted_probabilities(
+                prediction.probabilities, selected_quotes[fixture.match_id], market_pool
+            )
+            if fixture.match_id in selected_quotes
+            else None
+        )
+        preferred = assistance or structural
         matches.append(
             {
                 **live.details[fixture.match_id],
                 "model_forecast_date": str(fixture.match_date),
-                "p_home": float(prediction.probabilities[0]),
-                "p_draw": float(prediction.probabilities[1]),
-                "p_away": float(prediction.probabilities[2]),
+                **structural,
+                "structural_probabilities": structural,
+                "market_assisted_probabilities": assistance,
+                "market_assisted_p_home": None if assistance is None else assistance["p_home"],
+                "market_assisted_p_draw": None if assistance is None else assistance["p_draw"],
+                "market_assisted_p_away": None if assistance is None else assistance["p_away"],
+                "preferred_probability_source": "market_assisted"
+                if assistance is not None
+                else "structural",
+                "preferred_p_home": preferred["p_home"],
+                "preferred_p_draw": preferred["p_draw"],
+                "preferred_p_away": preferred["p_away"],
                 **(
                     {"player_quality": model.lineup_summary(fixture)}
                     if hasattr(model, "lineup_summary")
                     else {}
                 ),
                 "score_distribution": {
+                    "probability_source": "structural",
                     "home_rate": prediction.scores.home_rate,
                     "away_rate": prediction.scores.away_rate,
                     "grid_home_rows_away_columns": grid.tolist(),
@@ -321,6 +370,15 @@ def export_forecast(
         "team_names": live.teams,
         "team_strengths": strengths,
         "matches": matches,
+        "market_assistance": None
+        if market_pool is None
+        else {
+            **market_pool,
+            "available_match_forecasts": sum(
+                row["market_assisted_probabilities"] is not None for row in matches
+            ),
+            "season_simulation_uses_market": False,
+        },
         "simulation": simulation,
         "simulation_unavailable_reason": (
             "Season projection awaits full-time results for in-progress or overdue fixtures; "
@@ -341,18 +399,14 @@ def export_forecast(
     }
     write_json(output / "forecast.json", forecast)
     write_json(output / "run.json", run)
+    flat_matches, match_fields = flatten_rows(matches)
     for name, rows, fields in (
         ("team_strengths.csv", strengths, list(strengths[0])),
         ("fixtures.csv", list(live.details.values()), list(next(iter(live.details.values())))),
         (
             "matches.csv",
-            [
-                {key: value for key, value in row.items() if not isinstance(value, (dict, list))}
-                for row in matches
-            ],
-            [key for key, value in matches[0].items() if not isinstance(value, (dict, list))]
-            if matches
-            else ["match_id", "p_home", "p_draw", "p_away"],
+            flat_matches,
+            match_fields if matches else ["match_id", "p_home", "p_draw", "p_away"],
         ),
         (
             "table.csv",
@@ -381,7 +435,7 @@ def export_forecast(
     ):
         write_csv(output / name, fields, rows)
     (output / "index.html").write_text(render_forecast(forecast))
-    hashes = {path.name: file_hash(path) for path in sorted(output.iterdir())}
+    hashes = {path.name: file_hash(path) for path in sorted(output.iterdir()) if path.is_file()}
     archived = datetime.now(UTC)
     write_json(
         output / "archive.json",

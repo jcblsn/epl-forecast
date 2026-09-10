@@ -103,3 +103,42 @@ def test_forecast_worker_does_not_block_on_collection(tmp_path, monkeypatch):
     report = prospective.capture_attempt(tmp_path / "runs", root, collect_first=False)
     assert report["status"] == "complete"
     assert len(report["forecasts"]) == 10
+
+
+def test_market_snapshot_changes_forecast_fingerprint(tmp_path):
+    from epl_forecast.datasets import Dataset
+
+    before = Dataset(tmp_path)
+    try:
+        first = prospective.information_fingerprint(before)
+    finally:
+        before.close()
+    publish(
+        tmp_path,
+        {
+            "provider": "football_data",
+            "retrieved_at": "2026-09-09T12:00:00+00:00",
+            "evidence_basis": "prospective",
+            "source_sha256": "b" * 64,
+            "context": {},
+        },
+        {
+            "odds": [
+                {
+                    "match_id": "match",
+                    "competition_id": "eng-premier-league",
+                    "season_id": "2026-2027",
+                    "family": "market_average_preclosing",
+                    "home_odds": 2,
+                    "draw_odds": 3,
+                    "away_odds": 4,
+                }
+            ]
+        },
+    )
+    after = Dataset(tmp_path)
+    try:
+        second = prospective.information_fingerprint(after)
+    finally:
+        after.close()
+    assert first != second

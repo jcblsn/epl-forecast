@@ -26,6 +26,10 @@ heartbeat. Expensive model runs therefore do not delay capture. M2, M5, M6, M7
 and M8 run for both leagues. Research model outputs do not establish model promotion.
 Each attempt records independent command outcomes and logs; failed forecasts are
 retried on a later tick. All models in an attempt use one cutoff after collection.
+M7 forecast archives publish structural probabilities and a separately labeled
+market-assisted probability when an average pre-closing quote was captured by that
+cutoff. The quote, de-vigged probabilities and retrieval timestamp remain in the
+forecast JSON. Season simulation and exact-score matrices remain structural.
 `--backfill-requests 200` installs a separate hourly job for bounded archive passes.
 The API quota reserve protects current collection. Remove this option when the
 historical archive is complete. Logs live under `runs/prospective/`.

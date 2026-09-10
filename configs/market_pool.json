@@ -1,0 +1,11 @@
+{
+  "fit_date_max": "2026-05-24",
+  "fit_date_min": "2023-08-11",
+  "fit_matches": 1140,
+  "information_horizon": "Football-Data pre-closing odds; individual historical quote times unavailable",
+  "market_family": "market_average_preclosing",
+  "market_weight": 1.0,
+  "method": "logarithmic_probability_pool",
+  "schema_version": 1,
+  "structural_model_id": "M7-xg-v1"
+}
