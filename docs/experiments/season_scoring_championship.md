@@ -52,6 +52,16 @@ and later is identical between the two runs.
 The Premier League panel is untouched: the guard applies only when the forecast
 competition is not the Premier League, so the promotion path is unchanged.
 
+The [pinned 2026/27 projection](current_season_projection_2026-09-10/report.md) is
+also unaffected, because every Championship club had played by its 10 September
+2026 cutoff and the reset only reached clubs with no match yet in the season.
+Regenerating that artifact from the same cutoff and seed after the fix reproduces
+`report.md`, `table.csv`, `rank_probabilities.csv`, `sensitivity.csv`,
+`mc_noise.csv` and both heatmaps byte for byte. The three Championship forecast
+JSONs differ only by two descriptive `playoff_model` fields added afterwards by
+the delayed-season playoff-date handling, and the manifest differs by its recorded
+commit and code hashes. No forecast number changed, so the snapshot stands.
+
 ## Scores across origins
 
 Rank RPS, lower is better:
