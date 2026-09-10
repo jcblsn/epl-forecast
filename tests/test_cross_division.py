@@ -57,15 +57,18 @@ def test_a_promoted_club_carries_its_state_instead_of_resetting():
         assert sum(e.source == "cross-division population" for e in entries) == 1
 
 
-def test_the_filter_recovers_a_known_division_level_and_home_advantage():
+def test_the_filter_recovers_a_known_division_scoring_level_and_home_advantage():
     matches, _ = two_division_history(seed=3)
     model = CrossDivisionQualityTilt().fit(matches, date(2021, 8, 1))
     summary = model.division_summary()
-    assert abs(summary["championship_level"] - LEVEL) < 3 * summary["championship_level_sd"]
+    assert (
+        abs(summary["championship_scoring_level"] - LEVEL)
+        < 3 * summary["championship_scoring_level_sd"]
+    )
     assert abs(summary["home_advantage"] - HOME) < 3 * summary["home_advantage_sd"]
 
 
-def test_observed_transitions_sharpen_the_division_level():
+def test_observed_transitions_sharpen_the_division_scoring_level():
     with_crossings = CrossDivisionQualityTilt().fit(
         two_division_history(seed=1, crossings=3)[0], date(2021, 8, 1)
     )
@@ -92,7 +95,9 @@ def test_championship_fixtures_load_the_division_offsets_and_premier_league_does
     assert model._league_design(premier)[:, 2:].sum() == 0
     assert model._league_design(second)[:, 2:].tolist() == [[1, 1], [1, 0]]
     top, lower = model.forecast_moments(premier)[0], model.forecast_moments(second)[0]
-    assert lower == pytest.approx(top + model.division_level + [model.division_home_advantage, 0])
+    assert lower == pytest.approx(
+        top + model.division_scoring_level + [model.division_home_offset, 0]
+    )
 
 
 def test_the_same_club_keeps_one_state_slot_across_divisions():
@@ -161,11 +166,14 @@ def test_xg_published_after_the_daily_update_is_not_retrofitted():
     assert late.fit_diagnostics["xg_matches"] == 0
 
 
-def test_xg_states_still_recover_the_known_division_level():
+def test_xg_states_still_recover_the_known_division_scoring_level():
     matches, _ = two_division_history(seed=3)
     model = CrossDivisionXG(xg_rows(matches)).fit(matches, date(2021, 8, 1))
     summary = model.division_summary()
-    assert abs(summary["championship_level"] - LEVEL) < 3 * summary["championship_level_sd"]
+    assert (
+        abs(summary["championship_scoring_level"] - LEVEL)
+        < 3 * summary["championship_scoring_level_sd"]
+    )
 
 
 def test_quality_tilt_and_attack_defence_are_one_state_in_two_coordinates():
@@ -242,7 +250,7 @@ def test_the_championship_offsets_actually_move_the_sampled_rates():
         rates[competition] = _forward_rate_moments(model, fixture)[0]
     shift = rates[CHAMPIONSHIP] - rates[PL]
     expected = np.array(
-        [model.division_level + model.division_home_advantage, model.division_level]
+        [model.division_scoring_level + model.division_home_offset, model.division_scoring_level]
     )
     assert shift == pytest.approx(expected, abs=0.02)
 
@@ -263,7 +271,7 @@ def test_a_new_season_entrant_is_evolved_with_club_dynamics_not_league_dynamics(
 
 def test_the_declared_league_prior_reaches_the_initial_state():
     model = CrossDivisionQualityTilt(
-        division_level_sd=0.31, division_home_sd=0.07, independent_poisson=True
+        division_scoring_level_sd=0.31, division_home_sd=0.07, independent_poisson=True
     )
     assert np.sqrt(np.diag(model.covariance)) == pytest.approx([0.25, 0.25, 0.31, 0.07])
     assert model.mean[2:] == pytest.approx([0.0, 0.0])

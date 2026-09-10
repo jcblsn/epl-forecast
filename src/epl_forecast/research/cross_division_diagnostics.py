@@ -2,6 +2,7 @@
 
 from collections import defaultdict
 from datetime import date
+from typing import NamedTuple
 
 import numpy as np
 
@@ -11,7 +12,36 @@ from epl_forecast.schema import Fixture, Match, fixture_id
 
 TRUE_BASE = np.log(1.35)
 TRUE_HOME = 0.24
-TRUE_LEVEL = -0.20
+TRUE_SCORING_LEVEL = -0.20
+
+
+class DivisionHistory(NamedTuple):
+    matches: list
+    observations: list
+    quality: dict
+    tilt: dict
+    transitions: list
+
+    def true_log_rates(self, fixture):
+        offset = TRUE_SCORING_LEVEL if fixture.competition_id == CHAMPIONSHIP else 0.0
+        home, away = fixture.home_team_id, fixture.away_team_id
+        return np.array(
+            [
+                TRUE_BASE
+                + TRUE_HOME
+                + offset
+                + self.quality[home]
+                + self.tilt[home]
+                - self.quality[away]
+                + self.tilt[away],
+                TRUE_BASE
+                + offset
+                + self.quality[away]
+                + self.tilt[away]
+                - self.quality[home]
+                + self.tilt[home],
+            ]
+        )
 
 
 def two_division_history(
@@ -19,18 +49,26 @@ def two_division_history(
     seasons=4,
     clubs=10,
     crossings=3,
-    level=TRUE_LEVEL,
+    level=TRUE_SCORING_LEVEL,
     quality_sd=0.22,
     tilt_sd=0.10,
     chance_probability=0.2,
+    quality_gap=0.0,
 ):
-    """Generate both divisions from one club-state scale and a known division level."""
+    """Generate both divisions from one club-state scale and a known scoring level.
+
+    `quality_gap` plants an absolute strength difference between the two club
+    populations while each club keeps its own latent identity when it crosses.
+    That is the cross-division problem the persistent state is meant to solve,
+    and it is distinct from the scoring-level difference `level` plants.
+    """
     rng = np.random.default_rng(seed)
     top = [f"pl{i}" for i in range(clubs)]
     lower = [f"ch{i}" for i in range(clubs)]
-    quality = {t: rng.normal(0.0, quality_sd) for t in top + lower}
+    quality = {t: rng.normal(0.0, quality_sd) for t in top}
+    quality.update({t: rng.normal(-quality_gap, quality_sd) for t in lower})
     tilt = {t: rng.normal(0.0, tilt_sd) for t in top + lower}
-    matches, observations, start = [], [], date(2018, 8, 1)
+    matches, observations, transitions, start = [], [], [], date(2018, 8, 1)
     for year in range(2018, 2018 + seasons):
         season = f"{year}-{year + 1}"
         for competition, teams, offset in ((PL, top, 0.0), (CHAMPIONSHIP, lower, level)):
@@ -79,9 +117,13 @@ def two_division_history(
                     }
                 )
         start = date(year + 1, 8, 1)
+        next_season = f"{year + 1}-{year + 2}"
         for k in range(crossings):
-            top[-1 - k], lower[k] = lower[k], top[-1 - k]
-    return matches, observations, quality, tilt
+            promoted, relegated = lower[k], top[-1 - k]
+            top[-1 - k], lower[k] = promoted, relegated
+            transitions.append({"season_id": next_season, "team_id": promoted, "to": PL})
+            transitions.append({"season_id": next_season, "team_id": relegated, "to": CHAMPIONSHIP})
+    return DivisionHistory(matches, observations, quality, tilt, transitions)
 
 
 DYNAMICS = {
@@ -100,9 +142,10 @@ def recovery_checks(replicates=30, seasons=4, crossings=3, chance_probability=0.
     """Recover a known division level, home advantage and club states from goals."""
     results = defaultdict(list)
     for seed in range(replicates):
-        matches, observations, quality, _ = two_division_history(
+        history = two_division_history(
             seed, seasons=seasons, crossings=crossings, chance_probability=chance_probability
         )
+        matches, observations, quality = history.matches, history.observations, history.quality
         cutoff = _cutoff(seasons)
         models = {
             "goals_only": CrossDivisionQualityTilt(independent_poisson=True, **DYNAMICS),
@@ -115,10 +158,12 @@ def recovery_checks(replicates=30, seasons=4, crossings=3, chance_probability=0.
             order = list(model.team_index)
             estimated = model.mean[model.league_dimensions :: 2]
             truth = np.array([quality[t] for t in order])
-            results[name, "level_error"].append(float(model.division_level - TRUE_LEVEL))
+            results[name, "level_error"].append(
+                float(model.division_scoring_level - TRUE_SCORING_LEVEL)
+            )
             results[name, "level_sd"].append(level_sd)
             results[name, "level_covered"].append(
-                float(abs(model.division_level - TRUE_LEVEL) <= 1.959964 * level_sd)
+                float(abs(model.division_scoring_level - TRUE_SCORING_LEVEL) <= 1.959964 * level_sd)
             )
             results[name, "home_error"].append(float(model.mean[1] - TRUE_HOME))
             results[name, "home_covered"].append(
@@ -152,7 +197,7 @@ def recovery_checks(replicates=30, seasons=4, crossings=3, chance_probability=0.
         "seasons": seasons,
         "crossings_per_season": crossings,
         "chance_probability": chance_probability,
-        "true_division_level": TRUE_LEVEL,
+        "true_division_scoring_level": TRUE_SCORING_LEVEL,
         "true_home_advantage": TRUE_HOME,
         "results": rows,
         "xg_minus_goals_quality_mse": {
@@ -168,12 +213,12 @@ def crossing_sensitivity(replicates=12, seasons=4, counts=(0, 1, 3, 5)):
     for crossings in counts:
         sds, errors = [], []
         for seed in range(replicates):
-            matches, _, _, _ = two_division_history(seed, seasons=seasons, crossings=crossings)
+            matches = two_division_history(seed, seasons=seasons, crossings=crossings).matches
             model = CrossDivisionQualityTilt(independent_poisson=True, **DYNAMICS).fit(
                 matches, _cutoff(seasons)
             )
             sds.append(float(np.sqrt(model.covariance[2, 2])))
-            errors.append(float(model.division_level - TRUE_LEVEL))
+            errors.append(float(model.division_scoring_level - TRUE_SCORING_LEVEL))
         rows.append(
             {
                 "crossings_per_season": crossings,
@@ -187,7 +232,7 @@ def crossing_sensitivity(replicates=12, seasons=4, counts=(0, 1, 3, 5)):
 
 def coordinate_equivalence(seed=0, seasons=3):
     """An attack/defence rotation reproduces the Quality/Tilt forecast exactly."""
-    matches, _, _, _ = two_division_history(seed, seasons=seasons)
+    matches = two_division_history(seed, seasons=seasons).matches
     cutoff = _cutoff(seasons)
     model = CrossDivisionQualityTilt(independent_poisson=True, **DYNAMICS).fit(matches, cutoff)
     season = f"{2018 + seasons}-{2019 + seasons}"
@@ -245,3 +290,83 @@ def promotion_slope_audit(matches, as_of, target_season):
         "M9 assumes a slope of one in both dimensions; the cohorts do not support that"
     )
     return report
+
+
+def promotion_calibration(
+    replicates=20,
+    seasons=5,
+    crossings=3,
+    quality_gap=0.45,
+    first_matches=10,
+    chance_probability=0.2,
+):
+    """Are a promoted club's first forecasts in its new division calibrated?
+
+    Both club populations are drawn with a planted absolute strength gap while
+    each club keeps its identity across the divide. A model that carries the
+    state without compressing it should show a positive strength bias on newly
+    promoted clubs; the errors here are in true log rate, not in loss.
+    """
+    errors = defaultdict(list)
+    for seed in range(replicates):
+        history = two_division_history(
+            seed,
+            seasons=seasons,
+            crossings=crossings,
+            quality_gap=quality_gap,
+            chance_probability=chance_probability,
+        )
+        moved = {(row["team_id"], row["season_id"]): row["to"] for row in history.transitions}
+        models = {
+            "goals_only": CrossDivisionQualityTilt(independent_poisson=True, **DYNAMICS),
+            "goals_xg": CrossDivisionXG(history.observations, chance_probability, **DYNAMICS),
+        }
+        counted = defaultdict(int)
+        targets = []
+        for match in sorted(
+            history.matches, key=lambda m: (m.fixture.match_date, m.fixture.match_id)
+        ):
+            fixture = match.fixture
+            for team in (fixture.home_team_id, fixture.away_team_id):
+                destination = moved.get((team, fixture.season_id))
+                if destination != fixture.competition_id:
+                    continue
+                counted[team, fixture.season_id] += 1
+                if counted[team, fixture.season_id] <= first_matches:
+                    targets.append((fixture, team, destination))
+        for cutoff_fixture, team, destination in targets:
+            training = [m for m in history.matches if m.available_on <= cutoff_fixture.match_date]
+            if len(training) < 200:
+                continue
+            side = 0 if cutoff_fixture.home_team_id == team else 1
+            for name, model in models.items():
+                model.fit(training, cutoff_fixture.match_date)
+                predicted = model.forecast_moments(cutoff_fixture)[0]
+                truth = history.true_log_rates(cutoff_fixture)
+                label = "promoted" if destination == PL else "relegated"
+                errors[name, label].append(float(predicted[side] - truth[side]))
+                errors[name, "all_transitions"].append(float(predicted[side] - truth[side]))
+    rows = []
+    for (name, label), values in sorted(errors.items()):
+        values = np.array(values)
+        rows.append(
+            {
+                "model": name,
+                "slice": label,
+                "team_matches": len(values),
+                "mean_log_rate_error": float(values.mean()),
+                "standard_error": float(values.std(ddof=1) / np.sqrt(len(values))),
+                "root_mean_squared_error": float(np.sqrt(np.mean(values**2))),
+            }
+        )
+    return {
+        "scope": "planted absolute club-strength gap between divisions, identities preserved",
+        "replicates": replicates,
+        "quality_gap": quality_gap,
+        "first_matches_after_transition": first_matches,
+        "interpretation": (
+            "a positive promoted error means the carried state overstates the club's "
+            "strength in its new division"
+        ),
+        "results": rows,
+    }

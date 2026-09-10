@@ -62,8 +62,8 @@ def main():
                 }
             )
             print(
-                f"{name:10s} {cutoff} level {summary['championship_level']:+.3f}"
-                f" ±{summary['championship_level_sd']:.3f}"
+                f"{name:10s} {cutoff} level {summary['championship_scoring_level']:+.3f}"
+                f" ±{summary['championship_scoring_level_sd']:.3f}"
                 f" home {summary['home_advantage']:+.3f} ±{summary['home_advantage_sd']:.3f}"
                 f" clubs {summary['clubs']}",
                 flush=True,
@@ -71,15 +71,17 @@ def main():
     drift = {}
     for name in models:
         values = np.array([row["home_advantage"] for row in path if row["model"] == name])
-        levels = np.array([row["championship_level"] for row in path if row["model"] == name])
+        levels = np.array(
+            [row["championship_scoring_level"] for row in path if row["model"] == name]
+        )
         drift[name] = {
             "home_advantage_first": float(values[0]),
             "home_advantage_last": float(values[-1]),
             "home_advantage_min": float(values.min()),
             "home_advantage_max": float(values.max()),
-            "championship_level_first": float(levels[0]),
-            "championship_level_last": float(levels[-1]),
-            "championship_level_mean": float(levels.mean()),
+            "championship_scoring_level_first": float(levels[0]),
+            "championship_scoring_level_last": float(levels[-1]),
+            "championship_scoring_level_mean": float(levels.mean()),
         }
     report = {
         "config": {"start": str(args.start), "end": str(args.end), "dynamics": DYNAMICS},

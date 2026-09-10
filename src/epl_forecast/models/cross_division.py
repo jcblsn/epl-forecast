@@ -22,18 +22,24 @@ DIVISIONS = (PL, CHAMPIONSHIP)
 
 
 class CrossDivisionQualityTilt(QualityTiltFilter):
-    """Leading block: scoring level, home advantage, division level, division home.
+    """Leading block: scoring level, home advantage, division scoring level, division home.
 
     The Premier League is the reference division, so its offsets are absorbed by
     the shared level and home advantage. Championship offsets are estimated with
     explicit uncertainty and evolve as a slow random walk.
+
+    The division scoring level is added to both teams' log rates, so it measures
+    how high-scoring Championship matches are, not how much weaker a typical
+    Championship club is. The common strength scale comes from somewhere else
+    entirely: a club keeps its own state when it crosses divisions, and those
+    crossings link two otherwise separate networks of pairwise comparisons.
     """
 
     league_dimensions = 4
 
     def __init__(
         self,
-        division_level_sd=0.30,
+        division_scoring_level_sd=0.30,
         division_home_sd=0.08,
         annual_division_sd=0.03,
         annual_division_home_sd=0.02,
@@ -43,14 +49,14 @@ class CrossDivisionQualityTilt(QualityTiltFilter):
         if independent_poisson:
             kwargs["dispersion"] = None
         for value in (
-            division_level_sd,
+            division_scoring_level_sd,
             division_home_sd,
             annual_division_sd,
             annual_division_home_sd,
         ):
             if not np.isfinite(value) or value <= 0:
                 raise ValueError("Division prior and innovation scales must be positive")
-        self.division_level_sd = division_level_sd
+        self.division_scoring_level_sd = division_scoring_level_sd
         self.division_home_sd = division_home_sd
         self.annual_division_sd = annual_division_sd
         self.annual_division_home_sd = annual_division_home_sd
@@ -61,7 +67,7 @@ class CrossDivisionQualityTilt(QualityTiltFilter):
         mean, variance = super().league_prior()
         return (
             np.r_[mean, np.zeros(2)],
-            np.r_[variance, self.division_level_sd**2, self.division_home_sd**2],
+            np.r_[variance, self.division_scoring_level_sd**2, self.division_home_sd**2],
         )
 
     def league_innovation_sd(self):
@@ -171,20 +177,20 @@ class CrossDivisionQualityTilt(QualityTiltFilter):
         return self
 
     @property
-    def division_level(self):
+    def division_scoring_level(self):
         return self.mean[2]
 
     @property
-    def division_home_advantage(self):
+    def division_home_offset(self):
         return self.mean[3]
 
     def division_summary(self):
         return {
             "intercept": float(self.mean[0]),
             "home_advantage": float(self.mean[1]),
-            "championship_level": float(self.mean[2]),
+            "championship_scoring_level": float(self.mean[2]),
             "championship_home_offset": float(self.mean[3]),
-            "championship_level_sd": float(np.sqrt(self.covariance[2, 2])),
+            "championship_scoring_level_sd": float(np.sqrt(self.covariance[2, 2])),
             "championship_home_offset_sd": float(np.sqrt(self.covariance[3, 3])),
             "home_advantage_sd": float(np.sqrt(self.covariance[1, 1])),
             "clubs": len(self.team_index),
