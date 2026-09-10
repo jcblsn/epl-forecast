@@ -305,6 +305,23 @@ def forecast_command(args) -> None:
     print(f"Open {output / 'index.html'}")
 
 
+def operate_command(args) -> None:
+    from epl_forecast.pipeline import operate
+
+    result = operate(
+        args.data,
+        args.site,
+        args.runs,
+        args.simulations,
+        args.interval_hours,
+        args.force,
+        not args.no_collect,
+    )
+    print(json.dumps({k: v for k, v in result.items() if k != "collection"}, indent=2))
+    if result["status"] in ("failed", "skipped"):
+        raise SystemExit(1)
+
+
 def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(
         description="Probabilistic forecasts and season simulation for England's top two leagues"
@@ -330,6 +347,17 @@ def parser() -> argparse.ArgumentParser:
     forecast.add_argument("--adjustments", type=Path)
     forecast.add_argument("--market-pool", type=Path, default=Path("configs/market_pool.json"))
     forecast.set_defaults(func=forecast_command)
+    operate = commands.add_parser(
+        "operate", help="Collect, forecast both leagues, verify and publish derived artifacts"
+    )
+    operate.add_argument("--data", type=Path, default=Path("data"))
+    operate.add_argument("--site", type=Path, default=Path("site"))
+    operate.add_argument("--runs", type=Path, default=Path("runs/product"))
+    operate.add_argument("--simulations", type=int, default=10000)
+    operate.add_argument("--interval-hours", type=float, default=12)
+    operate.add_argument("--force", action="store_true")
+    operate.add_argument("--no-collect", action="store_true")
+    operate.set_defaults(func=operate_command)
     for name in ("evaluate", "simulate", "predict"):
         command = commands.add_parser(name)
         command.add_argument("--config", type=Path, default=Path("configs/baselines.toml"))
