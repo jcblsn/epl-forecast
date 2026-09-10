@@ -18,6 +18,8 @@ PAIRS = (
     ("M7-xg-v1", "M9-cross-division-xg"),
     ("M2-attack-defense-v1", "M9-cross-division-xg"),
     ("M9-cross-division-goals", "M9-cross-division-xg"),
+    ("M9-cross-division-goals", "M10-centered-carry-control"),
+    ("M10-centered-carry-control", "M10-division-map-goals"),
     ("M9-cross-division-goals", "M10-division-map-goals"),
     ("M9-cross-division-xg", "M10-division-map-xg"),
     ("M5-centered-poisson-control", "M10-division-map-goals"),

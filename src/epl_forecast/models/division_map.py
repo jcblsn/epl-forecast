@@ -68,8 +68,9 @@ class DivisionMapPopulation(CrossDivisionQualityTilt):
     compressed carry rather than the reset the promotion bridge performs.
     """
 
-    def __init__(self, division_map=None, **kwargs):
+    def __init__(self, division_map=None, map_crossings=True, **kwargs):
         self.division_map = DivisionMap(*(division_map or ())).validated()
+        self.map_crossings = bool(map_crossings)
         super().__init__(**kwargs)
 
     def _reset(self):
@@ -98,16 +99,22 @@ class DivisionMapPopulation(CrossDivisionQualityTilt):
         """Where the destination division expects an arriving club to sit.
 
         Promotion has a measured answer already: the retained promotion bridge's
-        promoted-club prior, which is what M2, M5 and M7 reset to. Relegation has
-        no measured cohort, so the Championship population stands in for it.
+        promoted-club prior, which is what M2, M5 and M7 reset to. That prior is
+        measured against a zero-centered Premier League, while this hierarchy's
+        club states carry their own floating level, so it is applied as an offset
+        from the destination population rather than as an absolute state.
+        Relegation has no measured cohort, so the population itself stands in.
         """
-        if competition == PL:
-            prior = QualityTiltFilter._entry_prior(self, team, season, day)
-            if prior.source != "league population":
-                return AD_FROM_QT @ prior.mean, AD_FROM_QT @ prior.covariance @ AD_FROM_QT.T
         mean = self._population_moments().get(competition)
         if mean is None:
             return None
+        if competition == PL:
+            prior = QualityTiltFilter._entry_prior(self, team, season, day)
+            if prior.source != "league population":
+                return (
+                    mean + AD_FROM_QT @ prior.mean,
+                    AD_FROM_QT @ prior.covariance @ AD_FROM_QT.T,
+                )
         return mean, np.eye(2) * self.initial_team_sd**2
 
     def _map_state(self, team, season, day, competition):
@@ -145,7 +152,8 @@ class DivisionMapPopulation(CrossDivisionQualityTilt):
 
     def _ensure_team(self, team, season, day, competition=None):
         crossing = (
-            competition in DIVISIONS
+            self.map_crossings
+            and competition in DIVISIONS
             and team in self.team_index
             and self.divisions.get(team) not in (None, competition)
         )
@@ -164,7 +172,7 @@ class DivisionMapPopulation(CrossDivisionQualityTilt):
 
     def division_summary(self):
         return super().division_summary() | {
-            "division_map": self.division_map._asdict(),
+            "division_map": self.division_map._asdict() if self.map_crossings else None,
             "mapped_crossings": len(self.crossings),
         }
 

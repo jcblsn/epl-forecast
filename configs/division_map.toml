@@ -102,3 +102,16 @@ quality_retention = 0.85
 quality_sd = 0.09
 tilt_retention = 0.5
 tilt_sd = 0.07
+
+[[models]]
+id = "M10-centered-carry-control"
+kind = "division_map_quality_tilt"
+train_window_days = 0
+train_competitions = ["eng-premier-league", "eng-championship"]
+[models.parameters]
+map_crossings = false
+quality_retention = 0.85
+quality_sd = 0.09
+tilt_retention = 0.5
+tilt_sd = 0.07
+independent_poisson = true
