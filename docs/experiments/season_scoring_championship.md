@@ -15,9 +15,10 @@ selected using these scores. This is retrospective development evidence. See the
 [methodology and commands](../season_evaluation.md); the Premier League panel is
 in the [season scoreboard](season_scoring.md).
 
-M4 and M5 were not run. A four-model Championship panel needed about seven hours
-of refitting, which is not the "falls out of existing machinery cheaply" the batch
-allowed for, and the M2/M7 contrast is the one the product decision turns on.
+M4 and M5 were not run. A four-model Championship panel was started and abandoned:
+it completed 10 of 220 forecasts in twenty minutes, extrapolating to roughly seven
+hours of refitting, which is not the "falls out of existing machinery cheaply" the
+batch allowed for. The M2/M7 contrast is the one the product decision turns on.
 
 ## The preseason entry-state defect
 

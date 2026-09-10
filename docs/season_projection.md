@@ -126,7 +126,7 @@ forecast's `playoff_model` block.
 No new model family was opened. Market pooling was left as it stands, with the
 retained fit still placing full weight on the market; M7 is the primary forecast
 surface in both leagues. M4 and M5 were not added to the Championship panel,
-because a four-model run needed about seven hours of refitting. The player bridge,
+because a four-model run extrapolated to roughly seven hours of refitting. The player bridge,
 cross-division architecture, score-law search and scouting model stayed closed.
 No public forecast, bookmaker price or prediction market was scraped or fitted;
 the artifact is shaped so that comparison can happen later against its recorded
