@@ -25,6 +25,14 @@ what carries over is its dynamics and entry handling, not its observation model.
 The [2026/27 snapshot](experiments/current_season_projection_2026-09-10/report.md)
 is the current durable M7 season-distribution product for both leagues.
 
+M7 is frozen as the structural season model for both leagues. Structural-model
+improvement work is closed for now: the product path is prospective operation,
+immutable forecast accumulation and comparison against public models, bookmaker
+outrights and liquid prediction markets. The
+[current-strength study](experiments/current_strength.md) is the standing
+post-MVP research lead; it is not a build. Further player, current-strength or
+cross-division work resumes from observed product deficiencies, not from a queue.
+
 Every current M7 archive contains:
 
 - structural H/D/A probabilities and a structural exact-score matrix;
@@ -42,8 +50,14 @@ team states and season paths. The market-assisted arm remains separately labeled
 comparison evidence when its required quote exists.
 
 Championship playoff promotion simulates the edition-specific bracket conditional
-on each regular-season path with the structural score model. Neutral-final and
-tied-knockout treatments remain explicit approximations, separate from fitting.
+on each regular-season path, on that path's own latent team states. Neutral-final
+and tied-knockout treatments remain explicit approximations, separate from fitting.
+The [conditioning validation](experiments/playoff_conditioning.md) confirms that
+this leaves points and rank distributions untouched.
+
+Realized and current tables carry the sanctions in force, and forecasts carry only
+the sanctions knowable at their cutoff, in both leagues. `scripts/verify_forecast_product.py`
+re-checks a published archive against every claim on this page.
 
 Run both products with:
 
