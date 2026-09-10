@@ -38,6 +38,25 @@ newly normalized API-Football team statistics, including the first Championship
 xG in this archive, and records them as a post-MVP lead rather than a build.
 Historical reports retain their original datasets and results.
 
+## Operate the product
+
+One command takes fresh data to verified, published forecasts for both leagues:
+
+```sh
+uv run epl-forecast operate
+```
+
+It collects, forecasts, verifies each archive against the
+[MVP contract](docs/mvp.md), and publishes compact derived artifacts to `site/`
+only if verification passes. Old forecasts stay in an immutable chronological
+archive, and settled matches accumulate H/D/A log loss and Brier in a prospective
+ledger. Inspect any snapshot with `uv run python -m http.server -d site 8000`.
+
+Only model output is published; provider payloads, odds quotes, request records
+and Parquet partitions stay local. `configs/publication.toml` declares that
+boundary and `scripts/check_publishable.py` enforces it in CI.
+[Operating the forecast product](docs/product.md) has the details.
+
 ## Data and forecasts
 
 Run from the repository root with uv. Set `API_FOOTBALL_KEY` in the environment

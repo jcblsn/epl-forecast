@@ -134,7 +134,8 @@ def operate(
                 {"league": league, "stage": "forecast", "detail": forecast.stderr[-800:]}
             )
             continue
-        verification = verify_archive(data, archive, attempt / league / "verification")
+        reports = attempt / f"{league}-verification"
+        verification = verify_archive(data, archive, reports)
         write_immutable(
             attempt / f"{league}-verify.log", (verification.stdout + verification.stderr).encode()
         )
@@ -143,7 +144,7 @@ def operate(
                 {"league": league, "stage": "verify", "detail": verification.stdout[-800:]}
             )
             continue
-        report = json.loads((attempt / league / "verification" / "verification.json").read_text())
+        report = json.loads((reports / "verification.json").read_text())
         documents.append(
             derive_forecast(
                 json.loads((archive / "forecast.json").read_text()),

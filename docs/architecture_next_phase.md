@@ -245,6 +245,21 @@ models, bookmaker outrights and liquid prediction markets. Prospective operation
 identifies the next modeling bottleneck. Player, current-strength and cross-division
 work resumes from an observed product deficiency, not from this list.
 
+## Product layer
+
+The productization batch is complete and no model changed in it.
+`epl-forecast operate` is the single path from collected data to verified,
+published forecasts for both leagues; `configs/publication.toml` fixes what may
+leave this machine; `site/` is a static viewer over the published JSON; and
+`site/data/ledger.json` accumulates prospective H/D/A scores against the last
+snapshot generated before each kickoff. [Operating the forecast
+product](product.md) owns this layer. Pages deployment stays off.
+
+Post-MVP work starts from what live operation shows: forecast-change
+diagnostics, periodic comparison with public models and markets, and repeated
+deficiencies visible in the ledger. The viewer is the observation surface for
+that, not a separate project.
+
 ## Documentation and retained evidence
 
 Keep [the north star](north_star.md) limited to product outcomes. This file owns
@@ -277,6 +292,8 @@ plans when their useful content is retained elsewhere; Git preserves their histo
   incremental test does not license further current-state work.
 - [Playoff conditioning](experiments/playoff_conditioning.md): the matched check
   that carrying latent states into the bracket moves only the bracket.
+- [Operating the forecast product](product.md): the end-to-end run, the
+  publication boundary, the immutable snapshot archive and the score ledger.
 - [Data migration](data_architecture_migration.md): remaining ingestion/archive work.
 - [Live operations](live.md) and [season evaluation](season_evaluation.md): capture,
   point-in-time provenance, simulation outputs and product-level scoring.

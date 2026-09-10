@@ -69,6 +69,12 @@ uv run epl-forecast forecast --competition eng-premier-league
 uv run epl-forecast forecast --competition eng-championship
 ```
 
+`uv run epl-forecast operate` runs both, verifies each archive against this page
+and publishes the derived surface described in
+[operating the forecast product](product.md). Published snapshots are immutable,
+carry at least 1,000 simulated paths, and are scored prospectively once their
+matches settle.
+
 The [match scoreboard](experiments/research_scoreboard.md),
 [market-pool evaluation](experiments/market_pool.md), and
 [season scoreboard](experiments/season_scoring.md) retain the selection evidence.
