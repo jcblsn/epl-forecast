@@ -444,3 +444,78 @@ def test_identity_cache_matches_a_rebuild_after_a_transfer_publishes_a_team(tmp_
     rebuilt = api_football.identity_keys(tmp_path)[0]
     assert cached == rebuilt
     assert rebuilt[9001] == "af-team-9001"
+
+
+def fixture_record(time="2026-09-08T10:00:00+00:00"):
+    return {
+        "provider": "api_football",
+        "retrieved_at": time,
+        "evidence_basis": "retrospective",
+        "source_sha256": time.encode().hex().ljust(64, "0")[:64],
+        "context": {"endpoint": "fixtures"},
+    }
+
+
+def fixture_body(statistics):
+    return {
+        "response": [
+            {
+                "fixture": {
+                    "id": 900001,
+                    "date": "2026-08-15T14:00:00+00:00",
+                    "status": {"short": "FT"},
+                },
+                "league": {"id": 40, "season": 2026, "round": "Regular Season - 1"},
+                "teams": {
+                    "home": {"id": 41, "name": "Swansea"},
+                    "away": {"id": 54, "name": "Birmingham"},
+                },
+                "goals": {"home": 2, "away": 1},
+                "statistics": statistics,
+            }
+        ]
+    }
+
+
+def test_team_match_statistics_keep_percentages_and_absent_counts_apart(tmp_path):
+    body = fixture_body(
+        [
+            {
+                "team": {"id": 41, "name": "Swansea"},
+                "statistics": [
+                    {"type": "Total Shots", "value": 14},
+                    {"type": "Shots on Goal", "value": 5},
+                    {"type": "Ball Possession", "value": "57%"},
+                    {"type": "expected_goals", "value": "1.83"},
+                    {"type": "Red Cards", "value": None},
+                    {"type": "Unmapped Provider Metric", "value": 3},
+                ],
+            },
+            {
+                "team": {"id": 54, "name": "Birmingham"},
+                "statistics": [
+                    {"type": "Total Shots", "value": 9},
+                    {"type": "Shots on Goal", "value": 2},
+                    {"type": "Ball Possession", "value": "43%"},
+                ],
+            },
+        ]
+    )
+    api.normalize(fixture_record(), body, tmp_path)
+    data = Dataset(tmp_path)
+    rows = {r["team_id"]: r for r in data.rows("SELECT * FROM team_statistics ORDER BY team_id")}
+    data.close()
+    assert set(rows) == {"swansea-city", "birmingham-city"}
+    home = rows["swansea-city"]
+    assert (home["shots_total"], home["shots_on_goal"]) == (14, 5)
+    assert home["possession"] == 57.0
+    assert home["expected_goals"] == 1.83
+    assert home["red_cards"] is None
+    assert rows["birmingham-city"]["expected_goals"] is None
+
+
+def test_a_fixture_without_team_statistics_publishes_none(tmp_path):
+    api.normalize(fixture_record(), fixture_body([]), tmp_path)
+    data = Dataset(tmp_path)
+    assert data.rows("SELECT count(*) AS n FROM team_statistics") == [{"n": 0}]
+    data.close()

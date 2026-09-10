@@ -47,6 +47,12 @@ SCHEMAS = {
     "xa DOUBLE, shots INTEGER",
     "odds": "match_id VARCHAR, competition_id VARCHAR, season_id VARCHAR, family VARCHAR, "
     "home_odds DOUBLE, draw_odds DOUBLE, away_odds DOUBLE, observed_at TIMESTAMPTZ",
+    "team_statistics": "match_id VARCHAR, team_id VARCHAR, competition_id VARCHAR, "
+    "season_id VARCHAR, expected_goals DOUBLE, goals_prevented DOUBLE, shots_total INTEGER, "
+    "shots_on_goal INTEGER, shots_off_goal INTEGER, shots_blocked INTEGER, "
+    "shots_inside_box INTEGER, shots_outside_box INTEGER, corners INTEGER, offsides INTEGER, "
+    "fouls INTEGER, yellow_cards INTEGER, red_cards INTEGER, goalkeeper_saves INTEGER, "
+    "passes_total INTEGER, passes_accurate INTEGER, possession DOUBLE, api_id BIGINT",
     "standings": "competition_id VARCHAR, season_id VARCHAR, team_id VARCHAR, rank INTEGER, "
     "points INTEGER, played INTEGER, wins INTEGER, draws INTEGER, losses INTEGER, "
     "goals_for INTEGER, goals_against INTEGER, goal_difference INTEGER, "
@@ -64,6 +70,7 @@ KEYS = {
     "team_process": ["match_id", "team_id"],
     "player_process": ["match_id", "understat_id"],
     "odds": ["match_id", "family"],
+    "team_statistics": ["match_id", "team_id"],
     "standings": ["competition_id", "season_id", "team_id"],
 }
 
@@ -122,6 +129,10 @@ def publish(root, request, tables):
                 "odds": "home_odds<=1 OR draw_odds<=1 OR away_odds<=1 "
                 "OR NOT isfinite(home_odds) OR NOT isfinite(draw_odds) "
                 "OR NOT isfinite(away_odds)",
+                "team_statistics": "team_id IS NULL OR match_id IS NULL "
+                "OR expected_goals<0 OR shots_total<0 OR shots_on_goal<0 "
+                "OR possession<0 OR possession>100 "
+                "OR shots_on_goal>shots_total OR passes_accurate>passes_total",
                 "standings": "team_id IS NULL OR rank<1 OR played<0 OR wins<0 OR draws<0 "
                 "OR losses<0 OR goals_for<0 OR goals_against<0 "
                 "OR wins+draws+losses<>played "

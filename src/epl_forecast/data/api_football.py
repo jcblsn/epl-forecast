@@ -42,6 +42,45 @@ PLAYER_STAT_FIELDS = {
 }
 
 
+TEAM_STATISTICS = {
+    "expected_goals": ("expected_goals", float),
+    "goals_prevented": ("goals_prevented", float),
+    "Total Shots": ("shots_total", int),
+    "Shots on Goal": ("shots_on_goal", int),
+    "Shots off Goal": ("shots_off_goal", int),
+    "Blocked Shots": ("shots_blocked", int),
+    "Shots insidebox": ("shots_inside_box", int),
+    "Shots outsidebox": ("shots_outside_box", int),
+    "Corner Kicks": ("corners", int),
+    "Offsides": ("offsides", int),
+    "Fouls": ("fouls", int),
+    "Yellow Cards": ("yellow_cards", int),
+    "Red Cards": ("red_cards", int),
+    "Goalkeeper Saves": ("goalkeeper_saves", int),
+    "Total passes": ("passes_total", int),
+    "Passes accurate": ("passes_accurate", int),
+    "Ball Possession": ("possession", float),
+}
+
+
+def team_statistic(value, kind):
+    """A provider statistic, or None when it is absent rather than zero.
+
+    Percentages arrive as strings; counts the provider did not record arrive as null,
+    which is not the same as a recorded zero and is kept unknown.
+    """
+    if value is None:
+        return None
+    if isinstance(value, str):
+        value = value.strip().rstrip("%")
+        if not value:
+            return None
+    try:
+        return kind(float(value))
+    except (TypeError, ValueError):
+        return None
+
+
 def match_player_statistics(statistics, identity, issues):
     result = {}
     for field, (group, key) in PLAYER_STAT_FIELDS.items():
@@ -358,6 +397,25 @@ def normalize(record, body, root):
                 "season_id": season,
                 "kickoff_time": kickoff,
             }
+            for side in item.get("statistics") or []:
+                team = team_key(side["team"], True)
+                values = {}
+                for entry in side.get("statistics") or []:
+                    mapped = TEAM_STATISTICS.get(entry["type"])
+                    if mapped:
+                        values[mapped[0]] = team_statistic(entry["value"], mapped[1])
+                if values:
+                    add(
+                        "team_statistics",
+                        {
+                            "match_id": key,
+                            "team_id": team,
+                            "competition_id": comp,
+                            "season_id": season,
+                            "api_id": f["id"],
+                            **values,
+                        },
+                    )
             lineup, shirts = {}, {}
             for side in item.get("lineups", []):
                 team = team_key(side["team"], True)
