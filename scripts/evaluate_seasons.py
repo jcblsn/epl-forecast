@@ -7,7 +7,7 @@ from pathlib import Path
 from epl_forecast.artifacts import execution_provenance
 from epl_forecast.cli import fitted_model, load_config, save_rows
 from epl_forecast.data.rules import historical_adjustments
-from epl_forecast.datasets import load_dataset
+from epl_forecast.datasets import Dataset
 from epl_forecast.models.baselines import AttackDefensePoisson
 from epl_forecast.season_evaluation import final_cutoff, score_forecast, season_origins, summarize
 from epl_forecast.simulation import simulate_season
@@ -21,6 +21,35 @@ SPECS = {
 }
 
 
+def competition_config(name, competition):
+    config_path, model_id = SPECS[name]
+    config = load_config(Path(config_path))
+    config["competition_id"] = competition
+    for spec in config["models"]:
+        spec.setdefault("parameters", {})["competition_id"] = competition
+    return config, model_id
+
+
+def season_teams(matches, competition, season):
+    return {
+        team
+        for match in matches
+        if match.fixture.competition_id == competition and match.fixture.season_id == season
+        for team in (match.fixture.home_team_id, match.fixture.away_team_id)
+    }
+
+
+def championship_playoff_winner(matches, season, final_order):
+    year = int(season[:4])
+    current_pl = season_teams(matches, "eng-premier-league", season)
+    next_pl = season_teams(matches, "eng-premier-league", f"{year + 1}-{year + 2}")
+    promoted = next_pl - current_pl
+    winners = promoted - set(final_order[:2])
+    if len(winners) != 1:
+        raise ValueError(f"Cannot identify observed Championship playoff winner for {season}")
+    return next(iter(winners))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
@@ -29,8 +58,19 @@ def main():
     parser.add_argument("--seed", type=int, default=20260908)
     parser.add_argument("--seasons", nargs="+", type=int, default=list(range(2015, 2026)))
     parser.add_argument("--models", nargs="+", choices=SPECS, default=list(SPECS))
+    parser.add_argument(
+        "--competition",
+        choices=("eng-premier-league", "eng-championship"),
+        default="eng-premier-league",
+    )
     args = parser.parse_args()
-    matches, _, manifest = load_dataset(args.data)
+    data = Dataset(args.data)
+    try:
+        matches = data.matches()
+        manifest = data.provenance()
+    finally:
+        data.close()
+    configs = {name: competition_config(name, args.competition)[0] for name in args.models}
     metadata = {
         "execution": execution_provenance(),
         "simulations": args.simulations,
@@ -38,38 +78,40 @@ def main():
         "seasons": args.seasons,
         "models": args.models,
         "data_manifest": manifest,
-        "configs": {name: load_config(Path(SPECS[name][0])) for name in args.models},
+        "competition_id": args.competition,
+        "configs": configs,
         "code_hashes": {str(p): file_hash(p) for p in sorted(Path("src").rglob("*.py"))},
         "runner_hash": file_hash(Path(__file__)),
         "adjustments_hash": file_hash(Path("src/epl_forecast/data/pl_adjustments.json")),
         "origin_definition": (
-            "Start of first match date; next day after 60/120/190/300 results, whole days"
+            "Start of first match date; next day after 6/12/19/30 nominal rounds, whole days"
         ),
     }
     metadata_path = args.output / "manifest.json"
     if metadata_path.exists() and json.loads(metadata_path.read_text()) != metadata:
         raise ValueError("Resume manifest differs; use a new output directory")
     write_json(metadata_path, metadata)
-    premier = [m for m in matches if m.fixture.competition_id == "eng-premier-league"]
+    league = [m for m in matches if m.fixture.competition_id == args.competition]
     rows = []
     for year in args.seasons:
         season = f"{year}-{year + 1}"
-        season_matches = [m for m in premier if m.fixture.season_id == season]
+        season_matches = [m for m in league if m.fixture.season_id == season]
         origins = season_origins(season_matches)
         teams = sorted(
             {t for m in season_matches for t in (m.fixture.home_team_id, m.fixture.away_team_id)}
         )
-        previous = {
-            t
-            for m in premier
-            if m.fixture.season_id == f"{year - 1}-{year}"
-            for t in (m.fixture.home_team_id, m.fixture.away_team_id)
-        }
-        if len(previous) != 20:
+        previous = season_teams(matches, args.competition, f"{year - 1}-{year}")
+        expected = 20 if args.competition == "eng-premier-league" else 24
+        if len(previous) != expected:
             raise ValueError("Missing previous season for promotion labels")
         cutoff = final_cutoff(season_matches)
         truth_model = AttackDefensePoisson()
         truth_model.as_of = cutoff
+        adjustments = (
+            historical_adjustments(season, cutoff)
+            if args.competition == "eng-premier-league"
+            else []
+        )
         truth = simulate_season(
             truth_model,
             season_matches,
@@ -78,8 +120,32 @@ def main():
             cutoff,
             1,
             args.seed,
-            historical_adjustments(season, cutoff),
+            adjustments,
+            playoff_winner=teams[0] if args.competition == "eng-championship" else None,
         )
+        if args.competition == "eng-championship":
+            final_order = [
+                row["team_id"]
+                for row in sorted(truth["teams"], key=lambda row: row["mean_position"])
+            ]
+            winner = championship_playoff_winner(matches, season, final_order)
+            truth["playoff_model"] = {"format": "observed", "winner": winner}
+            for row in truth["teams"]:
+                row["playoff_promotion_probability"] = float(row["team_id"] == winner)
+                row["promotion_probability"] = (
+                    row["automatic_promotion_probability"] + row["playoff_promotion_probability"]
+                )
+        previous_pl = season_teams(matches, "eng-premier-league", f"{year - 1}-{year}")
+        entry_cohorts = {
+            team: (
+                "incumbent"
+                if team in previous
+                else "relegated_from_pl"
+                if args.competition == "eng-championship" and team in previous_pl
+                else "promoted_from_lower"
+            )
+            for team in teams
+        }
         for origin_index, (origin, as_of) in enumerate(origins.items()):
             seed = args.seed + year * 10 + origin_index
             played = [m for m in season_matches if m.available_on <= as_of]
@@ -100,7 +166,9 @@ def main():
                         as_of,
                         args.simulations,
                         seed,
-                        historical_adjustments(season, as_of),
+                        historical_adjustments(season, as_of)
+                        if args.competition == "eng-premier-league"
+                        else [],
                     )
                     write_json(path, forecast)
                 rows.extend(
@@ -112,7 +180,13 @@ def main():
                         "played_matches": len(played),
                         **row,
                     }
-                    for row in score_forecast(forecast, truth, set(teams) - previous, seed)
+                    for row in score_forecast(
+                        forecast,
+                        truth,
+                        {team for team, cohort in entry_cohorts.items() if cohort != "incumbent"},
+                        seed,
+                        entry_cohorts,
+                    )
                 )
                 save_rows(args.output / "club_seasons.csv", rows)
     summary, calibration = summarize(rows)
@@ -123,6 +197,11 @@ def main():
         scores, _ = summarize([r for r in rows if r["season_id"] == season])
         per_season.extend({"season_id": season, **r} for r in scores)
     save_rows(args.output / "by_season.csv", per_season)
+    subgroup_rows = []
+    for cohort in sorted({r["entry_cohort"] for r in rows}):
+        cohort_summary, _ = summarize([r for r in rows if r["entry_cohort"] == cohort])
+        subgroup_rows.extend({"entry_cohort": cohort, **row} for row in cohort_summary)
+    save_rows(args.output / "subgroups.csv", subgroup_rows)
     print(args.output / "summary.csv", flush=True)
 
 

@@ -114,7 +114,7 @@ def points_metrics(distribution, actual, uniform):
     return result
 
 
-def score_forecast(forecast, truth, promoted, seed):
+def score_forecast(forecast, truth, promoted, seed, entry_cohorts=None):
     actual = {r["team_id"]: r for r in truth["teams"]}
     if {r["team_id"] for r in forecast["teams"]} != set(actual):
         raise ValueError("Forecast and truth teams differ")
@@ -132,6 +132,7 @@ def score_forecast(forecast, truth, promoted, seed):
             "competition_id": forecast.get("competition_id", "eng-premier-league"),
             "team_id": team["team_id"],
             "promoted": team["team_id"] in promoted,
+            "entry_cohort": (entry_cohorts or {}).get(team["team_id"], "incumbent"),
             "actual_points": target["mean_points"],
             "mean_points": team["mean_points"],
             "rank_rps": float(trps),

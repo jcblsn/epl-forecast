@@ -60,9 +60,10 @@ repairs are reproducible from immutable evidence rather than accumulated state.
 Forecasts produce JSON, CSV and HTML under `runs/forecasts/`. Premier League
 projections report European league positions; Championship projections report
 automatic promotion, season-specific playoff qualification and promotion. Playoff
-fixtures are kept separate from the regular-season table. Until a playoff match
-model is estimated, the one playoff promotion slot is split equally among each
-simulated path's qualifiers.
+fixtures are kept separate from the regular-season table. The promotion forecast
+simulates the applicable postseason bracket conditional on each regular-season
+path with the structural score model. Neutral-final and tied-knockout treatments
+are explicit approximations in the forecast artifact.
 
 `--cutoff <ISO timestamp>` limits inputs to evidence retrieved by that timestamp.
 Model fitting also excludes results from the forecast's London calendar date.

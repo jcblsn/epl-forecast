@@ -7,6 +7,7 @@ import pytest
 from epl_forecast.cli import fitted_model
 from epl_forecast.data.rules import historical_adjustments, league_rules, reviewed_rules_evidence
 from epl_forecast.models.base import Forecast
+from epl_forecast.postseason import simulate_championship_playoffs
 from epl_forecast.simulation import (
     EuropeScenario,
     european_places,
@@ -245,12 +246,12 @@ def test_simulation_reuses_one_joint_state_per_path(full_season):
     assert sum(t["title_probability"] for t in result["teams"]) == pytest.approx(1)
     assert all(t["position_sd"] >= 0 for t in result["teams"])
     assert all(len(t["position_quantiles_05_50_95"]) == 3 for t in result["teams"])
+    assert all(set(t["position_intervals"]) == {"50", "80", "90"} for t in result["teams"])
+    assert all(set(t["points_intervals"]) == {"50", "80", "90"} for t in result["teams"])
     assert sum(t["relegation_probability"] for t in result["teams"]) == pytest.approx(3)
 
 
 def test_championship_projection_conserves_promotion_and_playoff_slots():
-    from types import SimpleNamespace
-
     from epl_forecast.schema import Fixture, Match, fixture_id
 
     teams = [f"club-{i}" for i in range(24)]
@@ -273,7 +274,7 @@ def test_championship_projection_conserves_promotion_and_playoff_slots():
         if h != a
     ]
     cutoff = date(2026, 8, 11)
-    result = simulate_season(SimpleNamespace(as_of=cutoff), games, [], teams, cutoff, 10, 7)
+    result = simulate_season(FixedModel(cutoff), games, [], teams, cutoff, 10, 7)
     assert len(result["teams"]) == 24
     assert sum(r["automatic_promotion_probability"] for r in result["teams"]) == pytest.approx(2)
     assert sum(r["playoff_qualification_probability"] for r in result["teams"]) == pytest.approx(6)
@@ -283,6 +284,24 @@ def test_championship_projection_conserves_promotion_and_playoff_slots():
     assert all("top_four_probability" not in r for r in result["teams"])
     assert result["ranking_rules"] == "efl"
     assert result["disciplinary_tiebreaks_available"] is False
+    assert result["playoff_model"]["format"] == "2026-six-team-seven-match"
+    assert "equal advancement" in result["playoff_model"]["tied_knockout_scores"]
+
+
+def test_six_team_playoff_bracket_respects_seed_paths():
+    teams = [f"club-{i}" for i in range(24)]
+    orders = np.tile(np.arange(24), (200, 1))
+    winners, details = simulate_championship_playoffs(
+        FixedModel(date(2026, 8, 1)),
+        orders,
+        teams,
+        "2026-2027",
+        date(2027, 5, 1),
+        np.random.default_rng(11),
+    )
+    assert set(winners) <= set(teams[2:6])
+    assert not set(winners) & set(teams[6:8])
+    assert details["format"] == "2026-six-team-seven-match"
 
 
 @pytest.mark.parametrize(

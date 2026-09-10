@@ -6,12 +6,18 @@
   "retrieved_at": "2026-09-08T20:52:07.692189+00:00",
   "source_sha256": "0ff9353d9fd8288fcca8c448c2d78e69050eed02b90bc8e7d8ece1e36acce630",
   "retained_root": "runs/efl-rules-2026",
-  "reviewed_pages": [1, 28, 29, 30, 31],
+  "reviewed_pages": [1, 28, 29, 30, 31, 32, 33],
   "ranking_sections": ["9.1", "9.2", "9.3", "9.4", "9.5", "9.6", "9.7", "9.8", "9.9"],
   "ranking_order": ["points", "goal_difference", "goals_scored", "head_to_head_points", "head_to_head_goal_difference", "head_to_head_goals_scored", "wins", "away_goals", "disciplinary_penalty_points", "twelve_point_sending_offs", "deciding_match_or_league_arrangement"],
   "automatic_promotion": 2,
   "playoff_end": 8,
   "relegated": 3,
   "boundary_sections": ["10.1.1(b)", "10.1.2(b)"],
-  "limitations": "Disciplinary penalty points at the 42-match cutoff, successful wrongful-dismissal claims, and twelve-point sending-off counts are not currently available to season simulation. Unresolved rank mass is an explicit model assumption, not an official disciplinary or deciding-match outcome. Edition verification applies only to the named season."
+  "playoff_sections": ["10.1.1(b)", "10.1.4"],
+  "championship_playoff_bracket": {
+    "quarter_finals": ["5 hosts 8", "6 hosts 7"],
+    "semi_finals": ["3 plays lowest-ranked quarter-final winner over two legs", "4 plays highest-ranked quarter-final winner over two legs"],
+    "final": "semi-final winners play one final"
+  },
+  "limitations": "Disciplinary penalty points at the 42-match cutoff, successful wrongful-dismissal claims, and twelve-point sending-off counts are not currently available to season simulation. Unresolved rank mass is an explicit model assumption, not an official disciplinary or deciding-match outcome. The reviewed text does not specify neutral-site scoring, extra-time or penalty probabilities, or Championship semi-final leg order; the simulator exposes its approximations. Edition verification applies only to the named season."
 }

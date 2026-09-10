@@ -7,6 +7,7 @@ import numpy as np
 
 from epl_forecast.data.rules import LeagueRules, league_rules, reviewed_rules_evidence
 from epl_forecast.models.base import ForecastModel
+from epl_forecast.postseason import simulate_championship_playoffs
 from epl_forecast.schema import Fixture, Match
 
 
@@ -198,6 +199,7 @@ def simulate_season(
     adjustments: list[dict] | None = None,
     europe: EuropeScenario | None = None,
     results_observed_at: datetime | None = None,
+    playoff_winner: str | None = None,
 ) -> dict:
     if type(simulations) is not int or simulations < 1:
         raise ValueError("simulations must be a positive integer")
@@ -306,6 +308,7 @@ def simulate_season(
         raise ValueError("European qualification scenarios apply to the Premier League")
     rules = league_rules(competition, season)
     unresolved_count, head_to_head_count = 0, 0
+    orders = np.empty((simulations, len(teams)), dtype=np.int16)
     for sample in range(simulations):
         order, ties, unresolved, used_h2h = rank_table(
             teams,
@@ -323,6 +326,7 @@ def simulate_season(
         )
         unresolved_count += unresolved
         head_to_head_count += used_h2h
+        orders[sample] = order
         weights = np.eye(len(teams))
         for start, end in ties:
             weights[start:end, start:end] = 1 / (end - start)
@@ -334,6 +338,22 @@ def simulate_season(
                 for team in qualified & team_index.keys():
                     qualification[competition][team_index[team]] += 1
 
+    playoff_counts = np.zeros(len(teams))
+    playoff_model = None
+    if championship:
+        if playoff_winner is not None:
+            if playoff_winner not in team_index:
+                raise ValueError("Playoff winner must be a Championship participant")
+            playoff_counts[team_index[playoff_winner]] = simulations
+            playoff_model = {"format": "observed", "winner": playoff_winner}
+        else:
+            last_regular_day = max(f.match_date for f in [m.fixture for m in played] + remaining)
+            winners, playoff_model = simulate_championship_playoffs(
+                model, orders, teams, season, last_regular_day, rng
+            )
+            for winner, count in zip(*np.unique(winners, return_counts=True), strict=True):
+                playoff_counts[team_index[str(winner)]] = count
+
     def distribution(values: np.ndarray) -> dict[str, float]:
         outcomes, counts = np.unique(values, return_counts=True)
         return {
@@ -341,11 +361,27 @@ def simulate_season(
             for value, count in zip(outcomes, counts, strict=True)
         }
 
+    def central_intervals(values, probabilities=None):
+        levels = (50, 80, 90)
+        if probabilities is None:
+            outcomes, counts = np.unique(values, return_counts=True)
+            cdf = counts.cumsum() / simulations
+        else:
+            outcomes = np.arange(1, len(probabilities) + 1)
+            cdf = np.asarray(probabilities).cumsum()
+        result = {}
+        for level in levels:
+            tail = (1 - level / 100) / 2
+            result[str(level)] = list(map(int, outcomes[np.searchsorted(cdf, [tail, 1 - tail])]))
+        return result
+
     rows = []
     for index, team in enumerate(teams):
         positions = position_counts[index] / simulations
         ranks = np.arange(1, len(teams) + 1)
         mean_position = float(positions @ ranks)
+        position_intervals = central_intervals(None, positions)
+        points_intervals = central_intervals(points[:, index])
         row = {
             "team_id": team,
             "mean_position": mean_position,
@@ -353,9 +389,13 @@ def simulate_season(
             "position_quantiles_05_50_95": list(
                 map(int, np.searchsorted(positions.cumsum(), [0.05, 0.5, 0.95]) + 1)
             ),
+            "median_position": int(np.searchsorted(positions.cumsum(), 0.5) + 1),
+            "position_intervals": position_intervals,
             "position_probabilities": list(positions),
             "mean_points": float(points[:, index].mean()),
             "points_quantiles_05_50_95": list(np.quantile(points[:, index], [0.05, 0.5, 0.95])),
+            "median_points": int(np.quantile(points[:, index], 0.5)),
+            "points_intervals": points_intervals,
             "points_distribution": distribution(points[:, index]),
             "mean_goal_difference": float(goal_difference[:, index].mean()),
             "goal_difference_distribution": distribution(goal_difference[:, index]),
@@ -371,9 +411,7 @@ def simulate_season(
             row["playoff_qualification_probability"] = float(
                 positions[rules.automatic_promotion : rules.playoff_end].sum()
             )
-            row["playoff_promotion_probability"] = row["playoff_qualification_probability"] / (
-                rules.playoff_end - rules.automatic_promotion
-            )
+            row["playoff_promotion_probability"] = float(playoff_counts[index] / simulations)
             row["promotion_probability"] = (
                 row["automatic_promotion_probability"] + row["playoff_promotion_probability"]
             )
@@ -401,6 +439,7 @@ def simulate_season(
         "point_adjustments": adjustments,
         "ranking_rules": rules.ranking,
         "ranking_rules_evidence": reviewed_rules_evidence(competition, season),
+        "playoff_model": playoff_model,
         "disciplinary_tiebreaks_available": False if championship else None,
         "head_to_head_applied_rate": head_to_head_count / simulations,
         "unresolved_decisive_tie_rate": unresolved_count / simulations,
@@ -427,7 +466,7 @@ def simulate_season(
             "Nondecisive shared positions split mass across occupied ranks for reporting.",
             (
                 "EFL disciplinary tiebreak data are unavailable. Remaining ties split rank mass equally; "
-                "this is an uncertainty assumption, not an application of disciplinary rules or a playoff forecast."
+                "this is an uncertainty assumption, not an application of disciplinary rules."
                 if championship
                 else "Unresolved decisive ties assume equal playoff chances; playoff model not estimated."
             ),
@@ -440,8 +479,8 @@ def simulate_season(
             ]
             if europe
             else [
-                "Playoff promotion splits each simulated path's one playoff place equally among "
-                "the four qualifiers; a match-level playoff model is not yet estimated."
+                "Playoff promotion simulates the applicable bracket conditional on every "
+                "regular-season path using the structural match model."
             ]
             if championship
             else ["Top-four/five probabilities are table positions, not European qualification."]
