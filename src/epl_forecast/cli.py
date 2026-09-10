@@ -316,10 +316,10 @@ def parser() -> argparse.ArgumentParser:
         default="eng-premier-league",
     )
     forecast.add_argument("--season")
-    forecast.add_argument("--config", type=Path, default=Path("configs/baselines.toml"))
+    forecast.add_argument("--config", type=Path, default=Path("configs/xg_quality_tilt.toml"))
     forecast.add_argument("--data", type=Path, default=Path("data"))
     forecast.add_argument("--output", type=Path)
-    forecast.add_argument("--model", default="M2-attack-defense-v1")
+    forecast.add_argument("--model", default="M7-xg-v1")
     forecast.add_argument("--simulations", type=int, default=10000)
     forecast.add_argument("--seed", type=int, default=20260905)
     forecast.add_argument("--max-goals", type=int, default=10)

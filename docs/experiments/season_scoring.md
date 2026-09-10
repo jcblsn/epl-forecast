@@ -124,8 +124,11 @@ Season distribution scores now belong in model-promotion evidence. M2's early
 points intervals should not be described as calibrated, and M4/M5's uncertainty
 capabilities should not be dismissed using near-equal H/D/A loss. M7's season
 ranking and top-four results also strengthen the case for its retained research
-status. The operational default remains M2; these measurements support revisiting
-season output choices, with explicit attention to origin and target.
+status. Together with the matched match scoreboard, these measurements select M7
+for the structural MVP: it leads retained match models, has the best rank RPS at
+four of five origins and the best points CRPS after preseason. M2 remains the
+operational benchmark, and M4's better preseason points CRPS remains a visible
+tradeoff rather than being erased by the product choice.
 
 This comparison does not isolate the causal effect of parameter uncertainty or
 state evolution: the models also differ in training history, promotion priors,

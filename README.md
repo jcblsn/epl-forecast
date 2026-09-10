@@ -5,7 +5,7 @@ Product objective: [north star](docs/north_star.md). Active research:
 
 Probabilistic match forecasts and season simulations for England's top two leagues,
 using locally archived provider data. Both leagues are supported forecasting targets.
-M2 remains the operational benchmark and M7 the retained xG research benchmark.
+M7 is the active structural MVP model and M2 remains its operational benchmark.
 The [matched research scoreboard](docs/experiments/research_scoreboard.md) keeps
 their outcome, score and calibration metrics beside M5 and market comparators.
 The [chronological market pool](docs/experiments/market_pool.md) now publishes a
@@ -14,9 +14,8 @@ Existing models and the simulator supply evidence and reusable components for a
 joint system; they do not prescribe its final architecture. The
 [corrected player comparisons](docs/experiments/player_layer_corrections.md)
 support a small [portable attacking-trait interface](docs/portable_player_interface.md).
-The next empirical gate is a known-minutes roster bridge, alongside one bounded
-dynamic-state candidate. Historical reports retain their original datasets and
-results.
+The [MVP contract and model choice](docs/mvp.md) describe the current product.
+Historical reports retain their original datasets and results.
 
 ## Data and forecasts
 
@@ -29,7 +28,7 @@ uv sync --locked --all-extras
 uv run epl-forecast data collect
 uv run epl-forecast data audit
 uv run epl-forecast forecast --competition eng-premier-league
-uv run epl-forecast forecast --competition eng-championship --config configs/championship.toml
+uv run epl-forecast forecast --competition eng-championship
 ```
 
 API-Football supplies schedules and player data. Football-Data supplies results,
@@ -57,9 +56,10 @@ repairs are reproducible from immutable evidence rather than accumulated state.
 
 Forecasts produce JSON, CSV and HTML under `runs/forecasts/`. Premier League
 projections report European league positions; Championship projections report
-automatic promotion and season-specific playoff qualification. Playoff fixtures
-are kept separate from the regular-season table. Qualification probability does
-not include winning the knockout playoffs.
+automatic promotion, season-specific playoff qualification and promotion. Playoff
+fixtures are kept separate from the regular-season table. Until a playoff match
+model is estimated, the one playoff promotion slot is split equally among each
+simulated path's qualifiers.
 
 `--cutoff <ISO timestamp>` limits inputs to evidence retrieved by that timestamp.
 Model fitting also excludes results from the forecast's London calendar date.
@@ -81,7 +81,8 @@ The [M5 batch report](docs/experiments/m5_quality_tilt.md) compares 4,180 matche
 in 2015/16–2025/26 and checks a sampled posterior on a smaller historical subset.
 M5 is near M2 on aggregate outcome loss. The [season-level comparison](docs/experiments/season_scoring.md)
 now shows better early-season distribution scores and coverage for M4/M5/M7,
-with tradeoffs across origins and targets; M2 remains operational. The finite dynamics grid concentrates heavily,
+with tradeoffs across origins and targets; M7 supplies the structural MVP while M2
+remains the benchmark. The finite dynamics grid concentrates heavily,
 and synthetic league-level coverage needs improvement.
 
 ```sh
@@ -201,6 +202,5 @@ Use `configs/xg_quality_tilt.toml` for chronological comparisons; M2 remains the
 operational benchmark. Historical xG availability is reconstructed, not prospective.
 
 Season projections now have a [direct evaluation layer](docs/season_evaluation.md):
-TRPS for standings, points CRPS/PIT/interval coverage, and title/top-four/relegation
-Brier scores and reliability curves. Compare these product-level scores alongside
-match loss when assessing a replacement for M2.
+rank RPS, rank and points PIT/interval coverage, points CRPS, and event Brier scores
+and reliability curves. Compare these product-level scores alongside match loss.

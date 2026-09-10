@@ -50,9 +50,9 @@ prior scale, lineup pseudo-counts, substitution probabilities and linear injury
 recovery remain explicit assumptions until learned or better-observed replacements
 are justified.
 
-M2 remains the operational match benchmark and M7 the retained xG research
-benchmark until the combined match and season scoreboard supports a product
-choice. Keep both in matched comparisons. Existing dynamics, player layers and
+M7 is the active structural MVP model and M2 remains its operational match
+benchmark after the combined match and season scoreboard. Keep both in matched
+comparisons. Existing dynamics, player layers and
 simulation machinery are reusable evidence, not a required model lineage. The
 [architecture roadmap](architecture_next_phase.md) records candidate mechanisms;
 it is not a serial gate before a usable product. Preserve prospective evidence and

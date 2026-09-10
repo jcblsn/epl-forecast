@@ -1,7 +1,7 @@
 # Joint forecasting architecture: research roadmap
 
 This work follows the steering memo supplied on 2026-09-09, starting from
-`1999ec0`. M2 remains the operational benchmark and M7 the retained xG benchmark.
+`1999ec0`. M7 is the active structural MVP model and M2 its operational benchmark.
 Neither fixes the final architecture. The
 [corrected player evidence](experiments/player_layer_corrections.md) supersedes
 the original horizon, reliability and API-control claims.
@@ -13,7 +13,8 @@ gates. The immediate product path is to publish structural and market-assisted
 match forecasts for both leagues, select an existing simulator from the combined
 match/season scoreboard, and expose full points, rank and event distributions with
 timestamped archives. A new compression-state model must first earn implementation
-through cheap exploratory evidence.
+through cheap exploratory evidence. The [MVP contract](mvp.md) records the current
+product choice and output surface.
 
 1. Correct the standalone player controls: explicit 90/180/240-day transfer
    horizons; provider-null-as-zero reliability; API-only features and uncertainty;
