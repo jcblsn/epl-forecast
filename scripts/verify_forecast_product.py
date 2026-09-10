@@ -199,6 +199,51 @@ def verify(archive: Path, data: Path) -> dict:
             ),
         )
 
+    impacts = simulation.get("match_impacts")
+    if impacts:
+        events = {
+            (row["team_id"], event): value
+            for row in teams
+            for event, value in row.items()
+            if event.endswith("_probability")
+        }
+        for fixture in impacts["fixtures"]:
+            counts = fixture["outcome_counts"]
+            checks.check(
+                f"conditional samples partition the paths: {fixture['match_id']}",
+                sum(counts.values()) == simulation["simulations"],
+                f"{sum(counts.values())} against {simulation['simulations']}",
+            )
+            for row in fixture["impacts"]:
+                key = (row["team_id"], row["event"])
+                if not checks.check(
+                    f"conditioning leaves the season event unchanged in aggregate: {key}",
+                    abs(
+                        sum(
+                            counts[name] / simulation["simulations"] * row["conditional"][name]
+                            for name in ("home", "draw", "away")
+                            if counts[name]
+                        )
+                        - row["baseline"]
+                    )
+                    < 1e-6,
+                    f"baseline {row['baseline']:.6f}",
+                ):
+                    break
+                if not checks.check(
+                    f"the conditioned event is the published season event: {key}",
+                    abs(events[key] - row["baseline"]) < 1e-6,
+                    f"{events[key]:.6f} against {row['baseline']:.6f}",
+                ):
+                    break
+                if not checks.check(
+                    f"every conditional rests on enough paths: {key}",
+                    row["sufficient_sample"]
+                    == (min(counts.values()) >= impacts["minimum_conditional_samples"]),
+                    f"smallest outcome sample {min(counts.values())}",
+                ):
+                    break
+
     frequencies = {row["match_id"]: row for row in simulation["match_frequencies"]}
     published = {
         row["match_id"]: row for row in forecast["matches"] if row["match_id"] in frequencies

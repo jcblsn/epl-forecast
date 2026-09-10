@@ -5,6 +5,7 @@ const VIEWS = [
   ["positions", "Positions"],
   ["teams", "Distributions"],
   ["fixtures", "Fixtures"],
+  ["impact", "Impact"],
   ["ledger", "Ledger"],
 ];
 const EVENT_ORDER = [
@@ -88,7 +89,7 @@ function render() {
     button.setAttribute("aria-current", String(button.dataset.view === state.view));
   });
   panel.replaceChildren();
-  const views = { table: tableView, positions: positionsView, teams: teamsView, fixtures: fixturesView, ledger: ledgerView };
+  const views = { table: tableView, positions: positionsView, teams: teamsView, fixtures: fixturesView, impact: impactView, ledger: ledgerView };
   views[state.view]();
 }
 
@@ -178,20 +179,18 @@ function teamsView() {
 
 function fixturesView() {
   const names = Object.fromEntries(state.document.teams.map((team) => [team.team_id, team.name]));
-  const rows = state.document.matches.map((match) => {
-    const assisted = match.market_assisted;
-    return element("tr", {}, [
+  const rows = state.document.matches.map((match) =>
+    element("tr", {}, [
       cell(when(match.kickoff_time)),
       element("td", { className: "name", textContent: names[match.home_team_id] ?? match.home_team_id }),
       element("td", { className: "name", textContent: names[match.away_team_id] ?? match.away_team_id }),
       cell(pct(match.p_home)),
       cell(pct(match.p_draw)),
       cell(pct(match.p_away)),
-      cell(assisted ? `${pct(assisted.p_home)}/${pct(assisted.p_draw)}/${pct(assisted.p_away)}` : "", { className: "muted" }),
       cell(match.score_probabilities ? topScores(match.score_probabilities) : "", { className: "muted" }),
-    ]);
-  });
-  panel.append(table(["Kickoff (UTC)", "Home", "Away", "H", "D", "A", "Market-assisted", "Likeliest scores"], rows));
+    ])
+  );
+  panel.append(table(["Kickoff (UTC)", "Home", "Away", "H", "D", "A", "Likeliest scores"], rows));
 }
 
 function topScores(scores) {
@@ -204,6 +203,44 @@ function topScores(scores) {
     .slice(0, 3)
     .map(([score, p]) => `${score} ${pct(p)}%`)
     .join("  ");
+}
+
+function impactView() {
+  const impact = state.document.impact;
+  if (!impact || !impact.fixtures.length) {
+    panel.append(element("p", { className: "muted", textContent: "No fixtures inside the impact horizon." }));
+    return;
+  }
+  const names = Object.fromEntries(state.document.teams.map((team) => [team.team_id, team.name]));
+  const name = (id) => names[id] ?? id;
+  panel.append(
+    element("p", { className: "muted", textContent: `${impact.basis} Next ${impact.horizon_days} days, from ${state.document.simulations.toLocaleString()} season paths; smallest outcome sample ${impact.smallest_outcome_count}.` })
+  );
+  for (const fixture of impact.fixtures) {
+    const counts = fixture.outcome_counts;
+    const total = counts.home + counts.draw + counts.away;
+    const rows = fixture.impacts.map((row) => {
+      const home = row.team_id === fixture.home_team_id;
+      const win = home ? row.conditional.home : row.conditional.away;
+      const loss = home ? row.conditional.away : row.conditional.home;
+      return element("tr", {}, [
+        element("td", { className: "name", textContent: name(row.team_id) }),
+        element("td", { className: "name", textContent: label(row.event) }),
+        cell(pct(row.baseline)),
+        cell(pct(win)),
+        cell(pct(row.conditional.draw)),
+        cell(pct(loss)),
+        cell(pct(row.rms_movement)),
+        cell(pct(row.swing)),
+        cell(row.sufficient_sample ? "" : "thin", { className: "muted" }),
+      ]);
+    });
+    panel.append(
+      element("h2", { textContent: `${name(fixture.home_team_id)} v ${name(fixture.away_team_id)} — ${when(fixture.kickoff_time) || fixture.match_date}` }),
+      element("p", { className: "muted", textContent: `Paths: home ${pct(counts.home / total)}%, draw ${pct(counts.draw / total)}%, away ${pct(counts.away / total)}%` }),
+      table(["Team", "Event", "Now", "If win", "If draw", "If loss", "RMS", "Swing", ""], rows)
+    );
+  }
 }
 
 function ledgerView() {

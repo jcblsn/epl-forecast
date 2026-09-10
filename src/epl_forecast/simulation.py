@@ -188,6 +188,89 @@ def validate_schedule(
         raise ValueError("Remaining fixtures predate the simulation cutoff")
 
 
+OUTCOME_NAMES = ("home", "draw", "away")
+MINIMUM_CONDITIONAL_SAMPLES = 100
+
+
+def conditional_impacts(
+    outcomes: dict,
+    event_paths: dict,
+    team_index: dict,
+    simulations: int,
+    horizon_days: int,
+) -> dict:
+    """Condition published season events on each fixture outcome, over the same paths.
+
+    Every conditional is the mean of a team-event indicator over the subset of season
+    paths where the fixture ended that way. Because those subsets partition the paths,
+    the outcome-weighted conditionals must return the baseline exactly; that identity
+    and the per-cell path counts are the checks reported here. These are conditional
+    forecasts on one simulation, not causal effects of a result.
+    """
+    fixtures, smallest = [], simulations
+    for match_id, (fixture, codes) in sorted(outcomes.items()):
+        masks = [codes == index for index in range(3)]
+        counts = [int(mask.sum()) for mask in masks]
+        impacts = []
+        for team in (fixture.home_team_id, fixture.away_team_id):
+            column = team_index[team]
+            for event, values in event_paths.items():
+                indicators = values[:, column].astype(float)
+                baseline = float(indicators.mean())
+                conditional, error = {}, {}
+                movement = 0.0
+                for name, mask, count in zip(OUTCOME_NAMES, masks, counts, strict=True):
+                    if not count:
+                        conditional[name], error[name] = None, None
+                        continue
+                    subset = indicators[mask]
+                    conditional[name] = float(subset.mean())
+                    error[name] = float(np.sqrt(subset.var() / count))
+                    movement += count / simulations * (conditional[name] - baseline) ** 2
+                present = [value for value in conditional.values() if value is not None]
+                recovered = sum(
+                    count / simulations * conditional[name]
+                    for name, count in zip(OUTCOME_NAMES, counts, strict=True)
+                    if count
+                )
+                if abs(recovered - baseline) > 1e-9:
+                    raise RuntimeError(f"Conditional impacts do not total the baseline: {match_id}")
+                impacts.append(
+                    {
+                        "team_id": team,
+                        "event": event,
+                        "baseline": baseline,
+                        "conditional": conditional,
+                        "standard_error": error,
+                        "rms_movement": float(np.sqrt(movement)),
+                        "swing": float(max(present) - min(present)),
+                        "sufficient_sample": min(counts) >= MINIMUM_CONDITIONAL_SAMPLES,
+                    }
+                )
+        impacts.sort(key=lambda row: row["rms_movement"], reverse=True)
+        smallest = min(smallest, *counts)
+        fixtures.append(
+            {
+                "match_id": match_id,
+                "match_date": str(fixture.match_date),
+                "home_team_id": fixture.home_team_id,
+                "away_team_id": fixture.away_team_id,
+                "outcome_counts": dict(zip(OUTCOME_NAMES, counts, strict=True)),
+                "impacts": impacts,
+                "top_rms_movement": impacts[0]["rms_movement"] if impacts else 0.0,
+            }
+        )
+    fixtures.sort(key=lambda row: row["top_rms_movement"], reverse=True)
+    return {
+        "horizon_days": horizon_days,
+        "simulations": simulations,
+        "minimum_conditional_samples": MINIMUM_CONDITIONAL_SAMPLES,
+        "smallest_outcome_count": int(smallest) if outcomes else 0,
+        "fixtures": fixtures,
+        "basis": "Conditional forecasts aggregated from one season simulation, not causal effects of a result.",
+    }
+
+
 def simulate_season(
     model: ForecastModel,
     played: list[Match],
@@ -201,6 +284,8 @@ def simulate_season(
     results_observed_at: datetime | None = None,
     playoff_winner: str | None = None,
     playoff_conditioning: str = "path",
+    impact_fixtures: set[str] | None = None,
+    impact_horizon_days: int = 7,
 ) -> dict:
     if type(simulations) is not int or simulations < 1:
         raise ValueError("simulations must be a positive integer")
@@ -265,6 +350,8 @@ def simulate_season(
     unknown_teams = set()
     known = getattr(model, "team_index", None)
     match_frequencies = []
+    wanted = set(impact_fixtures or ())
+    impact_outcomes = {}
     for fixture in sorted(remaining, key=lambda f: (f.match_date, f.match_id)):
         if known is not None:
             unknown_teams.update(
@@ -285,6 +372,12 @@ def simulate_season(
         ):
             raise ValueError("Score samples must be nonnegative integer arrays, one per path")
         add_result(fixture, *goals)
+        if fixture.match_id in wanted:
+            home, away = np.asarray(goals[0]), np.asarray(goals[1])
+            impact_outcomes[fixture.match_id] = (
+                fixture,
+                np.where(home > away, 0, np.where(home == away, 1, 2)).astype(np.int8),
+            )
         match_frequencies.append(
             {
                 "match_id": fixture.match_id,
@@ -314,6 +407,26 @@ def simulate_season(
     rules = league_rules(competition, season)
     unresolved_count, head_to_head_count = 0, 0
     orders = np.empty((simulations, len(teams)), dtype=np.int16)
+    position_events = (
+        (
+            "title_probability",
+            "automatic_promotion_probability",
+            "playoff_qualification_probability",
+            "relegation_probability",
+        )
+        if championship
+        else (
+            "title_probability",
+            "top_four_probability",
+            "top_five_probability",
+            "relegation_probability",
+        )
+    )
+    event_paths = (
+        {key: np.zeros((simulations, len(teams))) for key in position_events}
+        if impact_outcomes
+        else {}
+    )
     for sample in range(simulations):
         order, ties, unresolved, used_h2h = rank_table(
             teams,
@@ -336,6 +449,21 @@ def simulate_season(
         for start, end in ties:
             weights[start:end, start:end] = 1 / (end - start)
         position_counts[order] += weights
+        if event_paths:
+            path_positions = np.zeros((len(teams), len(teams)))
+            path_positions[order] = weights
+            event_paths["title_probability"][sample] = path_positions[:, 0]
+            event_paths["relegation_probability"][sample] = path_positions[:, -3:].sum(axis=1)
+            if championship:
+                event_paths["automatic_promotion_probability"][sample] = path_positions[
+                    :, : rules.automatic_promotion
+                ].sum(axis=1)
+                event_paths["playoff_qualification_probability"][sample] = path_positions[
+                    :, rules.automatic_promotion : rules.playoff_end
+                ].sum(axis=1)
+            else:
+                event_paths["top_four_probability"][sample] = path_positions[:, :4].sum(axis=1)
+                event_paths["top_five_probability"][sample] = path_positions[:, :5].sum(axis=1)
         if europe is not None:
             for tournament, qualified in european_places([teams[i] for i in order], europe).items():
                 for team in qualified & team_index.keys():
@@ -362,6 +490,18 @@ def simulate_season(
             )
             for winner, count in zip(*np.unique(winners, return_counts=True), strict=True):
                 playoff_counts[team_index[str(winner)]] = count
+        if event_paths:
+            promoted = np.zeros((simulations, len(teams)))
+            if playoff_winner is not None:
+                promoted[:, team_index[playoff_winner]] = 1.0
+            else:
+                promoted[
+                    np.arange(simulations), [team_index[str(winner)] for winner in winners]
+                ] = 1.0
+            event_paths["playoff_promotion_probability"] = promoted
+            event_paths["promotion_probability"] = (
+                event_paths["automatic_promotion_probability"] + promoted
+            )
 
     def distribution(values: np.ndarray) -> dict[str, float]:
         outcomes, counts = np.unique(values, return_counts=True)
@@ -431,8 +571,20 @@ def simulate_season(
                 key: float(values[index] / simulations) for key, values in qualification.items()
             }
         rows.append(row)
+    for event, values in event_paths.items():
+        published = np.array([row[event] for row in rows])
+        if np.max(np.abs(values.mean(axis=0) - published)) > 1e-9:
+            raise RuntimeError(f"Per-path event indicators disagree with the published {event}")
+    impacts = (
+        conditional_impacts(
+            impact_outcomes, event_paths, team_index, simulations, impact_horizon_days
+        )
+        if impact_outcomes
+        else None
+    )
     return {
         "competition_id": competition,
+        "match_impacts": impacts,
         "season_id": season,
         "as_of": str(as_of),
         "results_observed_at": results_observed_at.isoformat() if results_observed_at else None,

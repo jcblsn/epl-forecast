@@ -1,5 +1,5 @@
 import math
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from html import escape
 from pathlib import Path
 
@@ -246,6 +246,7 @@ def export_forecast(
     europe: EuropeScenario | None = None,
     market_quotes: list[dict] | None = None,
     market_pool: dict | None = None,
+    impact_horizon_days: int = 7,
 ) -> dict:
     new_run_directory(output)
     in_progress = [
@@ -258,6 +259,14 @@ def export_forecast(
     ]
     simulation = None
     if not in_progress and not unscheduled:
+        horizon = live.observed_at + timedelta(days=impact_horizon_days)
+        impact_fixtures = {
+            row["match_id"]
+            for row in live.details.values()
+            if row["status"] == "scheduled"
+            and row["kickoff_time"]
+            and live.observed_at < timestamp(row["kickoff_time"]) <= horizon
+        }
         simulation = simulate_season(
             model,
             live.played,
@@ -269,6 +278,8 @@ def export_forecast(
             adjustments,
             europe,
             results_observed_at=live.observed_at,
+            impact_fixtures=impact_fixtures,
+            impact_horizon_days=impact_horizon_days,
         )
         table = current_table(live, adjustments)
         for row in simulation["teams"]:

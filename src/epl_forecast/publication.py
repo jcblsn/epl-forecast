@@ -104,6 +104,70 @@ def _distribution(mapping: dict) -> dict:
     return {key: kept[key] for key in sorted(kept, key=int)}
 
 
+def derive_impact(
+    simulation: dict, kickoffs: dict, fixtures: int = 5, rows: int = 4
+) -> dict | None:
+    """Keep the highest-impact fixtures and, within each, the largest movements.
+
+    Both participants are represented where the fixture moves anything for them, so a
+    fixture never appears with only one side's events.
+    """
+    impacts = simulation.get("match_impacts")
+    if not impacts:
+        return None
+    published = []
+    for fixture in impacts["fixtures"][:fixtures]:
+        ranked = fixture["impacts"]
+        kept = [
+            next((row for row in ranked if row["team_id"] == team), None)
+            for team in (fixture["home_team_id"], fixture["away_team_id"])
+        ]
+        kept = [row for row in kept if row is not None]
+        for row in ranked:
+            if len(kept) >= rows:
+                break
+            if row not in kept:
+                kept.append(row)
+        kept.sort(key=lambda row: row["rms_movement"], reverse=True)
+        published.append(
+            {
+                "match_id": fixture["match_id"],
+                "match_date": fixture["match_date"],
+                "kickoff_time": kickoffs.get(fixture["match_id"]),
+                "home_team_id": fixture["home_team_id"],
+                "away_team_id": fixture["away_team_id"],
+                "outcome_counts": fixture["outcome_counts"],
+                "top_rms_movement": probability(fixture["top_rms_movement"]),
+                "impacts": [
+                    {
+                        "team_id": row["team_id"],
+                        "event": row["event"],
+                        "baseline": probability(row["baseline"]),
+                        "conditional": {
+                            key: None if value is None else probability(value)
+                            for key, value in row["conditional"].items()
+                        },
+                        "standard_error": {
+                            key: None if value is None else probability(value)
+                            for key, value in row["standard_error"].items()
+                        },
+                        "rms_movement": probability(row["rms_movement"]),
+                        "swing": probability(row["swing"]),
+                        "sufficient_sample": row["sufficient_sample"],
+                    }
+                    for row in kept
+                ],
+            }
+        )
+    return {
+        "horizon_days": impacts["horizon_days"],
+        "minimum_conditional_samples": impacts["minimum_conditional_samples"],
+        "smallest_outcome_count": impacts["smallest_outcome_count"],
+        "basis": impacts["basis"],
+        "fixtures": published,
+    }
+
+
 def derive_forecast(
     forecast: dict,
     run: dict,
@@ -191,6 +255,9 @@ def derive_forecast(
         },
         "teams": teams,
         "matches": matches,
+        "impact": derive_impact(
+            simulation, {row["match_id"]: row["kickoff_time"] for row in matches}
+        ),
         "verification": None
         if verification is None
         else {
