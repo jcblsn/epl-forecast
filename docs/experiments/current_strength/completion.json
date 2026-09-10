@@ -1,0 +1,34 @@
+{
+  "observation_sha256": "162c3530d96126af14254a0177db3ca276c5aaa0851dd0c89d54affc9c1fb080",
+  "observations": 51520,
+  "studies": {
+    "box_shots": {
+      "comparisons": 30,
+      "complete_cases": 50708,
+      "predictions": 185416,
+      "seasons": [
+        "2016-2017",
+        "2017-2018",
+        "2018-2019",
+        "2019-2020",
+        "2020-2021",
+        "2021-2022",
+        "2022-2023",
+        "2023-2024",
+        "2024-2025",
+        "2025-2026"
+      ]
+    },
+    "expected_goals": {
+      "comparisons": 63,
+      "complete_cases": 16402,
+      "predictions": 69376,
+      "seasons": [
+        "2022-2023",
+        "2023-2024",
+        "2024-2025",
+        "2025-2026"
+      ]
+    }
+  }
+}
