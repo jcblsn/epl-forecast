@@ -127,7 +127,9 @@ def derive(standings: list[dict], matches, competition: str, season: str) -> dic
         "teams_reported": len(rows),
         "teams_unknown": len(unknown),
         "sanctioned_table_available": complete,
-        "observed_on": min((row["retrieved_at"] for row in rows), default=None),
+        "observed_on": min(
+            (str(row["retrieved_at"].astimezone(LONDON).date()) for row in rows), default=None
+        ),
         "adjustments": adjustments,
         "unknown": unknown,
     }
