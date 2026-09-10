@@ -8,11 +8,14 @@ population prior at each entry.
 
 from datetime import date
 from itertools import groupby
+from types import MappingProxyType
 
 import numpy as np
 
+from epl_forecast.models.gaussian import likelihood_laplace_update
 from epl_forecast.models.promotion import CHAMPIONSHIP, PL, TeamPrior
 from epl_forecast.models.quality_tilt import QualityTiltFilter
+from epl_forecast.models.xg_observation import ChanceObservation, chance_rows
 from epl_forecast.schema import Match
 
 DIVISIONS = (PL, CHAMPIONSHIP)
@@ -196,3 +199,68 @@ class CrossDivisionQualityTilt(QualityTiltFilter):
                 ):
                     crossed.add(team)
         return crossed
+
+
+class CrossDivisionXG(CrossDivisionQualityTilt):
+    """The same club states, with team xG as a noisy measurement of the process.
+
+    Goals stay the Binomial thinning of a Poisson opportunity process and xG its
+    Gamma measurement, so xG never double-counts goals and is never forced to
+    equal an additive player total.
+    """
+
+    def __init__(self, observations=(), chance_probability=0.2, **kwargs):
+        if kwargs.get("dispersion") is not None:
+            raise ValueError("Opportunity thinning implies marginal independent Poisson goals")
+        kwargs["dispersion"] = None
+        self.chance_probability = chance_probability
+        ChanceObservation([], [], chance_probability)
+        self._observations = chance_rows(observations)
+        super().__init__(**kwargs)
+
+    @property
+    def observations(self):
+        return MappingProxyType(self._observations)
+
+    def _reset(self):
+        super()._reset()
+        self.xg_updates = 0
+        self._daily_xg = np.empty(0)
+
+    def _prepare_observations(self, games):
+        values = []
+        for match in games:
+            row = self.observations.get(match.fixture.match_id)
+            if row is not None:
+                day, available, home, away, home_xg, away_xg = row
+                if day != match.fixture.match_date or (home, away) != (
+                    match.home_goals,
+                    match.away_goals,
+                ):
+                    raise ValueError("xG does not reconcile with training result")
+                # Daily filtering cannot retrofit observations published after this update.
+                if available <= match.available_on:
+                    values.extend([home_xg, away_xg])
+                    self.xg_updates += 1
+                    continue
+            values.extend([np.nan, np.nan])
+        self._daily_xg = np.asarray(values)
+
+    def _update(self, design, goals):
+        likelihood = ChanceObservation(goals, self._daily_xg, self.chance_probability)
+        self.mean, self.covariance, evidence = likelihood_laplace_update(
+            self.mean, self.covariance, design, likelihood
+        )
+        self.log_evidence += evidence
+
+    def fit(self, matches, as_of):
+        super().fit(matches, as_of)
+        self.fit_diagnostics.update(
+            {
+                "observation_model": "Poisson opportunities; Gamma xG; Binomial goals",
+                "chance_probability": self.chance_probability,
+                "xg_matches": self.xg_updates,
+                "xg_availability": "retrospective next-day assumption; late records skipped",
+            }
+        )
+        return self

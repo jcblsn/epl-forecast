@@ -3,7 +3,7 @@ from datetime import date
 import numpy as np
 import pytest
 
-from epl_forecast.models.cross_division import CrossDivisionQualityTilt
+from epl_forecast.models.cross_division import CrossDivisionQualityTilt, CrossDivisionXG
 from epl_forecast.models.promotion import CHAMPIONSHIP, PL
 from epl_forecast.schema import Fixture, Match, fixture_id
 
@@ -120,3 +120,79 @@ def test_a_division_outside_the_hierarchy_is_refused():
     )
     with pytest.raises(ValueError, match="PL and Championship"):
         CrossDivisionQualityTilt().fit([*matches, outside], date(2021, 8, 1))
+
+
+def xg_rows(matches, seed=0, noise=0.35):
+    rng = np.random.default_rng(seed)
+    rows = []
+    for match in matches:
+        rows.append(
+            {
+                "match_id": match.fixture.match_id,
+                "match_date": str(match.fixture.match_date),
+                "available_on": str(date.fromordinal(match.fixture.match_date.toordinal() + 1)),
+                "home_goals": match.home_goals,
+                "away_goals": match.away_goals,
+                "home_xg": float(rng.gamma(4.0, (match.home_goals + noise) / 4.0)),
+                "away_xg": float(rng.gamma(4.0, (match.away_goals + noise) / 4.0)),
+            }
+        )
+    return rows
+
+
+def test_team_xg_sharpens_club_states_without_replacing_the_goal_likelihood():
+    matches, _ = two_division_history(seed=2)
+    cutoff = date(2021, 8, 1)
+    goals_only = CrossDivisionQualityTilt(dispersion=None).fit(matches, cutoff)
+    with_xg = CrossDivisionXG(xg_rows(matches)).fit(matches, cutoff)
+    assert with_xg.fit_diagnostics["xg_matches"] == len(matches)
+    team = with_xg.league_dimensions
+    assert np.trace(with_xg.covariance[team:, team:]) < np.trace(
+        goals_only.covariance[team:, team:]
+    )
+
+
+def test_xg_published_after_the_daily_update_is_not_retrofitted():
+    matches, _ = two_division_history(seed=2)
+    rows = xg_rows(matches)
+    for row in rows:
+        row["available_on"] = "2030-06-01"
+    late = CrossDivisionXG(rows).fit(matches, date(2021, 8, 1))
+    assert late.fit_diagnostics["xg_matches"] == 0
+
+
+def test_xg_states_still_recover_the_known_division_level():
+    matches, _ = two_division_history(seed=3)
+    model = CrossDivisionXG(xg_rows(matches)).fit(matches, date(2021, 8, 1))
+    summary = model.division_summary()
+    assert abs(summary["championship_level"] - LEVEL) < 3 * summary["championship_level_sd"]
+
+
+def test_quality_tilt_and_attack_defence_are_one_state_in_two_coordinates():
+    """The rotation is a change of coordinates, not a second model family."""
+    matches, _ = two_division_history()
+    cutoff = date(2021, 8, 1)
+    model = CrossDivisionQualityTilt().fit(matches, cutoff)
+    fixture = Fixture(
+        fixture_id(PL, "2021-2022", "pl0", "pl1"), PL, "2021-2022", cutoff, "pl0", "pl1"
+    )
+    quality_mean, quality_covariance = model.forecast_moments(fixture)
+
+    rotation = np.eye(len(model.mean))
+    for index in range(len(model.team_index)):
+        start = model.league_dimensions + 2 * index
+        rotation[start : start + 2, start : start + 2] = [[1.0, 1.0], [1.0, -1.0]]
+    attack_mean = rotation @ model.mean
+    attack_covariance = rotation @ model.covariance @ rotation.T
+
+    design = np.zeros((2, len(model.mean)))
+    design[:, : model.league_dimensions] = model._league_design(fixture)
+    for team, transform in zip(
+        (fixture.home_team_id, fixture.away_team_id),
+        (np.array([[1, 0], [0, -1]]), np.array([[0, -1], [1, 0]])),
+        strict=True,
+    ):
+        design[:, model._team_slice(team)] = transform
+
+    assert design @ attack_mean == pytest.approx(quality_mean, abs=1e-12)
+    assert design @ attack_covariance @ design.T == pytest.approx(quality_covariance, abs=1e-12)

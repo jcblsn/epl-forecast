@@ -1,9 +1,31 @@
 """Joint goals/xG likelihood from a thinned Poisson opportunity process."""
 
+from datetime import date
+
 import numpy as np
 from scipy.special import gammaln, logsumexp
 
 from epl_forecast.models.gaussian import LikelihoodDomainError
+
+
+def chance_rows(observations):
+    """Validate provider xG rows and index them by match for daily filtering."""
+    rows = {}
+    for row in observations:
+        key = row["match_id"]
+        if key in rows:
+            raise ValueError("Duplicate xG match observation")
+        day, available = (
+            date.fromisoformat(row["match_date"]),
+            date.fromisoformat(row["available_on"]),
+        )
+        if available <= day:
+            raise ValueError("xG cannot be available before the next calendar day")
+        xg = (float(row["home_xg"]), float(row["away_xg"]))
+        if not np.isfinite(xg).all() or min(xg) < 0:
+            raise ValueError("Observed xG must be finite and nonnegative")
+        rows[key] = (day, available, int(row["home_goals"]), int(row["away_goals"]), *xg)
+    return rows
 
 
 class ChanceObservation:

@@ -1,7 +1,6 @@
 """M7 centered team state with joint opportunity-based goals and Understat xG."""
 
 from copy import copy
-from datetime import date
 from types import MappingProxyType
 
 import numpy as np
@@ -9,7 +8,7 @@ import numpy as np
 from epl_forecast.models.centered_quality_tilt import CenteredQualityTiltFilter
 from epl_forecast.models.gaussian import likelihood_laplace_update
 from epl_forecast.models.quality_tilt import BayesianQualityTilt, ForwardQualityTiltStates
-from epl_forecast.models.xg_observation import ChanceObservation
+from epl_forecast.models.xg_observation import ChanceObservation, chance_rows
 
 XG_DYNAMICS = {
     "quality_retention": 0.85,
@@ -27,22 +26,7 @@ class XGQualityTiltFilter(CenteredQualityTiltFilter):
         kwargs["dispersion"] = None
         self.chance_probability = chance_probability
         ChanceObservation([], [], chance_probability)
-        rows = {}
-        for row in observations:
-            key = row["match_id"]
-            if key in rows:
-                raise ValueError("Duplicate xG match observation")
-            day, available = (
-                date.fromisoformat(row["match_date"]),
-                date.fromisoformat(row["available_on"]),
-            )
-            if available <= day:
-                raise ValueError("xG cannot be available before the next calendar day")
-            xg = (float(row["home_xg"]), float(row["away_xg"]))
-            if not np.isfinite(xg).all() or min(xg) < 0:
-                raise ValueError("Observed xG must be finite and nonnegative")
-            rows[key] = (day, available, int(row["home_goals"]), int(row["away_goals"]), *xg)
-        self._observations = rows
+        self._observations = chance_rows(observations)
         super().__init__(**kwargs)
 
     @property
