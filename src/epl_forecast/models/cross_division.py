@@ -149,7 +149,7 @@ class CrossDivisionQualityTilt(QualityTiltFilter):
                 for row, match in enumerate(games):
                     block = design[2 * row : 2 * row + 2]
                     block[:, : self.league_dimensions] = self._league_design(match.fixture)
-                    home_transform, away_transform = self._team_transforms()
+                    home_transform, away_transform = self._team_transforms(match.fixture)
                     block[:, self._team_slice(match.fixture.home_team_id)] = home_transform
                     block[:, self._team_slice(match.fixture.away_team_id)] = away_transform
                     self._augment_design(block, match)

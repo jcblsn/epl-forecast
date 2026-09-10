@@ -12,22 +12,31 @@ from epl_forecast.models.quality_tilt import QualityTiltFilter
 
 
 @lru_cache(maxsize=128)
-def tilt_coordinates(teams):
-    """Map population coordinates to level, Quality, Tilt contrasts and scoring memory."""
+def tilt_coordinates(teams, absorption=(2.0, 0.0)):
+    """Map population coordinates to league slots, Quality, Tilt contrasts and scoring memory.
+
+    Every club Tilt enters both teams' log rates with the same sign, so the
+    population mean of Tilt is a scoring level. `absorption` gives the coefficient
+    with which that mean enters each slot of the leading league block, and the
+    corresponding slot takes ownership of it here.
+    """
     if type(teams) is not int or teams < 0:
         raise ValueError("Team count must be a nonnegative integer")
-    size = 2 + 2 * teams
-    transform = np.eye(size)
+    league = len(absorption)
+    if league < 2 or league % 2:
+        raise ValueError("The leading league block needs an even number of slots")
+    size = league + 2 * teams
+    transform, inverse = np.eye(size), np.eye(size)
     if teams:
-        indices = np.arange(3, size, 2)
-        transform[0, indices] = 2 / teams
+        indices = np.arange(league + 1, size, 2)
         transform[np.ix_(indices, indices)] = np.vstack(
             [helmert(teams), np.full((1, teams), 1 / teams)]
         )
-    inverse = np.eye(size)
-    if teams:
-        inverse[0, -1] = -2
         inverse[np.ix_(indices, indices)] = np.column_stack([helmert(teams).T, np.ones(teams)])
+        for slot, coefficient in enumerate(absorption):
+            if coefficient:
+                transform[slot, indices] = coefficient / teams
+                inverse[slot, -1] = -coefficient
     transform.setflags(write=False)
     inverse.setflags(write=False)
     return transform, inverse
@@ -45,8 +54,12 @@ class CenteredQualityTiltFilter(QualityTiltFilter):
             kwargs["dispersion"] = None
         super().__init__(**kwargs)
 
+    def _mean_tilt_absorption(self):
+        """Which league slots own the population mean of club Tilt."""
+        return (2.0, 0.0)
+
     def _coordinates(self):
-        return tilt_coordinates(len(self.team_index))
+        return tilt_coordinates(len(self.team_index), self._mean_tilt_absorption())
 
     def population_moments(self):
         _, inverse = self._coordinates()
@@ -111,16 +124,16 @@ class CenteredQualityTiltFilter(QualityTiltFilter):
         n = len(self.team_index)
         design = np.zeros((n, len(self.mean)))
         if n > 1:
-            design[:, 3:-2:2] = helmert(n).T
+            design[:, self.league_dimensions + 1 : -2 : 2] = helmert(n).T
         return design
 
     @property
     def attack(self):
-        return self.mean[2::2] + self._centered_tilt_map() @ self.mean
+        return self.mean[self.league_dimensions :: 2] + self._centered_tilt_map() @ self.mean
 
     @property
     def defense(self):
-        return self.mean[2::2] - self._centered_tilt_map() @ self.mean
+        return self.mean[self.league_dimensions :: 2] - self._centered_tilt_map() @ self.mean
 
     def team_state(self, team, season):
         if self.as_of is None:
@@ -128,7 +141,7 @@ class CenteredQualityTiltFilter(QualityTiltFilter):
         if self._uses_fitted_state(team, season):
             index = self.team_index[team]
             design = np.zeros((2, len(self.mean)))
-            design[0, 2 + 2 * index] = 1
+            design[0, self.league_dimensions + 2 * index] = 1
             design[1] = self._centered_tilt_map()[index]
             source = self.entry_priors.get((team, season))
             return TeamPrior(
@@ -154,11 +167,13 @@ class CenteredQualityTiltFilter(QualityTiltFilter):
             snapshot._ensure_team(team, fixture.season_id, self.as_of)
         snapshot._advance(fixture.match_date)
         design = np.zeros((2, len(snapshot.mean)))
-        design[:, :2] = [[1, 1], [1, 0]]
+        design[:, : self.league_dimensions] = self._league_design(fixture)
         for team, transform in zip(
-            (fixture.home_team_id, fixture.away_team_id), self._team_transforms(), strict=True
+            (fixture.home_team_id, fixture.away_team_id),
+            self._team_transforms(fixture),
+            strict=True,
         ):
-            index = 2 + 2 * snapshot.team_index[team]
+            index = self.league_dimensions + 2 * snapshot.team_index[team]
             design[:, index : index + 2] = transform
         design = snapshot.observation_design(design)
         return design @ snapshot.mean, design @ snapshot.covariance @ design.T

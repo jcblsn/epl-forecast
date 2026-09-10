@@ -59,7 +59,7 @@ class QualityTiltFilter(DynamicAttackDefense):
             QT_FROM_AD @ prior.mean, QT_FROM_AD @ prior.covariance @ QT_FROM_AD.T, prior.source
         )
 
-    def _team_transforms(self):
+    def _team_transforms(self, fixture=None):
         return np.array([[1, 1], [-1, 1]]), np.array([[-1, 1], [1, 1]])
 
     def transition(self, years, dimensions):

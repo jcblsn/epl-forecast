@@ -186,7 +186,7 @@ class DynamicAttackDefense(BaseModel):
                     design[2 * row : 2 * row + 2, : self.league_dimensions] = self._league_design(
                         match.fixture
                     )
-                    home_transform, away_transform = self._team_transforms()
+                    home_transform, away_transform = self._team_transforms(match.fixture)
                     design[2 * row : 2 * row + 2, self._team_slice(match.fixture.home_team_id)] = (
                         home_transform
                     )
@@ -219,7 +219,8 @@ class DynamicAttackDefense(BaseModel):
     def _augment_design(self, design, match):
         pass
 
-    def _team_transforms(self):
+    def _team_transforms(self, fixture=None):
+        """Club loadings on the home and away log rates, optionally per fixture."""
         return np.array([[1, 0], [0, -1]]), np.array([[0, -1], [1, 0]])
 
     def _update(self, design, goals):
@@ -286,9 +287,10 @@ class DynamicAttackDefense(BaseModel):
         design = np.zeros((2, len(self.mean)))
         design[:, : self.league_dimensions] = self._league_design(fixture)
         extra_mean, extra_covariance = np.zeros(2), np.zeros((2, 2))
-        for team, transform in (
-            (fixture.home_team_id, self._team_transforms()[0]),
-            (fixture.away_team_id, self._team_transforms()[1]),
+        for team, transform in zip(
+            (fixture.home_team_id, fixture.away_team_id),
+            self._team_transforms(fixture),
+            strict=True,
         ):
             if self._uses_fitted_state(team, fixture.season_id):
                 design[:, self._team_slice(team)] = transform
