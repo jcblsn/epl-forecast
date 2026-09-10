@@ -89,23 +89,32 @@ exposure/staleness uncertainty. Its Gamma latent-rate uncertainty is explicitly
 uncalibrated; the standalone future-process interval scores do not establish this
 interface's coverage.
 
-Gate 3 is in progress. `research/roster_bridge.py` and
-`scripts/evaluate_roster_bridge.py` implement an attacking-only known-minutes
-bridge on the exact saved M2 and M7 forecast distributions, with baseline states
-held fixed. The mapping fits exactly two coefficients, no intercept, and ridge 1
-using a chronological Poisson mean estimating equation. Actual target minutes
-are compared with the previous eight eligible team matches, requiring at least
-three reference matches. Scoring begins on 2024-08-01 after at least 200 training
-fixtures.
+Gate 3 is complete and negative. The
+[known-minutes roster bridge](experiments/roster_bridge.md) improves neither
+baseline: across 760 chronological fixtures the paired outcome-loss difference is
++0.00178 against M2 and +0.00108 against M7, and every whole-population and slice
+interval includes zero. The plan's diagnosis requirement resolves to a
+structurally inadequate mapping rather than a one-baseline-only improvement.
 
-This first bridge uses expected portable traits as plug-in inputs. It exports a
-trait-variance audit but does not integrate that uncertainty into forecasts.
-Whole-population and transfer, injury, large-lineup-change (at least two player
-match equivalents), opening (first five matches) and promoted slices are required
-in the retained report. Reconstruction covered all 1,140 saved baseline matches;
-M7 likelihood agreement was within 8.9e-16. Five synthetic bridge tests pass.
-The empirical run `runs/roster-bridge-v1` is preparing; no empirical bridge result
-or dynamic-state result is claimed here. The full objective remains open.
+The [representation check](experiments/roster_bridge/representation_audit.json)
+rules out estimation as the cause. Refitting the two coefficients in sample on
+the evaluation window itself, the entire attainable Poisson log-likelihood gain
+is 0.42 nats for M2 and 0.01 for M7 over 1,520 team-matches, both coefficients
+sit under one standard error from zero, and a permutation null is not rejected.
+The design is well conditioned throughout, so no coefficient choice for this
+contrast could have helped. Averaging the reference over eight matches removes
+lineup identity, leaving a delta that measures rotation: 87.4% of team-matches
+already exceed the plan's two-equivalent threshold, which is why the required
+large-lineup-change and injury slices cover 97.4% and 94.5% of fixtures and
+separate no distinct population. A positive shooting coefficient appears only in
+the 5.4% of team-matches with the largest personnel change; that stratum is
+in-sample on a post hoc threshold and is a direction, not evidence.
+
+The channel is parked with at most one bounded second formulation available under
+the research principles, against an identity-preserving recent-lineup reference
+on a population where personnel actually change. The frozen portable interface is
+unaffected. Gate 6 is conditional on bridge evidence and therefore stays closed
+until such a contrast produces some. Gate 4 is not blocked by this result.
 
 The depth-matched API control uses all API appearances starting at the earliest
 eligible retained process observation at each cutoff, including role-population
@@ -130,6 +139,8 @@ plans when their useful content is retained elsewhere; Git preserves their histo
   retained xG benchmark and parked observation candidate.
 - [Corrected player evidence](experiments/player_layer_corrections.md): completed
   horizon, reliability and API-control comparisons, with archived per-case scores.
+- [Known-minutes roster bridge](experiments/roster_bridge.md): the negative Gate 3
+  result and the identification and representation check that closed it.
 - [Portable-player interface](portable_player_interface.md): trait distribution,
   chronology, provenance and downstream consumption contract.
 - [Original player report](experiments/player_layer.md) and
