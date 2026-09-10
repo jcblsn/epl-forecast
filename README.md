@@ -50,7 +50,9 @@ It collects, forecasts, verifies each archive against the
 [MVP contract](docs/mvp.md), and publishes compact derived artifacts to `site/`
 only if verification passes. Old forecasts stay in an immutable chronological
 archive, and settled matches accumulate H/D/A log loss and Brier in a prospective
-ledger. Inspect any snapshot with `uv run python -m http.server -d site 8000`.
+ledger. Each run also ranks the coming week's fixtures by how far their outcome
+moves the season events, conditioning on the same simulated paths. Inspect any
+snapshot with `uv run python -m http.server -d site 8000`.
 
 Only model output is published; provider payloads, odds quotes, request records
 and Parquet partitions stay local. `configs/publication.toml` declares that

@@ -46,8 +46,9 @@ provider, a local file or a captured payload.
 
 Published: H/D/A probabilities, exact-score grids for each club's next fixture,
 full final-points and finishing-position distributions, expected and median
-points and rank, reported intervals, event probabilities, the market-assisted
-blend where one exists, timestamps, model identity and the verification result.
+points and rank, reported intervals, event probabilities, aggregate conditional
+impacts for the next seven days, the market-assisted blend where one exists,
+timestamps, model identity and the verification result.
 
 Private: everything under `data/` and `snapshots/`, request records, Parquet
 partitions and their hashes, odds quotes and the decimal prices behind the
@@ -80,6 +81,37 @@ verification or falls below the product floor.
 The full private archive of each run — every CSV, the run provenance, the
 verification report and the logs — stays under `runs/product/<snapshot>/`.
 
+## Highest-impact fixtures
+
+For every remaining fixture inside a seven-day horizon, the season simulation
+partitions its own paths by that fixture's outcome and re-reads each participating
+club's headline events over each subset. Nothing is re-simulated: one bounded run
+produces the baseline and all three conditionals, so they are mutually consistent
+by construction rather than by matching separate runs.
+
+A team-event pair is ranked by the probability-weighted RMS movement
+
+```text
+sqrt( sum_o P(o) (P(E|o) - P(E))^2 )
+```
+
+and a fixture by its largest participating-team movement. The plainer
+`max(P(E|o)) - min(P(E|o))` swing is retained beside it for display. The top five
+fixtures per league are published, each with the leading movement for both
+participants.
+
+These are conditional forecasts, not causal-effect estimates: they say how the
+season distribution looks among the paths where a result happened, not what a
+result would cause.
+
+Three checks run on every archive, in the simulator and again in the product
+verifier. The outcome subsets must partition the paths; the outcome-weighted
+conditionals must return the baseline exactly, since the subsets partition the
+same paths; and the per-path event indicators must reproduce the published season
+event probabilities. Each cell also carries its Monte Carlo standard error and
+its path count, and a fixture whose smallest outcome sample falls below 100 paths
+is marked as a thin sample rather than dropped.
+
 ## The prospective ledger
 
 `site/data/ledger.json` scores settled matches. Each match is scored once,
@@ -104,9 +136,14 @@ uv run python -m http.server -d site 8000
 
 It shows both league tables with expected rank and points and the headline event
 probabilities, the full finishing-position matrix, per-club points and rank
-distributions, upcoming fixtures with H/D/A and likeliest scores, and the
-ledger. The snapshot selector loads any archived forecast. Every table column
-sorts.
+distributions, upcoming fixtures with H/D/A and likeliest scores, the
+highest-impact fixtures, and the ledger. The snapshot selector loads any archived
+forecast. Every table column sorts.
+
+The fixtures view carries no market-assisted column. The market-assisted arm is
+still computed, still published per match and still retained in the archive; it
+is simply not on this page. Earlier snapshots keep the field they were written
+with.
 
 Pages deployment is off. `.github/workflows/pages.yml` runs only when started by
 hand and publishes `site/` as committed, after re-checking the boundary. To go

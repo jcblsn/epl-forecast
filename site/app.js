@@ -39,6 +39,9 @@ function table(headers, rows) {
   const body = element("tbody", {}, rows);
   const node = element("table", {}, [element("thead", {}, [head]), body]);
   head.querySelectorAll("th").forEach((th, column) => {
+    if (rows.length && [...body.children].every((row) => row.children[column]?.classList.contains("name"))) {
+      th.classList.add("name");
+    }
     th.onclick = () => {
       const ascending = th.dataset.order !== "asc";
       head.querySelectorAll("th").forEach((other) => delete other.dataset.order);

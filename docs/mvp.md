@@ -75,6 +75,12 @@ and publishes the derived surface described in
 carry at least 1,000 simulated paths, and are scored prospectively once their
 matches settle.
 
+Each archive also conditions the headline season events on the outcome of every
+remaining fixture inside a seven-day horizon, by partitioning the same season
+paths rather than re-simulating. These are conditional forecasts on one run, not
+causal effects of a result, and the verifier re-checks that the outcome-weighted
+conditionals return the published event.
+
 The [match scoreboard](experiments/research_scoreboard.md),
 [market-pool evaluation](experiments/market_pool.md), and
 [season scoreboard](experiments/season_scoring.md) retain the selection evidence.
