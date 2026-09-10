@@ -61,6 +61,30 @@ The simulation receives the retrospectively recorded future schedule, not future
 scores. M7's historical xG publication dates remain reconstructed. Forecasts use
 only sanctions known at the cutoff; realized final points and positions include
 all final sanctions. Unexpected sanctions therefore contribute to forecast error.
+
+## Sanctioned final tables
+
+Archived results record what clubs earned on the pitch, not what the competition
+awarded them. The realized table is therefore built from results plus every
+sanction the retained API-Football standings show in force at the end of the
+season, in both leagues. A club's net adjustment is the difference between its
+standings points and the points its archived results imply, checked against the
+prefix of its own fixtures the provider says it had played and against the
+provider's goal difference over that prefix. Where the two tables do not describe
+the same matches, the club is reported unknown and no adjustment is invented; a
+season whose only retained snapshot is a partial mid-season table yields no
+sanctioned table and falls back to results alone, which the run names in
+`sanctions.json`. The reviewed Premier League announcement registry and the
+derived 2023/24 adjustments agree at -12 points, which is the check on the
+derivation.
+
+Forecasts apply only what a forecaster could have known. A reviewed announcement
+date is used where one exists; otherwise a derived sanction is dated by the
+earliest retained standings snapshot that shows it, so a sanction first seen in a
+retrospective capture is applied at no in-season origin. Historical Championship
+sanctions are all of that kind, so they enter the realized table and never the
+historical forecast; current-season sanctions are picked up by the scheduled
+standings capture and do enter the live product.
 Premier League promotion means absence from the preceding Premier League season.
 Championship subgroup labels distinguish entry from below and relegation from the
 Premier League using preceding-season membership.

@@ -1,5 +1,6 @@
 [
   {
+    "competition_id": "eng-premier-league",
     "season_id": "2023-2024",
     "team_id": "everton",
     "points": -10,
@@ -8,6 +9,7 @@
     "source": "https://www.premierleague.com/en/news/3788486"
   },
   {
+    "competition_id": "eng-premier-league",
     "season_id": "2023-2024",
     "team_id": "everton",
     "points": 4,
@@ -16,6 +18,7 @@
     "source": "https://www.premierleague.com/en/news/3912574"
   },
   {
+    "competition_id": "eng-premier-league",
     "season_id": "2023-2024",
     "team_id": "nottingham-forest",
     "points": -4,
@@ -24,6 +27,7 @@
     "source": "https://www.premierleague.com/en/news/3936397"
   },
   {
+    "competition_id": "eng-premier-league",
     "season_id": "2023-2024",
     "team_id": "everton",
     "points": -2,

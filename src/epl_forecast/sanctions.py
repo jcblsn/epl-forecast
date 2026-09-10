@@ -30,16 +30,32 @@ from zoneinfo import ZoneInfo
 LONDON = ZoneInfo("Europe/London")
 
 FULL_SEASON = {"eng-premier-league": 38, "eng-championship": 46}
+FULL_FIELD = {"eng-premier-league": 20, "eng-championship": 24}
+REGISTRIES = ("pl_adjustments.json", "efl_adjustments.json")
+
+
+def reviewed_events(competition: str, season: str) -> list[dict]:
+    """Every reviewed sanction for a season, dated or not."""
+    events = []
+    for name in REGISTRIES:
+        path = Path(__file__).parent.joinpath("data", name)
+        for event in json.loads(path.read_text()):
+            if event["season_id"] == season and event["competition_id"] == competition:
+                events.append(event)
+    return events
 
 
 def reviewed_adjustments(competition: str, season: str, as_of: date | None = None) -> list[dict]:
-    """Human-reviewed sanctions with published announcement dates."""
-    events = json.loads(Path(__file__).parent.joinpath("data", "pl_adjustments.json").read_text())
+    """Reviewed sanctions a forecaster could have applied.
+
+    An entry whose announcement date could not be established carries a null
+    ``known_on`` and is never applied to a forecast; it still describes the club, so
+    the derived final-table adjustment is not double counted against it.
+    """
     return [
-        {**event, "competition_id": competition}
-        for event in events
-        if event["season_id"] == season
-        and event.get("competition_id", "eng-premier-league") == competition
+        event
+        for event in reviewed_events(competition, season)
+        if event["known_on"] is not None
         and (as_of is None or date.fromisoformat(event["known_on"]) <= as_of)
     ]
 
@@ -107,6 +123,7 @@ def derive(standings: list[dict], matches, competition: str, season: str) -> dic
                     "points": row["points"] - archived[0],
                     "matches_covered": reported,
                     "observed_on": str(row["retrieved_at"].astimezone(LONDON).date()),
+                    "evidence_basis": row["evidence_basis"],
                     "table_updated_on": (
                         str(row["updated_at"].astimezone(LONDON).date())
                         if row["updated_at"]
@@ -117,7 +134,9 @@ def derive(standings: list[dict], matches, competition: str, season: str) -> dic
                 }
             )
     complete = (
-        bool(rows)
+        len(rows) == FULL_FIELD[competition]
+        and len({row["team_id"] for row in rows}) == FULL_FIELD[competition]
+        and {row["team_id"] for row in rows} == set(prefixes)
         and not unknown
         and all(row["played"] == FULL_SEASON[competition] for row in rows)
     )
@@ -143,7 +162,29 @@ class SanctionRegistry:
         for competition, season in sorted(
             {(row["competition_id"], row["season_id"]) for row in standings}
         ):
-            self.derivations[competition, season] = derive(standings, matches, competition, season)
+            derivation = derive(standings, matches, competition, season)
+            self.derivations[competition, season] = derivation
+            if derivation["sanctioned_table_available"]:
+                self._check_reviewed(derivation)
+
+    @staticmethod
+    def _check_reviewed(derivation: dict) -> None:
+        """A reviewed registry that contradicts a complete provider table is an error.
+
+        The registry supplies announcement dates the provider does not publish, but its
+        magnitudes are checkable: per club they must sum to the difference between the
+        final table and the archived results.
+        """
+        competition, season = derivation["competition_id"], derivation["season_id"]
+        derived = {a["team_id"]: a["points"] for a in derivation["adjustments"]}
+        reviewed: dict[str, int] = {}
+        for event in reviewed_events(competition, season):
+            reviewed[event["team_id"]] = reviewed.get(event["team_id"], 0) + event["points"]
+        if {k: v for k, v in reviewed.items() if v} != derived:
+            raise ValueError(
+                f"Reviewed sanctions disagree with the {competition} {season} final table: "
+                f"reviewed {reviewed}, derived {derived}"
+            )
 
     def derivation(self, competition: str, season: str) -> dict:
         return self.derivations.get(
@@ -181,16 +222,24 @@ class SanctionRegistry:
         A reviewed announcement date beats a retrieval date, and a team the reviewed
         registry already covers is left to it, so a mid-season sanction is not counted
         twice when the final table also shows it.
+
+        A derived sanction is dated by its own observation only when that observation
+        was captured live. A retrospective backfill says when this archive learned of a
+        sanction, not when anyone could have; treating the two as the same would let a
+        2026 capture inform a 2019 forecast or, read the other way, pretend a decision
+        had no date at all. Live captures do carry availability: a sanction visible in
+        today's table was in force when the table was published.
         """
         reviewed = [
             {**event, "applies": "reviewed announcement"}
             for event in reviewed_adjustments(competition, season, as_of)
         ]
-        covered = {event["team_id"] for event in reviewed_adjustments(competition, season)}
+        covered = {event["team_id"] for event in reviewed_events(competition, season)}
         derived = [
             {**adjustment, "known_on": adjustment["observed_on"], "applies": "observed standings"}
             for adjustment in self.derivation(competition, season)["adjustments"]
             if adjustment["team_id"] not in covered
+            and adjustment["evidence_basis"] == "captured"
             and date.fromisoformat(adjustment["observed_on"]) <= as_of
         ]
         return reviewed + derived
@@ -208,7 +257,13 @@ class SanctionRegistry:
                 "derived_net_points": sum(a["points"] for a in derivation["adjustments"]),
                 "reviewed_net_points": sum(
                     event["points"]
-                    for event in reviewed_adjustments(
+                    for event in reviewed_events(
+                        derivation["competition_id"], derivation["season_id"]
+                    )
+                ),
+                "reviewed_undated_events": sum(
+                    event["known_on"] is None
+                    for event in reviewed_events(
                         derivation["competition_id"], derivation["season_id"]
                     )
                 ),

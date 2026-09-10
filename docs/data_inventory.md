@@ -5,13 +5,19 @@ Provider payloads remain local and subject to provider licensing.
 
 | Provider | Retained purpose | Important boundary |
 | --- | --- | --- |
-| API-Football | Both leagues' fixtures, players, squads, appearances, transfers, injuries and sidelined records | Historical responses are retrospective; current squads cannot reconstruct historical registrations. |
+| API-Football | Both leagues' fixtures, players, squads, appearances, transfers, injuries, sidelined records, per-match team statistics and league standings | Historical responses are retrospective; current squads cannot reconstruct historical registrations. |
 | football-data.co.uk | Both leagues' results, odds, shots and shots on target | Historical odds have retrieval provenance, not invented pre-kickoff capture times. |
 | Understat | PL team and player xG/process | No Championship xG; team and player xG are distinct concepts. |
 | FPL | PL availability, news, round playing probabilities | Current observations only; no historical player restoration or fixture dependency. |
 
 API-Football fixture coverage begins in 2010 for PL and 2011 for Championship;
 player-statistics coverage begins in 2014 and 2015 respectively, injuries in 2020.
+Per-match team statistics arrive with fixture detail captures from 2016/17, and
+carry the provider's own expected goals from 2022/23 in both leagues, which is the
+only Championship xG in this archive. Standings are the provider's league table
+including sanctions; they are the evidence behind realized final points, and the
+retained snapshot for 2017/18 Championship is a partial mid-season table rather
+than a final one.
 Endpoint flags describe advertised coverage, not verified completeness. The local
 archive audit reports actual counts and gaps. Transfers and sidelined depth vary
 by player. Stable API IDs anchor canonical player identity; explicit FPL and

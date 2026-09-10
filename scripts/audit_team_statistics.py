@@ -72,12 +72,15 @@ def main():
     finally:
         data.close()
 
-    finished = {
-        (r["competition_id"], r["season_id"]): set() for r in fixtures if r["status"] == "finished"
-    }
+    finished, season_of = defaultdict(set), {}
     for row in fixtures:
         if row["status"] == "finished":
             finished[row["competition_id"], row["season_id"]].add(row["match_id"])
+            season_of[row["match_id"]] = (row["competition_id"], row["season_id"])
+    # Coverage compares like with like: only statistics for finished regular-season
+    # matches count, against the finished regular-season matches of the same season.
+    outside = [r for r in statistics if r["match_id"] not in season_of]
+    statistics = [r for r in statistics if r["match_id"] in season_of]
     indexed = {(r["match_id"], r["team_id"]): r for r in statistics}
     retained = defaultdict(dict)
     for row in process:
@@ -138,18 +141,16 @@ def main():
                 }
             )
 
-    unmatched = sorted(
-        key
-        for key in indexed
-        if key[0]
-        not in finished.get((indexed[key]["competition_id"], indexed[key]["season_id"]), ())
-    )
     report = {
         "execution": execution_provenance(),
         "data_manifest_batches": len(provenance["batches"]),
         "team_matches": len(statistics),
         "evidence_basis": dict(sorted(basis.items())),
-        "team_matches_outside_finished_regular_season": len(unmatched),
+        "scope": (
+            "Finished regular-season team-matches only, in both the numerator and the "
+            "denominator; playoff and unfinished fixtures are excluded from each"
+        ),
+        "team_matches_outside_finished_regular_season": len(outside),
         "coverage": coverage,
         "provider_agreement": comparisons,
     }

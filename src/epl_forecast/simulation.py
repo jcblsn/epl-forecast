@@ -200,9 +200,12 @@ def simulate_season(
     europe: EuropeScenario | None = None,
     results_observed_at: datetime | None = None,
     playoff_winner: str | None = None,
+    playoff_conditioning: str = "path",
 ) -> dict:
     if type(simulations) is not int or simulations < 1:
         raise ValueError("simulations must be a positive integer")
+    if playoff_conditioning not in ("path", "marginal"):
+        raise ValueError("Playoff conditioning is either path or marginal")
     teams = sorted(teams)
     validate_schedule(teams, played, remaining, as_of, results_observed_at)
     if model.as_of != as_of:
@@ -351,7 +354,13 @@ def simulate_season(
         else:
             last_regular_day = max(f.match_date for f in [m.fixture for m in played] + remaining)
             winners, playoff_model = simulate_championship_playoffs(
-                model, orders, teams, season, last_regular_day, rng, states
+                model,
+                orders,
+                teams,
+                season,
+                last_regular_day,
+                rng,
+                states if playoff_conditioning == "path" else None,
             )
             for winner, count in zip(*np.unique(winners, return_counts=True), strict=True):
                 playoff_counts[team_index[str(winner)]] = count

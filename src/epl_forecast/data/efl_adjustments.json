@@ -1,0 +1,152 @@
+[
+  {
+    "competition_id": "eng-championship",
+    "season_id": "2018-2019",
+    "team_id": "birmingham-city",
+    "points": -9,
+    "announced_on": "2019-03-22",
+    "known_on": "2019-03-22",
+    "decision": "EFL misconduct charge upheld for a profitability and sustainability breach",
+    "evidence": "reviewer-asserted decision date; no provider document retained locally"
+  },
+  {
+    "competition_id": "eng-championship",
+    "season_id": "2019-2020",
+    "team_id": "wigan-athletic",
+    "points": -12,
+    "announced_on": null,
+    "known_on": null,
+    "decision": "Insolvency deduction applied to the 2019/20 season after administration",
+    "evidence": "unknown: decision date not established; excluded from every forecast origin"
+  },
+  {
+    "competition_id": "eng-championship",
+    "season_id": "2020-2021",
+    "team_id": "sheffield-wednesday",
+    "points": -12,
+    "announced_on": "2020-07-31",
+    "known_on": "2020-07-31",
+    "decision": "Profitability and sustainability sanction imposed on the 2020/21 season",
+    "evidence": "reviewer-asserted decision date; no provider document retained locally"
+  },
+  {
+    "competition_id": "eng-championship",
+    "season_id": "2020-2021",
+    "team_id": "sheffield-wednesday",
+    "points": 6,
+    "announced_on": "2020-11-04",
+    "known_on": "2020-11-04",
+    "decision": "Appeal reduced the standing deduction from twelve points to six",
+    "evidence": "reviewer-asserted decision date; no provider document retained locally"
+  },
+  {
+    "competition_id": "eng-championship",
+    "season_id": "2021-2022",
+    "team_id": "derby-county",
+    "points": -12,
+    "announced_on": "2021-09-22",
+    "known_on": "2021-09-22",
+    "decision": "Insolvency deduction on entering administration",
+    "evidence": "reviewer-asserted decision date; no provider document retained locally"
+  },
+  {
+    "competition_id": "eng-championship",
+    "season_id": "2021-2022",
+    "team_id": "derby-county",
+    "points": -9,
+    "announced_on": "2021-11-24",
+    "known_on": "2021-11-24",
+    "decision": "Agreed sanction for accounting breaches in earlier submitted accounts",
+    "evidence": "reviewer-asserted decision date; no provider document retained locally"
+  },
+  {
+    "competition_id": "eng-championship",
+    "season_id": "2021-2022",
+    "team_id": "reading",
+    "points": -6,
+    "announced_on": "2021-11-15",
+    "known_on": "2021-11-15",
+    "decision": "Agreed sanction for a profitability and sustainability breach",
+    "evidence": "reviewer-asserted decision date; no provider document retained locally"
+  },
+  {
+    "competition_id": "eng-championship",
+    "season_id": "2022-2023",
+    "team_id": "reading",
+    "points": -6,
+    "announced_on": null,
+    "known_on": null,
+    "decision": "Further profitability and sustainability sanction during 2022/23",
+    "evidence": "unknown: decision date not established; excluded from every forecast origin"
+  },
+  {
+    "competition_id": "eng-championship",
+    "season_id": "2022-2023",
+    "team_id": "wigan-athletic",
+    "points": -6,
+    "announced_on": null,
+    "known_on": null,
+    "decision": "Sanction for failing to pay players on time during 2022/23",
+    "evidence": "unknown: decision date not established; excluded from every forecast origin"
+  },
+  {
+    "competition_id": "eng-championship",
+    "season_id": "2024-2025",
+    "team_id": "sheffield-united",
+    "points": -2,
+    "announced_on": null,
+    "known_on": null,
+    "decision": "Sanction recorded in the 2024/25 final table",
+    "evidence": "unknown: decision date not established; excluded from every forecast origin"
+  },
+  {
+    "competition_id": "eng-championship",
+    "season_id": "2025-2026",
+    "team_id": "leicester-city",
+    "points": -6,
+    "announced_on": null,
+    "known_on": null,
+    "decision": "Sanction recorded in the 2025/26 final table",
+    "evidence": "unknown: decision date not established; excluded from every forecast origin"
+  },
+  {
+    "competition_id": "eng-championship",
+    "season_id": "2025-2026",
+    "team_id": "sheffield-wednesday",
+    "points": -18,
+    "announced_on": null,
+    "known_on": null,
+    "decision": "Sanction recorded in the 2025/26 final table",
+    "evidence": "unknown: decision date not established; excluded from every forecast origin"
+  },
+  {
+    "competition_id": "eng-championship",
+    "season_id": "2025-2026",
+    "team_id": "west-bromwich-albion",
+    "points": -2,
+    "announced_on": null,
+    "known_on": null,
+    "decision": "Sanction recorded in the 2025/26 final table",
+    "evidence": "unknown: decision date not established; excluded from every forecast origin"
+  },
+  {
+    "competition_id": "eng-championship",
+    "season_id": "2011-2012",
+    "team_id": "portsmouth",
+    "points": -10,
+    "announced_on": null,
+    "known_on": null,
+    "decision": "Insolvency deduction applied during 2011/12",
+    "evidence": "unknown: decision date not established; excluded from every forecast origin"
+  },
+  {
+    "competition_id": "eng-championship",
+    "season_id": "2014-2015",
+    "team_id": "rotherham-united",
+    "points": -3,
+    "announced_on": null,
+    "known_on": null,
+    "decision": "Sanction recorded in the 2014/15 final table",
+    "evidence": "unknown: decision date not established; excluded from every forecast origin"
+  }
+]
