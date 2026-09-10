@@ -1,0 +1,704 @@
+[
+  {
+    "candidate": "generic",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": 0.0034702984827898833,
+    "interval_95": [
+      -0.028670037565104146,
+      0.036166356854619615
+    ],
+    "metric": "trps",
+    "observations": 30,
+    "scope": "relegated_clubs"
+  },
+  {
+    "candidate": "generic",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": 0.3062684583333322,
+    "interval_95": [
+      -1.340390770052086,
+      2.0364632089583337
+    ],
+    "metric": "points_crps",
+    "observations": 30,
+    "scope": "relegated_clubs"
+  },
+  {
+    "candidate": "generic",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": -0.13333333333333333,
+    "interval_95": [
+      -0.26666666666666666,
+      0.0
+    ],
+    "metric": "coverage_90",
+    "observations": 30,
+    "scope": "relegated_clubs"
+  },
+  {
+    "candidate": "generic",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": -6.533333333333333,
+    "interval_95": [
+      -11.166666666666666,
+      -2.466666666666667
+    ],
+    "metric": "width_90",
+    "observations": 30,
+    "scope": "relegated_clubs"
+  },
+  {
+    "candidate": "generic",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": 0.0066721333333333325,
+    "interval_95": [
+      -0.012858867031249999,
+      0.033667086562500004
+    ],
+    "metric": "relegation_brier",
+    "observations": 30,
+    "scope": "relegated_clubs"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": -0.005517118636775368,
+    "interval_95": [
+      -0.04544754770946558,
+      0.03457251000056613
+    ],
+    "metric": "trps",
+    "observations": 30,
+    "scope": "relegated_clubs"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": -0.21356696249999932,
+    "interval_95": [
+      -2.4750572289062505,
+      2.131377289218747
+    ],
+    "metric": "points_crps",
+    "observations": 30,
+    "scope": "relegated_clubs"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": -0.1,
+    "interval_95": [
+      -0.3333333333333333,
+      0.1
+    ],
+    "metric": "coverage_90",
+    "observations": 30,
+    "scope": "relegated_clubs"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": -6.266666666666667,
+    "interval_95": [
+      -10.8,
+      -2.3
+    ],
+    "metric": "width_90",
+    "observations": 30,
+    "scope": "relegated_clubs"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": 0.0077532625,
+    "interval_95": [
+      -0.011019047656249998,
+      0.03270839109375
+    ],
+    "metric": "relegation_brier",
+    "observations": 30,
+    "scope": "relegated_clubs"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "generic",
+    "difference": -0.008987417119565251,
+    "interval_95": [
+      -0.025209560852015415,
+      0.006447329370470934
+    ],
+    "metric": "trps",
+    "observations": 30,
+    "scope": "relegated_clubs"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "generic",
+    "difference": -0.5198354208333315,
+    "interval_95": [
+      -1.4475898151562454,
+      0.33179192437500094
+    ],
+    "metric": "points_crps",
+    "observations": 30,
+    "scope": "relegated_clubs"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "generic",
+    "difference": 0.03333333333333333,
+    "interval_95": [
+      -0.06666666666666667,
+      0.13333333333333333
+    ],
+    "metric": "coverage_90",
+    "observations": 30,
+    "scope": "relegated_clubs"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "generic",
+    "difference": 0.26666666666666666,
+    "interval_95": [
+      -0.2,
+      0.7
+    ],
+    "metric": "width_90",
+    "observations": 30,
+    "scope": "relegated_clubs"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "generic",
+    "difference": 0.0010811291666666682,
+    "interval_95": [
+      -0.001678233072916669,
+      0.003608027343750006
+    ],
+    "metric": "relegation_brier",
+    "observations": 30,
+    "scope": "relegated_clubs"
+  },
+  {
+    "candidate": "generic",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": 0.0004010962182971034,
+    "interval_95": [
+      -0.003927046609912809,
+      0.0049109405158797624
+    ],
+    "metric": "trps",
+    "observations": 240,
+    "scope": "all_clubs"
+  },
+  {
+    "candidate": "generic",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": 0.036995871614583876,
+    "interval_95": [
+      -0.18964677047526057,
+      0.2839639364583333
+    ],
+    "metric": "points_crps",
+    "observations": 240,
+    "scope": "all_clubs"
+  },
+  {
+    "candidate": "generic",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": -0.016666666666666666,
+    "interval_95": [
+      -0.03333333333333333,
+      0.0
+    ],
+    "metric": "coverage_90",
+    "observations": 240,
+    "scope": "all_clubs"
+  },
+  {
+    "candidate": "generic",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": -0.8208333333333333,
+    "interval_95": [
+      -1.4,
+      -0.32916666666666666
+    ],
+    "metric": "width_90",
+    "observations": 240,
+    "scope": "all_clubs"
+  },
+  {
+    "candidate": "generic",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": 0.0005258416666666649,
+    "interval_95": [
+      -0.0018797119791666703,
+      0.004058092187499998
+    ],
+    "metric": "relegation_brier",
+    "observations": 240,
+    "scope": "all_clubs"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": -0.0012831151947463757,
+    "interval_95": [
+      -0.006696564940132467,
+      0.004081898461418707
+    ],
+    "metric": "trps",
+    "observations": 240,
+    "scope": "all_clubs"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": -0.049093829166666166,
+    "interval_95": [
+      -0.34757798958984304,
+      0.272339363632814
+    ],
+    "metric": "points_crps",
+    "observations": 240,
+    "scope": "all_clubs"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": -0.0125,
+    "interval_95": [
+      -0.041666666666666664,
+      0.0125
+    ],
+    "metric": "coverage_90",
+    "observations": 240,
+    "scope": "all_clubs"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": -0.7208333333333333,
+    "interval_95": [
+      -1.3541666666666667,
+      -0.20833333333333334
+    ],
+    "metric": "width_90",
+    "observations": 240,
+    "scope": "all_clubs"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": 0.0006021494791666652,
+    "interval_95": [
+      -0.001915303815104168,
+      0.0039732730078124966
+    ],
+    "metric": "relegation_brier",
+    "observations": 240,
+    "scope": "all_clubs"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "generic",
+    "difference": -0.0016842114130434785,
+    "interval_95": [
+      -0.003551716104930934,
+      3.650097090126476e-05
+    ],
+    "metric": "trps",
+    "observations": 240,
+    "scope": "all_clubs"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "generic",
+    "difference": -0.08608970078125001,
+    "interval_95": [
+      -0.1876524573697922,
+      0.0083411085937504
+    ],
+    "metric": "points_crps",
+    "observations": 240,
+    "scope": "all_clubs"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "generic",
+    "difference": 0.004166666666666667,
+    "interval_95": [
+      -0.008333333333333333,
+      0.016666666666666666
+    ],
+    "metric": "coverage_90",
+    "observations": 240,
+    "scope": "all_clubs"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "generic",
+    "difference": 0.1,
+    "interval_95": [
+      -0.07927083333333329,
+      0.275
+    ],
+    "metric": "width_90",
+    "observations": 240,
+    "scope": "all_clubs"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "generic",
+    "difference": 7.630781250000025e-05,
+    "interval_95": [
+      -0.0007881356380208352,
+      0.0009741910546875013
+    ],
+    "metric": "relegation_brier",
+    "observations": 240,
+    "scope": "all_clubs"
+  },
+  {
+    "candidate": "generic",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": 0.01256063404308277,
+    "interval_95": [
+      -0.0005426289257774003,
+      0.02596221116484804
+    ],
+    "metric": "log_loss",
+    "observations": 283,
+    "scope": "opening_matches"
+  },
+  {
+    "candidate": "generic",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": 0.007952644154690014,
+    "interval_95": [
+      -0.0016576605053276246,
+      0.017997999224327137
+    ],
+    "metric": "brier",
+    "observations": 283,
+    "scope": "opening_matches"
+  },
+  {
+    "candidate": "generic",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": 0.017467868791421454,
+    "interval_95": [
+      -0.0012451450812810626,
+      0.038095365037442895
+    ],
+    "metric": "score_nll",
+    "observations": 283,
+    "scope": "opening_matches"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": 0.008601985620528867,
+    "interval_95": [
+      -0.009330511540948907,
+      0.024858003888672785
+    ],
+    "metric": "log_loss",
+    "observations": 283,
+    "scope": "opening_matches"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": 0.005116040103485603,
+    "interval_95": [
+      -0.00825162021471351,
+      0.017213664232257397
+    ],
+    "metric": "brier",
+    "observations": 283,
+    "scope": "opening_matches"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": 0.01506669519696665,
+    "interval_95": [
+      -0.012123418667553326,
+      0.043910990105957476
+    ],
+    "metric": "score_nll",
+    "observations": 283,
+    "scope": "opening_matches"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "generic",
+    "difference": -0.003958648422553903,
+    "interval_95": [
+      -0.012005747834468661,
+      0.004439613922489743
+    ],
+    "metric": "log_loss",
+    "observations": 283,
+    "scope": "opening_matches"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "generic",
+    "difference": -0.0028366040512044113,
+    "interval_95": [
+      -0.008778222750434935,
+      0.003567586769322758
+    ],
+    "metric": "brier",
+    "observations": 283,
+    "scope": "opening_matches"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "generic",
+    "difference": -0.0024011735944548035,
+    "interval_95": [
+      -0.018279828137970952,
+      0.011991799459279437
+    ],
+    "metric": "score_nll",
+    "observations": 283,
+    "scope": "opening_matches"
+  },
+  {
+    "candidate": "generic",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": 0.011074929791026105,
+    "interval_95": [
+      -0.0015324102084025254,
+      0.024028984523917548
+    ],
+    "metric": "log_loss",
+    "observations": 143,
+    "scope": "opening_five"
+  },
+  {
+    "candidate": "generic",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": 0.00708497903284152,
+    "interval_95": [
+      -0.0021403425340911406,
+      0.016536760490323064
+    ],
+    "metric": "brier",
+    "observations": 143,
+    "scope": "opening_five"
+  },
+  {
+    "candidate": "generic",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": 0.02433063368040418,
+    "interval_95": [
+      0.002468521943965341,
+      0.04757303547454789
+    ],
+    "metric": "score_nll",
+    "observations": 143,
+    "scope": "opening_five"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": 0.004962948496028542,
+    "interval_95": [
+      -0.008733316579564944,
+      0.02216028220882779
+    ],
+    "metric": "log_loss",
+    "observations": 143,
+    "scope": "opening_five"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": 0.00335258036150648,
+    "interval_95": [
+      -0.0066699649192723575,
+      0.015414520109699627
+    ],
+    "metric": "brier",
+    "observations": 143,
+    "scope": "opening_five"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": 0.01821319573567715,
+    "interval_95": [
+      -0.014680372502559906,
+      0.05546829515585875
+    ],
+    "metric": "score_nll",
+    "observations": 143,
+    "scope": "opening_five"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "generic",
+    "difference": -0.006111981294997564,
+    "interval_95": [
+      -0.01972147495481801,
+      0.0054362330205509814
+    ],
+    "metric": "log_loss",
+    "observations": 143,
+    "scope": "opening_five"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "generic",
+    "difference": -0.0037323986713350406,
+    "interval_95": [
+      -0.013372307810394854,
+      0.004708903752760178
+    ],
+    "metric": "brier",
+    "observations": 143,
+    "scope": "opening_five"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "generic",
+    "difference": -0.006117437944727033,
+    "interval_95": [
+      -0.024140865302753764,
+      0.012049749288734497
+    ],
+    "metric": "score_nll",
+    "observations": 143,
+    "scope": "opening_five"
+  },
+  {
+    "candidate": "generic",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": -0.006386922588142689,
+    "interval_95": [
+      -0.014632718658273836,
+      0.002508083262300656
+    ],
+    "metric": "squared_error",
+    "observations": 60,
+    "scope": "entry_strength"
+  },
+  {
+    "candidate": "generic",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": -0.002094514480894084,
+    "interval_95": [
+      -0.04592766345586687,
+      0.04269376639102603
+    ],
+    "metric": "log_score",
+    "observations": 60,
+    "scope": "entry_strength"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": -0.005330802053440839,
+    "interval_95": [
+      -0.0171602573649266,
+      0.007865553701856886
+    ],
+    "metric": "squared_error",
+    "observations": 60,
+    "scope": "entry_strength"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "retained",
+    "difference": -0.006607194923666823,
+    "interval_95": [
+      -0.06304082056729428,
+      0.05763205699167196
+    ],
+    "metric": "log_score",
+    "observations": 60,
+    "scope": "entry_strength"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "generic",
+    "difference": 0.0010561205347018488,
+    "interval_95": [
+      -0.006539070823958147,
+      0.01052062931474397
+    ],
+    "metric": "squared_error",
+    "observations": 60,
+    "scope": "entry_strength"
+  },
+  {
+    "candidate": "mapped",
+    "clusters": 10,
+    "comparator": "generic",
+    "difference": -0.004512680442772735,
+    "interval_95": [
+      -0.030598957642724342,
+      0.0337193096774629
+    ],
+    "metric": "log_score",
+    "observations": 60,
+    "scope": "entry_strength"
+  }
+]
