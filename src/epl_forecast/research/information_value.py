@@ -70,12 +70,20 @@ def predict_residual_sensor(fitted, controls, sensors):
     return baseline[:, 0] + residual @ fitted["beta"]
 
 
-def information_report(rows, seed=20260910):
+def information_report(rows, seed=20260910, signals_by_league=None):
+    """Score every sensor subset chronologically.
+
+    ``signals_by_league`` replaces the default goals/xG/shots/SOT set, so a focused
+    study can ask about a few candidate signals without paying for the power set of
+    every signal the archive happens to carry.
+    """
     predictions, coefficients, residual_correlations = [], [], []
     residual_traces = defaultdict(list)
     for league in sorted({r["competition_id"] for r in rows}):
         signals = (
-            SIGNALS if league == "eng-premier-league" else tuple(s for s in SIGNALS if s != "xg")
+            (SIGNALS if league == "eng-premier-league" else tuple(s for s in SIGNALS if s != "xg"))
+            if signals_by_league is None
+            else tuple(signals_by_league[league])
         )
         complete = [
             r
