@@ -8,7 +8,6 @@ import numpy as np
 
 from epl_forecast.artifacts import execution_provenance
 from epl_forecast.cli import save_rows
-from epl_forecast.data.rules import historical_adjustments
 from epl_forecast.models.baselines import AttackDefensePoisson
 from epl_forecast.models.xg_quality_tilt import XG_DYNAMICS, XGQualityTiltFilter
 from epl_forecast.research.promotion_transition import (
@@ -20,6 +19,7 @@ from epl_forecast.research.promotion_transition import (
 from epl_forecast.research.readiness import frozen_dataset
 from epl_forecast.research.uncertainty_ladder import MatchedStateForecast
 from epl_forecast.research.uncertainty_report import cluster_interval
+from epl_forecast.sanctions import load_registry
 from epl_forecast.season_evaluation import final_cutoff, score_forecast, season_origins
 from epl_forecast.simulation import simulate_season
 from epl_forecast.storage import file_hash, json_bytes, write_immutable, write_json
@@ -53,6 +53,7 @@ def main():
     try:
         matches, observations = data.matches(), data.process()
         sources = championship_observations(data)
+        sanctions = load_registry(data)
     finally:
         data.close()
     cohorts = transition_cohorts(matches, sources)
@@ -83,7 +84,14 @@ def main():
         truth_model = AttackDefensePoisson()
         truth_model.as_of = end
         truth = simulate_season(
-            truth_model, games, [], teams, end, 1, args.seed, historical_adjustments(season, end)
+            truth_model,
+            games,
+            [],
+            teams,
+            end,
+            1,
+            args.seed,
+            sanctions.final_adjustments("eng-premier-league", season, end),
         )
         opening_ids = {
             m.fixture.match_id
@@ -121,7 +129,7 @@ def main():
                 cutoff,
                 args.simulations,
                 args.seed + year,
-                historical_adjustments(season, cutoff),
+                sanctions.known_adjustments("eng-premier-league", season, cutoff),
             )
             base = {
                 "season_id": season,

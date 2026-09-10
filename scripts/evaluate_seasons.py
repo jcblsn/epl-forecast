@@ -6,15 +6,15 @@ from pathlib import Path
 
 from epl_forecast.artifacts import execution_provenance
 from epl_forecast.cli import fitted_model, load_config, save_rows
-from epl_forecast.data.rules import historical_adjustments
 from epl_forecast.datasets import Dataset
-from epl_forecast.models.baselines import AttackDefensePoisson
+from epl_forecast.sanctions import load_registry
 from epl_forecast.season_evaluation import (
     championship_season_truth,
     final_cutoff,
     score_forecast,
     season_origins,
     season_teams,
+    season_truth,
     summarize,
 )
 from epl_forecast.simulation import simulate_season
@@ -55,6 +55,7 @@ def main():
     try:
         matches = data.matches()
         manifest = data.provenance()
+        sanctions = load_registry(data)
     finally:
         data.close()
     configs = {name: competition_config(name, args.competition)[0] for name in args.models}
@@ -69,7 +70,15 @@ def main():
         "configs": configs,
         "code_hashes": {str(p): file_hash(p) for p in sorted(Path("src").rglob("*.py"))},
         "runner_hash": file_hash(Path(__file__)),
-        "adjustments_hash": file_hash(Path("src/epl_forecast/data/pl_adjustments.json")),
+        "reviewed_adjustments_hash": file_hash(Path("src/epl_forecast/data/pl_adjustments.json")),
+        "sanction_audit": [
+            row for row in sanctions.audit() if row["competition_id"] == args.competition
+        ],
+        "truth_definition": (
+            "Final table from fixed results plus every sanction the retained standings show "
+            "in force at the end of the season; seasons without a usable standings snapshot "
+            "fall back to results alone and are named in unsanctioned_seasons"
+        ),
         "origin_definition": (
             "Start of first match date; next day after 6/12/19/30 nominal rounds, whole days"
         ),
@@ -79,7 +88,7 @@ def main():
         raise ValueError("Resume manifest differs; use a new output directory")
     write_json(metadata_path, metadata)
     league = [m for m in matches if m.fixture.competition_id == args.competition]
-    rows = []
+    rows, unsanctioned = [], []
     for year in args.seasons:
         season = f"{year}-{year + 1}"
         season_matches = [m for m in league if m.fixture.season_id == season]
@@ -91,22 +100,16 @@ def main():
         expected = 20 if args.competition == "eng-premier-league" else 24
         if len(previous) != expected:
             raise ValueError("Missing previous season for promotion labels")
+        cutoff = final_cutoff(season_matches)
+        final = sanctions.final_adjustments(args.competition, season, cutoff)
+        if not sanctions.derivation(args.competition, season)["sanctioned_table_available"]:
+            unsanctioned.append(season)
         if args.competition == "eng-championship":
-            truth = championship_season_truth(matches, season, season_matches, teams, args.seed)
-        else:
-            cutoff = final_cutoff(season_matches)
-            truth_model = AttackDefensePoisson()
-            truth_model.as_of = cutoff
-            truth = simulate_season(
-                truth_model,
-                season_matches,
-                [],
-                teams,
-                cutoff,
-                1,
-                args.seed,
-                historical_adjustments(season, cutoff),
+            truth = championship_season_truth(
+                matches, season, season_matches, teams, args.seed, final
             )
+        else:
+            truth = season_truth(season_matches, teams, args.seed, final)
         previous_pl = season_teams(matches, "eng-premier-league", f"{year - 1}-{year}")
         entry_cohorts = {
             team: (
@@ -138,9 +141,7 @@ def main():
                         as_of,
                         args.simulations,
                         seed,
-                        historical_adjustments(season, as_of)
-                        if args.competition == "eng-premier-league"
-                        else [],
+                        sanctions.known_adjustments(args.competition, season, as_of),
                     )
                     write_json(path, forecast)
                 rows.extend(
@@ -161,6 +162,17 @@ def main():
                     )
                 )
                 save_rows(args.output / "club_seasons.csv", rows)
+    write_json(
+        args.output / "sanctions.json",
+        {
+            "competition_id": args.competition,
+            "unsanctioned_seasons": unsanctioned,
+            "seasons": [
+                sanctions.derivation(args.competition, f"{year}-{year + 1}")
+                for year in args.seasons
+            ],
+        },
+    )
     summary, calibration = summarize(rows)
     save_rows(args.output / "summary.csv", summary)
     save_rows(args.output / "calibration.csv", calibration)

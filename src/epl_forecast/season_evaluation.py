@@ -270,14 +270,19 @@ def championship_playoff_winner(matches, season, final_order):
     return next(iter(winners))
 
 
-def championship_season_truth(matches, season, season_matches, teams, seed):
-    """Realized Championship table, with the observed playoff winner as promotion truth."""
+def season_truth(season_matches, teams, seed, adjustments, **kwargs):
+    """The realized final table: fixed results plus every sanction in force at the end."""
     cutoff = final_cutoff(season_matches)
     truth_model = AttackDefensePoisson()
     truth_model.as_of = cutoff
-    truth = simulate_season(
-        truth_model, season_matches, [], teams, cutoff, 1, seed, [], playoff_winner=teams[0]
+    return simulate_season(
+        truth_model, season_matches, [], teams, cutoff, 1, seed, adjustments, **kwargs
     )
+
+
+def championship_season_truth(matches, season, season_matches, teams, seed, adjustments=()):
+    """Realized Championship table, with the observed playoff winner as promotion truth."""
+    truth = season_truth(season_matches, teams, seed, list(adjustments), playoff_winner=teams[0])
     final_order = [
         row["team_id"] for row in sorted(truth["teams"], key=lambda row: row["mean_position"])
     ]

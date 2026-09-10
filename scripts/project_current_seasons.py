@@ -12,6 +12,7 @@ from epl_forecast.datasets import Dataset, timestamp
 from epl_forecast.live import LONDON, load_live_season
 from epl_forecast.research.current_projection import compare_forecasts, noise_flags
 from epl_forecast.research.uncertainty_ladder import MatchedStateMixture
+from epl_forecast.sanctions import load_registry
 from epl_forecast.simulation import simulate_season
 from epl_forecast.storage import file_hash, json_bytes, sha256_bytes, write_json
 
@@ -62,6 +63,7 @@ def compact_snapshot(forecast, names, variant):
             "ranking_rules",
             "ranking_rules_evidence",
             "playoff_model",
+            "point_adjustments",
             "assumptions",
         )
     } | {
@@ -244,6 +246,7 @@ def main():
     try:
         matches = data.matches()
         provenance = data.provenance()
+        sanctions = load_registry(data)
     finally:
         data.close()
     manifest = {
@@ -261,12 +264,17 @@ def main():
         "data_provenance_sha256": sha256_bytes(json_bytes(provenance)),
         "data_manifest_count": len(provenance["batches"]),
         "execution": execution_provenance(),
+        "point_adjustments": {
+            competition: sanctions.known_adjustments(competition, args.season, cutoff_day)
+            for competition in COMPETITIONS
+        },
         "configs": {},
     }
     write_json(args.output / "data_provenance.json", provenance)
     snapshots, sensitivity, noise_rows = [], [], []
     for competition_index, competition in enumerate(COMPETITIONS):
         live = load_live_season(args.data, args.cutoff, competition, args.season)
+        adjustments = manifest["point_adjustments"][competition]
         config = configured_model(competition, args.cutoff)
         manifest["configs"][competition] = config
         model, _, training = fitted_model(matches, config, MODEL_ID, cutoff_day)
@@ -293,6 +301,7 @@ def main():
                 cutoff_day,
                 args.simulations,
                 args.seed + competition_index * 100,
+                adjustments,
                 results_observed_at=live.observed_at,
             )
             forecast["uncertainty_variant"] = variant
@@ -307,6 +316,7 @@ def main():
             cutoff_day,
             args.simulations,
             manifest["mc_replication_seed"] + competition_index,
+            adjustments,
             results_observed_at=live.observed_at,
         )
         baseline = forecasts["full_m7"]

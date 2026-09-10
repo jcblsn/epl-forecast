@@ -275,6 +275,38 @@ def normalize(record, body, root):
         elif endpoint == "teams":
             t = item["team"]
             add("teams", {"team_id": team_key(t, True), "api_id": t["id"], "name": t["name"]})
+        elif endpoint == "standings":
+            league = item["league"]
+            if league["id"] not in LEAGUES:
+                continue
+            season = f"{league['season']}-{league['season'] + 1}"
+            for table in league["standings"]:
+                for row in table:
+                    t = row["team"]
+                    add(
+                        "teams",
+                        {"team_id": team_key(t, True), "api_id": t["id"], "name": t["name"]},
+                    )
+                    add(
+                        "standings",
+                        {
+                            "competition_id": LEAGUES[league["id"]],
+                            "season_id": season,
+                            "team_id": team_key(t, True),
+                            "rank": row["rank"],
+                            "points": row["points"],
+                            "played": row["all"]["played"],
+                            "wins": row["all"]["win"],
+                            "draws": row["all"]["draw"],
+                            "losses": row["all"]["lose"],
+                            "goals_for": row["all"]["goals"]["for"],
+                            "goals_against": row["all"]["goals"]["against"],
+                            "goal_difference": row["goalsDiff"],
+                            "group_name": row.get("group"),
+                            "description": row.get("description"),
+                            "updated_at": row.get("update"),
+                        },
+                    )
         elif endpoint == "fixtures":
             league = item["league"]
             if league["id"] not in LEAGUES:

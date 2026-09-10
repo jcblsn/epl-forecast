@@ -47,6 +47,10 @@ SCHEMAS = {
     "xa DOUBLE, shots INTEGER",
     "odds": "match_id VARCHAR, competition_id VARCHAR, season_id VARCHAR, family VARCHAR, "
     "home_odds DOUBLE, draw_odds DOUBLE, away_odds DOUBLE, observed_at TIMESTAMPTZ",
+    "standings": "competition_id VARCHAR, season_id VARCHAR, team_id VARCHAR, rank INTEGER, "
+    "points INTEGER, played INTEGER, wins INTEGER, draws INTEGER, losses INTEGER, "
+    "goals_for INTEGER, goals_against INTEGER, goal_difference INTEGER, "
+    "group_name VARCHAR, description VARCHAR, updated_at TIMESTAMPTZ",
 }
 KEYS = {
     "competition_seasons": ["competition_id", "season_id"],
@@ -60,6 +64,7 @@ KEYS = {
     "team_process": ["match_id", "team_id"],
     "player_process": ["match_id", "understat_id"],
     "odds": ["match_id", "family"],
+    "standings": ["competition_id", "season_id", "team_id"],
 }
 
 
@@ -117,6 +122,10 @@ def publish(root, request, tables):
                 "odds": "home_odds<=1 OR draw_odds<=1 OR away_odds<=1 "
                 "OR NOT isfinite(home_odds) OR NOT isfinite(draw_odds) "
                 "OR NOT isfinite(away_odds)",
+                "standings": "team_id IS NULL OR rank<1 OR played<0 OR wins<0 OR draws<0 "
+                "OR losses<0 OR goals_for<0 OR goals_against<0 "
+                "OR wins+draws+losses<>played "
+                "OR goal_difference<>goals_for-goals_against",
             }.get(table)
             if invalid and con.execute(f"SELECT 1 FROM records WHERE {invalid} LIMIT 1").fetchone():
                 raise ValueError(f"Invalid canonical {table} data")

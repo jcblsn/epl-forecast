@@ -7,12 +7,12 @@ from pathlib import Path
 
 from epl_forecast.artifacts import new_run_directory, provenance, results_markdown, write_csv
 from epl_forecast.data.capture import SourceAccessError
-from epl_forecast.data.rules import historical_adjustments
 from epl_forecast.datasets import load_dataset
 from epl_forecast.evaluation import market_predictions, rolling_predictions, summarize
 from epl_forecast.live import LONDON, load_live_season
 from epl_forecast.live_forecast import check_freshness, export_forecast
 from epl_forecast.models import make_model
+from epl_forecast.sanctions import load_sanctions
 from epl_forecast.schema import Fixture, fixture_id
 from epl_forecast.simulation import EuropeScenario, simulate_season
 from epl_forecast.storage import file_hash, write_json
@@ -106,7 +106,9 @@ def simulate_command(args) -> None:
         else EuropeScenario(**json.loads(args.europe_scenario.read_text()))
     )
     adjustments = (
-        historical_adjustments(args.season, args.as_of)
+        load_sanctions(args.data).known_adjustments(
+            config["competition_id"], args.season, args.as_of
+        )
         if args.adjustments is None
         else json.loads(args.adjustments.read_text())
     )
@@ -247,9 +249,9 @@ def forecast_command(args) -> None:
     adjustments = (
         json.loads(args.adjustments.read_text())
         if args.adjustments
-        else historical_adjustments(live.season_id, as_of)
-        if live.competition_id == "eng-premier-league"
-        else []
+        else load_sanctions(args.data, live.observed_at).known_adjustments(
+            live.competition_id, live.season_id, as_of
+        )
     )
     output = args.output or Path("runs/forecasts") / datetime.now(UTC).strftime(
         "%Y-%m-%dT%H%M%S.%fZ"

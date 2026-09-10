@@ -5,9 +5,10 @@ import numpy as np
 import pytest
 
 from epl_forecast.cli import fitted_model
-from epl_forecast.data.rules import historical_adjustments, league_rules, reviewed_rules_evidence
+from epl_forecast.data.rules import league_rules, reviewed_rules_evidence
 from epl_forecast.models.base import Forecast
 from epl_forecast.postseason import simulate_championship_playoffs
+from epl_forecast.sanctions import reviewed_adjustments
 from epl_forecast.simulation import (
     EuropeScenario,
     european_places,
@@ -150,7 +151,7 @@ def test_historical_appeal_is_not_backdated():
     def everton_points(cutoff):
         return sum(
             event["points"]
-            for event in historical_adjustments("2023-2024", cutoff)
+            for event in reviewed_adjustments("eng-premier-league", "2023-2024", cutoff)
             if event["team_id"] == "everton"
         )
 

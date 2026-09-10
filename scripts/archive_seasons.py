@@ -5,15 +5,14 @@ import gzip
 import json
 from pathlib import Path
 
-from epl_forecast.data.rules import historical_adjustments
 from epl_forecast.datasets import Dataset
-from epl_forecast.models.baselines import AttackDefensePoisson
+from epl_forecast.sanctions import load_registry
 from epl_forecast.season_evaluation import (
     championship_season_truth,
     final_cutoff,
     season_teams,
+    season_truth,
 )
-from epl_forecast.simulation import simulate_season
 from epl_forecast.storage import file_hash, write_json
 
 CHAMPIONSHIP = "eng-championship"
@@ -50,6 +49,7 @@ def main():
     data = Dataset(args.data)
     try:
         matches = data.matches()
+        sanctions = load_registry(data)
     finally:
         data.close()
     league = [m for m in matches if m.fixture.competition_id == competition]
@@ -65,24 +65,14 @@ def main():
         year = int(season[:4])
         previous = season_teams(matches, competition, f"{year - 1}-{year}")
         previous_pl = season_teams(matches, "eng-premier-league", f"{year - 1}-{year}")
+        cutoff = final_cutoff(season_matches)
+        final = sanctions.final_adjustments(competition, season, cutoff)
         if competition == CHAMPIONSHIP:
             truth[season] = championship_season_truth(
-                matches, season, season_matches, teams, manifest["seed"]
+                matches, season, season_matches, teams, manifest["seed"], final
             )
         else:
-            cutoff = final_cutoff(season_matches)
-            model_at_end = AttackDefensePoisson()
-            model_at_end.as_of = cutoff
-            truth[season] = simulate_season(
-                model_at_end,
-                season_matches,
-                [],
-                teams,
-                cutoff,
-                1,
-                manifest["seed"],
-                historical_adjustments(season, cutoff),
-            )
+            truth[season] = season_truth(season_matches, teams, manifest["seed"], final)
         cohorts[season] = {
             team: (
                 "incumbent"

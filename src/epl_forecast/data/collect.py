@@ -250,6 +250,7 @@ def backfill(root=Path("data"), start=2010, end=None, max_requests=None):
                     continue
                 print(f"Backfill {comp} {year}: fixtures, players, injuries", flush=True)
                 get("teams", {"league": league, "season": year})
+                get("standings", {"league": league, "season": year})
                 fixtures = get("fixtures", {"league": league, "season": year})["response"]
                 ids = [
                     r["fixture"]["id"]
@@ -474,6 +475,13 @@ def collect(root=Path("data"), season=None):
             normalized_request,
             fetcher,
             "injuries",
+            {"league": league, "season": year},
+            max_age=14400,
+        )
+        attempt(
+            normalized_request,
+            fetcher,
+            "standings",
             {"league": league, "season": year},
             max_age=14400,
         )
