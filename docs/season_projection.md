@@ -121,6 +121,25 @@ and postseason dates are synthetic offsets from the last regular-season match,
 compressed if the season schema leaves less room. All three are recorded in each
 forecast's `playoff_model` block.
 
+## What has changed since this artifact was pinned
+
+The pinned projection predates two corrections that landed later on 10 September
+2026, and it is not regenerated: it remains what was published at its cutoff.
+
+Its Championship bracket resamples each tie from the common forecast distribution
+rather than carrying each path's own latent states. The
+[matched validation](experiments/playoff_conditioning.md) measures what that costs
+at this point in the season: rank and points distributions are unaffected, promotion
+mass is conserved, and per-club promotion probabilities move by 0.005 on average and
+0.020 at most. Southampton's promotion probability is the largest mover, and it
+falls rather than rises. Read the pinned promotion column with that width in mind.
+
+It also predates the archive's first live standings capture, which shows a
+four-point sanction against Southampton in force. Current forecasts apply it; the
+pinned artifact does not, because the capture postdates its cutoff. Any forecast
+generated after that capture carries the deduction in both the current table and
+the projection.
+
 ## What this batch did not do
 
 No new model family was opened. Market pooling was left as it stands, with the

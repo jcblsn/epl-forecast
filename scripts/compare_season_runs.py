@@ -29,6 +29,7 @@ METRICS = (
     "relegation_brier",
     "title_brier",
 )
+SCORES = tuple(m for m in METRICS if m.endswith(("_rps", "_crps", "_brier")))
 ORIGINS = ("preseason", "MW6", "MW12", "MW19", "MW30")
 
 
@@ -81,15 +82,17 @@ def main():
                     }
                 )
 
+    # Only proper scores decide a model comparison. Bias and coverage are diagnostics:
+    # a signed bias closest to zero is not a win, and coverage is judged against
+    # nominal rather than maximized, so neither has a leader to preserve.
     verdicts = []
     for origin in ORIGINS:
-        for metric in METRICS:
+        for metric in SCORES:
             selected = [r for r in rows if r["origin"] == origin and r["metric"] == metric]
             if len(selected) < 2:
                 continue
-            better = min if not metric.endswith("coverage_90") else max
-            baseline_winner = better(selected, key=lambda r: r["baseline"])["model_id"]
-            revised_winner = better(selected, key=lambda r: r["revised"])["model_id"]
+            baseline_winner = min(selected, key=lambda r: r["baseline"])["model_id"]
+            revised_winner = min(selected, key=lambda r: r["revised"])["model_id"]
             verdicts.append(
                 {
                     "origin": origin,

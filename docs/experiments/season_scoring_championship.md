@@ -2,11 +2,16 @@
 
 M7 is defensible as the Championship season product. On eleven seasons of
 Championship history it beats M2 on rank RPS at preseason, MW6, MW12 and MW19,
-on points CRPS at preseason, MW6 and MW12, and on every headline event Brier at
-preseason, each with a season-clustered interval excluding zero. Its rank and
-points PIT histograms are close to uniform at every origin, where M2's are
-strongly U-shaped. No league-specific model split is needed: M7 is the product in
-both competitions.
+on points CRPS at preseason, MW6 and MW12, and on four of five headline event
+Briers at preseason, each with a season-clustered interval excluding zero. Its
+rank and points PIT histograms are close to uniform at every origin, where M2's
+are strongly U-shaped. No league-specific model split is needed: M7 is the product
+in both competitions.
+
+This is the corrected panel. It scores against the sanctioned final tables rather
+than results-only tables, applies to each forecast only the sanctions knowable at
+its cutoff, and runs the playoff bracket on each simulated path's own latent
+states. Every score moved; no model-selection conclusion did.
 
 The panel contains 110 forecasts: two retained specifications, 11 seasons
 2015/16–2025/26, five origins and 10,000 simulations per forecast. Scores pool 264
@@ -24,7 +29,9 @@ batch allowed for. The M2/M7 contrast is the one the product decision turns on.
 
 The first Championship panel produced a much worse M7: preseason rank RPS 0.1665
 against M2's 0.1651, points CRPS 8.53 against 8.12, and a mean points SD of 19.8
-points against M2's 8.6. That was a defect, not a model property.
+points against M2's 8.6. That was a defect, not a model property. The numbers in
+this section are the ones that diagnosed it, scored against the results-only truth
+this panel has since replaced; they are kept as they were measured.
 
 The promotion bridge decides whether a club entering a season gives up its fitted
 state. Its source is the immediately preceding Championship season, which is
@@ -53,9 +60,12 @@ and later is identical between the two runs.
 The Premier League panel is untouched: the guard applies only when the forecast
 competition is not the Premier League, so the promotion path is unchanged.
 
-The [pinned 2026/27 projection](current_season_projection_2026-09-10/report.md) is
-also unaffected, because every Championship club had played by its 10 September
-2026 cutoff and the reset only reached clubs with no match yet in the season.
+The [pinned 2026/27 projection](current_season_projection_2026-09-10/report.md) was
+also unaffected by that fix, because every Championship club had played by its
+10 September 2026 cutoff and the reset only reached clubs with no match yet in the
+season. It does predate the playoff-conditioning correction and Southampton's
+four-point sanction, both of which reached the archive later the same day; the
+[season projection guide](../season_projection.md) says what that means for it.
 Regenerating that artifact from the same cutoff and seed after the fix reproduces
 `report.md`, `table.csv`, `rank_probabilities.csv`, `sensitivity.csv`,
 `mc_noise.csv` and both heatmaps byte for byte. The three Championship forecast
@@ -63,27 +73,66 @@ JSONs differ only by two descriptive `playoff_model` fields added afterwards by
 the delayed-season playoff-date handling, and the manifest differs by its recorded
 commit and code hashes. No forecast number changed, so the snapshot stands.
 
+## What the corrections changed
+
+Truth was previously the table a season's results imply, which is not the table any
+of these seasons finished on: seven of the eleven carry Championship sanctions
+totalling 94 points, and none of them reached the realized table. Forecasts, in
+turn, applied no Championship sanction at any origin, including sanctions that had
+been announced months before the cutoff.
+
+Both are now fixed, and the size of the fix is checkable arithmetic. Mean points
+error moves by exactly the same amount for both models — +0.31061 at preseason and
+MW6, +0.28788 at MW12, +0.23106 at MW19 and MW30 — because it is a property of
+truth, not of a model. At preseason that is 82 points over 264 club-seasons: the 94
+sanctioned points now in the realized tables, less the 12 that Sheffield Wednesday's
+July 2020 deduction already put into the 2020/21 forecasts before its November
+appeal cut it to six. By MW19 the gap has fallen to 61 points, because Derby's two
+2021/22 deductions and Reading's are by then knowable and the forecasts carry them.
+
+Rank RPS improves for both models at every origin, by 0.0001 to 0.0021, since the
+realized ranks the models are scored against are now the actual ones. Points CRPS
+worsens for both by 0.12 to 0.18 points, which is the cost of being scored against
+deductions a forecast could not have known. Neither is a model effect.
+
+The [comparison artifact](season_scoring_championship/metric_changes.csv) records
+every metric at every origin for both models. Of the 35 origin-by-metric proper
+scores that name a leading model, 34 name the same one as before. The exception is
+promotion Brier at MW6, where M7 led by 0.00028 and M2 now leads by 0.00024, on a
+Brier near 0.082. That is a 0.3% gap on one metric at one origin, and the product
+decision does not turn on it.
+
+The playoff correction contributes nothing to the regular-season columns by
+construction and is validated separately in the
+[conditioning check](playoff_conditioning.md).
+
+One season has no sanctioned table. The retained API-Football standings snapshot
+for 2017/18 Championship is a partial mid-season table, not a final one: it
+describes 31 or 32 played matches per club, which is internally consistent with the
+archive over that prefix and therefore yields no sanction and no completed table.
+That season falls back to results alone, and `sanctions.json` names it.
+
 ## Scores across origins
 
 Rank RPS, lower is better:
 
 | Origin | M2 | M7 | M7 − M2 | Season-cluster 95% |
 | --- | ---: | ---: | ---: | --- |
-| preseason | 0.16507 | 0.15128 | −0.01380 | [−0.01963, −0.00735] |
-| MW6 | 0.14360 | 0.13549 | −0.00811 | [−0.01114, −0.00491] |
-| MW12 | 0.12451 | 0.11826 | −0.00626 | [−0.00930, −0.00269] |
-| MW19 | 0.10080 | 0.09799 | −0.00280 | [−0.00533, −0.00054] |
-| MW30 | 0.06345 | 0.06308 | −0.00037 | [−0.00124, +0.00052] |
+| preseason | 0.16299 | 0.15008 | −0.01291 | [−0.01897, −0.00640] |
+| MW6 | 0.14166 | 0.13390 | −0.00776 | [−0.01055, −0.00464] |
+| MW12 | 0.12378 | 0.11766 | −0.00611 | [−0.00936, −0.00243] |
+| MW19 | 0.09931 | 0.09661 | −0.00270 | [−0.00524, −0.00036] |
+| MW30 | 0.06334 | 0.06293 | −0.00041 | [−0.00123, +0.00044] |
 
 Points CRPS, lower is better and measured in points:
 
 | Origin | M2 | M7 | M7 − M2 | Season-cluster 95% |
 | --- | ---: | ---: | ---: | --- |
-| preseason | 8.124 | 7.554 | −0.569 | [−0.891, −0.226] |
-| MW6 | 7.119 | 6.809 | −0.310 | [−0.470, −0.145] |
-| MW12 | 6.145 | 5.892 | −0.253 | [−0.388, −0.109] |
-| MW19 | 4.883 | 4.774 | −0.109 | [−0.224, +0.006] |
-| MW30 | 3.218 | 3.195 | −0.023 | [−0.076, +0.028] |
+| preseason | 8.291 | 7.731 | −0.560 | [−0.894, −0.206] |
+| MW6 | 7.250 | 6.951 | −0.299 | [−0.457, −0.134] |
+| MW12 | 6.308 | 6.064 | −0.244 | [−0.389, −0.090] |
+| MW19 | 5.000 | 4.896 | −0.104 | [−0.220, +0.010] |
+| MW30 | 3.345 | 3.325 | −0.021 | [−0.073, +0.029] |
 
 M7 has the better preseason rank RPS in nine of the eleven seasons; 2015/16 and
 2024/25 are the exceptions. The advantage closes as results accumulate, which is
@@ -97,12 +146,12 @@ interval covers 73.5% of final totals and its nominal 50% covers 34.5%.
 
 | Origin | Model | 50% | 80% | 90% | 95% |
 | --- | --- | ---: | ---: | ---: | ---: |
-| preseason | M2 points | 34.5% | 63.6% | 73.5% | 79.9% |
-| preseason | M7 points | 53.8% | 79.5% | 88.6% | 92.8% |
-| preseason | M2 rank | 42.8% | 71.2% | 83.3% | 89.8% |
-| preseason | M7 rank | 55.7% | 84.5% | 94.3% | 97.3% |
-| MW30 | M2 points | 50.0% | 77.7% | 86.0% | 92.0% |
-| MW30 | M7 points | 52.3% | 81.1% | 89.4% | 96.2% |
+| preseason | M2 points | 34.1% | 63.6% | 73.1% | 78.8% |
+| preseason | M7 points | 53.8% | 79.2% | 87.5% | 91.7% |
+| preseason | M2 rank | 44.3% | 72.7% | 84.5% | 89.8% |
+| preseason | M7 rank | 55.3% | 84.8% | 95.1% | 97.0% |
+| MW30 | M2 points | 50.0% | 77.3% | 84.8% | 90.9% |
+| MW30 | M7 points | 52.3% | 80.3% | 88.3% | 94.7% |
 
 M7's points intervals are close to nominal from preseason on. Its rank intervals
 are a little too wide from the 80% level up — 94.3% coverage at nominal 90% at
@@ -111,11 +160,11 @@ M7 pays for its dispersion. Total variation from uniform in the PIT histograms:
 
 | Origin | M2 points | M7 points | M2 rank | M7 rank |
 | --- | ---: | ---: | ---: | ---: |
-| preseason | 0.204 | 0.072 | 0.145 | 0.038 |
-| MW6 | 0.196 | 0.077 | 0.164 | 0.066 |
-| MW12 | 0.189 | 0.117 | 0.149 | 0.062 |
-| MW19 | 0.147 | 0.098 | 0.117 | 0.049 |
-| MW30 | 0.111 | 0.092 | 0.098 | 0.058 |
+| preseason | 0.204 | 0.076 | 0.136 | 0.045 |
+| MW6 | 0.190 | 0.086 | 0.147 | 0.057 |
+| MW12 | 0.192 | 0.129 | 0.149 | 0.057 |
+| MW19 | 0.151 | 0.102 | 0.117 | 0.051 |
+| MW30 | 0.111 | 0.083 | 0.083 | 0.047 |
 
 ## Event probabilities
 
@@ -124,12 +173,13 @@ Brier scores, lower is better, with the season-clustered M7 − M2 interval:
 | Origin | Event | M2 | M7 | M7 − M2 | 95% interval |
 | --- | --- | ---: | ---: | ---: | --- |
 | preseason | Title | 0.04616 | 0.03905 | −0.00712 | [−0.01100, −0.00366] |
-| preseason | Automatic promotion | 0.07855 | 0.06793 | −0.01062 | [−0.01952, −0.00130] |
-| preseason | Playoff qualification | 0.14052 | 0.13526 | −0.00526 | [−0.01047, −0.00033] |
-| preseason | Promotion | 0.10756 | 0.09530 | −0.01226 | [−0.02438, −0.00065] |
-| preseason | Relegation | 0.11189 | 0.10261 | −0.00928 | [−0.01946, +0.00101] |
+| preseason | Automatic promotion | 0.07856 | 0.06793 | −0.01062 | [−0.01952, −0.00130] |
+| preseason | Playoff qualification | 0.14053 | 0.13524 | −0.00529 | [−0.01057, −0.00033] |
+| preseason | Promotion | 0.10762 | 0.09548 | −0.01214 | [−0.02448, −0.00021] |
+| preseason | Relegation | 0.10654 | 0.09883 | −0.00771 | [−0.01730, +0.00183] |
 | MW6 | Title | 0.03852 | 0.03551 | −0.00301 | [−0.00563, −0.00039] |
-| MW30 | Promotion | 0.04498 | 0.04539 | +0.00041 | [−0.00132, +0.00212] |
+| MW6 | Promotion | 0.08201 | 0.08225 | +0.00024 | [−0.00675, +0.00783] |
+| MW30 | Promotion | 0.04493 | 0.04576 | +0.00083 | [−0.00127, +0.00297] |
 
 Every preseason event favors M7, four of five with intervals excluding zero.
 After MW12 the two models are indistinguishable on events. Promotion probabilities
@@ -143,17 +193,17 @@ relegated from the Premier League. Preseason:
 
 | Cohort | Clubs | Model | Rank RPS | Points CRPS | Points bias | 90% points coverage |
 | --- | ---: | --- | ---: | ---: | ---: | ---: |
-| Incumbent | 198 | M2 | 0.15848 | 7.496 | −0.00 | 76.8% |
-| Incumbent | 198 | M7 | 0.14779 | 7.159 | +0.39 | 87.9% |
-| Promoted from below | 33 | M2 | 0.16426 | 7.206 | +3.54 | 81.8% |
-| Promoted from below | 33 | M7 | 0.15935 | 7.309 | +3.61 | 93.9% |
-| Relegated from the PL | 33 | M2 | 0.20543 | 12.808 | −2.58 | 45.5% |
-| Relegated from the PL | 33 | M7 | 0.16412 | 10.171 | −3.46 | 87.9% |
+| Incumbent | 198 | M2 | 0.15626 | 7.668 | +0.34 | 76.3% |
+| Incumbent | 198 | M7 | 0.14653 | 7.346 | +0.73 | 86.9% |
+| Promoted from below | 33 | M2 | 0.16015 | 7.388 | +3.72 | 81.8% |
+| Promoted from below | 33 | M7 | 0.15577 | 7.476 | +3.80 | 90.9% |
+| Relegated from the PL | 33 | M2 | 0.20620 | 12.936 | −2.34 | 45.5% |
+| Relegated from the PL | 33 | M7 | 0.16567 | 10.302 | −3.22 | 87.9% |
 
 Relegated clubs are the hardest cohort for both models and the largest M7 gain:
-rank RPS 0.164 against 0.205 and 87.9% against 45.5% coverage. Both models
-under-predict them, M7 by 3.5 points, and both over-predict clubs promoted from
-below by about 3.6 points. The under-prediction of relegated clubs is what the
+rank RPS 0.166 against 0.206 and 87.9% against 45.5% coverage. Both models
+under-predict them, M7 by 3.2 points, and both over-predict clubs promoted from
+below by about 3.8 points. The under-prediction of relegated clubs is what the
 [relegation entry-state comparison](relegation_entry.md) tests directly; neither a
 generic relegated-club prior nor a mapping from the club's Premier League season
 removes it without costing coverage.
@@ -166,11 +216,18 @@ identical likelihoods, and the model reduces to the centered Quality/Tilt filter
 with fixed dynamics. "M7 in the Championship" means M7's dynamics and entry
 handling, not its observation model.
 
-Sanctions are Premier League only in this scorer: Championship forecasts apply no
-point adjustments, while realized tables include every sanction the archive
-records, so points deductions contribute to Championship forecast error in a way
-they do not in the Premier League panel. EFL disciplinary tiebreaks are
-unavailable, so remaining ties split rank mass equally.
+Sanction dates are reviewed claims, not retained provider documents. The
+magnitudes are checked against the provider's final table and must agree with it,
+but the announcement dates come from a reviewed registry, and six Championship
+sanctions in the panel window have no established date: Wigan 2019/20, Reading and
+Wigan 2022/23, Sheffield United 2024/25, and all three 2025/26 deductions. Those
+enter the realized table and no forecast, which understates what a forecaster could
+have known at the later origins of those seasons. Five of the six were late-season
+or post-season decisions, where the understatement reaches at most the MW30 origin;
+the 2025/26 sanctions are the ones where this matters most and least is known.
+
+EFL disciplinary tiebreaks are unavailable, so remaining ties split rank mass
+equally.
 
 Origins are match-count proxies, not fixture rounds, and the 2019/20 season's
 interruption makes calendar-time and match-count origins diverge. The observed
@@ -179,13 +236,15 @@ which requires that season to exist in the archive.
 
 ## Reproducing
 
-`runs/championship-season-scoring-v4`, seed 20260910, 10,000 simulations. The
+`runs/championship-season-scoring-v7`, seed 20260910, 10,000 simulations. The
 [forecast manifest](season_scoring_championship/forecast_manifest.json) pins the
-configs, code hashes, dependency versions and data manifest;
+configs, code hashes, dependency versions, data manifest, both reviewed sanction
+registries and the per-season sanction audit;
 [evaluation_runner.txt](season_scoring_championship/evaluation_runner.txt) is the
-runner as executed, before its later refactor onto the shared truth helper. The
-committed [forecast marginals](season_scoring_championship/forecast_marginals.json.gz)
-reproduce every score in this report without provider data:
+runner as executed. [sanctions.json](season_scoring_championship/sanctions.json)
+records what was derived for each season and which season has no sanctioned table.
+The committed [forecast marginals](season_scoring_championship/forecast_marginals.json.gz)
+reproduce every score in this report without provider data, exactly:
 
 ```sh
 uv run python scripts/rescore_seasons.py \
