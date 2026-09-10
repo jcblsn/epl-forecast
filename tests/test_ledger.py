@@ -60,6 +60,7 @@ def test_a_sharper_forecast_scores_better(tmp_path):
 def test_rebuilding_the_ledger_reproduces_it(tmp_path):
     publish(tmp_path, "2026-09-10T12:00:00+00:00", "2026-09-10T120000Z")
     first = build_ledger(tmp_path, {MATCH: "D"}, load_policy())
+    written = (tmp_path / "data" / "ledger.json").read_bytes()
     second = build_ledger(tmp_path, {MATCH: "D"}, load_policy())
-    assert first["settled"] == second["settled"]
-    assert first["summary"] == second["summary"]
+    assert first == second
+    assert (tmp_path / "data" / "ledger.json").read_bytes() == written

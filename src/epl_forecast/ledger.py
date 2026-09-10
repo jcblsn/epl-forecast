@@ -12,8 +12,7 @@ from pathlib import Path
 
 from epl_forecast.datasets import timestamp
 from epl_forecast.evaluation import metrics
-from epl_forecast.publication import check_publishable, published_documents
-from epl_forecast.storage import write_json
+from epl_forecast.publication import check_publishable, published_documents, write_derived
 
 
 def realized_outcomes(fixtures) -> dict:
@@ -98,8 +97,7 @@ def build_ledger(site: Path, outcomes: dict, policy: dict) -> dict:
         ],
     }
     check_publishable(ledger, policy)
-    write_json(Path(site) / "data" / "ledger.json", ledger)
-    return ledger
+    return write_derived(Path(site) / "data" / "ledger.json", ledger)
 
 
 def read_ledger(site: Path) -> dict:

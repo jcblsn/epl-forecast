@@ -204,6 +204,18 @@ def derive_forecast(
     return document
 
 
+def write_derived(path: Path, value: dict) -> dict:
+    """Write a rebuilt document, keeping the old one when only its timestamp moved."""
+    if path.exists():
+        existing = json.loads(path.read_text())
+        if {k: v for k, v in existing.items() if k != "archived_at"} == {
+            k: v for k, v in value.items() if k != "archived_at"
+        }:
+            return existing
+    write_json(path, value)
+    return value
+
+
 def snapshot_directory(site: Path, snapshot_id: str) -> Path:
     return Path(site) / "data" / "forecasts" / snapshot_id
 
@@ -252,8 +264,7 @@ def rebuild_index(site: Path, policy: dict) -> dict:
         "snapshots": snapshots,
     }
     check_publishable(index, policy)
-    write_json(site / "data" / "index.json", index)
-    return index
+    return write_derived(site / "data" / "index.json", index)
 
 
 def published_documents(site: Path):
