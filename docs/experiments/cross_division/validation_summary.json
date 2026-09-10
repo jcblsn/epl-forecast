@@ -1,0 +1,2914 @@
+{
+  "by_season": [
+    {
+      "brier": 0.547156497904164,
+      "classwise_ece": 0.027037016615429288,
+      "log_loss": 0.9293582222045591,
+      "matches": 380,
+      "model_id": "M2-attack-defense-v1",
+      "score_matches": 380,
+      "score_nll": 3.0857183931450884,
+      "season_id": "2023-2024"
+    },
+    {
+      "brier": 0.588490851437947,
+      "classwise_ece": 0.029677643413050975,
+      "log_loss": 0.9853308720339864,
+      "matches": 380,
+      "model_id": "M2-attack-defense-v1",
+      "score_matches": 380,
+      "score_nll": 2.9682847307178846,
+      "season_id": "2024-2025"
+    },
+    {
+      "brier": 0.5462638185546704,
+      "classwise_ece": 0.03100858019538382,
+      "log_loss": 0.9287504006387166,
+      "matches": 380,
+      "model_id": "M5-centered-poisson-control",
+      "score_matches": 380,
+      "score_nll": 3.0655430732768716,
+      "season_id": "2023-2024"
+    },
+    {
+      "brier": 0.5876509500309008,
+      "classwise_ece": 0.04679724282188525,
+      "log_loss": 0.9850840219293825,
+      "matches": 380,
+      "model_id": "M5-centered-poisson-control",
+      "score_matches": 380,
+      "score_nll": 2.965567398065503,
+      "season_id": "2024-2025"
+    },
+    {
+      "brier": 0.5491438716475465,
+      "classwise_ece": 0.038408975998451896,
+      "log_loss": 0.9338571847556308,
+      "matches": 380,
+      "model_id": "M7-xg-v1",
+      "score_matches": 380,
+      "score_nll": 3.054912796918786,
+      "season_id": "2023-2024"
+    },
+    {
+      "brier": 0.577688508098244,
+      "classwise_ece": 0.060522694104068755,
+      "log_loss": 0.9718384796119303,
+      "matches": 380,
+      "model_id": "M7-xg-v1",
+      "score_matches": 380,
+      "score_nll": 2.966118099056953,
+      "season_id": "2024-2025"
+    },
+    {
+      "brier": 0.5462638185546703,
+      "classwise_ece": 0.031008580195383835,
+      "log_loss": 0.9287504006387166,
+      "matches": 380,
+      "model_id": "M5-uncentered-bridge-control",
+      "score_matches": 380,
+      "score_nll": 3.0655430732768716,
+      "season_id": "2023-2024"
+    },
+    {
+      "brier": 0.5876509500309008,
+      "classwise_ece": 0.04679724282188526,
+      "log_loss": 0.9850840219293825,
+      "matches": 380,
+      "model_id": "M5-uncentered-bridge-control",
+      "score_matches": 380,
+      "score_nll": 2.965567398065503,
+      "season_id": "2024-2025"
+    },
+    {
+      "brier": 0.55593521374954,
+      "classwise_ece": 0.04454729672929833,
+      "log_loss": 0.9430603585987737,
+      "matches": 380,
+      "model_id": "M9-cross-division-goals",
+      "score_matches": 380,
+      "score_nll": 3.081948375699381,
+      "season_id": "2023-2024"
+    },
+    {
+      "brier": 0.5971333002270021,
+      "classwise_ece": 0.04253842579049458,
+      "log_loss": 0.9990371678080425,
+      "matches": 380,
+      "model_id": "M9-cross-division-goals",
+      "score_matches": 380,
+      "score_nll": 2.98152396816795,
+      "season_id": "2024-2025"
+    },
+    {
+      "brier": 0.5547655487830568,
+      "classwise_ece": 0.03387291490959083,
+      "log_loss": 0.9419651327926474,
+      "matches": 380,
+      "model_id": "M9-cross-division-xg",
+      "score_matches": 380,
+      "score_nll": 3.0629925512500953,
+      "season_id": "2023-2024"
+    },
+    {
+      "brier": 0.5827210324773285,
+      "classwise_ece": 0.05940332882917638,
+      "log_loss": 0.979285407762894,
+      "matches": 380,
+      "model_id": "M9-cross-division-xg",
+      "score_matches": 380,
+      "score_nll": 2.972555533369028,
+      "season_id": "2024-2025"
+    },
+    {
+      "brier": 0.5331233730163928,
+      "classwise_ece": 0.03847765093724288,
+      "log_loss": 0.9092124760895899,
+      "matches": 380,
+      "model_id": "market:bet365_preclosing",
+      "score_matches": 0,
+      "score_nll": null,
+      "season_id": "2023-2024"
+    },
+    {
+      "brier": 0.5786638026588309,
+      "classwise_ece": 0.04040828444055508,
+      "log_loss": 0.9707576734366714,
+      "matches": 380,
+      "model_id": "market:bet365_preclosing",
+      "score_matches": 0,
+      "score_nll": null,
+      "season_id": "2024-2025"
+    },
+    {
+      "brier": 0.5267458308911198,
+      "classwise_ece": 0.03338474736686772,
+      "log_loss": 0.9007013128279796,
+      "matches": 380,
+      "model_id": "market:market_average_closing",
+      "score_matches": 0,
+      "score_nll": null,
+      "season_id": "2023-2024"
+    },
+    {
+      "brier": 0.5751877511794847,
+      "classwise_ece": 0.039349864869337454,
+      "log_loss": 0.9667334134817074,
+      "matches": 380,
+      "model_id": "market:market_average_closing",
+      "score_matches": 0,
+      "score_nll": null,
+      "season_id": "2024-2025"
+    },
+    {
+      "brier": 0.5331180210631138,
+      "classwise_ece": 0.033781062870014596,
+      "log_loss": 0.9092502625018823,
+      "matches": 380,
+      "model_id": "market:market_average_preclosing",
+      "score_matches": 0,
+      "score_nll": null,
+      "season_id": "2023-2024"
+    },
+    {
+      "brier": 0.5788986039373658,
+      "classwise_ece": 0.041605889166356096,
+      "log_loss": 0.9705521250110707,
+      "matches": 380,
+      "model_id": "market:market_average_preclosing",
+      "score_matches": 0,
+      "score_nll": null,
+      "season_id": "2024-2025"
+    }
+  ],
+  "calibration": [
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "count": 10,
+      "mean_prediction": 0.07513376716529355,
+      "model_id": "M2-attack-defense-v1",
+      "observed_frequency": 0.1,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "count": 62,
+      "mean_prediction": 0.15702356274612045,
+      "model_id": "M2-attack-defense-v1",
+      "observed_frequency": 0.11290322580645161,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.2,
+      "bin_upper": 0.3,
+      "count": 114,
+      "mean_prediction": 0.25187780279678906,
+      "model_id": "M2-attack-defense-v1",
+      "observed_frequency": 0.21052631578947367,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.3,
+      "bin_upper": 0.4,
+      "count": 143,
+      "mean_prediction": 0.3529127775378414,
+      "model_id": "M2-attack-defense-v1",
+      "observed_frequency": 0.3356643356643357,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "count": 153,
+      "mean_prediction": 0.4499941614695615,
+      "model_id": "M2-attack-defense-v1",
+      "observed_frequency": 0.45751633986928103,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.5,
+      "bin_upper": 0.6,
+      "count": 102,
+      "mean_prediction": 0.5415859831910712,
+      "model_id": "M2-attack-defense-v1",
+      "observed_frequency": 0.5490196078431373,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.6,
+      "bin_upper": 0.7,
+      "count": 104,
+      "mean_prediction": 0.6438622188865181,
+      "model_id": "M2-attack-defense-v1",
+      "observed_frequency": 0.6346153846153846,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.7,
+      "bin_upper": 0.8,
+      "count": 51,
+      "mean_prediction": 0.7463427886139656,
+      "model_id": "M2-attack-defense-v1",
+      "observed_frequency": 0.7647058823529411,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "count": 19,
+      "mean_prediction": 0.8392089659997414,
+      "model_id": "M2-attack-defense-v1",
+      "observed_frequency": 0.8947368421052632,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "count": 2,
+      "mean_prediction": 0.9245985548594602,
+      "model_id": "M2-attack-defense-v1",
+      "observed_frequency": 1.0,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "count": 7,
+      "mean_prediction": 0.07605074268584788,
+      "model_id": "M2-attack-defense-v1",
+      "observed_frequency": 0.0,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "count": 166,
+      "mean_prediction": 0.16764680466904547,
+      "model_id": "M2-attack-defense-v1",
+      "observed_frequency": 0.1686746987951807,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.2,
+      "bin_upper": 0.3,
+      "count": 583,
+      "mean_prediction": 0.23984856125576556,
+      "model_id": "M2-attack-defense-v1",
+      "observed_frequency": 0.2504288164665523,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.3,
+      "bin_upper": 0.4,
+      "count": 4,
+      "mean_prediction": 0.3030454748764281,
+      "model_id": "M2-attack-defense-v1",
+      "observed_frequency": 0.25,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M2-attack-defense-v1",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.5,
+      "bin_upper": 0.6,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M2-attack-defense-v1",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.6,
+      "bin_upper": 0.7,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M2-attack-defense-v1",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.7,
+      "bin_upper": 0.8,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M2-attack-defense-v1",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M2-attack-defense-v1",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M2-attack-defense-v1",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "count": 50,
+      "mean_prediction": 0.07157730714448475,
+      "model_id": "M2-attack-defense-v1",
+      "observed_frequency": 0.06,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "count": 137,
+      "mean_prediction": 0.15365850555602056,
+      "model_id": "M2-attack-defense-v1",
+      "observed_frequency": 0.13138686131386862,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.2,
+      "bin_upper": 0.3,
+      "count": 166,
+      "mean_prediction": 0.25091971635038707,
+      "model_id": "M2-attack-defense-v1",
+      "observed_frequency": 0.23493975903614459,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.3,
+      "bin_upper": 0.4,
+      "count": 162,
+      "mean_prediction": 0.3487776271910889,
+      "model_id": "M2-attack-defense-v1",
+      "observed_frequency": 0.36419753086419754,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "count": 108,
+      "mean_prediction": 0.4454441119199333,
+      "model_id": "M2-attack-defense-v1",
+      "observed_frequency": 0.4166666666666667,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.5,
+      "bin_upper": 0.6,
+      "count": 76,
+      "mean_prediction": 0.549792157837186,
+      "model_id": "M2-attack-defense-v1",
+      "observed_frequency": 0.5657894736842105,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.6,
+      "bin_upper": 0.7,
+      "count": 39,
+      "mean_prediction": 0.6373854125657831,
+      "model_id": "M2-attack-defense-v1",
+      "observed_frequency": 0.7435897435897436,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.7,
+      "bin_upper": 0.8,
+      "count": 18,
+      "mean_prediction": 0.7320651507632514,
+      "model_id": "M2-attack-defense-v1",
+      "observed_frequency": 0.8888888888888888,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "count": 4,
+      "mean_prediction": 0.8261720960009505,
+      "model_id": "M2-attack-defense-v1",
+      "observed_frequency": 0.75,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M2-attack-defense-v1",
+      "observed_frequency": null,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "count": 6,
+      "mean_prediction": 0.09426250641382777,
+      "model_id": "M5-centered-poisson-control",
+      "observed_frequency": 0.0,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "count": 44,
+      "mean_prediction": 0.16165746219295862,
+      "model_id": "M5-centered-poisson-control",
+      "observed_frequency": 0.13636363636363635,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.2,
+      "bin_upper": 0.3,
+      "count": 114,
+      "mean_prediction": 0.24952940999559983,
+      "model_id": "M5-centered-poisson-control",
+      "observed_frequency": 0.15789473684210525,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.3,
+      "bin_upper": 0.4,
+      "count": 147,
+      "mean_prediction": 0.3535108891375834,
+      "model_id": "M5-centered-poisson-control",
+      "observed_frequency": 0.3401360544217687,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "count": 159,
+      "mean_prediction": 0.44789479528290743,
+      "model_id": "M5-centered-poisson-control",
+      "observed_frequency": 0.4276729559748428,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.5,
+      "bin_upper": 0.6,
+      "count": 123,
+      "mean_prediction": 0.5484289506661024,
+      "model_id": "M5-centered-poisson-control",
+      "observed_frequency": 0.5934959349593496,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.6,
+      "bin_upper": 0.7,
+      "count": 100,
+      "mean_prediction": 0.6413114024369555,
+      "model_id": "M5-centered-poisson-control",
+      "observed_frequency": 0.6,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.7,
+      "bin_upper": 0.8,
+      "count": 47,
+      "mean_prediction": 0.7363322234093388,
+      "model_id": "M5-centered-poisson-control",
+      "observed_frequency": 0.7446808510638298,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "count": 20,
+      "mean_prediction": 0.8360321079545778,
+      "model_id": "M5-centered-poisson-control",
+      "observed_frequency": 1.0,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M5-centered-poisson-control",
+      "observed_frequency": null,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "count": 5,
+      "mean_prediction": 0.08470214811405516,
+      "model_id": "M5-centered-poisson-control",
+      "observed_frequency": 0.0,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "count": 169,
+      "mean_prediction": 0.1698461827977656,
+      "model_id": "M5-centered-poisson-control",
+      "observed_frequency": 0.1952662721893491,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.2,
+      "bin_upper": 0.3,
+      "count": 586,
+      "mean_prediction": 0.2308509454851646,
+      "model_id": "M5-centered-poisson-control",
+      "observed_frequency": 0.24232081911262798,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.3,
+      "bin_upper": 0.4,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M5-centered-poisson-control",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M5-centered-poisson-control",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.5,
+      "bin_upper": 0.6,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M5-centered-poisson-control",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.6,
+      "bin_upper": 0.7,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M5-centered-poisson-control",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.7,
+      "bin_upper": 0.8,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M5-centered-poisson-control",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M5-centered-poisson-control",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M5-centered-poisson-control",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "count": 34,
+      "mean_prediction": 0.07149476405808478,
+      "model_id": "M5-centered-poisson-control",
+      "observed_frequency": 0.029411764705882353,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "count": 146,
+      "mean_prediction": 0.15671588391262375,
+      "model_id": "M5-centered-poisson-control",
+      "observed_frequency": 0.1095890410958904,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.2,
+      "bin_upper": 0.3,
+      "count": 164,
+      "mean_prediction": 0.2505373336747148,
+      "model_id": "M5-centered-poisson-control",
+      "observed_frequency": 0.22560975609756098,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.3,
+      "bin_upper": 0.4,
+      "count": 175,
+      "mean_prediction": 0.3474566740954484,
+      "model_id": "M5-centered-poisson-control",
+      "observed_frequency": 0.38857142857142857,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "count": 107,
+      "mean_prediction": 0.4444652980774656,
+      "model_id": "M5-centered-poisson-control",
+      "observed_frequency": 0.3925233644859813,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.5,
+      "bin_upper": 0.6,
+      "count": 89,
+      "mean_prediction": 0.5452229698526593,
+      "model_id": "M5-centered-poisson-control",
+      "observed_frequency": 0.6067415730337079,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.6,
+      "bin_upper": 0.7,
+      "count": 33,
+      "mean_prediction": 0.6416043748266664,
+      "model_id": "M5-centered-poisson-control",
+      "observed_frequency": 0.8181818181818182,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.7,
+      "bin_upper": 0.8,
+      "count": 12,
+      "mean_prediction": 0.7426238258862948,
+      "model_id": "M5-centered-poisson-control",
+      "observed_frequency": 0.8333333333333334,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M5-centered-poisson-control",
+      "observed_frequency": null,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M5-centered-poisson-control",
+      "observed_frequency": null,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "count": 6,
+      "mean_prediction": 0.0957330488807953,
+      "model_id": "M7-xg-v1",
+      "observed_frequency": 0.0,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "count": 41,
+      "mean_prediction": 0.16059813271224613,
+      "model_id": "M7-xg-v1",
+      "observed_frequency": 0.12195121951219512,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.2,
+      "bin_upper": 0.3,
+      "count": 106,
+      "mean_prediction": 0.25213631544780585,
+      "model_id": "M7-xg-v1",
+      "observed_frequency": 0.1509433962264151,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.3,
+      "bin_upper": 0.4,
+      "count": 135,
+      "mean_prediction": 0.35128241633885315,
+      "model_id": "M7-xg-v1",
+      "observed_frequency": 0.2814814814814815,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "count": 157,
+      "mean_prediction": 0.453595322060084,
+      "model_id": "M7-xg-v1",
+      "observed_frequency": 0.4012738853503185,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.5,
+      "bin_upper": 0.6,
+      "count": 128,
+      "mean_prediction": 0.542797474137065,
+      "model_id": "M7-xg-v1",
+      "observed_frequency": 0.6171875,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.6,
+      "bin_upper": 0.7,
+      "count": 111,
+      "mean_prediction": 0.6498475407155554,
+      "model_id": "M7-xg-v1",
+      "observed_frequency": 0.6396396396396397,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.7,
+      "bin_upper": 0.8,
+      "count": 54,
+      "mean_prediction": 0.737914489173692,
+      "model_id": "M7-xg-v1",
+      "observed_frequency": 0.6851851851851852,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "count": 21,
+      "mean_prediction": 0.8444022606436138,
+      "model_id": "M7-xg-v1",
+      "observed_frequency": 0.9523809523809523,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "count": 1,
+      "mean_prediction": 0.9045369922487685,
+      "model_id": "M7-xg-v1",
+      "observed_frequency": 1.0,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "count": 10,
+      "mean_prediction": 0.08576634610739156,
+      "model_id": "M7-xg-v1",
+      "observed_frequency": 0.0,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "count": 211,
+      "mean_prediction": 0.16904733437794559,
+      "model_id": "M7-xg-v1",
+      "observed_frequency": 0.20853080568720378,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.2,
+      "bin_upper": 0.3,
+      "count": 539,
+      "mean_prediction": 0.22563615755589178,
+      "model_id": "M7-xg-v1",
+      "observed_frequency": 0.24304267161410018,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.3,
+      "bin_upper": 0.4,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M7-xg-v1",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M7-xg-v1",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.5,
+      "bin_upper": 0.6,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M7-xg-v1",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.6,
+      "bin_upper": 0.7,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M7-xg-v1",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.7,
+      "bin_upper": 0.8,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M7-xg-v1",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M7-xg-v1",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M7-xg-v1",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "count": 34,
+      "mean_prediction": 0.06509981500790436,
+      "model_id": "M7-xg-v1",
+      "observed_frequency": 0.058823529411764705,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "count": 156,
+      "mean_prediction": 0.1525920629845399,
+      "model_id": "M7-xg-v1",
+      "observed_frequency": 0.11538461538461539,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.2,
+      "bin_upper": 0.3,
+      "count": 175,
+      "mean_prediction": 0.2544573098133609,
+      "model_id": "M7-xg-v1",
+      "observed_frequency": 0.22857142857142856,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.3,
+      "bin_upper": 0.4,
+      "count": 154,
+      "mean_prediction": 0.34436192685173195,
+      "model_id": "M7-xg-v1",
+      "observed_frequency": 0.34415584415584416,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "count": 114,
+      "mean_prediction": 0.4453623823208137,
+      "model_id": "M7-xg-v1",
+      "observed_frequency": 0.4824561403508772,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.5,
+      "bin_upper": 0.6,
+      "count": 82,
+      "mean_prediction": 0.5442397792769729,
+      "model_id": "M7-xg-v1",
+      "observed_frequency": 0.6463414634146342,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.6,
+      "bin_upper": 0.7,
+      "count": 33,
+      "mean_prediction": 0.6473544703609616,
+      "model_id": "M7-xg-v1",
+      "observed_frequency": 0.7575757575757576,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.7,
+      "bin_upper": 0.8,
+      "count": 12,
+      "mean_prediction": 0.7413153363123376,
+      "model_id": "M7-xg-v1",
+      "observed_frequency": 0.75,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M7-xg-v1",
+      "observed_frequency": null,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M7-xg-v1",
+      "observed_frequency": null,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "count": 6,
+      "mean_prediction": 0.09426250641382777,
+      "model_id": "M5-uncentered-bridge-control",
+      "observed_frequency": 0.0,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "count": 44,
+      "mean_prediction": 0.16165746219295865,
+      "model_id": "M5-uncentered-bridge-control",
+      "observed_frequency": 0.13636363636363635,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.2,
+      "bin_upper": 0.3,
+      "count": 114,
+      "mean_prediction": 0.24952940999559986,
+      "model_id": "M5-uncentered-bridge-control",
+      "observed_frequency": 0.15789473684210525,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.3,
+      "bin_upper": 0.4,
+      "count": 147,
+      "mean_prediction": 0.3535108891375834,
+      "model_id": "M5-uncentered-bridge-control",
+      "observed_frequency": 0.3401360544217687,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "count": 159,
+      "mean_prediction": 0.44789479528290743,
+      "model_id": "M5-uncentered-bridge-control",
+      "observed_frequency": 0.4276729559748428,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.5,
+      "bin_upper": 0.6,
+      "count": 123,
+      "mean_prediction": 0.5484289506661024,
+      "model_id": "M5-uncentered-bridge-control",
+      "observed_frequency": 0.5934959349593496,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.6,
+      "bin_upper": 0.7,
+      "count": 100,
+      "mean_prediction": 0.6413114024369554,
+      "model_id": "M5-uncentered-bridge-control",
+      "observed_frequency": 0.6,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.7,
+      "bin_upper": 0.8,
+      "count": 47,
+      "mean_prediction": 0.7363322234093388,
+      "model_id": "M5-uncentered-bridge-control",
+      "observed_frequency": 0.7446808510638298,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "count": 20,
+      "mean_prediction": 0.8360321079545778,
+      "model_id": "M5-uncentered-bridge-control",
+      "observed_frequency": 1.0,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M5-uncentered-bridge-control",
+      "observed_frequency": null,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "count": 5,
+      "mean_prediction": 0.08470214811405506,
+      "model_id": "M5-uncentered-bridge-control",
+      "observed_frequency": 0.0,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "count": 169,
+      "mean_prediction": 0.16984618279776553,
+      "model_id": "M5-uncentered-bridge-control",
+      "observed_frequency": 0.1952662721893491,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.2,
+      "bin_upper": 0.3,
+      "count": 586,
+      "mean_prediction": 0.2308509454851645,
+      "model_id": "M5-uncentered-bridge-control",
+      "observed_frequency": 0.24232081911262798,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.3,
+      "bin_upper": 0.4,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M5-uncentered-bridge-control",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M5-uncentered-bridge-control",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.5,
+      "bin_upper": 0.6,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M5-uncentered-bridge-control",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.6,
+      "bin_upper": 0.7,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M5-uncentered-bridge-control",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.7,
+      "bin_upper": 0.8,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M5-uncentered-bridge-control",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M5-uncentered-bridge-control",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M5-uncentered-bridge-control",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "count": 34,
+      "mean_prediction": 0.07149476405808482,
+      "model_id": "M5-uncentered-bridge-control",
+      "observed_frequency": 0.029411764705882353,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "count": 146,
+      "mean_prediction": 0.1567158839126238,
+      "model_id": "M5-uncentered-bridge-control",
+      "observed_frequency": 0.1095890410958904,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.2,
+      "bin_upper": 0.3,
+      "count": 164,
+      "mean_prediction": 0.250537333674715,
+      "model_id": "M5-uncentered-bridge-control",
+      "observed_frequency": 0.22560975609756098,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.3,
+      "bin_upper": 0.4,
+      "count": 175,
+      "mean_prediction": 0.3474566740954485,
+      "model_id": "M5-uncentered-bridge-control",
+      "observed_frequency": 0.38857142857142857,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "count": 107,
+      "mean_prediction": 0.4444652980774656,
+      "model_id": "M5-uncentered-bridge-control",
+      "observed_frequency": 0.3925233644859813,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.5,
+      "bin_upper": 0.6,
+      "count": 89,
+      "mean_prediction": 0.5452229698526593,
+      "model_id": "M5-uncentered-bridge-control",
+      "observed_frequency": 0.6067415730337079,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.6,
+      "bin_upper": 0.7,
+      "count": 33,
+      "mean_prediction": 0.6416043748266663,
+      "model_id": "M5-uncentered-bridge-control",
+      "observed_frequency": 0.8181818181818182,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.7,
+      "bin_upper": 0.8,
+      "count": 12,
+      "mean_prediction": 0.7426238258862949,
+      "model_id": "M5-uncentered-bridge-control",
+      "observed_frequency": 0.8333333333333334,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M5-uncentered-bridge-control",
+      "observed_frequency": null,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M5-uncentered-bridge-control",
+      "observed_frequency": null,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M9-cross-division-goals",
+      "observed_frequency": null,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "count": 36,
+      "mean_prediction": 0.16020561854999676,
+      "model_id": "M9-cross-division-goals",
+      "observed_frequency": 0.1388888888888889,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.2,
+      "bin_upper": 0.3,
+      "count": 99,
+      "mean_prediction": 0.24962375532454045,
+      "model_id": "M9-cross-division-goals",
+      "observed_frequency": 0.15151515151515152,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.3,
+      "bin_upper": 0.4,
+      "count": 159,
+      "mean_prediction": 0.35523810891853425,
+      "model_id": "M9-cross-division-goals",
+      "observed_frequency": 0.3270440251572327,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "count": 182,
+      "mean_prediction": 0.45050979613180453,
+      "model_id": "M9-cross-division-goals",
+      "observed_frequency": 0.4230769230769231,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.5,
+      "bin_upper": 0.6,
+      "count": 137,
+      "mean_prediction": 0.5472925602946318,
+      "model_id": "M9-cross-division-goals",
+      "observed_frequency": 0.5693430656934306,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.6,
+      "bin_upper": 0.7,
+      "count": 95,
+      "mean_prediction": 0.6393630693041946,
+      "model_id": "M9-cross-division-goals",
+      "observed_frequency": 0.6105263157894737,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.7,
+      "bin_upper": 0.8,
+      "count": 41,
+      "mean_prediction": 0.7424217449215156,
+      "model_id": "M9-cross-division-goals",
+      "observed_frequency": 0.8292682926829268,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "count": 11,
+      "mean_prediction": 0.828648785157977,
+      "model_id": "M9-cross-division-goals",
+      "observed_frequency": 1.0,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M9-cross-division-goals",
+      "observed_frequency": null,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "count": 3,
+      "mean_prediction": 0.09599774211459305,
+      "model_id": "M9-cross-division-goals",
+      "observed_frequency": 0.0,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "count": 138,
+      "mean_prediction": 0.17224881696441097,
+      "model_id": "M9-cross-division-goals",
+      "observed_frequency": 0.15942028985507245,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.2,
+      "bin_upper": 0.3,
+      "count": 619,
+      "mean_prediction": 0.23184394911099668,
+      "model_id": "M9-cross-division-goals",
+      "observed_frequency": 0.24717285945072698,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.3,
+      "bin_upper": 0.4,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M9-cross-division-goals",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M9-cross-division-goals",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.5,
+      "bin_upper": 0.6,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M9-cross-division-goals",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.6,
+      "bin_upper": 0.7,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M9-cross-division-goals",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.7,
+      "bin_upper": 0.8,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M9-cross-division-goals",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M9-cross-division-goals",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M9-cross-division-goals",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "count": 25,
+      "mean_prediction": 0.07666177046616263,
+      "model_id": "M9-cross-division-goals",
+      "observed_frequency": 0.04,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "count": 136,
+      "mean_prediction": 0.15884483326139048,
+      "model_id": "M9-cross-division-goals",
+      "observed_frequency": 0.11029411764705882,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.2,
+      "bin_upper": 0.3,
+      "count": 191,
+      "mean_prediction": 0.2514755440876633,
+      "model_id": "M9-cross-division-goals",
+      "observed_frequency": 0.2094240837696335,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.3,
+      "bin_upper": 0.4,
+      "count": 195,
+      "mean_prediction": 0.3471463649241855,
+      "model_id": "M9-cross-division-goals",
+      "observed_frequency": 0.4,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "count": 103,
+      "mean_prediction": 0.4427104633889127,
+      "model_id": "M9-cross-division-goals",
+      "observed_frequency": 0.44660194174757284,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.5,
+      "bin_upper": 0.6,
+      "count": 77,
+      "mean_prediction": 0.5426602863114292,
+      "model_id": "M9-cross-division-goals",
+      "observed_frequency": 0.6363636363636364,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.6,
+      "bin_upper": 0.7,
+      "count": 27,
+      "mean_prediction": 0.6380856326640599,
+      "model_id": "M9-cross-division-goals",
+      "observed_frequency": 0.8148148148148148,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.7,
+      "bin_upper": 0.8,
+      "count": 6,
+      "mean_prediction": 0.7240542046636932,
+      "model_id": "M9-cross-division-goals",
+      "observed_frequency": 0.6666666666666666,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M9-cross-division-goals",
+      "observed_frequency": null,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M9-cross-division-goals",
+      "observed_frequency": null,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "count": 1,
+      "mean_prediction": 0.09138420477312201,
+      "model_id": "M9-cross-division-xg",
+      "observed_frequency": 0.0,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "count": 39,
+      "mean_prediction": 0.15930668673438297,
+      "model_id": "M9-cross-division-xg",
+      "observed_frequency": 0.10256410256410256,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.2,
+      "bin_upper": 0.3,
+      "count": 93,
+      "mean_prediction": 0.24976823350145866,
+      "model_id": "M9-cross-division-xg",
+      "observed_frequency": 0.16129032258064516,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.3,
+      "bin_upper": 0.4,
+      "count": 140,
+      "mean_prediction": 0.3498078493164091,
+      "model_id": "M9-cross-division-xg",
+      "observed_frequency": 0.2785714285714286,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "count": 175,
+      "mean_prediction": 0.45035382302909005,
+      "model_id": "M9-cross-division-xg",
+      "observed_frequency": 0.3942857142857143,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.5,
+      "bin_upper": 0.6,
+      "count": 134,
+      "mean_prediction": 0.543174910442135,
+      "model_id": "M9-cross-division-xg",
+      "observed_frequency": 0.6119402985074627,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.6,
+      "bin_upper": 0.7,
+      "count": 110,
+      "mean_prediction": 0.6476617304746075,
+      "model_id": "M9-cross-division-xg",
+      "observed_frequency": 0.6090909090909091,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.7,
+      "bin_upper": 0.8,
+      "count": 49,
+      "mean_prediction": 0.7341873655890013,
+      "model_id": "M9-cross-division-xg",
+      "observed_frequency": 0.7142857142857143,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "count": 18,
+      "mean_prediction": 0.8353197960784662,
+      "model_id": "M9-cross-division-xg",
+      "observed_frequency": 1.0,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "count": 1,
+      "mean_prediction": 0.9003966716777272,
+      "model_id": "M9-cross-division-xg",
+      "observed_frequency": 1.0,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "count": 8,
+      "mean_prediction": 0.09013169405671415,
+      "model_id": "M9-cross-division-xg",
+      "observed_frequency": 0.0,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "count": 195,
+      "mean_prediction": 0.171224612826016,
+      "model_id": "M9-cross-division-xg",
+      "observed_frequency": 0.2205128205128205,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.2,
+      "bin_upper": 0.3,
+      "count": 557,
+      "mean_prediction": 0.22629380623120138,
+      "model_id": "M9-cross-division-xg",
+      "observed_frequency": 0.236983842010772,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.3,
+      "bin_upper": 0.4,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M9-cross-division-xg",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M9-cross-division-xg",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.5,
+      "bin_upper": 0.6,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M9-cross-division-xg",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.6,
+      "bin_upper": 0.7,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M9-cross-division-xg",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.7,
+      "bin_upper": 0.8,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M9-cross-division-xg",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M9-cross-division-xg",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M9-cross-division-xg",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "count": 30,
+      "mean_prediction": 0.06932770393631618,
+      "model_id": "M9-cross-division-xg",
+      "observed_frequency": 0.03333333333333333,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "count": 153,
+      "mean_prediction": 0.15524899027544187,
+      "model_id": "M9-cross-division-xg",
+      "observed_frequency": 0.12418300653594772,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.2,
+      "bin_upper": 0.3,
+      "count": 183,
+      "mean_prediction": 0.2547127000854345,
+      "model_id": "M9-cross-division-xg",
+      "observed_frequency": 0.2185792349726776,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.3,
+      "bin_upper": 0.4,
+      "count": 171,
+      "mean_prediction": 0.34632328592626616,
+      "model_id": "M9-cross-division-xg",
+      "observed_frequency": 0.38596491228070173,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "count": 109,
+      "mean_prediction": 0.4431902507815966,
+      "model_id": "M9-cross-division-xg",
+      "observed_frequency": 0.47706422018348627,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.5,
+      "bin_upper": 0.6,
+      "count": 75,
+      "mean_prediction": 0.5445898580691599,
+      "model_id": "M9-cross-division-xg",
+      "observed_frequency": 0.6533333333333333,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.6,
+      "bin_upper": 0.7,
+      "count": 32,
+      "mean_prediction": 0.6437503639227288,
+      "model_id": "M9-cross-division-xg",
+      "observed_frequency": 0.71875,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.7,
+      "bin_upper": 0.8,
+      "count": 7,
+      "mean_prediction": 0.7383578566693776,
+      "model_id": "M9-cross-division-xg",
+      "observed_frequency": 0.7142857142857143,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M9-cross-division-xg",
+      "observed_frequency": null,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "M9-cross-division-xg",
+      "observed_frequency": null,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "count": 11,
+      "mean_prediction": 0.07492993716972159,
+      "model_id": "market:bet365_preclosing",
+      "observed_frequency": 0.0,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "count": 83,
+      "mean_prediction": 0.15499359777684582,
+      "model_id": "market:bet365_preclosing",
+      "observed_frequency": 0.08433734939759036,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.2,
+      "bin_upper": 0.3,
+      "count": 103,
+      "mean_prediction": 0.25219238537243693,
+      "model_id": "market:bet365_preclosing",
+      "observed_frequency": 0.23300970873786409,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.3,
+      "bin_upper": 0.4,
+      "count": 144,
+      "mean_prediction": 0.35410028866333515,
+      "model_id": "market:bet365_preclosing",
+      "observed_frequency": 0.3472222222222222,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "count": 126,
+      "mean_prediction": 0.45241937102202473,
+      "model_id": "market:bet365_preclosing",
+      "observed_frequency": 0.46825396825396826,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.5,
+      "bin_upper": 0.6,
+      "count": 110,
+      "mean_prediction": 0.5526680498794092,
+      "model_id": "market:bet365_preclosing",
+      "observed_frequency": 0.5818181818181818,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.6,
+      "bin_upper": 0.7,
+      "count": 90,
+      "mean_prediction": 0.6510312109988955,
+      "model_id": "market:bet365_preclosing",
+      "observed_frequency": 0.6333333333333333,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.7,
+      "bin_upper": 0.8,
+      "count": 60,
+      "mean_prediction": 0.7420554803752751,
+      "model_id": "market:bet365_preclosing",
+      "observed_frequency": 0.6166666666666667,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "count": 33,
+      "mean_prediction": 0.8347687901935524,
+      "model_id": "market:bet365_preclosing",
+      "observed_frequency": 0.9696969696969697,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "market:bet365_preclosing",
+      "observed_frequency": null,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "count": 12,
+      "mean_prediction": 0.08327021813214355,
+      "model_id": "market:bet365_preclosing",
+      "observed_frequency": 0.0,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "count": 175,
+      "mean_prediction": 0.16411095010526114,
+      "model_id": "market:bet365_preclosing",
+      "observed_frequency": 0.18285714285714286,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.2,
+      "bin_upper": 0.3,
+      "count": 569,
+      "mean_prediction": 0.25099468713784523,
+      "model_id": "market:bet365_preclosing",
+      "observed_frequency": 0.2460456942003515,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.3,
+      "bin_upper": 0.4,
+      "count": 4,
+      "mean_prediction": 0.3079930428907783,
+      "model_id": "market:bet365_preclosing",
+      "observed_frequency": 0.75,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "market:bet365_preclosing",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.5,
+      "bin_upper": 0.6,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "market:bet365_preclosing",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.6,
+      "bin_upper": 0.7,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "market:bet365_preclosing",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.7,
+      "bin_upper": 0.8,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "market:bet365_preclosing",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "market:bet365_preclosing",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "market:bet365_preclosing",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "count": 58,
+      "mean_prediction": 0.07020905536738332,
+      "model_id": "market:bet365_preclosing",
+      "observed_frequency": 0.06896551724137931,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "count": 163,
+      "mean_prediction": 0.14923276131037655,
+      "model_id": "market:bet365_preclosing",
+      "observed_frequency": 0.15950920245398773,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.2,
+      "bin_upper": 0.3,
+      "count": 160,
+      "mean_prediction": 0.24852209284448565,
+      "model_id": "market:bet365_preclosing",
+      "observed_frequency": 0.2125,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.3,
+      "bin_upper": 0.4,
+      "count": 147,
+      "mean_prediction": 0.3510030156924021,
+      "model_id": "market:bet365_preclosing",
+      "observed_frequency": 0.3741496598639456,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "count": 93,
+      "mean_prediction": 0.44728078391071496,
+      "model_id": "market:bet365_preclosing",
+      "observed_frequency": 0.44086021505376344,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.5,
+      "bin_upper": 0.6,
+      "count": 69,
+      "mean_prediction": 0.5516891703463906,
+      "model_id": "market:bet365_preclosing",
+      "observed_frequency": 0.5217391304347826,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.6,
+      "bin_upper": 0.7,
+      "count": 48,
+      "mean_prediction": 0.649412665325527,
+      "model_id": "market:bet365_preclosing",
+      "observed_frequency": 0.8333333333333334,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.7,
+      "bin_upper": 0.8,
+      "count": 18,
+      "mean_prediction": 0.7373282876197861,
+      "model_id": "market:bet365_preclosing",
+      "observed_frequency": 0.8333333333333334,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "count": 4,
+      "mean_prediction": 0.8127941035690867,
+      "model_id": "market:bet365_preclosing",
+      "observed_frequency": 1.0,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "market:bet365_preclosing",
+      "observed_frequency": null,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "count": 15,
+      "mean_prediction": 0.07762043908524222,
+      "model_id": "market:market_average_closing",
+      "observed_frequency": 0.0,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "count": 76,
+      "mean_prediction": 0.1554023464706313,
+      "model_id": "market:market_average_closing",
+      "observed_frequency": 0.10526315789473684,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.2,
+      "bin_upper": 0.3,
+      "count": 108,
+      "mean_prediction": 0.25274863183918095,
+      "model_id": "market:market_average_closing",
+      "observed_frequency": 0.2037037037037037,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.3,
+      "bin_upper": 0.4,
+      "count": 136,
+      "mean_prediction": 0.34908992444660886,
+      "model_id": "market:market_average_closing",
+      "observed_frequency": 0.34558823529411764,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "count": 122,
+      "mean_prediction": 0.4486532918431474,
+      "model_id": "market:market_average_closing",
+      "observed_frequency": 0.4262295081967213,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.5,
+      "bin_upper": 0.6,
+      "count": 124,
+      "mean_prediction": 0.5528119485638183,
+      "model_id": "market:market_average_closing",
+      "observed_frequency": 0.6048387096774194,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.6,
+      "bin_upper": 0.7,
+      "count": 76,
+      "mean_prediction": 0.6530985675030714,
+      "model_id": "market:market_average_closing",
+      "observed_frequency": 0.618421052631579,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.7,
+      "bin_upper": 0.8,
+      "count": 71,
+      "mean_prediction": 0.7491069909754953,
+      "model_id": "market:market_average_closing",
+      "observed_frequency": 0.6901408450704225,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "count": 32,
+      "mean_prediction": 0.8433710872072293,
+      "model_id": "market:market_average_closing",
+      "observed_frequency": 0.9375,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "market:market_average_closing",
+      "observed_frequency": null,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "count": 14,
+      "mean_prediction": 0.0832977217140748,
+      "model_id": "market:market_average_closing",
+      "observed_frequency": 0.0,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "count": 169,
+      "mean_prediction": 0.16114070556508747,
+      "model_id": "market:market_average_closing",
+      "observed_frequency": 0.14792899408284024,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.2,
+      "bin_upper": 0.3,
+      "count": 562,
+      "mean_prediction": 0.25146629437934337,
+      "model_id": "market:market_average_closing",
+      "observed_frequency": 0.2597864768683274,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.3,
+      "bin_upper": 0.4,
+      "count": 15,
+      "mean_prediction": 0.30586538447922884,
+      "model_id": "market:market_average_closing",
+      "observed_frequency": 0.26666666666666666,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "market:market_average_closing",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.5,
+      "bin_upper": 0.6,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "market:market_average_closing",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.6,
+      "bin_upper": 0.7,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "market:market_average_closing",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.7,
+      "bin_upper": 0.8,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "market:market_average_closing",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "market:market_average_closing",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "market:market_average_closing",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "count": 75,
+      "mean_prediction": 0.070669570542637,
+      "model_id": "market:market_average_closing",
+      "observed_frequency": 0.09333333333333334,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "count": 162,
+      "mean_prediction": 0.15560556024202896,
+      "model_id": "market:market_average_closing",
+      "observed_frequency": 0.15432098765432098,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.2,
+      "bin_upper": 0.3,
+      "count": 148,
+      "mean_prediction": 0.24967173469462384,
+      "model_id": "market:market_average_closing",
+      "observed_frequency": 0.20270270270270271,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.3,
+      "bin_upper": 0.4,
+      "count": 138,
+      "mean_prediction": 0.3477181260884484,
+      "model_id": "market:market_average_closing",
+      "observed_frequency": 0.3695652173913043,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "count": 103,
+      "mean_prediction": 0.4477901197921901,
+      "model_id": "market:market_average_closing",
+      "observed_frequency": 0.4563106796116505,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.5,
+      "bin_upper": 0.6,
+      "count": 68,
+      "mean_prediction": 0.5536737546587872,
+      "model_id": "market:market_average_closing",
+      "observed_frequency": 0.5882352941176471,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.6,
+      "bin_upper": 0.7,
+      "count": 38,
+      "mean_prediction": 0.6480346973578917,
+      "model_id": "market:market_average_closing",
+      "observed_frequency": 0.7631578947368421,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.7,
+      "bin_upper": 0.8,
+      "count": 22,
+      "mean_prediction": 0.7345337868158246,
+      "model_id": "market:market_average_closing",
+      "observed_frequency": 1.0,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "count": 6,
+      "mean_prediction": 0.8074343181577723,
+      "model_id": "market:market_average_closing",
+      "observed_frequency": 0.6666666666666666,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "market:market_average_closing",
+      "observed_frequency": null,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "count": 12,
+      "mean_prediction": 0.07515458914117193,
+      "model_id": "market:market_average_preclosing",
+      "observed_frequency": 0.0,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "count": 78,
+      "mean_prediction": 0.1531939817466561,
+      "model_id": "market:market_average_preclosing",
+      "observed_frequency": 0.08974358974358974,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.2,
+      "bin_upper": 0.3,
+      "count": 106,
+      "mean_prediction": 0.2523536097773439,
+      "model_id": "market:market_average_preclosing",
+      "observed_frequency": 0.22641509433962265,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.3,
+      "bin_upper": 0.4,
+      "count": 146,
+      "mean_prediction": 0.3546880847192873,
+      "model_id": "market:market_average_preclosing",
+      "observed_frequency": 0.3424657534246575,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "count": 121,
+      "mean_prediction": 0.4496064851824267,
+      "model_id": "market:market_average_preclosing",
+      "observed_frequency": 0.4628099173553719,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.5,
+      "bin_upper": 0.6,
+      "count": 114,
+      "mean_prediction": 0.55107295001009,
+      "model_id": "market:market_average_preclosing",
+      "observed_frequency": 0.5789473684210527,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.6,
+      "bin_upper": 0.7,
+      "count": 85,
+      "mean_prediction": 0.6523859401266829,
+      "model_id": "market:market_average_preclosing",
+      "observed_frequency": 0.6235294117647059,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.7,
+      "bin_upper": 0.8,
+      "count": 66,
+      "mean_prediction": 0.7449167565335697,
+      "model_id": "market:market_average_preclosing",
+      "observed_frequency": 0.6515151515151515,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "count": 32,
+      "mean_prediction": 0.8436791398196788,
+      "model_id": "market:market_average_preclosing",
+      "observed_frequency": 0.96875,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "market:market_average_preclosing",
+      "observed_frequency": null,
+      "outcome": "H"
+    },
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "count": 13,
+      "mean_prediction": 0.0832176947823764,
+      "model_id": "market:market_average_preclosing",
+      "observed_frequency": 0.0,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "count": 173,
+      "mean_prediction": 0.16340803244023017,
+      "model_id": "market:market_average_preclosing",
+      "observed_frequency": 0.1791907514450867,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.2,
+      "bin_upper": 0.3,
+      "count": 571,
+      "mean_prediction": 0.24942745373071676,
+      "model_id": "market:market_average_preclosing",
+      "observed_frequency": 0.2504378283712785,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.3,
+      "bin_upper": 0.4,
+      "count": 3,
+      "mean_prediction": 0.3030414280123532,
+      "model_id": "market:market_average_preclosing",
+      "observed_frequency": 0.3333333333333333,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "market:market_average_preclosing",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.5,
+      "bin_upper": 0.6,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "market:market_average_preclosing",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.6,
+      "bin_upper": 0.7,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "market:market_average_preclosing",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.7,
+      "bin_upper": 0.8,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "market:market_average_preclosing",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "market:market_average_preclosing",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "market:market_average_preclosing",
+      "observed_frequency": null,
+      "outcome": "D"
+    },
+    {
+      "bin_lower": 0.0,
+      "bin_upper": 0.1,
+      "count": 64,
+      "mean_prediction": 0.06882580545202802,
+      "model_id": "market:market_average_preclosing",
+      "observed_frequency": 0.078125,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.1,
+      "bin_upper": 0.2,
+      "count": 158,
+      "mean_prediction": 0.15010547071388383,
+      "model_id": "market:market_average_preclosing",
+      "observed_frequency": 0.15822784810126583,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.2,
+      "bin_upper": 0.3,
+      "count": 156,
+      "mean_prediction": 0.2490486822902546,
+      "model_id": "market:market_average_preclosing",
+      "observed_frequency": 0.21794871794871795,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.3,
+      "bin_upper": 0.4,
+      "count": 150,
+      "mean_prediction": 0.3511069144045845,
+      "model_id": "market:market_average_preclosing",
+      "observed_frequency": 0.36666666666666664,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.4,
+      "bin_upper": 0.5,
+      "count": 92,
+      "mean_prediction": 0.44519282726352194,
+      "model_id": "market:market_average_preclosing",
+      "observed_frequency": 0.44565217391304346,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.5,
+      "bin_upper": 0.6,
+      "count": 70,
+      "mean_prediction": 0.5511077404037436,
+      "model_id": "market:market_average_preclosing",
+      "observed_frequency": 0.5142857142857142,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.6,
+      "bin_upper": 0.7,
+      "count": 47,
+      "mean_prediction": 0.6506260283557566,
+      "model_id": "market:market_average_preclosing",
+      "observed_frequency": 0.8297872340425532,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.7,
+      "bin_upper": 0.8,
+      "count": 18,
+      "mean_prediction": 0.7366915080442893,
+      "model_id": "market:market_average_preclosing",
+      "observed_frequency": 0.8888888888888888,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.8,
+      "bin_upper": 0.9,
+      "count": 5,
+      "mean_prediction": 0.8154814163786803,
+      "model_id": "market:market_average_preclosing",
+      "observed_frequency": 0.8,
+      "outcome": "A"
+    },
+    {
+      "bin_lower": 0.9,
+      "bin_upper": 1.0,
+      "count": 0,
+      "mean_prediction": null,
+      "model_id": "market:market_average_preclosing",
+      "observed_frequency": null,
+      "outcome": "A"
+    }
+  ],
+  "evaluation_note": "Matched M2/M7 comparison for one bounded cross-division state candidate; Understat next-day availability assumed rather than timestamp-proven.",
+  "evaluation_status": "exploratory historical rolling comparison",
+  "market_matched": [
+    {
+      "brier": 0.5678236746710554,
+      "classwise_ece": 0.018699711810025575,
+      "log_loss": 0.9573445471192727,
+      "market_subset": "market:bet365_preclosing",
+      "matches": 760,
+      "model_id": "M2-attack-defense-v1",
+      "score_matches": 760,
+      "score_nll": 3.027001561931487
+    },
+    {
+      "brier": 0.5669573842927856,
+      "classwise_ece": 0.03492818499833719,
+      "log_loss": 0.9569172112840496,
+      "market_subset": "market:bet365_preclosing",
+      "matches": 760,
+      "model_id": "M5-centered-poisson-control",
+      "score_matches": 760,
+      "score_nll": 3.0155552356711874
+    },
+    {
+      "brier": 0.5634161898728953,
+      "classwise_ece": 0.04029877835559162,
+      "log_loss": 0.9528478321837806,
+      "market_subset": "market:bet365_preclosing",
+      "matches": 760,
+      "model_id": "M7-xg-v1",
+      "score_matches": 760,
+      "score_nll": 3.0105154479878693
+    },
+    {
+      "brier": 0.5669573842927856,
+      "classwise_ece": 0.034928184998337226,
+      "log_loss": 0.9569172112840496,
+      "market_subset": "market:bet365_preclosing",
+      "matches": 760,
+      "model_id": "M5-uncentered-bridge-control",
+      "score_matches": 760,
+      "score_nll": 3.0155552356711874
+    },
+    {
+      "brier": 0.576534256988271,
+      "classwise_ece": 0.03565720486335506,
+      "log_loss": 0.9710487632034083,
+      "market_subset": "market:bet365_preclosing",
+      "matches": 760,
+      "model_id": "M9-cross-division-goals",
+      "score_matches": 760,
+      "score_nll": 3.031736171933665
+    },
+    {
+      "brier": 0.5687432906301927,
+      "classwise_ece": 0.0428690256127295,
+      "log_loss": 0.9606252702777708,
+      "market_subset": "market:bet365_preclosing",
+      "matches": 760,
+      "model_id": "M9-cross-division-xg",
+      "score_matches": 760,
+      "score_nll": 3.017774042309561
+    },
+    {
+      "brier": 0.5558935878376119,
+      "classwise_ece": 0.027268103790075923,
+      "log_loss": 0.9399850747631308,
+      "market_subset": "market:bet365_preclosing",
+      "matches": 760,
+      "model_id": "market:bet365_preclosing",
+      "score_matches": 0,
+      "score_nll": null
+    },
+    {
+      "brier": 0.5678236746710554,
+      "classwise_ece": 0.018699711810025575,
+      "log_loss": 0.9573445471192727,
+      "market_subset": "market:market_average_closing",
+      "matches": 760,
+      "model_id": "M2-attack-defense-v1",
+      "score_matches": 760,
+      "score_nll": 3.027001561931487
+    },
+    {
+      "brier": 0.5669573842927856,
+      "classwise_ece": 0.03492818499833719,
+      "log_loss": 0.9569172112840496,
+      "market_subset": "market:market_average_closing",
+      "matches": 760,
+      "model_id": "M5-centered-poisson-control",
+      "score_matches": 760,
+      "score_nll": 3.0155552356711874
+    },
+    {
+      "brier": 0.5634161898728953,
+      "classwise_ece": 0.04029877835559162,
+      "log_loss": 0.9528478321837806,
+      "market_subset": "market:market_average_closing",
+      "matches": 760,
+      "model_id": "M7-xg-v1",
+      "score_matches": 760,
+      "score_nll": 3.0105154479878693
+    },
+    {
+      "brier": 0.5669573842927856,
+      "classwise_ece": 0.034928184998337226,
+      "log_loss": 0.9569172112840496,
+      "market_subset": "market:market_average_closing",
+      "matches": 760,
+      "model_id": "M5-uncentered-bridge-control",
+      "score_matches": 760,
+      "score_nll": 3.0155552356711874
+    },
+    {
+      "brier": 0.576534256988271,
+      "classwise_ece": 0.03565720486335506,
+      "log_loss": 0.9710487632034083,
+      "market_subset": "market:market_average_closing",
+      "matches": 760,
+      "model_id": "M9-cross-division-goals",
+      "score_matches": 760,
+      "score_nll": 3.031736171933665
+    },
+    {
+      "brier": 0.5687432906301927,
+      "classwise_ece": 0.0428690256127295,
+      "log_loss": 0.9606252702777708,
+      "market_subset": "market:market_average_closing",
+      "matches": 760,
+      "model_id": "M9-cross-division-xg",
+      "score_matches": 760,
+      "score_nll": 3.017774042309561
+    },
+    {
+      "brier": 0.5509667910353023,
+      "classwise_ece": 0.028330532886332842,
+      "log_loss": 0.9337173631548434,
+      "market_subset": "market:market_average_closing",
+      "matches": 760,
+      "model_id": "market:market_average_closing",
+      "score_matches": 0,
+      "score_nll": null
+    },
+    {
+      "brier": 0.5678236746710554,
+      "classwise_ece": 0.018699711810025575,
+      "log_loss": 0.9573445471192727,
+      "market_subset": "market:market_average_preclosing",
+      "matches": 760,
+      "model_id": "M2-attack-defense-v1",
+      "score_matches": 760,
+      "score_nll": 3.027001561931487
+    },
+    {
+      "brier": 0.5669573842927856,
+      "classwise_ece": 0.03492818499833719,
+      "log_loss": 0.9569172112840496,
+      "market_subset": "market:market_average_preclosing",
+      "matches": 760,
+      "model_id": "M5-centered-poisson-control",
+      "score_matches": 760,
+      "score_nll": 3.0155552356711874
+    },
+    {
+      "brier": 0.5634161898728953,
+      "classwise_ece": 0.04029877835559162,
+      "log_loss": 0.9528478321837806,
+      "market_subset": "market:market_average_preclosing",
+      "matches": 760,
+      "model_id": "M7-xg-v1",
+      "score_matches": 760,
+      "score_nll": 3.0105154479878693
+    },
+    {
+      "brier": 0.5669573842927856,
+      "classwise_ece": 0.034928184998337226,
+      "log_loss": 0.9569172112840496,
+      "market_subset": "market:market_average_preclosing",
+      "matches": 760,
+      "model_id": "M5-uncentered-bridge-control",
+      "score_matches": 760,
+      "score_nll": 3.0155552356711874
+    },
+    {
+      "brier": 0.576534256988271,
+      "classwise_ece": 0.03565720486335506,
+      "log_loss": 0.9710487632034083,
+      "market_subset": "market:market_average_preclosing",
+      "matches": 760,
+      "model_id": "M9-cross-division-goals",
+      "score_matches": 760,
+      "score_nll": 3.031736171933665
+    },
+    {
+      "brier": 0.5687432906301927,
+      "classwise_ece": 0.0428690256127295,
+      "log_loss": 0.9606252702777708,
+      "market_subset": "market:market_average_preclosing",
+      "matches": 760,
+      "model_id": "M9-cross-division-xg",
+      "score_matches": 760,
+      "score_nll": 3.017774042309561
+    },
+    {
+      "brier": 0.5560083125002399,
+      "classwise_ece": 0.024202291993804692,
+      "log_loss": 0.9399011937564766,
+      "market_subset": "market:market_average_preclosing",
+      "matches": 760,
+      "model_id": "market:market_average_preclosing",
+      "score_matches": 0,
+      "score_nll": null
+    }
+  ],
+  "overall": [
+    {
+      "brier": 0.5678236746710554,
+      "classwise_ece": 0.018699711810025575,
+      "log_loss": 0.9573445471192727,
+      "matches": 760,
+      "model_id": "M2-attack-defense-v1",
+      "score_matches": 760,
+      "score_nll": 3.027001561931487
+    },
+    {
+      "brier": 0.5669573842927856,
+      "classwise_ece": 0.03492818499833719,
+      "log_loss": 0.9569172112840496,
+      "matches": 760,
+      "model_id": "M5-centered-poisson-control",
+      "score_matches": 760,
+      "score_nll": 3.0155552356711874
+    },
+    {
+      "brier": 0.5634161898728953,
+      "classwise_ece": 0.04029877835559162,
+      "log_loss": 0.9528478321837806,
+      "matches": 760,
+      "model_id": "M7-xg-v1",
+      "score_matches": 760,
+      "score_nll": 3.0105154479878693
+    },
+    {
+      "brier": 0.5669573842927856,
+      "classwise_ece": 0.034928184998337226,
+      "log_loss": 0.9569172112840496,
+      "matches": 760,
+      "model_id": "M5-uncentered-bridge-control",
+      "score_matches": 760,
+      "score_nll": 3.0155552356711874
+    },
+    {
+      "brier": 0.576534256988271,
+      "classwise_ece": 0.03565720486335506,
+      "log_loss": 0.9710487632034083,
+      "matches": 760,
+      "model_id": "M9-cross-division-goals",
+      "score_matches": 760,
+      "score_nll": 3.031736171933665
+    },
+    {
+      "brier": 0.5687432906301927,
+      "classwise_ece": 0.0428690256127295,
+      "log_loss": 0.9606252702777708,
+      "matches": 760,
+      "model_id": "M9-cross-division-xg",
+      "score_matches": 760,
+      "score_nll": 3.017774042309561
+    },
+    {
+      "brier": 0.5558935878376119,
+      "classwise_ece": 0.027268103790075923,
+      "log_loss": 0.9399850747631308,
+      "matches": 760,
+      "model_id": "market:bet365_preclosing",
+      "score_matches": 0,
+      "score_nll": null
+    },
+    {
+      "brier": 0.5509667910353023,
+      "classwise_ece": 0.028330532886332842,
+      "log_loss": 0.9337173631548434,
+      "matches": 760,
+      "model_id": "market:market_average_closing",
+      "score_matches": 0,
+      "score_nll": null
+    },
+    {
+      "brier": 0.5560083125002399,
+      "classwise_ece": 0.024202291993804692,
+      "log_loss": 0.9399011937564766,
+      "matches": 760,
+      "model_id": "market:market_average_preclosing",
+      "score_matches": 0,
+      "score_nll": null
+    }
+  ],
+  "paired_comparisons": []
+}

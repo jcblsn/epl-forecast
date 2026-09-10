@@ -1,0 +1,83 @@
+{
+  "coordinates": {
+    "covariance_max_absolute_difference": 5.204170427930421e-18,
+    "interpretation": "one state in two coordinates, not a second model family",
+    "mean_max_absolute_difference": 0.0
+  },
+  "crossing_sensitivity": [
+    {
+      "crossings_per_season": 0,
+      "level_posterior_sd": 0.10547817839982715,
+      "level_root_mean_squared_error": 0.12209297445936206,
+      "replicates": 12
+    },
+    {
+      "crossings_per_season": 1,
+      "level_posterior_sd": 0.10103612747597988,
+      "level_root_mean_squared_error": 0.06949704203264576,
+      "replicates": 12
+    },
+    {
+      "crossings_per_season": 3,
+      "level_posterior_sd": 0.09351016151173099,
+      "level_root_mean_squared_error": 0.06860882852759785,
+      "replicates": 12
+    },
+    {
+      "crossings_per_season": 5,
+      "level_posterior_sd": 0.08776662858193518,
+      "level_root_mean_squared_error": 0.0699987740014622,
+      "replicates": 12
+    }
+  ],
+  "recovery": {
+    "chance_probability": 0.2,
+    "crossings_per_season": 3,
+    "results": [
+      {
+        "home_covered": 0.9333333333333333,
+        "home_covered_replicate_se": 0.046320555585310084,
+        "home_error": 0.003065318177689643,
+        "home_error_replicate_se": 0.011679740848157847,
+        "level_covered": 0.9666666666666667,
+        "level_covered_replicate_se": 0.03333333333333333,
+        "level_error": 0.02498334723721117,
+        "level_error_replicate_se": 0.01361286568653334,
+        "level_sd": 0.09302404987131804,
+        "level_sd_replicate_se": 0.0002197386403249572,
+        "model": "goals_only",
+        "quality_correlation": 0.9246726117889963,
+        "quality_correlation_replicate_se": 0.007231794207486309,
+        "quality_mse": 0.007563684098556238,
+        "quality_mse_replicate_se": 0.00048694705607364724,
+        "replicates": 30
+      },
+      {
+        "home_covered": 1.0,
+        "home_covered_replicate_se": 0.0,
+        "home_error": 0.0017778437706697902,
+        "home_error_replicate_se": 0.006661675948402343,
+        "level_covered": 0.9666666666666667,
+        "level_covered_replicate_se": 0.03333333333333333,
+        "level_error": 0.019572073964109846,
+        "level_error_replicate_se": 0.011475408044505458,
+        "level_sd": 0.0729656406642405,
+        "level_sd_replicate_se": 0.00013650692858196037,
+        "model": "goals_xg",
+        "quality_correlation": 0.9600137362263328,
+        "quality_correlation_replicate_se": 0.004133532808590831,
+        "quality_mse": 0.004448686125340247,
+        "quality_mse_replicate_se": 0.00025385208927646767,
+        "replicates": 30
+      }
+    ],
+    "scope": "synthetic two-division opportunity process with a known common club scale",
+    "seasons": 4,
+    "true_division_level": -0.2,
+    "true_home_advantage": 0.24,
+    "xg_minus_goals_quality_mse": {
+      "mean": -0.003114997973215991,
+      "replicate_standard_error": 0.0003758149686123561
+    }
+  }
+}

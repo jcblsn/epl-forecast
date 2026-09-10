@@ -1,0 +1,37 @@
+{
+  "as_of": "2025-07-01",
+  "cohorts": 42,
+  "dimensions": {
+    "attack": {
+      "coefficient_sd": [
+        0.0967663833369287,
+        0.31657903516106245
+      ],
+      "intercept": -0.3795697861095839,
+      "residual_sd": 0.0744183091129015,
+      "residual_sd_interval_05_95": [
+        0.002863710344562047,
+        0.13488649046278892
+      ],
+      "slope": 0.5391753664644096,
+      "standard_errors_from_unit_slope": 1.4556385052508034
+    },
+    "defense": {
+      "coefficient_sd": [
+        0.07828116663931765,
+        0.250370977677402
+      ],
+      "intercept": -0.2916096888681938,
+      "residual_sd": 0.10219136512805362,
+      "residual_sd_interval_05_95": [
+        0.00562189340322706,
+        0.17430571686322505
+      ],
+      "slope": 0.0743704437219676,
+      "standard_errors_from_unit_slope": 3.6970321594968865
+    }
+  },
+  "interpretation": "M9 assumes a slope of one in both dimensions; the cohorts do not support that",
+  "last_target_season": "2024-2025",
+  "target_season": "2025-2026"
+}

@@ -1,0 +1,265 @@
+{
+  "models": [
+    "M2-attack-defense-v1",
+    "M5-centered-poisson-control",
+    "M5-uncentered-bridge-control",
+    "M7-xg-v1",
+    "M9-cross-division-goals",
+    "M9-cross-division-xg"
+  ],
+  "run": "runs/m9-validation-v2",
+  "slices": {
+    "all": {
+      "fixtures": 760,
+      "outcome_loss": {
+        "M2-attack-defense-v1": 0.9573445471192727,
+        "M5-centered-poisson-control": 0.9569172112840496,
+        "M5-uncentered-bridge-control": 0.9569172112840496,
+        "M7-xg-v1": 0.9528478321837806,
+        "M9-cross-division-goals": 0.9710487632034083,
+        "M9-cross-division-xg": 0.9606252702777708
+      },
+      "paired": [
+        {
+          "blocks": 22,
+          "candidate": "M9-cross-division-goals",
+          "ci_lower": 0.008894244437602995,
+          "ci_upper": 0.01943987993084855,
+          "delta_log_loss": 0.014131551919358587,
+          "matches": 760,
+          "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+          "reference": "M5-uncentered-bridge-control"
+        },
+        {
+          "blocks": 22,
+          "candidate": "M9-cross-division-goals",
+          "ci_lower": 0.008894244437602974,
+          "ci_upper": 0.01943987993084858,
+          "delta_log_loss": 0.014131551919358635,
+          "matches": 760,
+          "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+          "reference": "M5-centered-poisson-control"
+        },
+        {
+          "blocks": 22,
+          "candidate": "M9-cross-division-xg",
+          "ci_lower": 0.004541298753949482,
+          "ci_upper": 0.011485333987583035,
+          "delta_log_loss": 0.00777743809399028,
+          "matches": 760,
+          "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+          "reference": "M7-xg-v1"
+        },
+        {
+          "blocks": 22,
+          "candidate": "M9-cross-division-xg",
+          "ci_lower": -0.009462341912849913,
+          "ci_upper": 0.016665666010056597,
+          "delta_log_loss": 0.003280723158498094,
+          "matches": 760,
+          "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+          "reference": "M2-attack-defense-v1"
+        },
+        {
+          "blocks": 22,
+          "candidate": "M9-cross-division-xg",
+          "ci_lower": -0.018560921684183565,
+          "ci_upper": -0.0021007965027424022,
+          "delta_log_loss": -0.010423492925637361,
+          "matches": 760,
+          "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+          "reference": "M9-cross-division-goals"
+        }
+      ]
+    },
+    "established": {
+      "fixtures": 652,
+      "outcome_loss": {
+        "M2-attack-defense-v1": 0.9818294439525226,
+        "M5-centered-poisson-control": 0.9819231565298139,
+        "M5-uncentered-bridge-control": 0.9819231565298139,
+        "M7-xg-v1": 0.9765911933379833,
+        "M9-cross-division-goals": 0.9898125409455626,
+        "M9-cross-division-xg": 0.9811547616056339
+      },
+      "paired": [
+        {
+          "blocks": 22,
+          "candidate": "M9-cross-division-goals",
+          "ci_lower": 0.001961029643689215,
+          "ci_upper": 0.014335189665099059,
+          "delta_log_loss": 0.00788938441574873,
+          "matches": 652,
+          "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+          "reference": "M5-uncentered-bridge-control"
+        },
+        {
+          "blocks": 22,
+          "candidate": "M9-cross-division-goals",
+          "ci_lower": 0.001961029643689288,
+          "ci_upper": 0.014335189665099096,
+          "delta_log_loss": 0.007889384415748796,
+          "matches": 652,
+          "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+          "reference": "M5-centered-poisson-control"
+        },
+        {
+          "blocks": 22,
+          "candidate": "M9-cross-division-xg",
+          "ci_lower": 0.001313781434910975,
+          "ci_upper": 0.008508318810017547,
+          "delta_log_loss": 0.004563568267650499,
+          "matches": 652,
+          "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+          "reference": "M7-xg-v1"
+        },
+        {
+          "blocks": 22,
+          "candidate": "M9-cross-division-xg",
+          "ci_lower": -0.013581006434850535,
+          "ci_upper": 0.013484420084293203,
+          "delta_log_loss": -0.0006746823468888371,
+          "matches": 652,
+          "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+          "reference": "M2-attack-defense-v1"
+        },
+        {
+          "blocks": 22,
+          "candidate": "M9-cross-division-xg",
+          "ci_lower": -0.016479821920304883,
+          "ci_upper": -0.0006191311292103887,
+          "delta_log_loss": -0.008657779339928772,
+          "matches": 652,
+          "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+          "reference": "M9-cross-division-goals"
+        }
+      ]
+    },
+    "opening": {
+      "fixtures": 101,
+      "outcome_loss": {
+        "M2-attack-defense-v1": 0.876637843918993,
+        "M5-centered-poisson-control": 0.8876796621301996,
+        "M5-uncentered-bridge-control": 0.8876796621301997,
+        "M7-xg-v1": 0.89712506025949,
+        "M9-cross-division-goals": 0.9211768416189505,
+        "M9-cross-division-xg": 0.9233007886231533
+      },
+      "paired": [
+        {
+          "blocks": 5,
+          "candidate": "M9-cross-division-goals",
+          "ci_lower": 0.022681645088620105,
+          "ci_upper": 0.051730620351973844,
+          "delta_log_loss": 0.033497179488750695,
+          "matches": 101,
+          "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+          "reference": "M5-uncentered-bridge-control"
+        },
+        {
+          "blocks": 5,
+          "candidate": "M9-cross-division-goals",
+          "ci_lower": 0.022681645088620358,
+          "ci_upper": 0.051730620351973906,
+          "delta_log_loss": 0.033497179488750826,
+          "matches": 101,
+          "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+          "reference": "M5-centered-poisson-control"
+        },
+        {
+          "blocks": 5,
+          "candidate": "M9-cross-division-xg",
+          "ci_lower": 0.016925346601567994,
+          "ci_upper": 0.038885729050326806,
+          "delta_log_loss": 0.02617572836366329,
+          "matches": 101,
+          "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+          "reference": "M7-xg-v1"
+        },
+        {
+          "blocks": 5,
+          "candidate": "M9-cross-division-xg",
+          "ci_lower": 0.01686595999397509,
+          "ci_upper": 0.07475559991670078,
+          "delta_log_loss": 0.046662944704160124,
+          "matches": 101,
+          "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+          "reference": "M2-attack-defense-v1"
+        },
+        {
+          "blocks": 5,
+          "candidate": "M9-cross-division-xg",
+          "ci_lower": -0.01980534344200305,
+          "ci_upper": 0.018790853444396887,
+          "delta_log_loss": 0.00212394700420267,
+          "matches": 101,
+          "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+          "reference": "M9-cross-division-goals"
+        }
+      ]
+    },
+    "promoted": {
+      "fixtures": 108,
+      "outcome_loss": {
+        "M2-attack-defense-v1": 0.809528318088912,
+        "M5-centered-poisson-control": 0.8059553936892506,
+        "M5-uncentered-bridge-control": 0.8059553936892505,
+        "M7-xg-v1": 0.809508281512112,
+        "M9-cross-division-goals": 0.8577711420192909,
+        "M9-cross-division-xg": 0.8366879707799313
+      },
+      "paired": [
+        {
+          "blocks": 11,
+          "candidate": "M9-cross-division-goals",
+          "ci_lower": 0.03610231873765203,
+          "ci_upper": 0.06720765032335095,
+          "delta_log_loss": 0.05181574833004032,
+          "matches": 108,
+          "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+          "reference": "M5-uncentered-bridge-control"
+        },
+        {
+          "blocks": 11,
+          "candidate": "M9-cross-division-goals",
+          "ci_lower": 0.03610231873765207,
+          "ci_upper": 0.06720765032335083,
+          "delta_log_loss": 0.051815748330040275,
+          "matches": 108,
+          "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+          "reference": "M5-centered-poisson-control"
+        },
+        {
+          "blocks": 11,
+          "candidate": "M9-cross-division-xg",
+          "ci_lower": 0.015955263881026912,
+          "ci_upper": 0.04162336882529681,
+          "delta_log_loss": 0.027179689267819322,
+          "matches": 108,
+          "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+          "reference": "M7-xg-v1"
+        },
+        {
+          "blocks": 11,
+          "candidate": "M9-cross-division-xg",
+          "ci_lower": -0.004679729973398526,
+          "ci_upper": 0.06243048372166735,
+          "delta_log_loss": 0.027159652691019203,
+          "matches": 108,
+          "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+          "reference": "M2-attack-defense-v1"
+        },
+        {
+          "blocks": 11,
+          "candidate": "M9-cross-division-xg",
+          "ci_lower": -0.042956709933380285,
+          "ci_upper": 0.006169942556835796,
+          "delta_log_loss": -0.02108317123935957,
+          "matches": 108,
+          "method": "paired 28-day blocks within seasons, pooled block bootstrap; negative favors candidate",
+          "reference": "M9-cross-division-goals"
+        }
+      ]
+    }
+  }
+}

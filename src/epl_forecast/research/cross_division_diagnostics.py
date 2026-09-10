@@ -219,3 +219,29 @@ def coordinate_equivalence(seed=0, seasons=3):
         ),
         "interpretation": "one state in two coordinates, not a second model family",
     }
+
+
+def promotion_slope_audit(matches, as_of, target_season):
+    """How far a real promoted club's state travels: unit slope is M9's assumption.
+
+    The cross-division state transports a club's Championship state into the
+    Premier League unchanged apart from one shared division level, which is a
+    slope of one in both dimensions. The retained promotion bridge estimates that
+    slope from realized promoted cohorts instead.
+    """
+    from epl_forecast.models.promotion import PromotionBridge
+
+    eligible = [
+        m
+        for m in matches
+        if m.fixture.competition_id in (PL, CHAMPIONSHIP) and m.available_on <= as_of
+    ]
+    bridge = PromotionBridge(eligible, as_of, target_season)
+    report = bridge.diagnostics()
+    for block in report["dimensions"].values():
+        slope_sd = block["coefficient_sd"][1]
+        block["standard_errors_from_unit_slope"] = float((1.0 - block["slope"]) / slope_sd)
+    report["interpretation"] = (
+        "M9 assumes a slope of one in both dimensions; the cohorts do not support that"
+    )
+    return report
