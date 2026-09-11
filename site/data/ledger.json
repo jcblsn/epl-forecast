@@ -1,5 +1,5 @@
 {
-  "archived_at": "2026-09-11T02:09:26.252907+00:00",
+  "archived_at": "2026-09-11T14:36:17.131096+00:00",
   "pending_season_snapshots": [
     {
       "competition_id": "eng-championship",
@@ -22,6 +22,21 @@
       "snapshot_id": "2026-09-11T020802Z"
     },
     {
+      "competition_id": "eng-championship",
+      "season_id": "2026-2027",
+      "snapshot_id": "2026-09-11T143335Z"
+    },
+    {
+      "competition_id": "eng-league-one",
+      "season_id": "2026-2027",
+      "snapshot_id": "2026-09-11T143335Z"
+    },
+    {
+      "competition_id": "eng-league-two",
+      "season_id": "2026-2027",
+      "snapshot_id": "2026-09-11T143335Z"
+    },
+    {
       "competition_id": "eng-premier-league",
       "season_id": "2026-2027",
       "snapshot_id": "2026-09-10T224303Z"
@@ -40,10 +55,15 @@
       "competition_id": "eng-premier-league",
       "season_id": "2026-2027",
       "snapshot_id": "2026-09-11T020802Z"
+    },
+    {
+      "competition_id": "eng-premier-league",
+      "season_id": "2026-2027",
+      "snapshot_id": "2026-09-11T143335Z"
     }
   ],
   "schema_version": 1,
   "settled": [],
   "summary": {},
-  "unsettled": 46
+  "unsettled": 117
 }
