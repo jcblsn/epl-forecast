@@ -1,5 +1,5 @@
 {
-  "archived_at": "2026-09-11T14:36:17.131096+00:00",
+  "archived_at": "2026-09-11T21:23:22.139008+00:00",
   "pending_season_snapshots": [
     {
       "competition_id": "eng-championship",
@@ -27,14 +27,29 @@
       "snapshot_id": "2026-09-11T143335Z"
     },
     {
+      "competition_id": "eng-championship",
+      "season_id": "2026-2027",
+      "snapshot_id": "2026-09-11T212051Z"
+    },
+    {
       "competition_id": "eng-league-one",
+      "season_id": "2026-2027",
+      "snapshot_id": "2026-09-11T143335Z"
+    },
+    {
+      "competition_id": "eng-league-one",
+      "season_id": "2026-2027",
+      "snapshot_id": "2026-09-11T212051Z"
+    },
+    {
+      "competition_id": "eng-league-two",
       "season_id": "2026-2027",
       "snapshot_id": "2026-09-11T143335Z"
     },
     {
       "competition_id": "eng-league-two",
       "season_id": "2026-2027",
-      "snapshot_id": "2026-09-11T143335Z"
+      "snapshot_id": "2026-09-11T212051Z"
     },
     {
       "competition_id": "eng-premier-league",
@@ -60,10 +75,41 @@
       "competition_id": "eng-premier-league",
       "season_id": "2026-2027",
       "snapshot_id": "2026-09-11T143335Z"
+    },
+    {
+      "competition_id": "eng-premier-league",
+      "season_id": "2026-2027",
+      "snapshot_id": "2026-09-11T212051Z"
     }
   ],
   "schema_version": 1,
-  "settled": [],
-  "summary": {},
-  "unsettled": 117
+  "settled": [
+    {
+      "competition_id": "eng-championship",
+      "generated_at": "2026-09-11T14:34:57.437485+00:00",
+      "kickoff_time": "2026-09-11T15:00:00-04:00",
+      "match_id": "eng-championship:2026-2027:west-ham-united:wrexham",
+      "outcome": "H",
+      "p_away": 0.222191,
+      "p_draw": 0.217472,
+      "p_home": 0.560338,
+      "season_id": "2026-2027",
+      "snapshot_id": "2026-09-11T143335Z"
+    }
+  ],
+  "summary": {
+    "eng-championship": {
+      "brier": 0.289966,
+      "classwise_ece": 0.293108,
+      "log_loss": 0.579216,
+      "scored": 1
+    },
+    "overall": {
+      "brier": 0.289966,
+      "classwise_ece": 0.293108,
+      "log_loss": 0.579216,
+      "scored": 1
+    }
+  },
+  "unsettled": 116
 }
