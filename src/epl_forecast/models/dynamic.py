@@ -25,11 +25,19 @@ RELEGATION_ENTRY = ("retained", "generic", "mapped")
 
 
 class DynamicAttackDefense(BaseModel):
-    """The state holds a leading league block, then two slots per club."""
+    """The state holds a leading league block, then two slots per club.
+
+    One generic entry rule covers every division boundary: a club that played the
+    forecast competition last season carries its filtered state, and a club
+    arriving from anywhere else is described by a transition-aware entry prior.
+    Setting `entry_prior` to None restores the earlier split rule, where a
+    promoted club used the Championship bridge and every other entrant kept
+    whatever target-division state it last held, however old.
+    """
 
     league_dimensions = 2
     relegation_entry = "retained"
-    entry_prior = None
+    entry_prior = "memory"
     entry_prior_label = "season"
 
     def __init__(

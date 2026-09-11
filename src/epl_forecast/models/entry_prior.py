@@ -350,6 +350,8 @@ class EntryPriorModel:
             return None
         if date.fromisoformat(row["features_available_on"]) > self.as_of:
             raise ValueError("Entry features postdate the forecast cutoff")
+        if self.level == "population":
+            return self.population_prior(f"{row['transition']} population")
         _, features = self._transition_features(row["transition"])
         if features is None:
             return self.population_prior(f"{row['transition']} population fallback")

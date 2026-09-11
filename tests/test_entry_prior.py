@@ -191,18 +191,21 @@ def test_the_filter_replaces_an_entering_state_and_keeps_a_continuing_one():
         assert club_features(seasons, CHAMPIONSHIP, target, team) is not None
 
 
-def test_the_default_filter_keeps_the_previous_entry_behavior():
+def test_the_generic_rule_is_the_default_and_can_be_switched_off():
     matches = two_division_history()
     seasons = panel(matches)
     target = sorted({s for (c, s) in seasons if c == CHAMPIONSHIP})[-1]
     cutoff = min(m.fixture.match_date for m in seasons[CHAMPIONSHIP, target])
     training = [m for m in matches if m.available_on <= cutoff]
-    model = QualityTiltFilter()
-    model.primary_competition = CHAMPIONSHIP
-    model.fit(training, cutoff)
-    assert model.entry_prior is None
-    sources = {
-        model.team_state(team, target).source
-        for team in {m.fixture.home_team_id for m in seasons[CHAMPIONSHIP, target]}
-    }
+    default = QualityTiltFilter()
+    default.primary_competition = CHAMPIONSHIP
+    assert default.entry_prior == "memory"
+    default.fit(training, cutoff)
+    teams = sorted({m.fixture.home_team_id for m in seasons[CHAMPIONSHIP, target]})
+    assert any(default.team_state(t, target).source.endswith("entry prior") for t in teams)
+    retained = QualityTiltFilter()
+    retained.primary_competition = CHAMPIONSHIP
+    retained.entry_prior = None
+    retained.fit(training, cutoff)
+    sources = {retained.team_state(team, target).source for team in teams}
     assert sources <= {"previous league state", "league population"}

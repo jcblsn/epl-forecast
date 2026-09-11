@@ -6,6 +6,7 @@ from epl_forecast.models.cross_division import CrossDivisionQualityTilt, CrossDi
 from epl_forecast.models.division_map import DivisionMapQualityTilt, DivisionMapXG
 from epl_forecast.models.dynamic import RELEGATION_ENTRY, DynamicAttackDefense
 from epl_forecast.models.elo import EloOrderedLogit
+from epl_forecast.models.entry_prior import LABELS, LEVELS
 from epl_forecast.models.process_quality_tilt import BayesianProcessQualityTilt
 from epl_forecast.models.quality_tilt import BayesianQualityTilt, QualityTiltFilter
 from epl_forecast.models.xg_quality_tilt import BayesianXGQualityTilt
@@ -36,6 +37,12 @@ def make_model(spec: dict):
     parameters = dict(spec.get("parameters", {}))
     competition = parameters.pop("competition_id", "eng-premier-league")
     relegation_entry = parameters.pop("relegation_entry", None)
+    entry_prior = parameters.pop("entry_prior", None)
+    entry_prior_label = parameters.pop("entry_prior_label", None)
+    if entry_prior is not None and entry_prior not in (*LEVELS, "retained_state"):
+        raise ValueError(f"Unknown entry-prior rule: {entry_prior}")
+    if entry_prior_label is not None and entry_prior_label not in LABELS:
+        raise ValueError(f"Unknown entry-prior training label: {entry_prior_label}")
     data_root = parameters.pop("data_root", None)
     if data_root is not None:
         from epl_forecast.datasets import Dataset
@@ -54,6 +61,10 @@ def make_model(spec: dict):
                 if relegation_entry not in RELEGATION_ENTRY:
                     raise ValueError(f"Unknown relegation entry treatment: {relegation_entry}")
                 member.relegation_entry = relegation_entry
+            if entry_prior is not None and hasattr(member, "entry_prior"):
+                member.entry_prior = None if entry_prior == "retained_state" else entry_prior
+            if entry_prior_label is not None and hasattr(member, "entry_prior_label"):
+                member.entry_prior_label = entry_prior_label
         return model
     except TypeError as error:
         raise ValueError(f"Invalid parameters for {spec['kind']}: {error}") from error

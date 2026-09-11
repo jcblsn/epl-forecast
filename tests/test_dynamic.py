@@ -116,12 +116,25 @@ def test_bridge_uses_only_completed_past_cohorts(bridge_history):
 def test_promoted_prior_is_used_before_first_pl_result_and_replaces_stale_pl(bridge_history):
     cutoff = date(2020, 8, 1)
     old = season_matches(2017, PL, ["e3"] + [f"p{i}" for i in range(19)], 5)
-    model = DynamicAttackDefense().fit(old + bridge_history, cutoff)
+    model = DynamicAttackDefense()
+    model.entry_prior = None
+    model.fit(old + bridge_history, cutoff)
     expected = PromotionBridge(old + bridge_history, cutoff, "2020-2021").prior("e3")
     state = model.team_state("e3", "2020-2021")
     assert state.mean == pytest.approx(expected.mean)
     assert state.covariance == pytest.approx(expected.covariance)
     assert model.team_summary("e3", "2020-2021")["season_pl_matches"] == 0
+    assert model.team_state("e0", "2020-2021").source == "previous league state"
+
+
+def test_the_generic_entry_rule_also_discards_a_stale_state(bridge_history):
+    cutoff = date(2020, 8, 1)
+    old = season_matches(2017, PL, ["e3"] + [f"p{i}" for i in range(19)], 5)
+    model = DynamicAttackDefense().fit(old + bridge_history, cutoff)
+    assert model.entry_prior == "memory"
+    entering = model.team_state("e3", "2020-2021")
+    assert "entry prior" in entering.source or "population" in entering.source
+    assert np.linalg.eigvalsh(entering.covariance).min() > 0
     assert model.team_state("e0", "2020-2021").source == "previous league state"
 
 

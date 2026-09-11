@@ -301,9 +301,8 @@ def main():
             for treatment in args.treatments:
                 parent = XGQualityTiltFilter(observations, 0.2, **XG_DYNAMICS)
                 parent.primary_competition = competition
-                if treatment != "current":
-                    parent.entry_prior = treatment
-                    parent.entry_prior_label = args.label
+                parent.entry_prior = None if treatment == "current" else treatment
+                parent.entry_prior_label = args.label
                 for index, origin in enumerate(ORIGINS):
                     as_of = origins[origin]
                     print(f"Fitting {competition} {season} {origin} {treatment}", flush=True)
