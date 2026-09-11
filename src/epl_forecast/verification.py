@@ -4,14 +4,13 @@ The MVP contract is a list of things every archive must contain and every archiv
 must be internally consistent about: probabilities that are probabilities, a score
 matrix that agrees with the match probabilities drawn from it, a season simulation
 whose event masses equal the number of places the competition actually awards, the
-rules and sanctions in force at the cutoff, a Championship bracket conditioned on the
-same paths as the table, and enough provenance to say what was known when.
+rules and sanctions in force at the cutoff, a playoff bracket conditioned on the same
+paths as the table, and enough provenance to say what was known when.
 
 Every check reads only the archive, so it can be run on an old run as easily as a
 fresh one, and it fails loudly rather than reporting a score.
 """
 
-import argparse
 import json
 from datetime import date
 from pathlib import Path
@@ -284,27 +283,18 @@ def verify(archive: Path, data: Path) -> dict:
     }
 
 
-def main():
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--archive", type=Path, nargs="+", required=True)
-    parser.add_argument("--data", type=Path, default=Path("data"))
-    parser.add_argument("--output", type=Path, required=True)
-    args = parser.parse_args()
+def verify_archives(archives: list[Path], data: Path, output: Path) -> dict:
+    """Verify each archive, write one report and print every failed check."""
     report = {"execution": execution_provenance(), "archives": {}}
-    for archive in args.archive:
-        report["archives"][str(archive)] = verify(archive, args.data)
+    for archive in archives:
+        report["archives"][str(archive)] = verify(archive, data)
     report["failures"] = sum(a["failures"] for a in report["archives"].values())
-    args.output.mkdir(parents=True, exist_ok=True)
-    write_json(args.output / "verification.json", report)
+    output.mkdir(parents=True, exist_ok=True)
+    write_json(output / "verification.json", report)
     for name, result in report["archives"].items():
         passed = len(result["checks"]) - result["failures"]
         print(f"{name}: {passed}/{len(result['checks'])} checks passed", flush=True)
         for failure in (r for r in result["checks"] if not r["passed"]):
             print(f"  FAILED {failure['check']}: {failure['detail']}", flush=True)
-    print(args.output / "verification.json")
-    if report["failures"]:
-        raise SystemExit(f"{report['failures']} product checks failed")
-
-
-if __name__ == "__main__":
-    main()
+    print(output / "verification.json")
+    return report

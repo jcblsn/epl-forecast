@@ -22,8 +22,8 @@ from epl_forecast.simulation import simulate_season
 from epl_forecast.storage import file_hash, write_json
 
 SPECS = {
-    "M2": ("configs/xg_quality_tilt.toml", "M2-attack-defense-v1"),
-    "M7": ("configs/xg_quality_tilt.toml", "M7-xg-v1"),
+    "M2": ("configs/product.toml", "M2-attack-defense-v1"),
+    "M7": ("configs/product.toml", "M7-xg-v1"),
 }
 
 

@@ -1,8 +1,14 @@
 # Working in this repository
 
+## Writing
+
+Use ASD-STE100 Simplified Technical English for all public facing natural language text in the repo, including documents and comments.
+
+Text in markdown files should not be hard wrapped.
+
 ## Verifying
 
-Run `scripts/verify.sh` — it formats, then lints, then tests, with `--all-extras`. Order matters: `ruff check` before `ruff format` aborts on fixable layout findings. A plain `uv sync` prunes the `research` extra and turns the numpyro tests into silent skips.
+Run `scripts/verify.sh` — it formats, then lints, then tests. Order matters: `ruff check` before `ruff format` aborts on fixable layout findings.
 
 Ruff E501 is disabled, so the formatter owns line length in Python. Do not hand-split string literals to satisfy a line limit.
 

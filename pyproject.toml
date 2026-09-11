@@ -1,7 +1,7 @@
 [project]
 name = "epl-forecast"
 version = "0.1.0"
-description = "Probabilistic Premier League and Championship forecasts and season simulation"
+description = "Probabilistic forecasts and season simulations for the four English league divisions"
 requires-python = ">=3.12"
 dependencies = [
     "duckdb>=1.5.5",
@@ -13,11 +13,6 @@ dependencies = [
 
 [project.scripts]
 epl-forecast = "epl_forecast.cli:main"
-
-[project.optional-dependencies]
-research = [
-    "numpyro>=0.21.0",
-]
 
 [build-system]
 requires = ["hatchling"]

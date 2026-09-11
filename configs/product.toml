@@ -12,7 +12,7 @@ validation_end = "2025-07-01"
 holdout_start = "2025-08-01"
 holdout_end = "2026-07-01"
 evaluation_status = "exploratory historical rolling comparison"
-evaluation_note = "Historical development comparison; M2 unchanged, expanding M5/M7 history, Understat next-day availability assumed rather than timestamp-proven."
+evaluation_note = "Historical development comparison. M2 uses a 1,095-day window in the forecast division; M7 uses expanding history. Understat next-day availability is assumed, not proven by timestamps."
 
 [[models]]
 id = "M2-attack-defense-v1"

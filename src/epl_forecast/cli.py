@@ -169,8 +169,7 @@ def forecast_command(args) -> None:
 def operate_command(args) -> None:
     import shutil
 
-    from epl_forecast.pipeline import operate
-    from epl_forecast.prospective import install_launch_agent
+    from epl_forecast.pipeline import install_launch_agent, operate
 
     if args.install_launch_agent:
         uv = shutil.which("uv")
@@ -215,6 +214,14 @@ def operate_command(args) -> None:
         raise SystemExit(1)
 
 
+def verify_command(args) -> None:
+    from epl_forecast.verification import verify_archives
+
+    report = verify_archives(args.archive, args.data, args.output)
+    if report["failures"]:
+        raise SystemExit(f"{report['failures']} product checks failed")
+
+
 def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(
         description="Probabilistic forecasts and season simulation for England's four league divisions"
@@ -224,7 +231,7 @@ def parser() -> argparse.ArgumentParser:
     forecast.add_argument("--cutoff", type=datetime.fromisoformat)
     forecast.add_argument("--competition", choices=COMPETITION_IDS, default=COMPETITION_IDS[0])
     forecast.add_argument("--season")
-    forecast.add_argument("--config", type=Path, default=Path("configs/xg_quality_tilt.toml"))
+    forecast.add_argument("--config", type=Path, default=Path("configs/product.toml"))
     forecast.add_argument("--data", type=Path, default=Path("data"))
     forecast.add_argument("--output", type=Path)
     forecast.add_argument("--model", default="M7-xg-v1")
@@ -248,10 +255,17 @@ def parser() -> argparse.ArgumentParser:
     operate.add_argument("--no-collect", action="store_true")
     operate.add_argument("--install-launch-agent", action="store_true")
     operate.set_defaults(func=operate_command)
+    verify = commands.add_parser(
+        "verify", help="Check forecast archives against the product contract"
+    )
+    verify.add_argument("--archive", type=Path, nargs="+", required=True)
+    verify.add_argument("--data", type=Path, default=Path("data"))
+    verify.add_argument("--output", type=Path, required=True)
+    verify.set_defaults(func=verify_command)
     evaluate = commands.add_parser(
         "evaluate", help="Score rolling historical match forecasts for M7 and M2"
     )
-    evaluate.add_argument("--config", type=Path, default=Path("configs/xg_quality_tilt.toml"))
+    evaluate.add_argument("--config", type=Path, default=Path("configs/product.toml"))
     evaluate.add_argument("--data", type=Path, default=Path("data"))
     evaluate.add_argument("--output", type=Path, required=True)
     evaluate.add_argument(

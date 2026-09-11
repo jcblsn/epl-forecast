@@ -1,17 +1,15 @@
 import plistlib
 from pathlib import Path
 
-from epl_forecast import prospective
+from epl_forecast import pipeline
 
 
 def test_launch_agent_replaces_any_earlier_job(tmp_path, monkeypatch):
     calls = []
     monkeypatch.setattr(Path, "home", staticmethod(lambda: tmp_path))
-    monkeypatch.setattr(
-        prospective.subprocess, "run", lambda command, **kwargs: calls.append(command)
-    )
+    monkeypatch.setattr(pipeline.subprocess, "run", lambda command, **kwargs: calls.append(command))
     root = tmp_path / "runs"
-    path = prospective.install_launch_agent(
+    path = pipeline.install_launch_agent(
         "org.epl-forecast.test", ["/bin/echo", "hello"], root, 3600, logs="operate"
     )
     config = plistlib.loads(path.read_bytes())

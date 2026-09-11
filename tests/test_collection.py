@@ -1,8 +1,8 @@
 from datetime import UTC, datetime
 
-from epl_forecast import prospective
 from epl_forecast.data.capture import retain
 from epl_forecast.datasets import publish
+from epl_forecast.pipeline import information_fingerprint
 
 
 def test_normalize_rejects_corrupted_raw_capture(tmp_path):
@@ -48,7 +48,7 @@ def test_market_snapshot_changes_forecast_fingerprint(tmp_path):
 
     before = Dataset(tmp_path)
     try:
-        first = prospective.information_fingerprint(before)
+        first = information_fingerprint(before)
     finally:
         before.close()
     publish(
@@ -76,7 +76,7 @@ def test_market_snapshot_changes_forecast_fingerprint(tmp_path):
     )
     after = Dataset(tmp_path)
     try:
-        second = prospective.information_fingerprint(after)
+        second = information_fingerprint(after)
     finally:
         after.close()
     assert first != second

@@ -18,17 +18,16 @@ from epl_forecast.data.capture import SourceAccessError, writer_lock
 from epl_forecast.data.collect import collect
 from epl_forecast.datasets import Dataset
 from epl_forecast.ledger import build_ledger, realized_outcomes
-from epl_forecast.prospective import information_fingerprint
 from epl_forecast.publication import (
     derive_forecast,
     load_policy,
     publish_document,
     rebuild_index,
 )
-from epl_forecast.storage import json_bytes, write_immutable, write_json
+from epl_forecast.storage import json_bytes, sha256_bytes, write_immutable, write_json
 
 PRODUCT_MODEL = "M7-xg-v1"
-PRODUCT_CONFIG = Path("configs/xg_quality_tilt.toml")
+PRODUCT_CONFIG = Path("configs/product.toml")
 LEAGUES = COMPETITION_IDS
 REPOSITORY = Path(__file__).resolve().parents[2]
 
@@ -70,7 +69,9 @@ def verify_archive(data: Path, archive: Path, output: Path):
     return _run(
         [
             sys.executable,
-            "scripts/verify_forecast_product.py",
+            "-m",
+            "epl_forecast.cli",
+            "verify",
             "--archive",
             str(archive),
             "--data",
@@ -79,6 +80,50 @@ def verify_archive(data: Path, archive: Path, output: Path):
             str(output),
         ]
     )
+
+
+def information_fingerprint(data):
+    """A digest of the inputs that can change a forecast; a new digest makes a run due."""
+    fields = {
+        "fixtures": "match_id, kickoff_time, status, home_goals, away_goals",
+        "memberships": "player_id, team_id, season_id, basis",
+        "availability": "player_id, fpl_code, scope, status, reason, chance_next_round",
+        "team_process": "match_id, team_id, xg",
+        "odds": "match_id, family, home_odds, draw_odds, away_odds, retrieved_at",
+    }
+    records = {
+        table: data.rows(f"SELECT DISTINCT {columns} FROM {table} ORDER BY ALL")
+        for table, columns in fields.items()
+    }
+    return sha256_bytes(json.dumps(records, default=str, sort_keys=True).encode())
+
+
+def install_launch_agent(label, arguments, root, interval_seconds, logs=None):
+    """Install and start a per-user launchd job, replacing any earlier one."""
+    import os
+    import plistlib
+
+    root = Path(root).resolve()
+    root.mkdir(parents=True, exist_ok=True)
+    logs = logs or label.rsplit(".", 1)[-1]
+    path = Path.home() / "Library/LaunchAgents" / f"{label}.plist"
+    config = {
+        "Label": label,
+        "ProgramArguments": list(arguments),
+        "WorkingDirectory": str(REPOSITORY),
+        "StartInterval": int(interval_seconds),
+        "RunAtLoad": True,
+        "ProcessType": "Background",
+        "StandardOutPath": str(root / f"{logs}.log"),
+        "StandardErrorPath": str(root / f"{logs}-errors.log"),
+        "EnvironmentVariables": {"OPENBLAS_NUM_THREADS": "1"},
+    }
+    domain = f"gui/{os.getuid()}"
+    subprocess.run(["launchctl", "bootout", f"{domain}/{label}"], capture_output=True, check=False)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(plistlib.dumps(config))
+    subprocess.run(["launchctl", "bootstrap", domain, str(path)], check=True)
+    return path
 
 
 def due(state: dict, fingerprint: str, now: datetime, interval_hours: float) -> bool:
