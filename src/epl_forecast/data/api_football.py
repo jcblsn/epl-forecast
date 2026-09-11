@@ -569,6 +569,16 @@ def normalize(record, body, root):
                 positions.setdefault(p["id"], set()).add(p["position"])
             for p in item["players"]:
                 pid = player_id(p["id"])
+                if pid is None:
+                    issues.append(
+                        {
+                            "table": "memberships",
+                            "team_id": team_key(item["team"], True),
+                            "reported_values": {"id": p["id"], "name": p["name"]},
+                            "resolution": "unknown: squad entry without a provider player id",
+                        }
+                    )
+                    continue
                 add(
                     "players",
                     {"player_id": pid, "api_id": canonical_api_id(p["id"]), "name": p["name"]},

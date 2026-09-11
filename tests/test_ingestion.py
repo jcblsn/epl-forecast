@@ -583,3 +583,24 @@ def test_latest_odds_without_a_captured_schedule_stay_unlinked(tmp_path):
     assert odds == [{"match_id": fixture["match_id"]}]
     (issue,) = manifest["request"]["normalization_issues"]
     assert (issue["competition_id"], issue["rows"]) == ("eng-league-one", 1)
+
+
+def test_a_squad_entry_without_a_provider_id_is_unknown(tmp_path):
+    body = {
+        "response": [
+            {
+                "team": {"id": 42, "name": "Swansea"},
+                "players": [
+                    {"id": None, "name": "Oliver Hall", "position": "Midfielder"},
+                    {"id": 7, "name": "Known Player", "position": "Defender"},
+                ],
+            }
+        ]
+    }
+    manifest = api.normalize(squad_record("2026-09-11T14:00:00+00:00"), body, tmp_path)
+    data = Dataset(tmp_path)
+    members = data.rows("SELECT player_id FROM memberships")
+    data.close()
+    assert members == [{"player_id": "p7"}]
+    (issue,) = manifest["request"]["normalization_issues"]
+    assert issue["reported_values"]["name"] == "Oliver Hall"
