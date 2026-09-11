@@ -9,8 +9,8 @@ from epl_forecast.cli import fitted_model, load_config, save_rows
 from epl_forecast.datasets import Dataset
 from epl_forecast.sanctions import REGISTRIES, load_registry
 from epl_forecast.season_evaluation import (
-    championship_season_truth,
     final_cutoff,
+    promotion_season_truth,
     score_forecast,
     season_origins,
     season_teams,
@@ -107,9 +107,7 @@ def main():
         if not sanctions.derivation(args.competition, season)["sanctioned_table_available"]:
             unsanctioned.append(season)
         if args.competition == "eng-championship":
-            truth = championship_season_truth(
-                matches, season, season_matches, teams, args.seed, final
-            )
+            truth = promotion_season_truth(matches, season, season_matches, teams, args.seed, final)
         else:
             truth = season_truth(season_matches, teams, args.seed, final)
         previous_pl = season_teams(matches, "eng-premier-league", f"{year - 1}-{year}")

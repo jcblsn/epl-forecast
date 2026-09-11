@@ -4,6 +4,7 @@ from html import escape
 from pathlib import Path
 
 from epl_forecast.artifacts import new_run_directory, write_csv
+from epl_forecast.competitions import competition
 from epl_forecast.live import LiveSeason, timestamp
 from epl_forecast.market import market_assisted_probabilities
 from epl_forecast.models.base import ForecastModel
@@ -46,7 +47,7 @@ def current_table(live: LiveSeason, adjustments: list[dict]) -> dict[str, dict]:
 def render_forecast(forecast: dict) -> str:
     names = forecast["team_names"]
     simulation = forecast["simulation"]
-    championship = forecast["competition_id"] == "eng-championship"
+    promotion = bool(simulation) and "promotion_probability" in simulation["teams"][0]
     uncertainty_note = (
         "These probabilities include uncertainty in current team strength and match randomness. "
         "Each simulated season holds its sampled strengths fixed; "
@@ -68,7 +69,7 @@ def render_forecast(forecast: dict) -> str:
             "contributions and lineup uncertainty are included in the full forecast JSON."
         )
     prior_note = (
-        "Promoted clubs start from Championship-informed distributions. Strength uncertainty "
+        "Clubs entering the division start from transition-aware entry priors. Strength uncertainty "
         "is available in the team strengths download."
         if forecast.get("state_uncertainty") == "posterior"
         else "Clubs without PL history start at 1."
@@ -87,7 +88,7 @@ def render_forecast(forecast: dict) -> str:
                 f"{int(team['points_quantiles_05_50_95'][0])}–{int(team['points_quantiles_05_50_95'][2])}",
                 f"{team['title_probability']:.1%}",
             ]
-            if championship:
+            if promotion:
                 cells.extend(
                     [
                         f"{team['automatic_promotion_probability']:.1%}",
@@ -103,7 +104,7 @@ def render_forecast(forecast: dict) -> str:
             rows.append("<tr>" + "".join(f"<td>{cell}</td>" for cell in cells) + "</tr>")
         event_headers = (
             "<th>Automatic promotion</th><th>Playoffs</th><th>Promotion</th>"
-            if championship
+            if promotion
             else "<th>Top four</th><th>Top five</th>"
         )
         table = (
@@ -417,9 +418,7 @@ def export_forecast(
         "fixtures_awaiting_results": in_progress,
         "results_crosschecked": live.results_crosschecked,
         "competition_id": live.competition_id,
-        "competition_name": "Championship"
-        if live.competition_id == "eng-championship"
-        else "Premier League",
+        "competition_name": competition(live.competition_id).name,
         "sources": live.manifest["files"],
         "source_errors": live.manifest["errors"],
     }

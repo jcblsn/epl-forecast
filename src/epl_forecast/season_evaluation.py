@@ -5,8 +5,9 @@ from datetime import timedelta
 
 import numpy as np
 
+from epl_forecast.competitions import COMPETITIONS, adjacent
+from epl_forecast.data.rules import league_rules
 from epl_forecast.models.baselines import AttackDefensePoisson
-from epl_forecast.models.promotion import CHAMPIONSHIP, PL
 from epl_forecast.simulation import simulate_season
 
 
@@ -72,10 +73,7 @@ def season_origins(matches):
         for match in ordered
         for team in (match.fixture.home_team_id, match.fixture.away_team_id)
     }
-    expected_teams = {
-        "eng-premier-league": 20,
-        "eng-championship": 24,
-    }
+    expected_teams = {c.competition_id: c.teams for c in COMPETITIONS}
     team_count = expected_teams.get(next(iter(competitions))) if len(competitions) == 1 else None
     expected_matches = team_count * (team_count - 1) if team_count else None
     if (
@@ -259,14 +257,21 @@ def season_teams(matches, competition, season):
     }
 
 
-def championship_playoff_winner(matches, season, final_order):
-    """The club promoted through the playoffs, read off the next Premier League field."""
+def playoff_winner(matches, competition, season, final_order):
+    """The club promoted through the playoffs, read off the next season of the division above.
+
+    Newcomers to the division above also include clubs relegated into it, so only
+    arrivals from this division count, less those it promoted automatically.
+    """
+    upper = adjacent(competition, -1).competition_id
     year = int(season[:4])
-    current = season_teams(matches, PL, season)
-    following = season_teams(matches, PL, f"{year + 1}-{year + 2}")
-    winners = (following - current) - set(final_order[:2])
+    current = season_teams(matches, upper, season)
+    following = season_teams(matches, upper, f"{year + 1}-{year + 2}")
+    division = season_teams(matches, competition, season)
+    automatic = league_rules(competition, season).automatic_promotion
+    winners = ((following - current) & division) - set(final_order[:automatic])
     if len(winners) != 1:
-        raise ValueError(f"Cannot identify observed Championship playoff winner for {season}")
+        raise ValueError(f"Cannot identify observed {competition} playoff winner for {season}")
     return next(iter(winners))
 
 
@@ -280,19 +285,20 @@ def season_truth(season_matches, teams, seed, adjustments, **kwargs):
     )
 
 
-def championship_season_truth(matches, season, season_matches, teams, seed, adjustments=()):
-    """Realized Championship table, with the observed playoff winner as promotion truth."""
+def promotion_season_truth(matches, season, season_matches, teams, seed, adjustments=()):
+    """Realized table of a promoting division, with the observed playoff winner as truth."""
+    competition = season_matches[0].fixture.competition_id
+    if not league_rules(competition, season).promotes:
+        raise ValueError("Playoff truth requires a division with a promotion bracket")
     truth = season_truth(season_matches, teams, seed, list(adjustments), playoff_winner=teams[0])
     final_order = [
         row["team_id"] for row in sorted(truth["teams"], key=lambda row: row["mean_position"])
     ]
-    winner = championship_playoff_winner(matches, season, final_order)
+    winner = playoff_winner(matches, competition, season, final_order)
     truth["playoff_model"] = {"format": "observed", "winner": winner}
     for row in truth["teams"]:
         row["playoff_promotion_probability"] = float(row["team_id"] == winner)
         row["promotion_probability"] = (
             row["automatic_promotion_probability"] + row["playoff_promotion_probability"]
         )
-    if truth.get("competition_id", CHAMPIONSHIP) != CHAMPIONSHIP:
-        raise ValueError("Championship truth requires Championship matches")
     return truth

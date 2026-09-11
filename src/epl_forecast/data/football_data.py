@@ -268,12 +268,20 @@ def ingest_latest_odds(root, record, payload):
     data = Dataset(root, record["retrieved_at"])
     fixtures = {f["match_id"]: f for f in data.fixtures()}
     data.close()
-    rows = []
+    scheduled = {(f["competition_id"], f["season_id"]) for f in fixtures.values()}
+    rows, unscheduled = [], {}
     for row in reader:
         if row["Div"] not in COMPETITIONS:
             continue
+        for side in ("HomeTeam", "AwayTeam"):
+            if row[side] not in aliases:
+                raise ValueError(f"Unknown team alias: {row[side]!r}; update teams.csv")
         comp = COMPETITIONS[row["Div"]]["id"]
         season = record["context"]["season_id"]
+        if (comp, season) not in scheduled:
+            # Quotes captured before this archive held the competition's schedule stay unlinked.
+            unscheduled[comp] = unscheduled.get(comp, 0) + 1
+            continue
         key = fixture_id(comp, season, aliases[row["HomeTeam"]], aliases[row["AwayTeam"]])
         fixture = fixtures.get(key)
         if fixture is None or fixture["match_date"] != parse_date(row["Date"]):
@@ -296,4 +304,18 @@ def ingest_latest_odds(root, record, payload):
                     "observed_at": record["retrieved_at"],
                 }
             )
+    if unscheduled:
+        record = {
+            **record,
+            "normalization_issues": [
+                {
+                    "table": "odds",
+                    "competition_id": comp,
+                    "season_id": record["context"]["season_id"],
+                    "rows": count,
+                    "resolution": "unknown: no captured schedule for this competition at retrieval",
+                }
+                for comp, count in sorted(unscheduled.items())
+            ],
+        }
     return publish(root, record, {"odds": rows})

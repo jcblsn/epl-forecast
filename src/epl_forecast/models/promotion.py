@@ -8,11 +8,13 @@ from numpy.polynomial.legendre import leggauss
 from scipy.linalg import cho_factor, cho_solve
 from scipy.special import logsumexp
 
+from epl_forecast.competitions import COMPETITIONS
 from epl_forecast.models.baselines import AttackDefensePoisson
 from epl_forecast.schema import Match
 
 PL = "eng-premier-league"
 CHAMPIONSHIP = "eng-championship"
+FIELD_SIZES = {c.competition_id: c.teams for c in COMPETITIONS}
 
 
 @dataclass(frozen=True)
@@ -77,11 +79,11 @@ def completed_seasons(
 ) -> dict[tuple[str, str], tuple[Match, ...]]:
     groups = defaultdict(list)
     for match in matches:
-        if match.available_on <= as_of and match.fixture.competition_id in {PL, CHAMPIONSHIP}:
+        if match.available_on <= as_of and match.fixture.competition_id in FIELD_SIZES:
             groups[match.fixture.competition_id, match.fixture.season_id].append(match)
     result = {}
     for (competition, season), rows in groups.items():
-        n = 20 if competition == PL else 24
+        n = FIELD_SIZES[competition]
         pairs = {(m.fixture.home_team_id, m.fixture.away_team_id) for m in rows}
         teams = {t for pair in pairs for t in pair}
         if len(rows) == len(pairs) == n * (n - 1) and len(teams) == n:

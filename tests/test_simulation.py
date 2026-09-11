@@ -7,7 +7,7 @@ import pytest
 from epl_forecast.cli import fitted_model
 from epl_forecast.data.rules import league_rules, reviewed_rules_evidence
 from epl_forecast.models.base import Forecast
-from epl_forecast.postseason import simulate_championship_playoffs
+from epl_forecast.postseason import simulate_playoffs
 from epl_forecast.sanctions import reviewed_adjustments
 from epl_forecast.simulation import (
     EuropeScenario,
@@ -292,10 +292,11 @@ def test_championship_projection_conserves_promotion_and_playoff_slots():
 def test_six_team_playoff_bracket_respects_seed_paths():
     teams = [f"club-{i}" for i in range(24)]
     orders = np.tile(np.arange(24), (200, 1))
-    winners, details = simulate_championship_playoffs(
+    winners, details = simulate_playoffs(
         FixedModel(date(2026, 8, 1)),
         orders,
         teams,
+        "eng-championship",
         "2026-2027",
         date(2027, 5, 1),
         np.random.default_rng(11),
@@ -345,10 +346,11 @@ def test_playoff_bracket_uses_each_path_own_latent_state():
     teams = [f"club-{i}" for i in range(24)]
     orders = np.tile(np.arange(24), (48, 1))
     states = PathStates(teams, date(2026, 8, 1), 48)
-    winners, details = simulate_championship_playoffs(
+    winners, details = simulate_playoffs(
         FixedModel(date(2026, 8, 1)),
         orders,
         teams,
+        "eng-championship",
         "2026-2027",
         date(2027, 5, 1),
         np.random.default_rng(3),
@@ -378,10 +380,11 @@ def test_playoff_conditioning_leaves_the_regular_season_untouched():
 def test_delayed_season_playoff_dates_stay_inside_schema():
     teams = [f"club-{i}" for i in range(24)]
     orders = np.tile(np.arange(24), (20, 1))
-    winners, details = simulate_championship_playoffs(
+    winners, details = simulate_playoffs(
         FixedModel(date(2020, 7, 1)),
         orders,
         teams,
+        "eng-championship",
         "2019-2020",
         date(2020, 7, 22),
         np.random.default_rng(12),
@@ -498,3 +501,114 @@ def test_efl_does_not_use_head_to_head_away_goals():
         away_goals=zeros,
     )
     assert ties == [(0, 2)] and unresolved
+
+
+LOWER_DIVISIONS = [("eng-league-one", 2, 6, 4), ("eng-league-two", 3, 7, 2)]
+
+
+@pytest.mark.parametrize("competition,automatic,playoff_end,relegated", LOWER_DIVISIONS)
+def test_reviewed_lower_division_editions_match_their_rules(
+    competition, automatic, playoff_end, relegated
+):
+    evidence = reviewed_rules_evidence(competition, "2026-2027")
+    rules = league_rules(competition, "2026-2027")
+    championship = reviewed_rules_evidence("eng-championship", "2026-2027")
+    assert evidence["source_sha256"] == championship["source_sha256"]
+    assert (evidence["automatic_promotion"], evidence["playoff_end"], evidence["relegated"]) == (
+        automatic,
+        playoff_end,
+        relegated,
+    )
+    assert (rules.automatic_promotion, rules.playoff_end, rules.relegated) == (
+        automatic,
+        playoff_end,
+        relegated,
+    )
+    assert rules.ranking == "efl" and rules.playoff_places == 4
+
+
+def division_fixtures(competition, teams, day, season="2026-2027"):
+    from epl_forecast.schema import Fixture, fixture_id
+
+    return [
+        Fixture(fixture_id(competition, season, h, a), competition, season, day, h, a)
+        for h in teams
+        for a in teams
+        if h != a
+    ]
+
+
+@pytest.mark.parametrize("competition,automatic,playoff_end,relegated", LOWER_DIVISIONS)
+def test_lower_division_projection_awards_its_own_places(
+    competition, automatic, playoff_end, relegated
+):
+    from epl_forecast.schema import Match
+
+    teams = [f"club-{i}" for i in range(24)]
+    games = [Match(f, 1, 1) for f in division_fixtures(competition, teams, date(2026, 8, 10))]
+    cutoff = date(2026, 8, 11)
+    result = simulate_season(FixedModel(cutoff), games, [], teams, cutoff, 10, 7)
+    rows = result["teams"]
+    assert sum(r["automatic_promotion_probability"] for r in rows) == pytest.approx(automatic)
+    assert sum(r["playoff_qualification_probability"] for r in rows) == pytest.approx(4)
+    assert sum(r["playoff_promotion_probability"] for r in rows) == pytest.approx(1)
+    assert sum(r["promotion_probability"] for r in rows) == pytest.approx(automatic + 1)
+    assert sum(r["relegation_probability"] for r in rows) == pytest.approx(relegated)
+    assert result["playoff_model"]["format"] == "four-team-five-match"
+    assert result["disciplinary_tiebreaks_available"] is False
+
+
+def test_four_team_bracket_starts_below_automatic_promotion():
+    teams = [f"club-{i}" for i in range(24)]
+    orders = np.tile(np.arange(24), (200, 1))
+    winners, details = simulate_playoffs(
+        FixedModel(date(2026, 8, 1)),
+        orders,
+        teams,
+        "eng-league-two",
+        "2026-2027",
+        date(2027, 5, 1),
+        np.random.default_rng(5),
+    )
+    assert set(winners) == set(teams[3:7])
+    assert details["format"] == "four-team-five-match"
+
+
+def test_lower_division_bracket_uses_each_path_own_latent_state():
+    teams = [f"club-{i}" for i in range(24)]
+    states = PathStates(teams, date(2026, 8, 1), 48)
+    winners, _ = simulate_playoffs(
+        FixedModel(date(2026, 8, 1)),
+        np.tile(np.arange(24), (48, 1)),
+        teams,
+        "eng-league-one",
+        "2026-2027",
+        date(2027, 5, 1),
+        np.random.default_rng(3),
+        states,
+    )
+    for path, champion in enumerate(states.champion):
+        if champion in teams[2:6]:
+            assert winners[path] == champion
+
+
+def test_playoff_winner_ignores_clubs_relegated_into_the_division_above():
+    from epl_forecast.schema import Fixture, Match, fixture_id
+    from epl_forecast.season_evaluation import playoff_winner
+
+    def games(competition, season, pairs):
+        day = date(int(season[:4]), 9, 1)
+        return [
+            Match(
+                Fixture(fixture_id(competition, season, h, a), competition, season, day, h, a), 1, 0
+            )
+            for h, a in pairs
+        ]
+
+    matches = (
+        games("eng-league-one", "2024-2025", [("a", "b"), ("c", "d"), ("e", "a")])
+        + games("eng-championship", "2024-2025", [("x", "y"), ("y", "z")])
+        + games("eng-championship", "2025-2026", [("x", "a"), ("b", "c"), ("p", "x")])
+    )
+    order = ["a", "b", "c", "d", "e"]
+    assert playoff_winner(matches, "eng-league-one", "2024-2025", order) == "c"

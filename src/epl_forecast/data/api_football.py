@@ -10,12 +10,13 @@ from pathlib import Path
 from urllib.parse import urlencode
 from zoneinfo import ZoneInfo
 
+from epl_forecast.competitions import COMPETITIONS, competition
 from epl_forecast.data.capture import SourceAccessError
 from epl_forecast.datasets import Dataset, publish
 from epl_forecast.schema import fixture_id
 
 BASE = "https://v3.football.api-sports.io/"
-LEAGUES = {39: "eng-premier-league", 40: "eng-championship"}
+LEAGUES = {c.api_football_league: c.competition_id for c in COMPETITIONS}
 ROLES = {
     "G": "GK",
     "D": "DEF",
@@ -129,6 +130,12 @@ def match_player_statistics(statistics, identity, issues):
 with Path(__file__).with_name("api_player_aliases.csv").open() as stream:
     PLAYER_ALIASES = {int(r["alias_api_id"]): int(r["api_id"]) for r in csv.DictReader(stream)}
 
+# Reviewed fixture records whose result the provider's own retained evidence contradicts.
+FIXTURE_DISPUTES = {
+    entry["api_id"]: entry
+    for entry in json.loads(Path(__file__).with_name("api_fixture_disputes.json").read_text())
+}
+
 
 def canonical_api_id(value):
     if value is None or int(value) <= 0:
@@ -217,6 +224,9 @@ def team_registry():
             "Charlton": "charlton-athletic",
             "Rotherham": "rotherham-united",
             "Wycombe": "wycombe-wanderers",
+            "Accrington ST": "accrington-stanley",
+            "Dagenham & Redbridge": "dagenham-redbridge",
+            "Sutton Utd": "sutton-united",
         }
     )
     return aliases
@@ -307,7 +317,7 @@ def normalize(record, body, root):
                     {
                         "competition_id": LEAGUES[league],
                         "season_id": f"{s['year']}-{s['year'] + 1}",
-                        "expected_matches": 380 if league == 39 else 552,
+                        "expected_matches": competition(LEAGUES[league]).matches,
                         "coverage": json.dumps(s["coverage"], sort_keys=True),
                     },
                 )
@@ -372,6 +382,25 @@ def normalize(record, body, root):
                 else "scheduled"
             )
             kickoff = f["date"]
+            disputed = FIXTURE_DISPUTES.get(f["id"])
+            if disputed is not None:
+                if disputed["match_id"] != key:
+                    raise ValueError(f"Reviewed fixture dispute names another match: {f['id']}")
+                issues.append(
+                    {
+                        "table": "fixtures",
+                        "match_id": key,
+                        "api_id": f["id"],
+                        "reported_values": {
+                            "kickoff_time": kickoff,
+                            "status": status,
+                            "home_goals": item["goals"]["home"],
+                            "away_goals": item["goals"]["away"],
+                        },
+                        "resolution": disputed["resolution"],
+                    }
+                )
+                finished, state, kickoff = False, "disputed", None
             add(
                 "fixtures",
                 {
@@ -384,7 +413,9 @@ def normalize(record, body, root):
                     "api_id": f["id"],
                     "match_date": str(
                         datetime.fromisoformat(kickoff).astimezone(ZoneInfo("Europe/London")).date()
-                    ),
+                    )
+                    if kickoff
+                    else None,
                     "kickoff_time": kickoff,
                     "status": state,
                     "home_goals": item["goals"]["home"] if finished else None,

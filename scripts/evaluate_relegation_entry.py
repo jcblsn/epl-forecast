@@ -28,8 +28,8 @@ from epl_forecast.models.xg_quality_tilt import XG_DYNAMICS, XGQualityTiltFilter
 from epl_forecast.research.uncertainty_ladder import MatchedStateForecast
 from epl_forecast.research.uncertainty_report import cluster_interval
 from epl_forecast.season_evaluation import (
-    championship_season_truth,
     final_cutoff,
+    promotion_season_truth,
     score_forecast,
     season_origins,
 )
@@ -151,7 +151,7 @@ def main():
         if len(teams) != 24 or len(previous) != 24 or len(relegated) != 3:
             raise ValueError(f"Incomplete relegation cohort for {season}")
         cutoff = season_origins(games)["preseason"]
-        truth = championship_season_truth(matches, season, games, teams, args.seed)
+        truth = promotion_season_truth(matches, season, games, teams, args.seed)
         opening_ids = {}
         for team in relegated:
             appearances = [

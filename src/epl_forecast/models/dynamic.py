@@ -6,13 +6,13 @@ from typing import Self
 
 import numpy as np
 
+from epl_forecast.competitions import COMPETITION_IDS
 from epl_forecast.models.base import Forecast
 from epl_forecast.models.baselines import BaseModel
 from epl_forecast.models.entry_prior import EntryPriorModel
 from epl_forecast.models.gaussian import poisson_laplace_update
 from epl_forecast.models.poisson import IndependentPoisson, PoissonMixture
 from epl_forecast.models.promotion import (
-    CHAMPIONSHIP,
     PL,
     PromotionBridge,
     RelegationBridge,
@@ -220,8 +220,8 @@ class DynamicAttackDefense(BaseModel):
             raise ValueError("Training set is empty")
         if any(m.available_on > as_of for m in matches):
             raise ValueError("Training contains a result unavailable at the forecast cutoff")
-        if any(m.fixture.competition_id not in {PL, CHAMPIONSHIP} for m in matches):
-            raise ValueError("M4 supports PL and Championship evidence")
+        if any(m.fixture.competition_id not in COMPETITION_IDS for m in matches):
+            raise ValueError("M4 supports evidence from the modeled English divisions")
         if len({m.fixture.match_id for m in matches}) != len(matches):
             raise ValueError("Duplicate training matches")
         ordered = sorted(matches, key=lambda m: (m.fixture.match_date, m.fixture.match_id))

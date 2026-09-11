@@ -32,8 +32,8 @@ from epl_forecast.research.uncertainty_ladder import MatchedStateForecast
 from epl_forecast.research.uncertainty_report import cluster_interval
 from epl_forecast.sanctions import REGISTRIES, load_registry
 from epl_forecast.season_evaluation import (
-    championship_season_truth,
     final_cutoff,
+    promotion_season_truth,
     score_forecast,
     season_origins,
     season_truth,
@@ -282,7 +282,7 @@ def main():
             labels = realized_labels(panel, competition, season, args.opening_matches)
             final = sanctions.final_adjustments(competition, season, final_cutoff(games))
             truth = (
-                championship_season_truth(matches, season, games, teams, args.seed, final)
+                promotion_season_truth(matches, season, games, teams, args.seed, final)
                 if competition == CHAMPIONSHIP
                 else season_truth(games, teams, args.seed, final)
             )

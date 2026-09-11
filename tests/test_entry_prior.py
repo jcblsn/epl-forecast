@@ -164,8 +164,8 @@ def test_an_unknown_level_or_division_is_refused():
     target = sorted({s for (c, s) in seasons if c == CHAMPIONSHIP})[-1]
     with pytest.raises(ValueError, match="level"):
         EntryPriorModel(seasons, CHAMPIONSHIP, target, date(2030, 1, 1), "hunch")
-    with pytest.raises(ValueError, match="Premier League and the Championship"):
-        EntryPriorModel(seasons, "eng-league-one", target, date(2030, 1, 1), "transition")
+    with pytest.raises(ValueError, match="modeled divisions"):
+        EntryPriorModel(seasons, "eng-national-league", target, date(2030, 1, 1), "transition")
     with pytest.raises(ValueError, match="training label"):
         EntryPriorModel(seasons, CHAMPIONSHIP, target, date(2030, 1, 1), "memory", label="vibes")
 

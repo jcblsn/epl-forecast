@@ -1,10 +1,10 @@
 """One command from collected data to a verified, published forecast.
 
 The pipeline reuses the existing collector, forecast export, product verifier and
-immutable archive. It runs the frozen product model for both leagues, refuses to
-publish an archive that fails verification, then derives the compact public
-documents, refreshes the snapshot index and rebuilds the prospective ledger.
-Provider data never leaves `data/`; only `site/data/` is publishable.
+immutable archive. It runs the frozen product model for every league division,
+refuses to publish unless every archive passes verification, then derives the
+compact public documents, refreshes the snapshot index and rebuilds the prospective
+ledger. Provider data never leaves `data/`; only `site/data/` is publishable.
 """
 
 import json
@@ -13,6 +13,7 @@ import sys
 from datetime import UTC, datetime
 from pathlib import Path
 
+from epl_forecast.competitions import COMPETITION_IDS
 from epl_forecast.data.capture import SourceAccessError, writer_lock
 from epl_forecast.data.collect import collect
 from epl_forecast.datasets import Dataset
@@ -28,7 +29,7 @@ from epl_forecast.storage import json_bytes, write_immutable, write_json
 
 PRODUCT_MODEL = "M7-xg-v1"
 PRODUCT_CONFIG = Path("configs/xg_quality_tilt.toml")
-LEAGUES = ("eng-premier-league", "eng-championship")
+LEAGUES = COMPETITION_IDS
 REPOSITORY = Path(__file__).resolve().parents[2]
 
 

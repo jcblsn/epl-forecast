@@ -1,0 +1,14 @@
+[
+ {
+  "api_id": 48366,
+  "match_id": "eng-league-one:2018-2019:accrington-stanley:sunderland",
+  "reported": {
+   "kickoff_time": "2018-12-08T15:00:00+00:00",
+   "status": "FT",
+   "home_goals": 1,
+   "away_goals": 1
+  },
+  "resolution": "unknown: result and date contradicted by the provider's own final standings",
+  "evidence": "The retained API-Football 2018/19 League One final standings give Accrington Stanley 51 for, 67 against and Sunderland 80 for, 47 against. Those totals reconcile with the Football-Data record of this fixture (0-3 on 2019-04-03) and not with this fixture record (1-1 on 2018-12-08)."
+ }
+]

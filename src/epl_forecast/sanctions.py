@@ -27,10 +27,12 @@ from datetime import date
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+from epl_forecast.competitions import COMPETITIONS
+
 LONDON = ZoneInfo("Europe/London")
 
-FULL_SEASON = {"eng-premier-league": 38, "eng-championship": 46}
-FULL_FIELD = {"eng-premier-league": 20, "eng-championship": 24}
+FULL_SEASON = {c.competition_id: c.rounds for c in COMPETITIONS}
+FULL_FIELD = {c.competition_id: c.teams for c in COMPETITIONS}
 REGISTRIES = ("pl_adjustments.json", "efl_adjustments.json")
 
 

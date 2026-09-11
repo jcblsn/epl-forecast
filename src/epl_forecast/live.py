@@ -5,6 +5,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+from epl_forecast import competitions
 from epl_forecast.datasets import Dataset, timestamp
 from epl_forecast.schema import Fixture
 
@@ -44,7 +45,7 @@ def load_live_season(root=Path("data"), cutoff=None, competition="eng-premier-le
             for m in data.manifests
             if m["request"]["context"].get("endpoint") == "fixtures"
             and m["request"]["context"].get("league")
-            == (39 if competition == "eng-premier-league" else 40)
+            == competitions.competition(competition).api_football_league
             and m["request"]["context"].get("season") == int(season[:4])
         ]
         latest = (

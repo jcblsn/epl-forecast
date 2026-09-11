@@ -39,10 +39,14 @@ def test_collector_uses_one_cutoff_after_collection(tmp_path, monkeypatch):
     cutoffs = {c[c.index("--cutoff") + 1] for c in commands}
     assert len(cutoffs) == 1
     assert datetime.fromisoformat(cutoffs.pop()) >= datetime.fromisoformat(captured[0])
-    assert {c[c.index("--competition") + 1] for c in commands} == {
+    competitions = [c[c.index("--competition") + 1] for c in commands]
+    assert set(competitions) == {
         "eng-premier-league",
         "eng-championship",
+        "eng-league-one",
+        "eng-league-two",
     }
+    assert competitions.count("eng-league-one") == competitions.count("eng-league-two") == 2
     assert json.loads((tmp_path / "runs" / "state.json").read_text())["fingerprint"]
 
 
@@ -102,7 +106,7 @@ def test_forecast_worker_does_not_block_on_collection(tmp_path, monkeypatch):
     )
     report = prospective.capture_attempt(tmp_path / "runs", root, collect_first=False)
     assert report["status"] == "complete"
-    assert len(report["forecasts"]) == 10
+    assert len(report["forecasts"]) == 14
 
 
 def test_market_snapshot_changes_forecast_fingerprint(tmp_path):

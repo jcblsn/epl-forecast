@@ -1,4 +1,4 @@
-"""Scheduled local collection and immutable forecast attempts for both leagues."""
+"""Scheduled local collection and immutable forecast attempts for every league division."""
 
 import json
 import subprocess
@@ -6,10 +6,14 @@ import sys
 from datetime import UTC, datetime
 from pathlib import Path
 
+from epl_forecast.competitions import COMPETITION_IDS
 from epl_forecast.data.capture import SourceAccessError, writer_lock
 from epl_forecast.data.collect import backfill, collect
 from epl_forecast.datasets import Dataset
 from epl_forecast.storage import json_bytes, sha256_bytes, write_immutable, write_json
+
+# Player and process research models run only where their provider inputs exist.
+RESEARCH_LEAGUES = ("eng-premier-league", "eng-championship")
 
 
 def information_fingerprint(data):
@@ -68,10 +72,12 @@ def capture_attempt(
         attempt = root / now.strftime("%Y-%m-%dT%H%M%S.%fZ")
         attempt.mkdir()
         results = []
-        for league, config in [
-            ("eng-premier-league", "configs/baselines.toml"),
-            ("eng-championship", "configs/championship.toml"),
-        ]:
+        for league in COMPETITION_IDS:
+            config = (
+                "configs/baselines.toml"
+                if league == "eng-premier-league"
+                else "configs/championship.toml"
+            )
             for name, path, model in [
                 ("M2", config, "M2-attack-defense-v1"),
                 ("M5", "configs/quality_tilt.toml", "M5-quality-tilt-v1"),
@@ -79,6 +85,8 @@ def capture_attempt(
                 ("M7", "configs/xg_quality_tilt.toml", "M7-xg-v1"),
                 ("M8", "configs/process_quality_tilt.toml", "M8-process-v1"),
             ]:
+                if league not in RESEARCH_LEAGUES and name not in ("M2", "M7"):
+                    continue
                 output = attempt / league / name
                 command = [
                     sys.executable,

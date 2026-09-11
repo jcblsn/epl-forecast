@@ -68,6 +68,21 @@ def test_duplicate_rows_and_provider_contradictions_fail(tmp_path):
     data.close()
 
 
+def test_a_disputed_record_yields_to_the_finished_one(tmp_path):
+    publish(tmp_path, evidence(), {"fixtures": [fixture()]})
+    disputed = {**fixture(), "status": "disputed", "match_date": None, "home_goals": None}
+    disputed["away_goals"] = None
+    publish(tmp_path, {**evidence(), "provider": "api_football"}, {"fixtures": [disputed]})
+    data = Dataset(tmp_path)
+    (match,) = data.matches()
+    data.close()
+    assert (str(match.fixture.match_date), match.home_goals, match.away_goals) == (
+        "2025-08-10",
+        1,
+        0,
+    )
+
+
 def test_unscoped_history_keeps_unknown_end_date(tmp_path):
     publish(
         tmp_path,

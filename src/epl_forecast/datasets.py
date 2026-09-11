@@ -283,6 +283,7 @@ class Dataset:
             if scores and row["status"] != "finished":
                 row = dict(
                     row,
+                    match_date=row["match_date"] or next(iter(dates)),
                     status="finished",
                     home_goals=next(iter(scores))[0],
                     away_goals=next(iter(scores))[1],

@@ -1,9 +1,11 @@
 import csv
 import io
 
+from epl_forecast.competitions import COMPETITIONS as DIVISIONS
+
 COMPETITIONS = {
-    "E0": {"id": "eng-premier-league", "teams": 20, "matches": 380},
-    "E1": {"id": "eng-championship", "teams": 24, "matches": 552},
+    c.football_data_division: {"id": c.competition_id, "teams": c.teams, "matches": c.matches}
+    for c in DIVISIONS
 }
 REQUIRED_FIELDS = {"Div", "Date", "HomeTeam", "AwayTeam", "FTHG", "FTAG", "FTR"}
 

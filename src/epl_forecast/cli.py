@@ -6,6 +6,7 @@ from datetime import UTC, date, datetime
 from pathlib import Path
 
 from epl_forecast.artifacts import new_run_directory, provenance, results_markdown, write_csv
+from epl_forecast.competitions import COMPETITION_IDS
 from epl_forecast.data.capture import SourceAccessError
 from epl_forecast.datasets import load_dataset
 from epl_forecast.evaluation import market_predictions, rolling_predictions, summarize
@@ -356,16 +357,12 @@ def operate_command(args) -> None:
 
 def parser() -> argparse.ArgumentParser:
     root = argparse.ArgumentParser(
-        description="Probabilistic forecasts and season simulation for England's top two leagues"
+        description="Probabilistic forecasts and season simulation for England's four league divisions"
     )
     commands = root.add_subparsers(dest="command", required=True)
     forecast = commands.add_parser("forecast", help="Archive a current-season score-model forecast")
     forecast.add_argument("--cutoff", type=datetime.fromisoformat)
-    forecast.add_argument(
-        "--competition",
-        choices=["eng-premier-league", "eng-championship"],
-        default="eng-premier-league",
-    )
+    forecast.add_argument("--competition", choices=COMPETITION_IDS, default=COMPETITION_IDS[0])
     forecast.add_argument("--season")
     forecast.add_argument("--config", type=Path, default=Path("configs/xg_quality_tilt.toml"))
     forecast.add_argument("--data", type=Path, default=Path("data"))

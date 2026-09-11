@@ -20,22 +20,27 @@ from zoneinfo import ZoneInfo
 import numpy as np
 
 from epl_forecast.artifacts import execution_provenance
+from epl_forecast.competitions import competition as competition_info
 from epl_forecast.data.rules import league_rules, reviewed_rules_evidence
 from epl_forecast.datasets import Dataset, timestamp
+from epl_forecast.postseason import playoff_format
 from epl_forecast.sanctions import load_registry
 from epl_forecast.storage import write_json
 
 LONDON = ZoneInfo("Europe/London")
-PLACES = {
-    "eng-premier-league": {"title_probability": 1, "relegation_probability": 3},
-    "eng-championship": {
-        "title_probability": 1,
-        "automatic_promotion_probability": 2,
-        "playoff_promotion_probability": 1,
-        "promotion_probability": 3,
-        "relegation_probability": 3,
-    },
-}
+
+
+def places(competition: str, season: str) -> dict[str, int]:
+    """How many clubs each season event must hold, from the season's rules."""
+    rules = league_rules(competition, season)
+    awarded = {"title_probability": 1, "relegation_probability": rules.relegated}
+    if rules.promotes:
+        awarded |= {
+            "automatic_promotion_probability": rules.automatic_promotion,
+            "playoff_promotion_probability": 1,
+            "promotion_probability": rules.automatic_promotion + 1,
+        }
+    return awarded
 
 
 class Checks:
@@ -122,7 +127,7 @@ def verify(archive: Path, data: Path) -> dict:
         return {"checks": checks.results, "failures": len(checks.failures)}
 
     teams = simulation["teams"]
-    expected_teams = 20 if competition == "eng-premier-league" else 24
+    expected_teams = competition_info(competition).teams
     checks.check("every club is projected", len(teams) == expected_teams, len(teams))
     for row in teams:
         points = row["points_distribution"]
@@ -140,12 +145,12 @@ def verify(archive: Path, data: Path) -> dict:
             set(row["points_intervals"]) == {"50", "80", "90"}
             and set(row["position_intervals"]) == {"50", "80", "90"},
         )
-    for event, places in PLACES[competition].items():
+    for event, awarded in places(competition, season).items():
         total = sum(row[event] for row in teams)
         checks.check(
             f"{event} mass equals the places awarded",
-            abs(total - places) < 1e-6,
-            f"{total:.6f} against {places}",
+            abs(total - awarded) < 1e-6,
+            f"{total:.6f} against {awarded}",
         )
 
     rules = league_rules(competition, season)
@@ -172,7 +177,7 @@ def verify(archive: Path, data: Path) -> dict:
         f"applied {sorted(applied)}",
     )
 
-    if competition == "eng-championship":
+    if rules.promotes:
         model = simulation["playoff_model"]
         checks.check(
             "the bracket is conditioned on each path's own latent state",
@@ -181,9 +186,7 @@ def verify(archive: Path, data: Path) -> dict:
         )
         checks.check(
             "the bracket is the season's reviewed edition",
-            model["format"] == "2026-six-team-seven-match"
-            if int(season[:4]) >= 2026
-            else model["format"] == "legacy-four-team-five-match",
+            model["format"] == playoff_format(rules),
             model["format"],
         )
         checks.check(

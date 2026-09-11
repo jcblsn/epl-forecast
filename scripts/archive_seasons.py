@@ -8,8 +8,8 @@ from pathlib import Path
 from epl_forecast.datasets import Dataset
 from epl_forecast.sanctions import load_registry
 from epl_forecast.season_evaluation import (
-    championship_season_truth,
     final_cutoff,
+    promotion_season_truth,
     season_teams,
     season_truth,
 )
@@ -68,7 +68,7 @@ def main():
         cutoff = final_cutoff(season_matches)
         final = sanctions.final_adjustments(competition, season, cutoff)
         if competition == CHAMPIONSHIP:
-            truth[season] = championship_season_truth(
+            truth[season] = promotion_season_truth(
                 matches, season, season_matches, teams, manifest["seed"], final
             )
         else:

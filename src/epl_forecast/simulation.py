@@ -5,9 +5,10 @@ from zoneinfo import ZoneInfo
 
 import numpy as np
 
+from epl_forecast.competitions import COMPETITIONS
 from epl_forecast.data.rules import LeagueRules, league_rules, reviewed_rules_evidence
 from epl_forecast.models.base import ForecastModel
-from epl_forecast.postseason import simulate_championship_playoffs
+from epl_forecast.postseason import simulate_playoffs
 from epl_forecast.schema import Fixture, Match
 
 
@@ -164,7 +165,7 @@ def validate_schedule(
     if len(competitions) != 1:
         raise ValueError("Simulation requires one competition")
     competition = next(iter(competitions))
-    expected_teams = {"eng-premier-league": 20, "eng-championship": 24}.get(competition)
+    expected_teams = {c.competition_id: c.teams for c in COMPETITIONS}.get(competition)
     if expected_teams is None or len(teams) != expected_teams or len(set(teams)) != expected_teams:
         raise ValueError("Invalid league season participants")
     if len({f.season_id for f in fixtures}) != 1:
@@ -340,10 +341,11 @@ def simulate_season(
         add_result(match.fixture, match.home_goals, match.away_goals)
     season = (played[0].fixture if played else remaining[0]).season_id
     competition = (played[0].fixture if played else remaining[0]).competition_id
-    championship = competition == "eng-championship"
+    rules = league_rules(competition, season)
+    promotion = rules.promotes
     state_sampler = getattr(model, "sample_forecast_state", None)
-    # A Championship bracket needs the same draws even when no league fixture is left.
-    needs_states = bool(remaining) or (championship and playoff_winner is None)
+    # A playoff bracket needs the same draws even when no league fixture is left.
+    needs_states = bool(remaining) or (promotion and playoff_winner is None)
     states = state_sampler(rng, size=simulations) if state_sampler and needs_states else None
     if states is not None and (states.as_of != as_of or states.size != simulations):
         raise ValueError("Sampled forecast states must match the simulation cutoff and size")
@@ -402,9 +404,8 @@ def simulate_season(
         if europe is not None
         else {}
     )
-    if championship and europe is not None:
+    if europe is not None and competition != COMPETITIONS[0].competition_id:
         raise ValueError("European qualification scenarios apply to the Premier League")
-    rules = league_rules(competition, season)
     unresolved_count, head_to_head_count = 0, 0
     orders = np.empty((simulations, len(teams)), dtype=np.int16)
     position_events = (
@@ -414,7 +415,7 @@ def simulate_season(
             "playoff_qualification_probability",
             "relegation_probability",
         )
-        if championship
+        if promotion
         else (
             "title_probability",
             "top_four_probability",
@@ -453,8 +454,10 @@ def simulate_season(
             path_positions = np.zeros((len(teams), len(teams)))
             path_positions[order] = weights
             event_paths["title_probability"][sample] = path_positions[:, 0]
-            event_paths["relegation_probability"][sample] = path_positions[:, -3:].sum(axis=1)
-            if championship:
+            event_paths["relegation_probability"][sample] = path_positions[
+                :, -rules.relegated :
+            ].sum(axis=1)
+            if promotion:
                 event_paths["automatic_promotion_probability"][sample] = path_positions[
                     :, : rules.automatic_promotion
                 ].sum(axis=1)
@@ -471,18 +474,19 @@ def simulate_season(
 
     playoff_counts = np.zeros(len(teams))
     playoff_model = None
-    if championship:
+    if promotion:
         if playoff_winner is not None:
             if playoff_winner not in team_index:
-                raise ValueError("Playoff winner must be a Championship participant")
+                raise ValueError("Playoff winner must be a league participant")
             playoff_counts[team_index[playoff_winner]] = simulations
             playoff_model = {"format": "observed", "winner": playoff_winner}
         else:
             last_regular_day = max(f.match_date for f in [m.fixture for m in played] + remaining)
-            winners, playoff_model = simulate_championship_playoffs(
+            winners, playoff_model = simulate_playoffs(
                 model,
                 orders,
                 teams,
+                competition,
                 season,
                 last_regular_day,
                 rng,
@@ -551,9 +555,9 @@ def simulate_season(
             "title_probability": float(positions[0]),
             "top_four_probability": float(positions[:4].sum()),
             "top_five_probability": float(positions[:5].sum()),
-            "relegation_probability": float(positions[-3:].sum()),
+            "relegation_probability": float(positions[-rules.relegated :].sum()),
         }
-        if championship:
+        if promotion:
             row["automatic_promotion_probability"] = float(
                 positions[: rules.automatic_promotion].sum()
             )
@@ -601,7 +605,7 @@ def simulate_season(
         "ranking_rules": rules.ranking,
         "ranking_rules_evidence": reviewed_rules_evidence(competition, season),
         "playoff_model": playoff_model,
-        "disciplinary_tiebreaks_available": False if championship else None,
+        "disciplinary_tiebreaks_available": False if rules.ranking == "efl" else None,
         "head_to_head_applied_rate": head_to_head_count / simulations,
         "unresolved_decisive_tie_rate": unresolved_count / simulations,
         "assumptions": [
@@ -628,7 +632,7 @@ def simulate_season(
             (
                 "EFL disciplinary tiebreak data are unavailable. Remaining ties split rank mass equally; "
                 "this is an uncertainty assumption, not an application of disciplinary rules."
-                if championship
+                if rules.ranking == "efl"
                 else "Unresolved decisive ties assume equal playoff chances; playoff model not estimated."
             ),
             "Points adjustments include only supplied sanctions known at the cutoff.",
@@ -644,7 +648,7 @@ def simulate_season(
                 "regular-season path, on that path's own latent team states when the "
                 "model supplies them."
             ]
-            if championship
+            if promotion
             else ["Top-four/five probabilities are table positions, not European qualification."]
         ),
         "europe_scenario": None

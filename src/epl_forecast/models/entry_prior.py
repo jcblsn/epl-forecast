@@ -15,9 +15,8 @@ from functools import lru_cache
 import numpy as np
 from numpy.polynomial.legendre import leggauss
 
+from epl_forecast.competitions import COMPETITION_IDS
 from epl_forecast.models.promotion import (
-    CHAMPIONSHIP,
-    PL,
     TeamPrior,
     entry_label,
     preceding_season,
@@ -31,7 +30,7 @@ OUTSIDE = "outside"
 MEMORY_TIMESCALES = (0.25, 0.5, 1.0, 2.0, 4.0, 8.0, np.inf)
 FRESHEST_GAP = 2
 MINIMUM_COHORT = 6
-DIVISIONS = (PL, CHAMPIONSHIP)
+DIVISIONS = COMPETITION_IDS
 
 
 def transition_id(source_competition: str | None, target_competition: str) -> str:
@@ -275,7 +274,7 @@ class EntryPriorModel:
         if label not in LABELS:
             raise ValueError(f"Unknown entry-prior training label: {label}")
         if competition not in DIVISIONS:
-            raise ValueError("Entry priors cover the Premier League and the Championship")
+            raise ValueError(f"Entry priors cover the modeled divisions, not {competition}")
         self.seasons = dict(seasons)
         self.competition, self.target_season, self.as_of = competition, target_season, as_of
         self.level, self.initial_team_sd, self.first = level, initial_team_sd, first

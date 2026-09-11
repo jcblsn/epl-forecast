@@ -671,8 +671,9 @@ def audit(root):
             "a AS (SELECT DISTINCT match_id FROM appearances) "
             "SELECT competition_id, season_id, "
             "count(*) FILTER (WHERE stage='regular') AS regular_fixtures, "
-            "CASE WHEN competition_id='eng-premier-league' THEN 380 ELSE 552 END "
-            "AS expected_regular, "
+            "CASE competition_id "
+            + " ".join(f"WHEN '{c['id']}' THEN {c['matches']}" for c in COMPETITIONS.values())
+            + " END AS expected_regular, "
             "count(*) FILTER (WHERE stage<>'regular') AS playoff_fixtures, "
             "count(a.match_id) AS fixtures_with_appearances "
             "FROM f LEFT JOIN a USING(match_id) GROUP BY 1,2 ORDER BY 1,2"

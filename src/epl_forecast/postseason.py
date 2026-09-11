@@ -4,6 +4,7 @@ from datetime import date, timedelta
 
 import numpy as np
 
+from epl_forecast.data.rules import league_rules
 from epl_forecast.schema import Fixture, fixture_id
 
 
@@ -42,7 +43,7 @@ class _PathLegs:
         return self.states.sample_scores(fixture, rng, selected)
 
 
-def _sample_legs(legs, home, away, day, season, rng):
+def _sample_legs(legs, home, away, day, competition, season, rng):
     home = np.asarray(home)
     away = np.asarray(away)
     home_goals = np.empty(len(home), dtype=int)
@@ -50,8 +51,8 @@ def _sample_legs(legs, home, away, day, season, rng):
     for h, a in sorted(set(zip(home, away, strict=True))):
         selected = np.flatnonzero((home == h) & (away == a))
         fixture = Fixture(
-            fixture_id("eng-championship", season, str(h), str(a)),
-            "eng-championship",
+            fixture_id(competition, season, str(h), str(a)),
+            competition,
             season,
             day,
             str(h),
@@ -61,7 +62,7 @@ def _sample_legs(legs, home, away, day, season, rng):
     return home_goals, away_goals
 
 
-def _single_match_winner(legs, first, second, day, season, rng, neutral=False):
+def _single_match_winner(legs, first, second, day, competition, season, rng, neutral=False):
     first = np.asarray(first)
     second = np.asarray(second)
     if neutral:
@@ -71,7 +72,7 @@ def _single_match_winner(legs, first, second, day, season, rng, neutral=False):
     else:
         first_home = np.ones(len(first), dtype=bool)
         home, away = first, second
-    home_goals, away_goals = _sample_legs(legs, home, away, day, season, rng)
+    home_goals, away_goals = _sample_legs(legs, home, away, day, competition, season, rng)
     home_wins = home_goals > away_goals
     tied = home_goals == away_goals
     home_wins[tied] = rng.random(tied.sum()) < 0.5
@@ -79,14 +80,14 @@ def _single_match_winner(legs, first, second, day, season, rng, neutral=False):
     return np.where(first_wins, first, second)
 
 
-def _two_leg_round(legs, ties, days, season, rng):
+def _two_leg_round(legs, ties, days, competition, season, rng):
     """Both semi-finals, in calendar order so a forward state advances once per date."""
     first = [
-        _sample_legs(legs, lower, higher, day, season, rng)
+        _sample_legs(legs, lower, higher, day, competition, season, rng)
         for (higher, lower), day in zip(ties, days[:2], strict=True)
     ]
     second = [
-        _sample_legs(legs, higher, lower, day, season, rng)
+        _sample_legs(legs, higher, lower, day, competition, season, rng)
         for (higher, lower), day in zip(ties, days[2:], strict=True)
     ]
     winners = []
@@ -109,22 +110,37 @@ def _playoff_days(season, last_regular_day):
     return day, [day + timedelta(days=offset) for offset in offsets], scale
 
 
-def simulate_championship_playoffs(
-    model, orders, teams, season, last_regular_day, rng, states=None
+PLAYOFF_FORMATS = {4: "four-team-five-match", 6: "2026-six-team-seven-match"}
+
+
+def playoff_format(rules) -> str:
+    try:
+        return PLAYOFF_FORMATS[rules.playoff_places]
+    except KeyError:
+        raise ValueError(f"No bracket for {rules.playoff_places} playoff places") from None
+
+
+def simulate_playoffs(
+    model, orders, teams, competition, season, last_regular_day, rng, states=None
 ):
     """Return one playoff winner per regular-season path.
 
-    Team IDs are represented by their indices while sampling. The structural model
-    sees the real IDs. Quarter-finals use the reviewed 2026/27 bracket; semi-finals
-    are two-legged and reseeded. A 50/50 virtual home designation removes expected
-    home advantage in the neutral final. Tied knockout scores use an explicit equal
-    extra-time/penalty approximation because retained rules do not specify a model.
+    The bracket starts at the first place below automatic promotion, so the same
+    code serves every EFL division. Six places add the reviewed 2026/27 Championship
+    quarter-finals, after which the semi-finals are reseeded; four places go straight
+    to semi-finals of first against fourth and second against third. Semi-finals are
+    two-legged. A 50/50 virtual home designation removes expected home advantage in
+    the neutral final. Tied knockout scores use an explicit equal extra-time/penalty
+    approximation because retained rules do not specify a model.
 
-    When the season simulation drew joint latent states, the bracket is played out on
-    those same draws, so a path's postseason inherits the strengths its table came
-    from. Rounds are then sampled in calendar order, because a forward-evolving state
-    cannot be asked for an earlier date once it has advanced.
+    Team IDs are represented by their indices while sampling. The structural model
+    sees the real IDs. When the season simulation drew joint latent states, the
+    bracket is played out on those same draws, so a path's postseason inherits the
+    strengths its table came from. Rounds are then sampled in calendar order, because
+    a forward-evolving state cannot be asked for an earlier date once it has advanced.
     """
+    rules = league_rules(competition, season)
+    format_name = playoff_format(rules)
     order = np.asarray(orders, dtype=int)
     if order.ndim != 2 or order.shape[1] != len(teams):
         raise ValueError("Playoff simulation requires one complete order per path")
@@ -133,26 +149,17 @@ def simulate_championship_playoffs(
         raise ValueError("Sampled states and regular-season paths must correspond")
     ids = np.asarray(teams)
     _, playoff_days, date_scale = _playoff_days(season, last_regular_day)
+    first = rules.automatic_promotion
 
-    def team_ids(indices):
-        return ids[np.asarray(indices, dtype=int)]
+    def team_ids(place):
+        return ids[np.asarray(order[:, first + place], dtype=int)]
 
-    if int(season[:4]) >= 2026:
+    if rules.playoff_places == 6:
         qf1 = _single_match_winner(
-            legs,
-            team_ids(order[:, 4]),
-            team_ids(order[:, 7]),
-            playoff_days[0],
-            season,
-            rng,
+            legs, team_ids(2), team_ids(5), playoff_days[0], competition, season, rng
         )
         qf2 = _single_match_winner(
-            legs,
-            team_ids(order[:, 5]),
-            team_ids(order[:, 6]),
-            playoff_days[1],
-            season,
-            rng,
+            legs, team_ids(3), team_ids(4), playoff_days[1], competition, season, rng
         )
         rank_by_path = [{ids[index]: rank for rank, index in enumerate(path)} for path in order]
         lower = np.array(
@@ -162,17 +169,16 @@ def simulate_championship_playoffs(
             ]
         )
         higher = np.where(lower == qf1, qf2, qf1)
-        semi1_high, semi1_low = team_ids(order[:, 2]), lower
-        semi2_high, semi2_low = team_ids(order[:, 3]), higher
-        format_name = "2026-six-team-seven-match"
+        semi1_high, semi1_low = team_ids(0), lower
+        semi2_high, semi2_low = team_ids(1), higher
     else:
-        semi1_high, semi1_low = team_ids(order[:, 2]), team_ids(order[:, 5])
-        semi2_high, semi2_low = team_ids(order[:, 3]), team_ids(order[:, 4])
-        format_name = "legacy-four-team-five-match"
+        semi1_high, semi1_low = team_ids(0), team_ids(3)
+        semi2_high, semi2_low = team_ids(1), team_ids(2)
     finalist1, finalist2 = _two_leg_round(
         legs,
         [(semi1_high, semi1_low), (semi2_high, semi2_low)],
         [playoff_days[2], playoff_days[3], playoff_days[4], playoff_days[5]],
+        competition,
         season,
         rng,
     )
@@ -181,6 +187,7 @@ def simulate_championship_playoffs(
         finalist1,
         finalist2,
         playoff_days[6],
+        competition,
         season,
         rng,
         neutral=True,
