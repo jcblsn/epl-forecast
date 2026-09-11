@@ -96,9 +96,9 @@ sqrt( sum_o P(o) (P(E|o) - P(E))^2 )
 ```
 
 and a fixture by its largest participating-team movement. The plainer
-`max(P(E|o)) - min(P(E|o))` swing is retained beside it for display. The top five
-fixtures per league are published, each with the leading movement for both
-participants.
+`max(P(E|o)) - min(P(E|o))` swing is retained beside it for display. Every fixture
+in the horizon is published with both participants on every headline event, so the
+viewer can rank the whole week by whichever event is selected.
 
 These are conditional forecasts, not causal-effect estimates: they say how the
 season distribution looks among the paths where a result happened, not what a
@@ -136,9 +136,11 @@ uv run python -m http.server -d site 8000
 
 It shows both league tables with expected rank and points and the headline event
 probabilities, the full finishing-position matrix, per-club points and rank
-distributions, upcoming fixtures with H/D/A and likeliest scores, the
-highest-impact fixtures, and the ledger. The snapshot selector loads any archived
-forecast. Every table column sorts.
+distributions, upcoming fixtures with H/D/A and likeliest scores, the impact
+view, and the ledger. The impact view takes an event from a dropdown and lists
+every fixture in the horizon ranked by how far that event moves for each
+participant, opening on whichever event moves most that week. The snapshot
+selector loads any archived forecast. Every table column sorts.
 
 The fixtures view carries no market-assisted column. The market-assisted arm is
 still computed, still published per match and still retained in the archive; it

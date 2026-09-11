@@ -1,8 +1,30 @@
 {
-  "archived_at": "2026-09-10T23:12:55.842932+00:00",
-  "latest": "2026-09-10T231152Z",
+  "archived_at": "2026-09-11T01:01:12.353806+00:00",
+  "latest": "2026-09-11T010006Z",
   "schema_version": 1,
   "snapshots": [
+    {
+      "competitions": [
+        {
+          "competition_id": "eng-championship",
+          "competition_name": "Championship",
+          "href": "forecasts/2026-09-11T010006Z/eng-championship.json",
+          "matches": 26,
+          "model_id": "M7-xg-v1",
+          "season_id": "2026-2027"
+        },
+        {
+          "competition_id": "eng-premier-league",
+          "competition_name": "Premier League",
+          "href": "forecasts/2026-09-11T010006Z/eng-premier-league.json",
+          "matches": 20,
+          "model_id": "M7-xg-v1",
+          "season_id": "2026-2027"
+        }
+      ],
+      "generated_at": "2026-09-11T01:00:43.935586+00:00",
+      "snapshot_id": "2026-09-11T010006Z"
+    },
     {
       "competitions": [
         {

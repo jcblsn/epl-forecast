@@ -1,4 +1,4 @@
-const state = { index: null, document: null, ledger: null, view: "table", team: null };
+const state = { index: null, document: null, ledger: null, view: "table", team: null, event: null };
 const panel = document.getElementById("panel");
 const VIEWS = [
   ["table", "Table"],
@@ -216,34 +216,59 @@ function impactView() {
   }
   const names = Object.fromEntries(state.document.teams.map((team) => [team.team_id, team.name]));
   const name = (id) => names[id] ?? id;
-  panel.append(
-    element("p", { className: "muted", textContent: `${impact.basis} Next ${impact.horizon_days} days, from ${state.document.simulations.toLocaleString()} season paths; smallest outcome sample ${impact.smallest_outcome_count}.` })
+  const available = EVENT_ORDER.filter((event) =>
+    impact.fixtures.some((fixture) => fixture.impacts.some((row) => row.event === event))
   );
+  if (!available.includes(state.event)) {
+    state.event = available.reduce((best, event) => (eventPeak(impact, event) > eventPeak(impact, best) ? event : best), available[0]);
+  }
+  const rows = [];
   for (const fixture of impact.fixtures) {
     const counts = fixture.outcome_counts;
     const total = counts.home + counts.draw + counts.away;
-    const rows = fixture.impacts.map((row) => {
+    for (const row of fixture.impacts.filter((row) => row.event === state.event)) {
       const home = row.team_id === fixture.home_team_id;
       const win = home ? row.conditional.home : row.conditional.away;
       const loss = home ? row.conditional.away : row.conditional.home;
-      return element("tr", {}, [
-        element("td", { className: "name", textContent: name(row.team_id) }),
-        element("td", { className: "name", textContent: label(row.event) }),
-        cell(pct(row.baseline)),
-        cell(pct(win)),
-        cell(pct(row.conditional.draw)),
-        cell(pct(loss)),
-        cell(pct(row.rms_movement)),
-        cell(pct(row.swing)),
-        cell(row.sufficient_sample ? "" : "thin", { className: "muted" }),
+      rows.push([
+        row.rms_movement,
+        element("tr", {}, [
+          cell(when(fixture.kickoff_time) || fixture.match_date),
+          element("td", { className: "name", textContent: `${name(fixture.home_team_id)} v ${name(fixture.away_team_id)}` }),
+          element("td", { className: "name", textContent: name(row.team_id) }),
+          cell(home ? "H" : "A", { className: "muted" }),
+          cell(pct(row.baseline)),
+          cell(pct(win)),
+          cell(pct(row.conditional.draw)),
+          cell(pct(loss)),
+          cell(pct(row.rms_movement)),
+          cell(pct(row.swing)),
+          cell(pct(counts[home ? "home" : "away"] / total), { className: "muted" }),
+          cell(row.sufficient_sample ? "" : "thin", { className: "muted" }),
+        ]),
       ]);
-    });
-    panel.append(
-      element("h2", { textContent: `${name(fixture.home_team_id)} v ${name(fixture.away_team_id)} — ${when(fixture.kickoff_time) || fixture.match_date}` }),
-      element("p", { className: "muted", textContent: `Paths: home ${pct(counts.home / total)}%, draw ${pct(counts.draw / total)}%, away ${pct(counts.away / total)}%` }),
-      table(["Team", "Event", "Now", "If win", "If draw", "If loss", "RMS", "Swing", ""], rows)
-    );
+    }
   }
+  rows.sort((a, b) => b[0] - a[0]);
+  panel.append(
+    element("select", { onchange: (event) => { state.event = event.target.value; render(); } },
+      available.map((event) => element("option", { value: event, textContent: label(event), selected: event === state.event }))
+    ),
+    element("p", { className: "muted", textContent: `${impact.basis} All ${impact.fixtures.length} fixtures in the next ${impact.horizon_days} days, ranked by how far each club's ${label(state.event)} probability moves with the result. ${state.document.simulations.toLocaleString()} season paths; smallest outcome sample ${impact.smallest_outcome_count}.` }),
+    table(
+      ["Kickoff (UTC)", "Fixture", "Team", "", "Now", "If win", "If draw", "If loss", "RMS", "Swing", "P(win)", ""],
+      rows.map(([, row]) => row)
+    )
+  );
+}
+
+function eventPeak(impact, event) {
+  return Math.max(
+    0,
+    ...impact.fixtures.flatMap((fixture) =>
+      fixture.impacts.filter((row) => row.event === event).map((row) => row.rms_movement)
+    )
+  );
 }
 
 function ledgerView() {

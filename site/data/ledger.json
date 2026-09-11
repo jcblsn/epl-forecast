@@ -1,5 +1,5 @@
 {
-  "archived_at": "2026-09-10T23:12:55.848763+00:00",
+  "archived_at": "2026-09-11T01:01:12.362346+00:00",
   "pending_season_snapshots": [
     {
       "competition_id": "eng-championship",
@@ -12,6 +12,11 @@
       "snapshot_id": "2026-09-10T231152Z"
     },
     {
+      "competition_id": "eng-championship",
+      "season_id": "2026-2027",
+      "snapshot_id": "2026-09-11T010006Z"
+    },
+    {
       "competition_id": "eng-premier-league",
       "season_id": "2026-2027",
       "snapshot_id": "2026-09-10T224303Z"
@@ -20,6 +25,11 @@
       "competition_id": "eng-premier-league",
       "season_id": "2026-2027",
       "snapshot_id": "2026-09-10T231152Z"
+    },
+    {
+      "competition_id": "eng-premier-league",
+      "season_id": "2026-2027",
+      "snapshot_id": "2026-09-11T010006Z"
     }
   ],
   "schema_version": 1,

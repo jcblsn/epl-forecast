@@ -104,31 +104,17 @@ def _distribution(mapping: dict) -> dict:
     return {key: kept[key] for key in sorted(kept, key=int)}
 
 
-def derive_impact(
-    simulation: dict, kickoffs: dict, fixtures: int = 5, rows: int = 4
-) -> dict | None:
-    """Keep the highest-impact fixtures and, within each, the largest movements.
+def derive_impact(simulation: dict, kickoffs: dict) -> dict | None:
+    """Publish every fixture in the horizon with both participants on every event.
 
-    Both participants are represented where the fixture moves anything for them, so a
-    fixture never appears with only one side's events.
+    The viewer ranks by one chosen event at a time, so it needs the whole week rather
+    than a precomputed leaderboard. These are aggregates only: no path-level data.
     """
     impacts = simulation.get("match_impacts")
     if not impacts:
         return None
     published = []
-    for fixture in impacts["fixtures"][:fixtures]:
-        ranked = fixture["impacts"]
-        kept = [
-            next((row for row in ranked if row["team_id"] == team), None)
-            for team in (fixture["home_team_id"], fixture["away_team_id"])
-        ]
-        kept = [row for row in kept if row is not None]
-        for row in ranked:
-            if len(kept) >= rows:
-                break
-            if row not in kept:
-                kept.append(row)
-        kept.sort(key=lambda row: row["rms_movement"], reverse=True)
+    for fixture in impacts["fixtures"]:
         published.append(
             {
                 "match_id": fixture["match_id"],
@@ -155,7 +141,7 @@ def derive_impact(
                         "swing": probability(row["swing"]),
                         "sufficient_sample": row["sufficient_sample"],
                     }
-                    for row in kept
+                    for row in fixture["impacts"]
                 ],
             }
         )

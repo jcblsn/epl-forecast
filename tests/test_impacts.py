@@ -127,21 +127,36 @@ def test_no_requested_fixtures_publishes_no_impact_surface(full_season):
     assert derive_impact(result, {}) is None
 
 
-def test_derive_impact_keeps_five_fixtures_and_both_participants(full_season):
+def test_derive_impact_publishes_the_whole_horizon(full_season):
     result = run(full_season, count=8)
     kickoffs = {
         fixture["match_id"]: "2020-08-11T14:00:00+00:00"
         for fixture in result["match_impacts"]["fixtures"]
     }
     published = derive_impact(result, kickoffs)
-    assert len(published["fixtures"]) == 5
+    assert len(published["fixtures"]) == 8
     assert published["horizon_days"] == 7
+    events = {row["event"] for row in result["match_impacts"]["fixtures"][0]["impacts"]}
     for fixture in published["fixtures"]:
         assert fixture["kickoff_time"] == "2020-08-11T14:00:00+00:00"
-        assert len(fixture["impacts"]) == 4
-        assert {row["team_id"] for row in fixture["impacts"]} == {
-            fixture["home_team_id"],
-            fixture["away_team_id"],
-        }
+        assert len(fixture["impacts"]) == 2 * len(events)
+        for event in events:
+            assert {row["team_id"] for row in fixture["impacts"] if row["event"] == event} == {
+                fixture["home_team_id"],
+                fixture["away_team_id"],
+            }
         movements = [row["rms_movement"] for row in fixture["impacts"]]
         assert movements == sorted(movements, reverse=True)
+
+
+def test_every_fixture_can_be_ranked_for_any_single_event(full_season):
+    result = run(full_season, count=6)
+    published = derive_impact(result, {})
+    for event in {row["event"] for row in published["fixtures"][0]["impacts"]}:
+        ranked = [
+            row
+            for fixture in published["fixtures"]
+            for row in fixture["impacts"]
+            if row["event"] == event
+        ]
+        assert len(ranked) == 2 * len(published["fixtures"])
