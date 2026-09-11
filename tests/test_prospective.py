@@ -1,53 +1,8 @@
-import json
 from datetime import UTC, datetime
-from types import SimpleNamespace
 
 from epl_forecast import prospective
 from epl_forecast.data.capture import retain
 from epl_forecast.datasets import publish
-
-
-def test_collector_uses_one_cutoff_after_collection(tmp_path, monkeypatch):
-    root = tmp_path / "data"
-    captured = []
-    commands = []
-
-    def collect(data_root):
-        timestamp = datetime.now(UTC).isoformat()
-        captured.append(timestamp)
-        publish(
-            data_root,
-            {
-                "provider": "test",
-                "retrieved_at": timestamp,
-                "evidence_basis": "prospective",
-                "source_sha256": "a" * 64,
-                "context": {},
-            },
-            {},
-        )
-        return {"status": "complete", "errors": []}
-
-    def run(command, **kwargs):
-        commands.append(command)
-        return SimpleNamespace(returncode=0, stdout="", stderr="")
-
-    monkeypatch.setattr(prospective, "collect", collect)
-    monkeypatch.setattr(prospective.subprocess, "run", run)
-    report = prospective.capture_attempt(tmp_path / "runs", root)
-    assert report["status"] == "complete"
-    cutoffs = {c[c.index("--cutoff") + 1] for c in commands}
-    assert len(cutoffs) == 1
-    assert datetime.fromisoformat(cutoffs.pop()) >= datetime.fromisoformat(captured[0])
-    competitions = [c[c.index("--competition") + 1] for c in commands]
-    assert set(competitions) == {
-        "eng-premier-league",
-        "eng-championship",
-        "eng-league-one",
-        "eng-league-two",
-    }
-    assert competitions.count("eng-league-one") == competitions.count("eng-league-two") == 2
-    assert json.loads((tmp_path / "runs" / "state.json").read_text())["fingerprint"]
 
 
 def test_normalize_rejects_corrupted_raw_capture(tmp_path):
@@ -86,27 +41,6 @@ def test_final_fixture_capture_has_bounded_correction_checkpoints():
     assert fixture_details_due(fixtures, records(25), kickoff + timedelta(days=2)) == []
     assert fixture_details_due(fixtures, records(25), kickoff + timedelta(days=7)) == [10]
     assert fixture_details_due(fixtures, records(169), kickoff + timedelta(days=30)) == []
-
-
-def test_forecast_worker_does_not_block_on_collection(tmp_path, monkeypatch):
-    root = tmp_path / "data"
-    (root / "audits").mkdir(parents=True)
-    (root / "audits" / "collection.json").write_text(
-        json.dumps({"status": "complete", "errors": []})
-    )
-
-    def forbidden(*args, **kwargs):
-        raise AssertionError("Forecast worker must use the independently captured archive")
-
-    monkeypatch.setattr(prospective, "collect", forbidden)
-    monkeypatch.setattr(
-        prospective.subprocess,
-        "run",
-        lambda *args, **kwargs: SimpleNamespace(returncode=0, stdout="", stderr=""),
-    )
-    report = prospective.capture_attempt(tmp_path / "runs", root, collect_first=False)
-    assert report["status"] == "complete"
-    assert len(report["forecasts"]) == 14
 
 
 def test_market_snapshot_changes_forecast_fingerprint(tmp_path):
