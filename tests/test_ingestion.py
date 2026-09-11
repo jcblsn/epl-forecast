@@ -519,3 +519,67 @@ def test_a_fixture_without_team_statistics_publishes_none(tmp_path):
     data = Dataset(tmp_path)
     assert data.rows("SELECT count(*) AS n FROM team_statistics") == [{"n": 0}]
     data.close()
+
+
+def test_a_reviewed_disputed_fixture_keeps_its_result_unknown(tmp_path, monkeypatch):
+    import pytest
+
+    key = "eng-championship:2026-2027:swansea-city:birmingham-city"
+    monkeypatch.setattr(
+        api, "FIXTURE_DISPUTES", {900001: {"match_id": key, "resolution": "unknown: test"}}
+    )
+    manifest = api.normalize(fixture_record(), fixture_body([]), tmp_path)
+    data = Dataset(tmp_path)
+    (row,) = data.rows("SELECT * FROM fixtures")
+    data.close()
+    assert (row["status"], row["home_goals"], row["match_date"]) == ("disputed", None, None)
+    (issue,) = manifest["request"]["normalization_issues"]
+    assert issue["match_id"] == key and issue["reported_values"]["home_goals"] == 2
+    monkeypatch.setattr(
+        api, "FIXTURE_DISPUTES", {900001: {"match_id": "another", "resolution": "unknown"}}
+    )
+    with pytest.raises(ValueError, match="another match"):
+        api.normalize(fixture_record("2026-09-09T10:00:00+00:00"), fixture_body([]), tmp_path)
+
+
+def test_latest_odds_without_a_captured_schedule_stay_unlinked(tmp_path):
+    from epl_forecast.data import football_data
+    from epl_forecast.datasets import publish
+
+    evidence = {
+        "provider": "api_football",
+        "retrieved_at": "2026-08-13T10:00:00+00:00",
+        "evidence_basis": "captured",
+        "source_sha256": "a" * 64,
+        "context": {},
+    }
+    fixture = {
+        "match_id": "eng-premier-league:2026-2027:arsenal:chelsea",
+        "competition_id": "eng-premier-league",
+        "season_id": "2026-2027",
+        "stage": "regular",
+        "home_team_id": "arsenal",
+        "away_team_id": "chelsea",
+        "match_date": "2026-08-15",
+        "status": "scheduled",
+    }
+    publish(tmp_path, evidence, {"fixtures": [fixture]})
+    payload = (
+        "Div,Date,HomeTeam,AwayTeam,B365H,B365D,B365A\n"
+        "E0,15/08/2026,Arsenal,Chelsea,2.1,3.4,3.6\n"
+        "E2,15/08/2026,Barnet,Bromley,2.5,3.2,2.9\n"
+    ).encode()
+    record = {
+        "provider": "football_data",
+        "retrieved_at": "2026-08-14T10:00:00+00:00",
+        "evidence_basis": "captured",
+        "source_sha256": "b" * 64,
+        "context": {"kind": "latest_odds", "season_id": "2026-2027"},
+    }
+    manifest = football_data.ingest(tmp_path, record, payload)
+    data = Dataset(tmp_path)
+    odds = data.rows("SELECT match_id FROM odds")
+    data.close()
+    assert odds == [{"match_id": fixture["match_id"]}]
+    (issue,) = manifest["request"]["normalization_issues"]
+    assert (issue["competition_id"], issue["rows"]) == ("eng-league-one", 1)
