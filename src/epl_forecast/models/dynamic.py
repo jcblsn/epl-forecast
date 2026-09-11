@@ -30,6 +30,7 @@ class DynamicAttackDefense(BaseModel):
     league_dimensions = 2
     relegation_entry = "retained"
     entry_prior = None
+    entry_prior_label = "season"
 
     def __init__(
         self,
@@ -119,7 +120,7 @@ class DynamicAttackDefense(BaseModel):
             for key, rows in self._seasons.items()
             if key[1] < season and rows[-1].available_on <= as_of
         }
-        key = season, tuple(sorted(available)), self.entry_prior
+        key = season, tuple(sorted(available)), self.entry_prior, self.entry_prior_label
         if key not in self._entry_models:
             self._entry_models[key] = EntryPriorModel(
                 available,
@@ -128,6 +129,7 @@ class DynamicAttackDefense(BaseModel):
                 as_of,
                 self.entry_prior,
                 self.initial_team_sd,
+                label=self.entry_prior_label,
             )
         return self._entry_models[key]
 
