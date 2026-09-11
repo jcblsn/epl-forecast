@@ -6,6 +6,14 @@ Use ASD-STE100 Simplified Technical English for all public facing natural langua
 
 Text in markdown files should not be hard wrapped.
 
+## Branches
+
+- `main` is the product line. It holds only what the four-division M7 product needs: operation, data collection, simulation, verification, publication, prospective scoring, the evidence in `evidence/`, tests and current docs.
+- Do model research on the `research` branch or on a temporary branch. The `research-anchor` tag marks the complete history before the product consolidation. See `docs/research.md`.
+- Move an improvement to `main` only as one focused pull request, with the evidence that `docs/validation.md` describes. Do not merge the whole `research` branch into `main`.
+- Do not add experiment reports, one-off scripts, parameter searches or superseded models to `main`.
+- M7 is frozen on `main`. Do not change model statistics in a cleanup or a refactor.
+
 ## Verifying
 
 Run `scripts/verify.sh` — it formats, then lints, then tests. Order matters: `ruff check` before `ruff format` aborts on fixable layout findings.
