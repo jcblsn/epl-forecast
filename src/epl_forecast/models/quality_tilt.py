@@ -88,7 +88,7 @@ class QualityTiltFilter(DynamicAttackDefense):
         """Decay and innovation variance for one club's two state slots.
 
         This deliberately uses the club dynamics rather than any subclass
-        augmentation of the state vector, such as appended player slots.
+        augmentation of the state vector.
         """
         leading = self.league_dimensions
         decay, variance = QualityTiltFilter.transition(self, years, leading + 2)
@@ -149,9 +149,6 @@ class QualityTiltFilter(DynamicAttackDefense):
             else rng.gamma(self.dispersion, 1 / self.dispersion, len(home_rate))
         )
         return rng.poisson(tempo * home_rate), rng.poisson(tempo * away_rate)
-
-    def player_quality_difference(self, fixture, values, rng, unknown):
-        return 0.0
 
     def team_summary(self, team, season):
         state = self.team_state(team, season)
@@ -264,7 +261,7 @@ class BayesianQualityTilt:
         covariance = np.einsum("i,ijk->jk", self.weights, [s.covariance for s in states])
         covariance += (deviations.T * self.weights) @ deviations
         summary = state_summary(team, TeamPrior(mean, covariance, states[0].source))
-        summary["season_pl_matches"] = self.members[0].appearances[team, season]
+        summary["season_matches"] = self.members[0].appearances[team, season]
         return summary
 
     def predict_match(self, fixture):
@@ -296,7 +293,7 @@ class ForwardQualityTiltStates:
             values = member.mean + rng.standard_normal((len(positions), len(member.mean))) @ (
                 np.linalg.cholesky(member.covariance).T
             )
-            self.groups.append([positions, snapshot, values, self.as_of, {}, {}])
+            self.groups.append([positions, snapshot, values, self.as_of, {}])
 
     def sample_scores(self, fixture, rng, paths=None):
         home, away = np.empty(self.size, dtype=int), np.empty(self.size, dtype=int)
@@ -321,7 +318,7 @@ class ForwardQualityTiltStates:
 
     def _group_rates(self, group, fixture, rng):
         """Advance one specification group to the fixture and return its latent rates."""
-        positions, model, values, day, entries, unknown = group
+        positions, model, values, day, entries = group
         model.validate_fixture(fixture)
         if fixture.match_date < day:
             raise ValueError("Forward simulation requires chronological fixtures")
@@ -357,7 +354,6 @@ class ForwardQualityTiltStates:
 
         home, away = team_value(fixture.home_team_id), team_value(fixture.away_team_id)
         quality, tilt = home[:, 0] - away[:, 0], home[:, 1] + away[:, 1]
-        quality += model.player_quality_difference(fixture, values, rng, unknown)
         # Every leading league slot must reach the simulated rate, not only the first two.
         league = values[:, : model.league_dimensions] @ model._league_design(fixture).T
         return np.exp(league[:, 0] + quality + tilt), np.exp(league[:, 1] - quality + tilt)

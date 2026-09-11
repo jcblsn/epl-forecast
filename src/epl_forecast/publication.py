@@ -221,6 +221,18 @@ def derive_forecast(
                 ],
             }
         matches.append(published)
+    # A postponed or undated fixture still enters the season paths, so say where it was placed.
+    unscheduled = [
+        {
+            "match_id": row["match_id"],
+            "home_team_id": row["home_team_id"],
+            "away_team_id": row["away_team_id"],
+            "match_date": row["match_date"],
+            "simulated_on": row["model_forecast_date"],
+        }
+        for row in forecast["matches"]
+        if row["status"] == "unscheduled"
+    ]
     document = {
         "schema_version": 1,
         "snapshot_id": snapshot_id,
@@ -242,6 +254,8 @@ def derive_forecast(
         },
         "teams": teams,
         "matches": matches,
+        "unscheduled_fixtures": unscheduled,
+        "unscheduled_assumption": forecast.get("unscheduled_placeholder") if unscheduled else None,
         "impact": derive_impact(
             simulation, {row["match_id"]: row["kickoff_time"] for row in matches}
         ),

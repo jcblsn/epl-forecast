@@ -170,6 +170,41 @@ def test_distant_fixtures_stay_outside_the_horizon():
     assert [match["match_date"] for match in document["matches"]] == ["2026-09-12"]
 
 
+def test_postponed_fixtures_are_disclosed_with_their_placement():
+    from epl_forecast.live_forecast import UNSCHEDULED_PLACEHOLDER
+
+    forecast = sample_forecast()
+    match_id = "eng-premier-league:2026-2027:chelsea:arsenal-postponed"
+    forecast["matches"].append(
+        {
+            **forecast["matches"][1],
+            "match_id": match_id,
+            "status": "unscheduled",
+            "kickoff_time": None,
+            "match_date": "2026-09-08",
+            "model_forecast_date": "2026-09-10",
+        }
+    )
+    forecast["unscheduled_fixtures"] = [match_id]
+    forecast["unscheduled_placeholder"] = UNSCHEDULED_PLACEHOLDER
+    document = derive_forecast(forecast, sample_run(), "2026-09-10T120000Z")
+    check_publishable(document, load_policy())
+    assert document["unscheduled_fixtures"] == [
+        {
+            "match_id": match_id,
+            "home_team_id": "chelsea",
+            "away_team_id": "arsenal",
+            "match_date": "2026-09-08",
+            "simulated_on": "2026-09-10",
+        }
+    ]
+    assert document["unscheduled_assumption"] == UNSCHEDULED_PLACEHOLDER
+    assert match_id not in {match["match_id"] for match in document["matches"]}
+    plain = derive_forecast(sample_forecast(), sample_run(), "2026-09-10T120000Z")
+    assert plain["unscheduled_fixtures"] == []
+    assert plain["unscheduled_assumption"] is None
+
+
 def test_a_thin_or_missing_projection_is_not_a_product():
     coarse = sample_forecast()
     coarse["simulation"]["simulations"] = 20

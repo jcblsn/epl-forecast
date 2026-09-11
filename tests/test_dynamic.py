@@ -123,7 +123,7 @@ def test_promoted_prior_is_used_before_first_pl_result_and_replaces_stale_pl(bri
     state = model.team_state("e3", "2020-2021")
     assert state.mean == pytest.approx(expected.mean)
     assert state.covariance == pytest.approx(expected.covariance)
-    assert model.team_summary("e3", "2020-2021")["season_pl_matches"] == 0
+    assert model.team_summary("e3", "2020-2021")["season_matches"] == 0
     assert model.team_state("e0", "2020-2021").source == "previous league state"
 
 

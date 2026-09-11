@@ -237,7 +237,7 @@ def parser() -> argparse.ArgumentParser:
     forecast.add_argument("--market-pool", type=Path, default=Path("configs/market_pool.json"))
     forecast.set_defaults(func=forecast_command)
     operate = commands.add_parser(
-        "operate", help="Collect, forecast both leagues, verify and publish derived artifacts"
+        "operate", help="Collect, forecast every division, verify and publish derived artifacts"
     )
     operate.add_argument("--data", type=Path, default=Path("data"))
     operate.add_argument("--site", type=Path, default=Path("site"))

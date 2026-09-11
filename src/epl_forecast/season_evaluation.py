@@ -302,3 +302,32 @@ def promotion_season_truth(matches, season, season_matches, teams, seed, adjustm
             row["automatic_promotion_probability"] + row["playoff_promotion_probability"]
         )
     return truth
+
+
+def realized_truth(matches, competition, season, season_matches, teams, seed, adjustments):
+    """The realized table, with the observed playoff winner wherever the division promotes."""
+    if league_rules(competition, season).promotes:
+        return promotion_season_truth(matches, season, season_matches, teams, seed, adjustments)
+    return season_truth(season_matches, teams, seed, adjustments)
+
+
+def entry_cohorts(matches, competition, season, teams):
+    """How each club entered the division: it stayed, fell from above or rose from below."""
+    year = int(season[:4])
+    prior = f"{year - 1}-{year}"
+    previous = season_teams(matches, competition, prior)
+    above, below = (adjacent(competition, step) for step in (-1, 1))
+    from_above = season_teams(matches, above.competition_id, prior) if above else set()
+    from_below = season_teams(matches, below.competition_id, prior) if below else set()
+    return {
+        team: (
+            "incumbent"
+            if team in previous
+            else "relegated_from_above"
+            if team in from_above
+            else "promoted_from_below"
+            if team in from_below
+            else "promoted_from_outside"
+        )
+        for team in teams
+    }

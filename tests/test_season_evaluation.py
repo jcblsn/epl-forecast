@@ -1,7 +1,53 @@
+from datetime import date
+
 import numpy as np
 import pytest
 
+from epl_forecast.schema import Fixture, Match, fixture_id
 from epl_forecast.season_evaluation import points_metrics, rank_metrics, rank_scores, summarize
+
+
+def test_entry_cohorts_read_both_neighbouring_divisions():
+    from epl_forecast.season_evaluation import entry_cohorts
+
+    def game(competition, season, home, away):
+        day = date(int(season[:4]), 9, 1)
+        return Match(
+            Fixture(
+                fixture_id(competition, season, home, away), competition, season, day, home, away
+            ),
+            1,
+            0,
+        )
+
+    matches = [
+        game("eng-championship", "2019-2020", "stay", "gone"),
+        game("eng-premier-league", "2019-2020", "fell", "other"),
+        game("eng-league-one", "2019-2020", "rose", "another"),
+    ]
+    assert entry_cohorts(
+        matches, "eng-championship", "2020-2021", ["stay", "fell", "rose", "new"]
+    ) == {
+        "stay": "incumbent",
+        "fell": "relegated_from_above",
+        "rose": "promoted_from_below",
+        "new": "promoted_from_outside",
+    }
+    assert entry_cohorts(matches, "eng-league-two", "2020-2021", ["rose"]) == {
+        "rose": "relegated_from_above"
+    }
+
+
+def test_realized_truth_uses_the_playoff_winner_in_every_promoting_division(monkeypatch):
+    from epl_forecast import season_evaluation as evaluation
+
+    monkeypatch.setattr(evaluation, "promotion_season_truth", lambda *args: "bracket")
+    monkeypatch.setattr(evaluation, "season_truth", lambda *args: "table")
+    for competition in ("eng-championship", "eng-league-one", "eng-league-two"):
+        assert evaluation.realized_truth([], competition, "2024-2025", [], [], 1, []) == "bracket"
+    assert (
+        evaluation.realized_truth([], "eng-premier-league", "2024-2025", [], [], 1, []) == "table"
+    )
 
 
 def test_trps_perfect_worst_and_partial_rankings():

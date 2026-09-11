@@ -6,17 +6,16 @@ from pathlib import Path
 
 from epl_forecast.artifacts import execution_provenance
 from epl_forecast.cli import fitted_model, load_config, save_rows
-from epl_forecast.competitions import COMPETITION_IDS, adjacent, competition
-from epl_forecast.data.rules import league_rules
+from epl_forecast.competitions import COMPETITION_IDS, competition
 from epl_forecast.datasets import Dataset
 from epl_forecast.sanctions import REGISTRIES, load_registry
 from epl_forecast.season_evaluation import (
+    entry_cohorts,
     final_cutoff,
-    promotion_season_truth,
+    realized_truth,
     score_forecast,
     season_origins,
     season_teams,
-    season_truth,
     summarize,
 )
 from epl_forecast.simulation import simulate_season
@@ -113,25 +112,10 @@ def main():
         final = sanctions.final_adjustments(args.competition, season, cutoff)
         if not sanctions.derivation(args.competition, season)["sanctioned_table_available"]:
             unsanctioned.append(season)
-        if league_rules(args.competition, season).promotes:
-            truth = promotion_season_truth(matches, season, season_matches, teams, args.seed, final)
-        else:
-            truth = season_truth(season_matches, teams, args.seed, final)
-        above, below = (adjacent(args.competition, step) for step in (-1, 1))
-        from_above = season_teams(matches, above.competition_id, prior_season) if above else set()
-        from_below = season_teams(matches, below.competition_id, prior_season) if below else set()
-        entry_cohorts = {
-            team: (
-                "incumbent"
-                if team in previous
-                else "relegated_from_above"
-                if team in from_above
-                else "promoted_from_below"
-                if team in from_below
-                else "promoted_from_outside"
-            )
-            for team in teams
-        }
+        truth = realized_truth(
+            matches, args.competition, season, season_matches, teams, args.seed, final
+        )
+        cohorts = entry_cohorts(matches, args.competition, season, teams)
         for origin_index, (origin, as_of) in enumerate(origins.items()):
             seed = args.seed + year * 10 + origin_index
             played = [m for m in season_matches if m.available_on <= as_of]
@@ -167,9 +151,9 @@ def main():
                     for row in score_forecast(
                         forecast,
                         truth,
-                        {team for team, cohort in entry_cohorts.items() if cohort != "incumbent"},
+                        {team for team, cohort in cohorts.items() if cohort != "incumbent"},
                         seed,
-                        entry_cohorts,
+                        cohorts,
                     )
                 )
                 save_rows(args.output / "club_seasons.csv", rows)

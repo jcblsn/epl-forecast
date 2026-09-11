@@ -348,7 +348,7 @@ class DynamicAttackDefense(BaseModel):
             "defense_sd": float(np.sqrt(state.covariance[1, 1])),
             "attack_defense_covariance": float(state.covariance[0, 1]),
             "state_source": state.source,
-            "season_pl_matches": self.appearances[team, season],
+            "season_matches": self.appearances[team, season],
             "entry_attack": float(prior.mean[0]),
             "entry_defense": float(prior.mean[1]),
             "entry_attack_sd": float(np.sqrt(prior.covariance[0, 0])),

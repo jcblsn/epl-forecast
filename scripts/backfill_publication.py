@@ -33,8 +33,8 @@ def snapshot_id(directory: Path) -> str:
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--source", type=Path, default=Path("runs/prospective"))
-    parser.add_argument("--pattern", default="*/*/M7")
+    parser.add_argument("--source", type=Path, default=Path("runs/product"))
+    parser.add_argument("--pattern", default="*/eng-*")
     parser.add_argument("--site", type=Path, default=Path("site"))
     parser.add_argument("--data", type=Path, default=Path("data"))
     parser.add_argument("--verification", type=Path, default=Path("runs/product/backfill"))
@@ -44,9 +44,9 @@ def main():
     for archive in sorted(args.source.glob(args.pattern)):
         if not (archive / "forecast.json").is_file():
             continue
-        attempt = archive.relative_to(args.source).parts[0]
-        name = f"{attempt}/{archive.parent.name}"
-        report_directory = args.verification / attempt / archive.parent.name
+        relative = archive.relative_to(args.source)
+        attempt, name = relative.parts[0], relative.as_posix()
+        report_directory = args.verification / relative
         completed = verify_archive(args.data, archive, report_directory)
         if completed.returncode:
             reason = (completed.stdout + completed.stderr).strip().splitlines()

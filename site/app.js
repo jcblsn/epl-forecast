@@ -92,8 +92,21 @@ function render() {
     button.setAttribute("aria-current", String(button.dataset.view === state.view));
   });
   panel.replaceChildren();
+  if (state.view !== "ledger") panel.append(...unscheduledNote());
   const views = { table: tableView, positions: positionsView, teams: teamsView, fixtures: fixturesView, impact: impactView, ledger: ledgerView };
   views[state.view]();
+}
+
+function unscheduledNote() {
+  // Snapshots published before this field existed carry no disclosure.
+  const fixtures = state.document.unscheduled_fixtures ?? [];
+  if (!fixtures.length) return [];
+  const names = Object.fromEntries(state.document.teams.map((team) => [team.team_id, team.name]));
+  const listed = fixtures
+    .map((f) => `${names[f.home_team_id] ?? f.home_team_id} v ${names[f.away_team_id] ?? f.away_team_id}` +
+      (f.match_date ? ` (was ${f.match_date}, simulated on ${f.simulated_on})` : ` (no date, simulated on ${f.simulated_on})`))
+    .join("; ");
+  return [element("p", { className: "note", textContent: `Postponed or undated: ${listed}. ${state.document.unscheduled_assumption ?? ""}` })];
 }
 
 function tableView() {

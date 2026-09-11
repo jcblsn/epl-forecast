@@ -7,15 +7,9 @@ from pathlib import Path
 
 from epl_forecast.datasets import Dataset
 from epl_forecast.sanctions import load_registry
-from epl_forecast.season_evaluation import (
-    final_cutoff,
-    promotion_season_truth,
-    season_teams,
-    season_truth,
-)
+from epl_forecast.season_evaluation import entry_cohorts, final_cutoff, realized_truth
 from epl_forecast.storage import file_hash, write_json
 
-CHAMPIONSHIP = "eng-championship"
 KEEP = (
     "competition_id",
     "season_id",
@@ -61,28 +55,14 @@ def main():
         if season in truth:
             continue
         season_matches = [m for m in league if m.fixture.season_id == season]
-        teams = sorted({m.fixture.home_team_id for m in season_matches})
-        year = int(season[:4])
-        previous = season_teams(matches, competition, f"{year - 1}-{year}")
-        previous_pl = season_teams(matches, "eng-premier-league", f"{year - 1}-{year}")
-        cutoff = final_cutoff(season_matches)
-        final = sanctions.final_adjustments(competition, season, cutoff)
-        if competition == CHAMPIONSHIP:
-            truth[season] = promotion_season_truth(
-                matches, season, season_matches, teams, manifest["seed"], final
-            )
-        else:
-            truth[season] = season_truth(season_matches, teams, manifest["seed"], final)
-        cohorts[season] = {
-            team: (
-                "incumbent"
-                if team in previous
-                else "relegated_from_pl"
-                if competition == CHAMPIONSHIP and team in previous_pl
-                else "promoted_from_lower"
-            )
-            for team in teams
-        }
+        teams = sorted(
+            {t for m in season_matches for t in (m.fixture.home_team_id, m.fixture.away_team_id)}
+        )
+        final = sanctions.final_adjustments(competition, season, final_cutoff(season_matches))
+        truth[season] = realized_truth(
+            matches, competition, season, season_matches, teams, manifest["seed"], final
+        )
+        cohorts[season] = entry_cohorts(matches, competition, season, teams)
         promoted[season] = sorted(t for t, c in cohorts[season].items() if c != "incumbent")
     archive = {
         "schema_version": 1,

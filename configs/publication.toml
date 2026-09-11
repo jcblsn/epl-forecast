@@ -76,6 +76,7 @@ allowed_keys = [
   "scored",
   "season_id",
   "settled",
+  "simulated_on",
   "simulations",
   "smallest_outcome_count",
   "snapshot_id",
@@ -90,6 +91,8 @@ allowed_keys = [
   "team_id",
   "teams",
   "top_rms_movement",
+  "unscheduled_assumption",
+  "unscheduled_fixtures",
   "unsettled",
   "verification",
 ]
