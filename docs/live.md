@@ -1,9 +1,10 @@
 # Local collection and forecasts
 
-Both the Premier League and Championship use the same local collector and canonical
-data boundary. Run `uv run epl-forecast data collect`, then `uv run epl-forecast forecast
---competition eng-premier-league` or the equivalent `eng-championship` command.
-The Championship baseline configuration is `configs/championship.toml`.
+All four divisions — the Premier League, Championship, League One and League Two —
+use the same local collector and canonical data boundary. Run
+`uv run epl-forecast data collect`, then `uv run epl-forecast forecast --competition
+eng-premier-league` or the equivalent `eng-championship`, `eng-league-one` or
+`eng-league-two` command. The EFL baseline configuration is `configs/championship.toml`.
 
 API-Football credentials belong in the environment or ignored `.env`. Collection
 preserves successful responses when another source fails and reports partial status
@@ -22,8 +23,10 @@ uv run python scripts/capture_prospective.py --install-launch-agent --backfill-r
 
 The collector wakes every twelve hours and captures due provider observations. The
 separate forecast worker checks for canonical information changes or a twelve-hour
-heartbeat. Expensive model runs therefore do not delay capture. M2, M5, M6, M7
-and M8 run for both leagues. Research model outputs do not establish model promotion.
+heartbeat. Expensive model runs therefore do not delay capture. M2 and M7 run for
+every division; the player and process research models M5, M6 and M8 run for the
+Premier League and Championship, where their inputs exist. Research model outputs do
+not establish model promotion.
 Each attempt records independent command outcomes and logs; failed forecasts are
 retried on a later tick. All models in an attempt use one cutoff after collection.
 M7 forecast archives publish structural probabilities and a separately labeled

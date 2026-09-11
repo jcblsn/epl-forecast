@@ -131,14 +131,16 @@ titleholders or eligibility exclusions. The
 shows why league ranks alone cannot determine every European place.
 
 The `forecast` command reads canonical regular-season fixtures populated from
-API-Football schedules and reconciled provider results. It supports both leagues,
-with 380 PL or 552 Championship fixtures, and retains capture provenance. Fitting
+API-Football schedules and reconciled provider results. It supports all four
+divisions, with 380 Premier League fixtures or 552 in each EFL division, and retains
+capture provenance. Fitting
 excludes the cutoff's London date; the live table fixes all captured full-time
 scores, including that date. The optional `results_observed_at` simulation input
 supports this separation; historical simulation retains its next-day cutoff.
 
-Undated/postponed fixtures keep their raw kickoff information in exports.
-Unresolved schedules, in-progress games and overdue results suspend the season
+Undated/postponed fixtures keep their raw kickoff information in exports and are
+simulated on the cutoff day, disclosed as placeholders, until the provider re-dates
+them. In-progress games and overdue results suspend the season
 projection while other predictions remain available.
 These forecasts do not constitute an in-play model. See [live operations](live.md)
 for freshness, archival behavior and the initial 2026/27 forecast.

@@ -67,7 +67,7 @@ all final sanctions. Unexpected sanctions therefore contribute to forecast error
 Archived results record what clubs earned on the pitch, not what the competition
 awarded them. The realized table is therefore built from results plus every
 sanction the retained API-Football standings show in force at the end of the
-season, in both leagues. A club's net adjustment is the difference between its
+season, in every division. A club's net adjustment is the difference between its
 standings points and the points its archived results imply, checked against the
 prefix of its own fixtures the provider says it had played and against the
 provider's goal difference over that prefix. Where the two tables do not describe

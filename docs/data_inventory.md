@@ -5,9 +5,9 @@ Provider payloads remain local and subject to provider licensing.
 
 | Provider | Retained purpose | Important boundary |
 | --- | --- | --- |
-| API-Football | Both leagues' fixtures, players, squads, appearances, transfers, injuries, sidelined records, per-match team statistics and league standings | Historical responses are retrospective; current squads cannot reconstruct historical registrations. |
-| football-data.co.uk | Both leagues' results, odds, shots and shots on target | Historical odds have retrieval provenance, not invented pre-kickoff capture times. |
-| Understat | PL team and player xG/process | No Championship xG; team and player xG are distinct concepts. |
+| API-Football | Fixtures, teams and league standings for all four divisions; current squads, players, transfers and injuries for all four; historical player appearances, sidelined records and per-match team statistics for the top two | Historical responses are retrospective; current squads cannot reconstruct historical registrations. League One and League Two player-level history is not backfilled. |
+| football-data.co.uk | All four divisions' results, odds, shots and shots on target from 2010/11 | Historical odds have retrieval provenance, not invented pre-kickoff capture times. |
+| Understat | PL team and player xG/process | No Championship, League One or League Two xG; team and player xG are distinct concepts. |
 | FPL | PL availability, news, round playing probabilities | Current observations only; no historical player restoration or fixture dependency. |
 
 API-Football fixture coverage begins in 2010 for PL and 2011 for Championship;
@@ -17,7 +17,11 @@ carry the provider's own expected goals from 2022/23 in both leagues, which is t
 only Championship xG in this archive. Standings are the provider's league table
 including sanctions; they are the evidence behind realized final points, and the
 retained snapshot for 2017/18 Championship is a partial mid-season table rather
-than a final one.
+than a final one. League One and League Two fixtures, teams and standings are
+retained from 2015/16; their 2017/18 standings are also not final tables, and their
+curtailed 2019/20 seasons have incomplete fixture lists. One API-Football fixture
+record contradicted by the provider's own final standings is listed in
+`src/epl_forecast/data/api_fixture_disputes.json`.
 Endpoint flags describe advertised coverage, not verified completeness. The local
 archive audit reports actual counts and gaps. Transfers and sidelined depth vary
 by player. Stable API IDs anchor canonical player identity; explicit FPL and

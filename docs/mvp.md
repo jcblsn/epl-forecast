@@ -44,32 +44,39 @@ Every current M7 archive contains:
 - expected and median points and rank, plus central 50%, 80% and 90% intervals;
 - title, top-four, top-five and relegation probabilities for the Premier League;
 - title, automatic-promotion, playoff-qualification, promotion and relegation
-  probabilities for the Championship;
+  probabilities for the Championship, League One and League Two, under each
+  division's own places;
 - the provider observation cutoff, generation timestamp, input provenance and a
-  pre-kickoff archive manifest.
+  pre-kickoff archive manifest;
+- any postponed or undated fixture, disclosed and simulated on the cutoff day until
+  the provider re-dates it.
 
 M7 is the primary forecast surface for near-term H/D/A probabilities, exact scores,
 team states and season paths. The market-assisted arm remains separately labeled
 comparison evidence when its required quote exists.
 
-Championship playoff promotion simulates the edition-specific bracket conditional
-on each regular-season path, on that path's own latent team states. Neutral-final
-and tied-knockout treatments remain explicit approximations, separate from fitting.
+Playoff promotion in each EFL division simulates the edition-specific bracket
+conditional on each regular-season path, on that path's own latent team states: the
+Championship's six-team 2026/27 bracket and the four-team brackets of League One and
+League Two. Neutral-final and tied-knockout treatments remain explicit approximations,
+separate from fitting.
 The [conditioning validation](experiments/playoff_conditioning.md) confirms that
 this leaves points and rank distributions untouched.
 
 Realized and current tables carry the sanctions in force, and forecasts carry only
-the sanctions knowable at their cutoff, in both leagues. `scripts/verify_forecast_product.py`
+the sanctions knowable at their cutoff, in every division. `scripts/verify_forecast_product.py`
 re-checks a published archive against every claim on this page.
 
-Run both products with:
+Run the four products with:
 
 ```sh
 uv run epl-forecast forecast --competition eng-premier-league
 uv run epl-forecast forecast --competition eng-championship
+uv run epl-forecast forecast --competition eng-league-one
+uv run epl-forecast forecast --competition eng-league-two
 ```
 
-`uv run epl-forecast operate` runs both, verifies each archive against this page
+`uv run epl-forecast operate` runs all four, verifies each archive against this page
 and publishes the derived surface described in
 [operating the forecast product](product.md). Published snapshots are immutable,
 carry at least 1,000 simulated paths, and are scored prospectively once their
