@@ -28,7 +28,7 @@ The previous rule was never stated as a rule. Promotion into the Premier League
 ran through a fitted bridge; entry into the Championship ran through whatever
 Championship state survived in the filter. West Ham enter the Championship in
 2026/27 with a Championship state last updated in 2011/12. Fifteen years of
-mean reversion leave that state at +0.03 attack with SD 0.19 — almost exactly
+mean reversion leave that state at +0.02 attack with SD 0.19 — almost exactly
 the stationary distribution — so the old rule describes a relegated Premier
 League club as an average Championship club, and describes a club promoted from
 League One the same way. The realized difference between those two cohorts is
@@ -259,6 +259,43 @@ corner that still looks overconfident is defence for clubs entering the
 Championship from outside, whose residual SD fits at 0.081; coverage in that
 cell improves rather than degrades, so this is a flag for the next pass, not a
 defect this experiment can resolve.
+
+## Applied to 2026/27
+
+Entry priors for the current season's boundary crossers under both rules, in
+division-relative log-rate attack and defence with the attack SD.
+
+| Club | Transition | Age | Previous attack | Previous defence | Previous SD | New attack | New defence | New SD |
+| --- | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Coventry City | Championship → PL | — | −0.239 | −0.262 | 0.115 | −0.149 | −0.172 | 0.129 |
+| Hull City | Championship → PL | 10 | −0.239 | −0.262 | 0.115 | −0.239 | −0.192 | 0.123 |
+| Ipswich Town | Championship → PL | 2 | −0.239 | −0.262 | 0.115 | −0.273 | −0.290 | 0.130 |
+| Bolton Wanderers | outside → Championship | 8 | −0.107 | −0.101 | 0.183 | −0.064 | −0.089 | 0.172 |
+| Burnley | PL → Championship | 2 | +0.283 | +0.378 | 0.146 | +0.169 | +0.182 | 0.169 |
+| Cardiff City | outside → Championship | 2 | −0.129 | −0.138 | 0.145 | −0.084 | −0.117 | 0.170 |
+| Lincoln City | outside → Championship | — | −0.003 | +0.003 | 0.400 | −0.050 | −0.085 | 0.161 |
+| West Ham United | PL → Championship | 15 | +0.022 | +0.027 | 0.188 | +0.177 | +0.126 | 0.174 |
+| Wolverhampton Wanderers | PL → Championship | 9 | +0.047 | +0.052 | 0.185 | +0.141 | +0.126 | 0.174 |
+
+M5 and M7 run the promotion bridge at the cohort-mean Championship season, so
+the previous rule gives all three promoted clubs one prior. The new rule
+separates them by their own Championship seasons, moving Coventry up 0.09 and
+Ipswich down 0.03 in attack.
+
+West Ham are the case that opened this question. The previous rule described
+them as an average Championship club because that is what fifteen years of mean
+reversion leaves behind; the new rule describes them as a relegated Premier
+League club, +0.18 attack and +0.13 defence. Wolverhampton Wanderers move the
+same way on a nine-year-old state. Burnley move the other way: the previous rule
+gave them a two-year-old promotion-winning Championship state at +0.28 attack
+with SD 0.146, and the new rule pulls that back toward the relegated cohort and
+widens it to 0.169, because a two-year-old state is worth real weight but not
+full confidence. Lincoln City change most: from the flat prior at SD 0.400 to a
+League One entrant's prior at SD 0.161.
+
+The rule does not simply sharpen every prior. It widens Burnley, Cardiff City
+and every Premier League entrant, and narrows only where the previous rule was
+either flat or resting on evidence a decade old.
 
 ## Limits
 
