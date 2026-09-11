@@ -30,12 +30,14 @@ SPECS = {
 }
 
 
-def competition_config(name, competition):
+def competition_config(name, competition, train_competitions=None):
     config_path, model_id = SPECS[name]
     config = load_config(Path(config_path))
     config["competition_id"] = competition
     for spec in config["models"]:
         spec.setdefault("parameters", {})["competition_id"] = competition
+        if train_competitions and "train_competitions" in spec:
+            spec["train_competitions"] = list(train_competitions)
     return config, model_id
 
 
@@ -48,6 +50,12 @@ def main():
     parser.add_argument("--seasons", nargs="+", type=int, default=list(range(2015, 2026)))
     parser.add_argument("--models", nargs="+", choices=SPECS, default=list(SPECS))
     parser.add_argument("--competition", choices=COMPETITION_IDS, default=COMPETITION_IDS[0])
+    parser.add_argument(
+        "--train-competitions",
+        nargs="+",
+        choices=COMPETITION_IDS,
+        help="Replace the multi-division training set of every spec that declares one",
+    )
     args = parser.parse_args()
     data = Dataset(args.data)
     try:
@@ -56,7 +64,10 @@ def main():
         sanctions = load_registry(data)
     finally:
         data.close()
-    configs = {name: competition_config(name, args.competition)[0] for name in args.models}
+    configs = {
+        name: competition_config(name, args.competition, args.train_competitions)[0]
+        for name in args.models
+    }
     metadata = {
         "execution": execution_provenance(),
         "simulations": args.simulations,

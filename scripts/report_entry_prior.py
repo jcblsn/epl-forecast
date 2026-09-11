@@ -8,7 +8,7 @@ from pathlib import Path
 
 import numpy as np
 
-TREATMENTS = ("current", "population", "transition", "source", "memory")
+TREATMENTS = ("current", "population", "transition", "source", "memory", "two_division")
 
 
 def read(path):
