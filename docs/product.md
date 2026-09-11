@@ -11,9 +11,10 @@ forecasts live and how prospective performance accumulates. The
 uv run epl-forecast operate
 ```
 
-`operate` collects fresh provider data, runs the M7 product forecast for the
-Premier League and the Championship, runs `scripts/verify_forecast_product.py`
-against each archive, and publishes only if both archives pass. It then derives
+`operate` collects fresh provider data, runs the M7 product forecast for every
+division in the registry — the Premier League, Championship, League One and
+League Two — runs `scripts/verify_forecast_product.py` against each archive,
+and publishes only if every archive passes. It then derives
 the compact public documents, refreshes the snapshot index and rebuilds the
 prospective ledger. Nothing is published from a failed or unverified run.
 
@@ -134,7 +135,7 @@ published JSON and nothing else.
 uv run python -m http.server -d site 8000
 ```
 
-It shows both league tables with expected rank and points and the headline event
+It shows each division's table with expected rank and points and the headline event
 probabilities, the full finishing-position matrix, per-club points and rank
 distributions, upcoming fixtures with H/D/A and likeliest scores, the impact
 view, and the ledger. The impact view takes an event from a dropdown and lists

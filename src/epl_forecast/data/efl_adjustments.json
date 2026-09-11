@@ -163,5 +163,38 @@
     "decision": "Sanction recorded in the 2014/15 final table",
     "source": "reviewed EFL sanction registry; magnitude from the provider final table, decision date not established",
     "evidence": "unknown: decision date not established; excluded from every forecast origin"
+  },
+  {
+    "competition_id": "eng-league-one",
+    "season_id": "2023-2024",
+    "team_id": "reading",
+    "points": -6,
+    "announced_on": null,
+    "known_on": null,
+    "decision": "Sanction recorded in the 2023/24 final table",
+    "source": "reviewed EFL sanction registry; magnitude from the provider final table, decision date not established",
+    "evidence": "unknown: decision date not established; excluded from every forecast origin"
+  },
+  {
+    "competition_id": "eng-league-one",
+    "season_id": "2023-2024",
+    "team_id": "wigan-athletic",
+    "points": -8,
+    "announced_on": null,
+    "known_on": null,
+    "decision": "Sanction recorded in the 2023/24 final table",
+    "source": "reviewed EFL sanction registry; magnitude from the provider final table, decision date not established",
+    "evidence": "unknown: decision date not established; excluded from every forecast origin"
+  },
+  {
+    "competition_id": "eng-league-two",
+    "season_id": "2023-2024",
+    "team_id": "morecambe",
+    "points": -3,
+    "announced_on": null,
+    "known_on": null,
+    "decision": "Sanction recorded in the 2023/24 final table",
+    "source": "reviewed EFL sanction registry; magnitude from the provider final table, decision date not established",
+    "evidence": "unknown: decision date not established; excluded from every forecast origin"
   }
 ]
