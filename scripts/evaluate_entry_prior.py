@@ -1,4 +1,4 @@
-"""Matched entry priors for every club crossing a division boundary, in both divisions.
+"""Matched entry priors for every club crossing a division boundary, in every division.
 
 The current rule is implicit: a promoted club is initialized by the Championship
 bridge, and every other entrant keeps whatever target-division state it last
@@ -7,6 +7,10 @@ compares that rule against an explicit hierarchy — population, transition
 identity, transition plus source-division strength, and transition plus a
 time-weighted memory of the club's own older target-division form — on the same
 seasons, fixtures, dynamics and score law.
+
+`two_division` is the memory rule fitted with only the Premier League and the
+Championship visible, which is the product before League One and League Two were
+modeled; set against `memory` it measures what the lower divisions add.
 """
 
 import argparse
@@ -17,11 +21,11 @@ import numpy as np
 
 from epl_forecast.artifacts import execution_provenance
 from epl_forecast.cli import save_rows
+from epl_forecast.competitions import COMPETITION_IDS
+from epl_forecast.data.rules import league_rules
 from epl_forecast.datasets import Dataset
 from epl_forecast.models.entry_prior import LABELS, LEVELS, club_features
 from epl_forecast.models.promotion import (
-    CHAMPIONSHIP,
-    PL,
     completed_seasons,
     entry_label,
     season_strengths,
@@ -41,7 +45,8 @@ from epl_forecast.season_evaluation import (
 from epl_forecast.simulation import simulate_season
 from epl_forecast.storage import file_hash, write_json
 
-TREATMENTS = ("current", *LEVELS)
+TOP_TWO = COMPETITION_IDS[:2]
+TREATMENTS = ("current", *LEVELS, "two_division")
 ORIGINS = ("preseason", "MW6")
 COMPARISONS = (
     ("population", "current"),
@@ -51,6 +56,7 @@ COMPARISONS = (
     ("transition", "population"),
     ("source", "transition"),
     ("memory", "source"),
+    ("memory", "two_division"),
 )
 SEASON_METRICS = ("trps", "points_crps", "coverage_90", "width_90", "points_sd")
 
@@ -214,7 +220,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--data", type=Path, default=Path("data"))
-    parser.add_argument("--competitions", nargs="+", default=[PL, CHAMPIONSHIP])
+    parser.add_argument("--competitions", nargs="+", choices=COMPETITION_IDS, default=list(TOP_TWO))
     parser.add_argument("--seasons", nargs="+", type=int, default=list(range(2016, 2026)))
     parser.add_argument("--treatments", nargs="+", choices=TREATMENTS, default=list(TREATMENTS))
     parser.add_argument("--simulations", type=int, default=4000)
@@ -222,6 +228,8 @@ def main():
     parser.add_argument("--label", choices=LABELS, default="season")
     parser.add_argument("--seed", type=int, default=20260910)
     args = parser.parse_args()
+    if "two_division" in args.treatments and not set(args.competitions) <= set(TOP_TWO):
+        raise ValueError("The two-division rule exists only in the Premier League and Championship")
     data = Dataset(args.data)
     try:
         matches = data.matches()
@@ -248,6 +256,7 @@ def main():
             "transition": "intercept-only prior learned from earlier entrants of the same transition",
             "source": "transition prior plus the club's immediately preceding source-division season, where that division is modeled",
             "memory": "source prior plus the club's own older target-division season, weighted by a learned decay timescale",
+            "two_division": "the memory rule fitted with only the Premier League and the Championship visible",
         },
         "training_label_definition": {
             "season": "the club's whole-season division-relative target strength, a smoothed retrospective state used only to discover the mapping",
@@ -281,9 +290,10 @@ def main():
                 raise ValueError(f"No boundary crossers identified for {competition} {season}")
             labels = realized_labels(panel, competition, season, args.opening_matches)
             final = sanctions.final_adjustments(competition, season, final_cutoff(games))
+            promotes = league_rules(competition, season).promotes
             truth = (
                 promotion_season_truth(matches, season, games, teams, args.seed, final)
-                if competition == CHAMPIONSHIP
+                if promotes
                 else season_truth(games, teams, args.seed, final)
             )
             opening = {}
@@ -299,14 +309,24 @@ def main():
                 for team in teams
             }
             for treatment in args.treatments:
+                visible = TOP_TWO if treatment == "two_division" else COMPETITION_IDS
                 parent = XGQualityTiltFilter(observations, 0.2, **XG_DYNAMICS)
                 parent.primary_competition = competition
-                parent.entry_prior = None if treatment == "current" else treatment
+                parent.entry_prior = {"current": None, "two_division": "memory"}.get(
+                    treatment, treatment
+                )
                 parent.entry_prior_label = args.label
                 for index, origin in enumerate(ORIGINS):
                     as_of = origins[origin]
                     print(f"Fitting {competition} {season} {origin} {treatment}", flush=True)
-                    parent.fit([m for m in matches if m.available_on <= as_of], as_of)
+                    parent.fit(
+                        [
+                            m
+                            for m in matches
+                            if m.available_on <= as_of and m.fixture.competition_id in visible
+                        ],
+                        as_of,
+                    )
                     model = MatchedStateForecast(parent, teams, season, evolution=True)
                     played = [m for m in games if m.available_on <= as_of]
                     remaining = [m.fixture for m in games if m.available_on > as_of]
@@ -319,7 +339,7 @@ def main():
                         args.simulations,
                         args.seed + year * 10 + index,
                         sanctions.known_adjustments(competition, season, as_of),
-                        playoff_winner=teams[0] if competition == CHAMPIONSHIP else None,
+                        playoff_winner=teams[0] if promotes else None,
                     )
                     base = {
                         "competition_id": competition,
@@ -351,7 +371,7 @@ def main():
                         prior_rows(season, competition, treatment, entrants, priors, labels)
                     )
                     opening_rows.extend(match_rows(model, games, opening, base, entrants))
-                    if treatment in ("transition", "source", "memory"):
+                    if treatment in ("transition", "source", "memory", "two_division"):
                         model_rows.append(
                             {
                                 "treatment": treatment,

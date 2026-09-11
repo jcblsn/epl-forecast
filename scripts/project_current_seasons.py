@@ -1,4 +1,4 @@
-"""Create an immutable two-league M7 projection and matched sensitivity snapshot."""
+"""Create an immutable M7 projection of every division and a matched sensitivity snapshot."""
 
 import argparse
 from pathlib import Path
@@ -8,6 +8,8 @@ import numpy as np
 
 from epl_forecast.artifacts import execution_provenance, write_csv
 from epl_forecast.cli import fitted_model, load_config
+from epl_forecast.competitions import COMPETITION_IDS
+from epl_forecast.competitions import competition as competition_info
 from epl_forecast.datasets import Dataset, timestamp
 from epl_forecast.live import LONDON, load_live_season
 from epl_forecast.research.current_projection import compare_forecasts, noise_flags
@@ -16,7 +18,7 @@ from epl_forecast.sanctions import load_registry
 from epl_forecast.simulation import simulate_season
 from epl_forecast.storage import file_hash, json_bytes, sha256_bytes, write_json
 
-COMPETITIONS = ("eng-premier-league", "eng-championship")
+COMPETITIONS = COMPETITION_IDS
 MODEL_ID = "M7-xg-v1"
 VARIANTS = {
     "full_m7": {},
@@ -142,19 +144,19 @@ def report(snapshots, sensitivity, simulations, seed, cutoff):
         "",
     ]
     for snapshot in snapshots:
-        championship = snapshot["competition_id"] == "eng-championship"
+        promotion = "promotion_probability" in snapshot["teams"][0]
         lines.extend(
             [
-                f"## {'Championship' if championship else 'Premier League'}",
+                f"## {competition_info(snapshot['competition_id']).name}",
                 "",
                 (
                     "| Team | Exp rank | Median | 90% rank | Exp pts | 90% pts | Auto | Playoff | Promotion | Relegation |"
-                    if championship
+                    if promotion
                     else "| Team | Exp rank | Median | 90% rank | Exp pts | 90% pts | Title | Top five | Relegation |"
                 ),
                 (
                     "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |"
-                    if championship
+                    if promotion
                     else "| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |"
                 ),
             ]
@@ -168,7 +170,7 @@ def report(snapshots, sensitivity, simulations, seed, cutoff):
                 f"{team['mean_points']:.1f}",
                 "–".join(map(str, team["points_intervals"]["90"])),
             ]
-            if championship:
+            if promotion:
                 values.extend(
                     f"{team[key]:.1%}"
                     for key in (
@@ -222,7 +224,7 @@ def report(snapshots, sensitivity, simulations, seed, cutoff):
             "",
             "The full CSV reports team-level expected-rank changes, 50/80/90% width changes, event-probability changes, Wasserstein distance and total variation, with Monte Carlo-noise flags.",
             "",
-            "Championship postseason probabilities simulate the edition-specific bracket after every regular-season path. The retained rules do not resolve extra-time probabilities, neutral-site scoring, or semi-final leg order, so the explicit approximations recorded in the JSON remain part of the forecast definition.",
+            "EFL postseason probabilities simulate the edition-specific bracket after every regular-season path. The retained rules do not resolve extra-time probabilities, neutral-site scoring, or semi-final leg order, so the explicit approximations recorded in the JSON remain part of the forecast definition.",
             "",
         ]
     )

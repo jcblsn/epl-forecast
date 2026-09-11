@@ -6,6 +6,8 @@ from pathlib import Path
 
 from epl_forecast.artifacts import execution_provenance
 from epl_forecast.cli import fitted_model, load_config, save_rows
+from epl_forecast.competitions import COMPETITION_IDS, adjacent, competition
+from epl_forecast.data.rules import league_rules
 from epl_forecast.datasets import Dataset
 from epl_forecast.sanctions import REGISTRIES, load_registry
 from epl_forecast.season_evaluation import (
@@ -45,11 +47,7 @@ def main():
     parser.add_argument("--seed", type=int, default=20260908)
     parser.add_argument("--seasons", nargs="+", type=int, default=list(range(2015, 2026)))
     parser.add_argument("--models", nargs="+", choices=SPECS, default=list(SPECS))
-    parser.add_argument(
-        "--competition",
-        choices=("eng-premier-league", "eng-championship"),
-        default="eng-premier-league",
-    )
+    parser.add_argument("--competition", choices=COMPETITION_IDS, default=COMPETITION_IDS[0])
     args = parser.parse_args()
     data = Dataset(args.data)
     try:
@@ -98,26 +96,30 @@ def main():
         teams = sorted(
             {t for m in season_matches for t in (m.fixture.home_team_id, m.fixture.away_team_id)}
         )
-        previous = season_teams(matches, args.competition, f"{year - 1}-{year}")
-        expected = 20 if args.competition == "eng-premier-league" else 24
-        if len(previous) != expected:
+        prior_season = f"{year - 1}-{year}"
+        previous = season_teams(matches, args.competition, prior_season)
+        if len(previous) != competition(args.competition).teams:
             raise ValueError("Missing previous season for promotion labels")
         cutoff = final_cutoff(season_matches)
         final = sanctions.final_adjustments(args.competition, season, cutoff)
         if not sanctions.derivation(args.competition, season)["sanctioned_table_available"]:
             unsanctioned.append(season)
-        if args.competition == "eng-championship":
+        if league_rules(args.competition, season).promotes:
             truth = promotion_season_truth(matches, season, season_matches, teams, args.seed, final)
         else:
             truth = season_truth(season_matches, teams, args.seed, final)
-        previous_pl = season_teams(matches, "eng-premier-league", f"{year - 1}-{year}")
+        above, below = (adjacent(args.competition, step) for step in (-1, 1))
+        from_above = season_teams(matches, above.competition_id, prior_season) if above else set()
+        from_below = season_teams(matches, below.competition_id, prior_season) if below else set()
         entry_cohorts = {
             team: (
                 "incumbent"
                 if team in previous
-                else "relegated_from_pl"
-                if args.competition == "eng-championship" and team in previous_pl
-                else "promoted_from_lower"
+                else "relegated_from_above"
+                if team in from_above
+                else "promoted_from_below"
+                if team in from_below
+                else "promoted_from_outside"
             )
             for team in teams
         }
