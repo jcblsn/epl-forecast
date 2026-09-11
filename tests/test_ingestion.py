@@ -565,10 +565,10 @@ def test_latest_odds_without_a_captured_schedule_stay_unlinked(tmp_path):
     }
     publish(tmp_path, evidence, {"fixtures": [fixture]})
     payload = (
-        "Div,Date,HomeTeam,AwayTeam,B365H,B365D,B365A\n"
-        "E0,15/08/2026,Arsenal,Chelsea,2.1,3.4,3.6\n"
-        "E2,15/08/2026,Barnet,Bromley,2.5,3.2,2.9\n"
-    ).encode()
+        b"Div,Date,HomeTeam,AwayTeam,B365H,B365D,B365A\n"
+        b"E0,15/08/2026,Arsenal,Chelsea,2.1,3.4,3.6\n"
+        b"E2,15/08/2026,Barnet,Bromley,2.5,3.2,2.9\n"
+    )
     record = {
         "provider": "football_data",
         "retrieved_at": "2026-08-14T10:00:00+00:00",
