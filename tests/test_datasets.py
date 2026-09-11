@@ -83,6 +83,17 @@ def test_a_disputed_record_yields_to_the_finished_one(tmp_path):
     )
 
 
+def test_stored_times_read_back_in_utc(tmp_path):
+    kickoff = "2025-08-10T19:00:00+00:00"
+    publish(tmp_path, evidence(), {"fixtures": [{**fixture(), "kickoff_time": kickoff}]})
+    data = Dataset(tmp_path)
+    zone = data.rows("SELECT current_setting('TimeZone') AS zone")[0]["zone"]
+    (row,) = data.rows("SELECT kickoff_time FROM fixtures")
+    data.close()
+    assert zone == "UTC"
+    assert row["kickoff_time"].isoformat() == kickoff
+
+
 def test_unscoped_history_keeps_unknown_end_date(tmp_path):
     publish(
         tmp_path,

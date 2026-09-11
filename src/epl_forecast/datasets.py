@@ -14,6 +14,8 @@ COMMON = (
     "provider VARCHAR, retrieved_at TIMESTAMPTZ, evidence_basis VARCHAR, source_sha256 VARCHAR, "
     "normalization_version INTEGER"
 )
+# Stored instants must read back in UTC, not in the time zone of the machine that runs the product.
+SESSION_TIME_ZONE = "SET TimeZone='UTC'"
 SCHEMAS = {
     "competition_seasons": "competition_id VARCHAR, season_id VARCHAR, team_ids VARCHAR[], "
     "expected_matches INTEGER, coverage VARCHAR",
@@ -90,6 +92,7 @@ def publish(root, request, tables):
         return json.loads(destination.read_text())
     files = []
     with duckdb.connect() as con:
+        con.execute(SESSION_TIME_ZONE)
         for table, rows in sorted(tables.items()):
             if not rows:
                 continue
@@ -200,6 +203,7 @@ class Dataset:
             if self.cutoff is None or timestamp(m["request"]["retrieved_at"]) <= self.cutoff
         ]
         self.con = duckdb.connect()
+        self.con.execute(SESSION_TIME_ZONE)
         for table, schema in SCHEMAS.items():
             paths = [
                 str(self.root / f["path"])
