@@ -8,6 +8,11 @@ Results-only initialization has a small points-CRPS advantage over the pooled
 population comparator, but its season-cluster interval spans zero. Retain the
 reusable probabilistic transition and its ablations as research infrastructure.
 
+The operational entry treatment was later replaced by the [generic entry
+rule](entry_prior.md), which reaches promoted clubs through the same
+transition mechanism as every other boundary crosser. The process-signal
+conclusion below is unchanged.
+
 ## Matched experiment
 
 `runs/promotion-transition-v1` ran from clean commit `7f7e10c`, with the pinned

@@ -19,6 +19,12 @@ carried by the retained state for 25 of the 30 evaluated entries. The
 within-Premier-League part is real in attack but too noisily measured at entry to
 survive into forecasts.
 
+This decision was superseded by the [generic entry rule](entry_prior.md), which
+reaches relegated clubs through a transition prior rather than through the
+reverse bridge tested here. The finding below still holds for what it tested:
+the relegation bridge, trained on ten-match entry labels, bought sharpness it
+had not earned.
+
 ## Matched experiment
 
 `runs/relegation-entry-v1`, ten Championship seasons 2016/17–2025/26, 30 relegated

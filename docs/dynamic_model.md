@@ -62,15 +62,43 @@ The bridge used at entry contains only completed PL cohorts from earlier
 seasons, available on that entry date. An incoming club uses its immediately
 previous Championship season, including a returning club with stale PL ratings.
 The bridge applies only when the forecast competition is the Premier League. A
-Championship forecast has no boundary bridge by default, so a club returning to
-the Championship keeps its own fitted state and only a club never seen there
-draws the league population prior. Setting `relegation_entry` to `generic` or
-`mapped` turns on the reverse boundary for research; the
-[comparison](experiments/relegation_entry.md) keeps the default.
+Championship forecast has no boundary bridge, so under this rule a club
+returning to the Championship keeps its own fitted state and only a club never
+seen there draws the league population prior. Setting `relegation_entry` to
+`generic` or `mapped` turns on the reverse boundary for research; the
+[comparison](experiments/relegation_entry.md) rejected both.
 If the Championship season is incomplete or absent, the explicit fallback is
 the broader league population prior. Before its first PL result, a club can be
 predicted from its Championship prior without adding future fixture identities
 to the fitted vocabulary.
+
+## Generic entry rule
+
+The bridge above is the `entry_prior = None` rule and is retained for
+comparison. The default is one rule for every division boundary: a club that
+played the forecast competition last season carries its filtered state, and any
+other club is initialized from a prior fitted to earlier clubs making the same
+transition. Transition identity is read from the season panel, so promotion
+into the PL, relegation into the Championship and arrival into the Championship
+from a division the model does not track are three cases of one mechanism
+rather than three rules.
+
+Each transition's prior is an intercept, a coefficient on the club's
+immediately preceding source-division season where that division is modeled,
+and a coefficient on the club's own older target-division season weighted by
+`exp(-(age - 2) / tau)`. Coefficient priors are N(0, 0.6²) on the intercept and
+N(0, 0.5²) on the slopes; the residual scale is integrated under a
+half-normal(0.3) prior, and `tau` is marginalized over a grid that includes no
+decay at all. Returned entry variance carries residual, coefficient, source
+measurement and timescale-mixture uncertainty, and the two dimensions share a
+shrunk residual correlation, so the prior is not diagonal.
+
+Coefficients are fitted on whole-season division-relative target strengths, a
+smoothed retrospective label used only to discover the mapping; `entry_prior_label`
+switches back to the first-ten-match label the bridges use. Only transitions
+whose target season finished and was available before the entry date are
+eligible. The [comparison](experiments/entry_prior.md) records the evidence,
+including the cohorts where each level of the hierarchy earns its place.
 
 This is a two-stage approximate hierarchy. Season summaries, fixed opponent
 offsets, independent attack/defense bridge regressions and Gaussian moment

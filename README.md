@@ -21,8 +21,9 @@ cutoff, the Championship bracket runs on each simulated path's own latent states
 [MVP contract](docs/mvp.md).
 The [Championship season panel](docs/experiments/season_scoring_championship.md)
 establishes M7 as the season product in the second league as well, and the
-[relegation entry-state comparison](docs/experiments/relegation_entry.md) keeps
-the current Championship treatment for clubs arriving from the Premier League.
+[entry-prior comparison](docs/experiments/entry_prior.md) replaces the earlier
+split treatment of promoted and returning clubs with one transition-aware rule
+for every club crossing a division boundary.
 The [chronological market pool](docs/experiments/market_pool.md) now publishes a
 separate market-assisted probability when a captured pre-closing quote is available.
 Existing models and the simulator supply evidence and reusable components for a
