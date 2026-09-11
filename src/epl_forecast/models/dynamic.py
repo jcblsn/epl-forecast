@@ -8,6 +8,7 @@ import numpy as np
 
 from epl_forecast.models.base import Forecast
 from epl_forecast.models.baselines import BaseModel
+from epl_forecast.models.entry_prior import EntryPriorModel
 from epl_forecast.models.gaussian import poisson_laplace_update
 from epl_forecast.models.poisson import IndependentPoisson, PoissonMixture
 from epl_forecast.models.promotion import (
@@ -21,7 +22,6 @@ from epl_forecast.models.promotion import (
 from epl_forecast.schema import Fixture, Match
 
 RELEGATION_ENTRY = ("retained", "generic", "mapped")
-BRIDGE_LABELS = frozenset({PromotionBridge.label, RelegationBridge.label})
 
 
 class DynamicAttackDefense(BaseModel):
@@ -29,6 +29,7 @@ class DynamicAttackDefense(BaseModel):
 
     league_dimensions = 2
     relegation_entry = "retained"
+    entry_prior = None
 
     def __init__(
         self,
@@ -62,6 +63,7 @@ class DynamicAttackDefense(BaseModel):
         self._history = []
         self._seasons = {}
         self._bridges = {}
+        self._entry_models = {}
         self.team_index = {}
         self._last_season = {}
         self.entry_priors = {}
@@ -110,19 +112,49 @@ class DynamicAttackDefense(BaseModel):
             return None
         return self._bridge(season, as_of, RelegationBridge)
 
+    def _entry_model(self, season: str, as_of: date) -> EntryPriorModel:
+        """The transition-aware entry rule, trained only on seasons already finished."""
+        available = {
+            key: rows
+            for key, rows in self._seasons.items()
+            if key[1] < season and rows[-1].available_on <= as_of
+        }
+        key = season, tuple(sorted(available)), self.entry_prior
+        if key not in self._entry_models:
+            self._entry_models[key] = EntryPriorModel(
+                available,
+                self.primary_competition,
+                season,
+                as_of,
+                self.entry_prior,
+                self.initial_team_sd,
+            )
+        return self._entry_models[key]
+
+    def _population_prior(self) -> TeamPrior:
+        return TeamPrior(np.zeros(2), np.eye(2) * self.initial_team_sd**2, "league population")
+
+    def _entry_replaces_state(self, team: str, season: str, as_of: date) -> bool:
+        """Whether this club crosses a boundary into the division rather than continuing in it."""
+        if self.entry_prior is not None:
+            return self._entry_model(season, as_of).features(team) is not None
+        bridge = self._boundary_bridge(season, as_of)
+        return bridge is not None and bridge.prior(team) is not None
+
     def _entry_prior(self, team: str, season: str, as_of: date) -> TeamPrior:
+        if self.entry_prior is not None:
+            prior = self._entry_model(season, as_of).prior(team)
+            return prior if prior is not None else self._population_prior()
         bridge = self._boundary_bridge(season, as_of)
         if bridge is None:
-            return TeamPrior(np.zeros(2), np.eye(2) * self.initial_team_sd**2, "league population")
+            return self._population_prior()
         performance = (
             self.promotion_performance
             if self.primary_competition == PL
             else self.relegation_entry == "mapped"
         )
         prior = bridge.prior(team, performance)
-        if prior is not None:
-            return prior
-        return TeamPrior(np.zeros(2), np.eye(2) * self.initial_team_sd**2, "league population")
+        return prior if prior is not None else self._population_prior()
 
     def _ensure_team(self, team: str, season: str, day: date, competition=None) -> None:
         if self._last_season.get(team) == season:
@@ -134,7 +166,7 @@ class DynamicAttackDefense(BaseModel):
             self.mean = np.r_[self.mean, prior.mean]
             self.covariance = np.pad(self.covariance, ((0, 2), (0, 2)))
             self.covariance[-2:, -2:] = prior.covariance
-        elif prior.source in BRIDGE_LABELS:
+        elif self._entry_replaces_state(team, season, day):
             index = self.league_dimensions + 2 * self.team_index[team]
             self.mean[index : index + 2] = prior.mean
             self.covariance[index : index + 2, :] = 0
@@ -279,8 +311,7 @@ class DynamicAttackDefense(BaseModel):
         """Only a club the boundary bridge recognizes gives up its fitted state."""
         if team not in self.team_index or self._last_season[team] == season:
             return team in self.team_index
-        bridge = self._boundary_bridge(season, self.as_of)
-        return bridge is None or bridge.prior(team) is None
+        return not self._entry_replaces_state(team, season, self.as_of)
 
     def team_state(self, team: str, season: str) -> TeamPrior:
         if self.as_of is None:

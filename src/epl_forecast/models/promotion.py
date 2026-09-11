@@ -108,6 +108,47 @@ def early_strength(goals: int, exposure: float, defense: bool = False) -> tuple[
     return (-value if defense else value), float(1 / (exposure * np.exp(value) + 1))
 
 
+def entry_label(
+    target: SeasonStrengths, target_matches: tuple[Match, ...], team: str, first: int = 10
+) -> dict:
+    """A club's opening target-division strength, exposure-adjusted for its opponents.
+
+    This is the label every entry prior is judged against, so one definition
+    serves the division bridges and the transition-aware entry priors alike.
+    """
+    games = [
+        m for m in target_matches if team in (m.fixture.home_team_id, m.fixture.away_team_id)
+    ][:first]
+    scored, conceded, points, exposure_for, exposure_against = 0, 0, 0, 0.0, 0.0
+    for match in games:
+        home = match.fixture.home_team_id == team
+        opponent = target.teams[match.fixture.away_team_id if home else match.fixture.home_team_id]
+        gf, ga = (
+            (match.home_goals, match.away_goals) if home else (match.away_goals, match.home_goals)
+        )
+        scored += gf
+        conceded += ga
+        points += 3 * (gf > ga) + (gf == ga)
+        exposure_for += np.exp(target.intercept + home * target.home_advantage - opponent.mean[1])
+        exposure_against += np.exp(
+            target.intercept + (not home) * target.home_advantage + opponent.mean[0]
+        )
+    attack, attack_var = early_strength(scored, exposure_for)
+    defense, defense_var = early_strength(conceded, exposure_against, defense=True)
+    return {
+        "team_id": team,
+        "season_id": target.season_id,
+        "entry_attack": float(attack),
+        "entry_defense": float(defense),
+        "entry_attack_variance": attack_var,
+        "entry_defense_variance": defense_var,
+        "first_ten_matches": len(games),
+        "first_ten_points": int(points),
+        "first_ten_goals_for": scored,
+        "first_ten_goals_against": conceded,
+    }
+
+
 @lru_cache(maxsize=192)
 def division_cohort(
     source_matches: tuple[Match, ...], target_matches: tuple[Match, ...]
@@ -120,31 +161,7 @@ def division_cohort(
     source, target = season_strengths(source_matches), season_strengths(target_matches)
     rows = []
     for team in sorted(source.teams.keys() & target.teams.keys()):
-        games = [
-            m for m in target_matches if team in (m.fixture.home_team_id, m.fixture.away_team_id)
-        ][:10]
-        scored, conceded, points, exposure_for, exposure_against = 0, 0, 0, 0.0, 0.0
-        for match in games:
-            home = match.fixture.home_team_id == team
-            opponent = target.teams[
-                match.fixture.away_team_id if home else match.fixture.home_team_id
-            ]
-            gf, ga = (
-                (match.home_goals, match.away_goals)
-                if home
-                else (match.away_goals, match.home_goals)
-            )
-            scored += gf
-            conceded += ga
-            points += 3 * (gf > ga) + (gf == ga)
-            exposure_for += np.exp(
-                target.intercept + home * target.home_advantage - opponent.mean[1]
-            )
-            exposure_against += np.exp(
-                target.intercept + (not home) * target.home_advantage + opponent.mean[0]
-            )
-        attack, attack_var = early_strength(scored, exposure_for)
-        defense, defense_var = early_strength(conceded, exposure_against, defense=True)
+        label = entry_label(target, target_matches, team)
         rows.append(
             {
                 "team_id": team,
@@ -154,14 +171,7 @@ def division_cohort(
                 "source_defense": float(source.teams[team].mean[1]),
                 "source_attack_variance": float(source.teams[team].covariance[0, 0]),
                 "source_defense_variance": float(source.teams[team].covariance[1, 1]),
-                "entry_attack": float(attack),
-                "entry_defense": float(defense),
-                "entry_attack_variance": attack_var,
-                "entry_defense_variance": defense_var,
-                "first_ten_matches": len(games),
-                "first_ten_points": int(points),
-                "first_ten_goals_for": scored,
-                "first_ten_goals_against": conceded,
+                **{k: v for k, v in label.items() if k not in ("team_id", "season_id")},
             }
         )
     return tuple(rows)
