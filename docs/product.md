@@ -1,6 +1,6 @@
 # Operating the forecast product
 
-M7 is the frozen structural model for both leagues. This page owns the product
+M7 is the frozen structural model for every division. This page owns the product
 layer around it: how a forecast is generated, what may be published, where old
 forecasts live and how prospective performance accumulates. The
 [MVP contract](mvp.md) owns what the forecast itself claims.

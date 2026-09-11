@@ -1,10 +1,13 @@
-# Premier League and Championship forecasts
+# English league forecasts
 
 Product objective: [north star](docs/north_star.md). Active research:
 [joint forecasting architecture](docs/architecture_next_phase.md).
 
-Probabilistic match forecasts and season simulations for England's top two leagues,
-using locally archived provider data. Both leagues are supported forecasting targets.
+Probabilistic match forecasts and season simulations for England's four league
+divisions — the Premier League, Championship, League One and League Two — using
+locally archived provider data. Every division is a supported forecasting target;
+the [four-division expansion](docs/experiments/four_division.md) records how the
+two lower divisions were added and calibrated.
 M7 is the active structural MVP model and M2 remains its operational benchmark.
 The [pinned 2026/27 projection](docs/experiments/current_season_projection_2026-09-10T18/report.md)
 records the current two-league rank distributions and matched uncertainty
@@ -12,15 +15,17 @@ sensitivity, with sanctions in force and a path-conditioned Championship bracket
 [what it says and how far to trust it](docs/season_projection.md) reads it back.
 The [matched research scoreboard](docs/experiments/research_scoreboard.md) keeps
 their outcome, score and calibration metrics beside M5 and market comparators.
-M7 is frozen as the structural season model for both leagues; the product path is
-now prospective operation rather than further architecture. Realized tables carry
+M7 is frozen as the structural season model for every division; the product path
+is now prospective operation rather than further architecture. Realized tables carry
 every sanction in force and forecasts carry only the sanctions knowable at their
 cutoff, the Championship bracket runs on each simulated path's own latent states
 ([validation](docs/experiments/playoff_conditioning.md)), and
 `scripts/verify_forecast_product.py` re-checks a published archive against the
 [MVP contract](docs/mvp.md).
 The [Championship season panel](docs/experiments/season_scoring_championship.md)
-establishes M7 as the season product in the second league as well, and the
+establishes M7 as the season product in the second league as well, the
+[four-division panels](docs/experiments/four_division.md) do the same in League One
+and League Two, and the
 [entry-prior comparison](docs/experiments/entry_prior.md) replaces the earlier
 split treatment of promoted and returning clubs with one transition-aware rule
 for every club crossing a division boundary.
@@ -41,7 +46,7 @@ Historical reports retain their original datasets and results.
 
 ## Operate the product
 
-One command takes fresh data to verified, published forecasts for both leagues:
+One command takes fresh data to verified, published forecasts for every division:
 
 ```sh
 uv run epl-forecast operate
@@ -72,10 +77,12 @@ uv run epl-forecast data collect
 uv run epl-forecast data audit
 uv run epl-forecast forecast --competition eng-premier-league
 uv run epl-forecast forecast --competition eng-championship
+uv run epl-forecast forecast --competition eng-league-one
+uv run epl-forecast forecast --competition eng-league-two
 ```
 
-Create a pinned two-league M7 season snapshot and matched uncertainty sensitivity
-from one retained information cutoff with:
+Create a pinned M7 season snapshot of every division and matched uncertainty
+sensitivity from one retained information cutoff with:
 
 ```sh
 OPENBLAS_NUM_THREADS=1 uv run python scripts/project_current_seasons.py \
@@ -84,7 +91,8 @@ OPENBLAS_NUM_THREADS=1 uv run python scripts/project_current_seasons.py \
 
 API-Football supplies schedules, player data, per-match team statistics and league
 standings. Football-Data supplies results, odds and basic match statistics.
-Understat supplies Premier League xG; no Championship xG enters any model. FPL is retained only for captured availability/news and playing
+Understat supplies Premier League xG; no Championship, League One or League Two xG
+enters any model. FPL is retained only for captured availability/news and playing
 probabilities. Canonical Parquet tables under `data/parquet/` are queried through
 embedded DuckDB. Immutable request records and publication manifests retain raw
 hashes, provenance and actual retrieval timestamps.
@@ -96,7 +104,7 @@ uv run epl-forecast forecast --config configs/quality_tilt.toml --model M5-quali
 ```
 
 Backfills resume from successful request checkpoints and reserve daily API quota
-for current collection. They complete the current season for both leagues, then
+for current collection. They complete the current season for every division, then
 current-player transfer and sidelined histories, then the preceding three seasons,
 before older history. The migration plan tracks remaining ingestion and audit work;
 a successful request does not establish complete historical coverage.
@@ -106,8 +114,9 @@ publishes it only after verification, so identity corrections and provider
 repairs are reproducible from immutable evidence rather than accumulated state.
 
 Forecasts produce JSON, CSV and HTML under `runs/forecasts/`. Premier League
-projections report European league positions; Championship projections report
-automatic promotion, season-specific playoff qualification and promotion. Playoff
+projections report European league positions; Championship, League One and League
+Two projections report automatic promotion, season-specific playoff qualification,
+promotion and each division's own relegation places. Playoff
 fixtures are kept separate from the regular-season table. The promotion forecast
 simulates the applicable postseason bracket conditional on each regular-season
 path with the structural score model. Neutral-final and tied-knockout treatments
@@ -116,7 +125,8 @@ are explicit approximations in the forecast artifact.
 `--cutoff <ISO timestamp>` limits inputs to evidence retrieved by that timestamp.
 Model fitting also excludes results from the forecast's London calendar date.
 Retrospective backfills cannot recreate historical pre-match observations.
-Unresolved live or unscheduled fixtures withhold a complete season projection.
+Unresolved live fixtures withhold a complete season projection; postponed or undated
+fixtures are simulated on the cutoff day and disclosed until they are re-dated.
 
 The [migration plan](docs/data_architecture_migration.md) records collector cutover,
 historical archive completeness and the conditions for retiring the plan.

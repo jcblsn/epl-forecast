@@ -1,7 +1,8 @@
 # Forecast MVP
 
-The active product uses M7 as its structural match and season model for both the
-Premier League and Championship. M2 remains the operational comparison benchmark.
+The active product uses M7 as its structural match and season model in all four
+divisions: the Premier League, Championship, League One and League Two. M2 remains
+the operational comparison benchmark.
 This is a product choice from the combined scoreboard, not a claim that M7 wins
 every metric or fixes the final architecture.
 
@@ -18,17 +19,27 @@ The [Championship panel](experiments/season_scoring_championship.md) makes the
 second league's choice explicit rather than inherited. M7 beats M2 there on rank
 RPS at preseason, MW6, MW12 and MW19, on points CRPS through MW12, and on every
 preseason event Brier, with season-clustered intervals excluding zero, and its PIT
-histograms are close to uniform where M2's are U-shaped. One model serves both
-leagues. In the Championship, M7's Understat channel contributes no evidence, so
-what carries over is its dynamics and entry handling, not its observation model.
+histograms are close to uniform where M2's are U-shaped. In the Championship, M7's
+Understat channel contributes no evidence, so what carries over is its dynamics and
+entry handling, not its observation model.
+
+The [four-division panels](experiments/four_division.md) make the same choice
+explicit in League One and League Two. M7 has lower rank RPS than M2 at every origin
+in both. The difference is resolved at every origin in League One and at MW6 in League
+Two, and no event Brier favours M2 resolvedly. M7's 90% points intervals cover 84–90%
+where M2's cover 65–86% early in the season. The largest gains are for clubs
+relegated into each division. One model serves all four divisions. Each division's
+entry priors read only the divisions validated as useful for it; League One stays
+out of the Championship, where its source term did not help promoted clubs.
 
 The [2026/27 snapshot](experiments/current_season_projection_2026-09-10T18/report.md)
-is the current durable M7 season-distribution product for both leagues; the
+is the durable M7 season-distribution snapshot for the top two divisions, taken
+before the scope widened; the
 [earlier snapshot](experiments/current_season_projection_2026-09-10/report.md) from
 the same day is retained as published and predates the sanction and playoff
 corrections.
 
-M7 is frozen as the structural season model for both leagues. Structural-model
+M7 is frozen as the structural season model for every division. Structural-model
 improvement work is closed for now: the product path is prospective operation,
 immutable forecast accumulation and comparison against public models, bookmaker
 outrights and liquid prediction markets. The
