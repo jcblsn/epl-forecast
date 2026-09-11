@@ -14,6 +14,7 @@ import tomllib
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
 
+from epl_forecast.competitions import COMPETITION_IDS
 from epl_forecast.datasets import timestamp
 from epl_forecast.storage import json_bytes, write_immutable, write_json
 
@@ -301,6 +302,15 @@ def rebuild_index(site: Path, policy: dict) -> dict:
                 }
             )
             generated = document["generated_at"]
+        # Pyramid order, so the viewer opens on the top division.
+        competitions.sort(
+            key=lambda row: (
+                COMPETITION_IDS.index(row["competition_id"])
+                if row["competition_id"] in COMPETITION_IDS
+                else len(COMPETITION_IDS),
+                row["competition_id"],
+            )
+        )
         if competitions:
             snapshots.append(
                 {

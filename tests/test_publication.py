@@ -205,3 +205,19 @@ def test_publish_document_is_immutable_and_indexed(tmp_path):
     )
     with pytest.raises(ValueError, match="Refusing to overwrite"):
         publish_document(tmp_path, {**document, "simulations": 99}, policy)
+
+
+def test_the_index_lists_divisions_in_pyramid_order(tmp_path):
+    policy = load_policy()
+    for competition in ("eng-league-two", "eng-championship", "eng-premier-league"):
+        forecast = sample_forecast(competition)
+        forecast["matches"] = []
+        publish_document(
+            tmp_path, derive_forecast(forecast, sample_run(), "2026-09-10T120000Z"), policy
+        )
+    index = rebuild_index(tmp_path, policy)
+    assert [row["competition_id"] for row in index["snapshots"][0]["competitions"]] == [
+        "eng-premier-league",
+        "eng-championship",
+        "eng-league-two",
+    ]
