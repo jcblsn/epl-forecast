@@ -116,9 +116,9 @@ def entry_label(
     This is the label every entry prior is judged against, so one definition
     serves the division bridges and the transition-aware entry priors alike.
     """
-    games = [
-        m for m in target_matches if team in (m.fixture.home_team_id, m.fixture.away_team_id)
-    ][:first]
+    games = [m for m in target_matches if team in (m.fixture.home_team_id, m.fixture.away_team_id)][
+        :first
+    ]
     scored, conceded, points, exposure_for, exposure_against = 0, 0, 0, 0.0, 0.0
     for match in games:
         home = match.fixture.home_team_id == team

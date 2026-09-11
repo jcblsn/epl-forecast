@@ -1,0 +1,4872 @@
+[
+  {
+    "as_of": "2016-08-13",
+    "cohorts": 15,
+    "competition_id": "eng-premier-league",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2015-2016",
+    "level": "transition",
+    "target_season": "2016-2017",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-championship->eng-premier-league": {
+        "attack": {
+          "coefficient_sd": [
+            0.04262368302368923
+          ],
+          "coefficients": [
+            -0.16604183765680183
+          ],
+          "residual_sd": 0.07443151007565137,
+          "residual_sd_interval_05_95": [
+            0.0019314793151586074,
+            0.1283874106469927
+          ]
+        },
+        "cohorts": 15,
+        "defense": {
+          "coefficient_sd": [
+            0.04178765273143357
+          ],
+          "coefficients": [
+            -0.16879278850324123
+          ],
+          "residual_sd": 0.10249520353935393,
+          "residual_sd_interval_05_95": [
+            0.006720249134111299,
+            0.1599762205355228
+          ]
+        },
+        "features": [],
+        "residual_correlation": -0.14502873589859092
+      }
+    },
+    "treatment": "transition"
+  },
+  {
+    "as_of": "2016-08-13",
+    "cohorts": 15,
+    "competition_id": "eng-premier-league",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2015-2016",
+    "level": "source",
+    "target_season": "2016-2017",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-championship->eng-premier-league": {
+        "attack": {
+          "coefficient_sd": [
+            0.07332648289739817,
+            0.25319975192076083
+          ],
+          "coefficients": [
+            -0.2175484525682897,
+            0.2187481781418506
+          ],
+          "residual_sd": 0.07352003428628053,
+          "residual_sd_interval_05_95": [
+            0.0019314793151586074,
+            0.12767122260613992
+          ]
+        },
+        "cohorts": 15,
+        "defense": {
+          "coefficient_sd": [
+            0.0751156715058753,
+            0.24695564238512394
+          ],
+          "coefficients": [
+            -0.10943713668683623,
+            -0.23049385398330727
+          ],
+          "residual_sd": 0.09436036783505639,
+          "residual_sd_interval_05_95": [
+            0.004195584116789864,
+            0.15002717594046974
+          ]
+        },
+        "features": [
+          "source"
+        ],
+        "residual_correlation": -0.17267843815513018
+      }
+    },
+    "treatment": "source"
+  },
+  {
+    "as_of": "2016-08-13",
+    "cohorts": 15,
+    "competition_id": "eng-premier-league",
+    "expected_memory_weight": {
+      "10": 0.21740941977998274,
+      "2": 1.0,
+      "3": 0.5413369583807747,
+      "5": 0.3478654223481858
+    },
+    "last_training_season": "2015-2016",
+    "level": "memory",
+    "target_season": "2016-2017",
+    "timescale_weights": [
+      0.14285714285714285,
+      0.14285714285714285,
+      0.14285714285714285,
+      0.14285714285714285,
+      0.14285714285714285,
+      0.14285714285714285,
+      0.14285714285714285
+    ],
+    "timescales": [
+      0.25,
+      0.5,
+      1.0,
+      2.0,
+      4.0,
+      8.0,
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-championship->eng-premier-league": {
+        "attack": {
+          "coefficient_sd": [
+            0.0768838912191194,
+            0.25672259032201045,
+            0.22856044411451024
+          ],
+          "coefficients": [
+            -0.22293525814909368,
+            0.22424222796476811,
+            -0.048536789274660055
+          ],
+          "residual_sd": 0.07802627434230995,
+          "residual_sd_interval_05_95": [
+            0.0019314793151586074,
+            0.1346905235825161
+          ]
+        },
+        "cohorts": 15,
+        "defense": {
+          "coefficient_sd": [
+            0.07782448301282603,
+            0.24862314872916025,
+            0.36304611329970277
+          ],
+          "coefficients": [
+            -0.10466240649083733,
+            -0.23288209109507468,
+            0.06926556348931978
+          ],
+          "residual_sd": 0.09506400627222095,
+          "residual_sd_interval_05_95": [
+            0.0041045789718255595,
+            0.15316019106566123
+          ]
+        },
+        "features": [
+          "source",
+          "memory"
+        ],
+        "residual_correlation": -0.15678495491093145
+      }
+    },
+    "treatment": "memory"
+  },
+  {
+    "as_of": "2017-08-11",
+    "cohorts": 18,
+    "competition_id": "eng-premier-league",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2016-2017",
+    "level": "transition",
+    "target_season": "2017-2018",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-championship->eng-premier-league": {
+        "attack": {
+          "coefficient_sd": [
+            0.03998731114176145
+          ],
+          "coefficients": [
+            -0.19381236545236277
+          ],
+          "residual_sd": 0.08006522098359403,
+          "residual_sd_interval_05_95": [
+            0.0024303028797992327,
+            0.1344666557674349
+          ]
+        },
+        "cohorts": 18,
+        "defense": {
+          "coefficient_sd": [
+            0.03962085985457537
+          ],
+          "coefficients": [
+            -0.17011168200192567
+          ],
+          "residual_sd": 0.11193165127031952,
+          "residual_sd_interval_05_95": [
+            0.013780906230234147,
+            0.16556607259551492
+          ]
+        },
+        "features": [],
+        "residual_correlation": -0.1618041823185634
+      }
+    },
+    "treatment": "transition"
+  },
+  {
+    "as_of": "2017-08-11",
+    "cohorts": 18,
+    "competition_id": "eng-premier-league",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2016-2017",
+    "level": "source",
+    "target_season": "2017-2018",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-championship->eng-premier-league": {
+        "attack": {
+          "coefficient_sd": [
+            0.0703597361460918,
+            0.25241464435615246
+          ],
+          "coefficients": [
+            -0.2602951805328173,
+            0.2898795455825371
+          ],
+          "residual_sd": 0.07440366687006707,
+          "residual_sd_interval_05_95": [
+            0.0019314793151586074,
+            0.12776013505213257
+          ]
+        },
+        "cohorts": 18,
+        "defense": {
+          "coefficient_sd": [
+            0.0759254625099146,
+            0.22918618265465074
+          ],
+          "coefficients": [
+            -0.12262949248052324,
+            -0.16575525342118347
+          ],
+          "residual_sd": 0.10581374858007185,
+          "residual_sd_interval_05_95": [
+            0.00840522427591857,
+            0.16148484111090441
+          ]
+        },
+        "features": [
+          "source"
+        ],
+        "residual_correlation": -0.2050880417301807
+      }
+    },
+    "treatment": "source"
+  },
+  {
+    "as_of": "2017-08-11",
+    "cohorts": 18,
+    "competition_id": "eng-premier-league",
+    "expected_memory_weight": {
+      "10": 0.21740941977998274,
+      "2": 1.0,
+      "3": 0.5413369583807747,
+      "5": 0.3478654223481858
+    },
+    "last_training_season": "2016-2017",
+    "level": "memory",
+    "target_season": "2017-2018",
+    "timescale_weights": [
+      0.14285714285714285,
+      0.14285714285714285,
+      0.14285714285714285,
+      0.14285714285714285,
+      0.14285714285714285,
+      0.14285714285714285,
+      0.14285714285714285
+    ],
+    "timescales": [
+      0.25,
+      0.5,
+      1.0,
+      2.0,
+      4.0,
+      8.0,
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-championship->eng-premier-league": {
+        "attack": {
+          "coefficient_sd": [
+            0.07461096137569417,
+            0.2555604708985569,
+            0.19775638138146195
+          ],
+          "coefficients": [
+            -0.2627133637957306,
+            0.2921357885434701,
+            -0.0149610333452035
+          ],
+          "residual_sd": 0.07923354404129379,
+          "residual_sd_interval_05_95": [
+            0.002165809890250339,
+            0.13490876646048644
+          ]
+        },
+        "cohorts": 18,
+        "defense": {
+          "coefficient_sd": [
+            0.07802220208837074,
+            0.22930268009265473,
+            0.36331716391777563
+          ],
+          "coefficients": [
+            -0.11737244616063633,
+            -0.16661321376773502,
+            0.07925839577720892
+          ],
+          "residual_sd": 0.1035345041143095,
+          "residual_sd_interval_05_95": [
+            0.006996765447748013,
+            0.1601527410669741
+          ]
+        },
+        "features": [
+          "source",
+          "memory"
+        ],
+        "residual_correlation": -0.20139785470568192
+      }
+    },
+    "treatment": "memory"
+  },
+  {
+    "as_of": "2018-08-10",
+    "cohorts": 21,
+    "competition_id": "eng-premier-league",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2017-2018",
+    "level": "transition",
+    "target_season": "2018-2019",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-championship->eng-premier-league": {
+        "attack": {
+          "coefficient_sd": [
+            0.03704973186229522
+          ],
+          "coefficients": [
+            -0.21007831681166947
+          ],
+          "residual_sd": 0.07703604910439882,
+          "residual_sd_interval_05_95": [
+            0.00239134583863435,
+            0.12883020119073393
+          ]
+        },
+        "cohorts": 21,
+        "defense": {
+          "coefficient_sd": [
+            0.03586187553166291
+          ],
+          "coefficients": [
+            -0.15494203763285874
+          ],
+          "residual_sd": 0.10483537492754397,
+          "residual_sd_interval_05_95": [
+            0.012858866029100425,
+            0.14534667517240143
+          ]
+        },
+        "features": [],
+        "residual_correlation": -0.1627742143793774
+      }
+    },
+    "treatment": "transition"
+  },
+  {
+    "as_of": "2018-08-10",
+    "cohorts": 21,
+    "competition_id": "eng-premier-league",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2017-2018",
+    "level": "source",
+    "target_season": "2018-2019",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-championship->eng-premier-league": {
+        "attack": {
+          "coefficient_sd": [
+            0.06411083800491407,
+            0.23326370958999113
+          ],
+          "coefficients": [
+            -0.29291992981687487,
+            0.3704068816868984
+          ],
+          "residual_sd": 0.06630164217488892,
+          "residual_sd_interval_05_95": [
+            0.0019314793151586074,
+            0.10892321160282935
+          ]
+        },
+        "cohorts": 21,
+        "defense": {
+          "coefficient_sd": [
+            0.06850820129225903,
+            0.2102627896869703
+          ],
+          "coefficients": [
+            -0.12072496917327322,
+            -0.12154305750161977
+          ],
+          "residual_sd": 0.10142484191284583,
+          "residual_sd_interval_05_95": [
+            0.009033943229071582,
+            0.14509080313067613
+          ]
+        },
+        "features": [
+          "source"
+        ],
+        "residual_correlation": -0.20772639457917275
+      }
+    },
+    "treatment": "source"
+  },
+  {
+    "as_of": "2018-08-10",
+    "cohorts": 21,
+    "competition_id": "eng-premier-league",
+    "expected_memory_weight": {
+      "10": 0.21740941977998274,
+      "2": 1.0,
+      "3": 0.5413369583807747,
+      "5": 0.3478654223481858
+    },
+    "last_training_season": "2017-2018",
+    "level": "memory",
+    "target_season": "2018-2019",
+    "timescale_weights": [
+      0.14285714285714285,
+      0.14285714285714285,
+      0.14285714285714285,
+      0.14285714285714285,
+      0.14285714285714285,
+      0.14285714285714285,
+      0.14285714285714285
+    ],
+    "timescales": [
+      0.25,
+      0.5,
+      1.0,
+      2.0,
+      4.0,
+      8.0,
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-championship->eng-premier-league": {
+        "attack": {
+          "coefficient_sd": [
+            0.06714959316213916,
+            0.23563926533774562,
+            0.1936900484590023
+          ],
+          "coefficients": [
+            -0.29806600926144167,
+            0.371763918084471,
+            -0.046081475949386795
+          ],
+          "residual_sd": 0.06989740742450118,
+          "residual_sd_interval_05_95": [
+            0.0019314793151586074,
+            0.11829460258121521
+          ]
+        },
+        "cohorts": 21,
+        "defense": {
+          "coefficient_sd": [
+            0.06980436829573683,
+            0.20923886400844735,
+            0.32828108115116555
+          ],
+          "coefficients": [
+            -0.12395187026743855,
+            -0.11810921231649149,
+            -0.0860925456618842
+          ],
+          "residual_sd": 0.09893042257733682,
+          "residual_sd_interval_05_95": [
+            0.007353000085639614,
+            0.14455586701250098
+          ]
+        },
+        "features": [
+          "source",
+          "memory"
+        ],
+        "residual_correlation": -0.19814280132928364
+      }
+    },
+    "treatment": "memory"
+  },
+  {
+    "as_of": "2019-08-09",
+    "cohorts": 24,
+    "competition_id": "eng-premier-league",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2018-2019",
+    "level": "transition",
+    "target_season": "2019-2020",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-championship->eng-premier-league": {
+        "attack": {
+          "coefficient_sd": [
+            0.0342463731182394
+          ],
+          "coefficients": [
+            -0.21548608506110759
+          ],
+          "residual_sd": 0.07211932547973758,
+          "residual_sd_interval_05_95": [
+            0.0021479141169627593,
+            0.11862654146511728
+          ]
+        },
+        "cohorts": 24,
+        "defense": {
+          "coefficient_sd": [
+            0.03578145189574959
+          ],
+          "coefficients": [
+            -0.16222262221836817
+          ],
+          "residual_sd": 0.12143155749529015,
+          "residual_sd_interval_05_95": [
+            0.03288534129765257,
+            0.16689883702264546
+          ]
+        },
+        "features": [],
+        "residual_correlation": -0.038194403945439395
+      }
+    },
+    "treatment": "transition"
+  },
+  {
+    "as_of": "2019-08-09",
+    "cohorts": 24,
+    "competition_id": "eng-premier-league",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2018-2019",
+    "level": "source",
+    "target_season": "2019-2020",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-championship->eng-premier-league": {
+        "attack": {
+          "coefficient_sd": [
+            0.0625950672341345,
+            0.22723102453667418
+          ],
+          "coefficients": [
+            -0.30368070255996976,
+            0.3836751129622779
+          ],
+          "residual_sd": 0.06127926473462762,
+          "residual_sd_interval_05_95": [
+            0.0019314793151586074,
+            0.10183259606762705
+          ]
+        },
+        "cohorts": 24,
+        "defense": {
+          "coefficient_sd": [
+            0.07103719217496034,
+            0.2184806420786016
+          ],
+          "coefficients": [
+            -0.14395679171258924,
+            -0.06381280405864442
+          ],
+          "residual_sd": 0.12014504907695642,
+          "residual_sd_interval_05_95": [
+            0.027180878045133222,
+            0.1683233538293717
+          ]
+        },
+        "features": [
+          "source"
+        ],
+        "residual_correlation": -0.06507773928214426
+      }
+    },
+    "treatment": "source"
+  },
+  {
+    "as_of": "2019-08-09",
+    "cohorts": 24,
+    "competition_id": "eng-premier-league",
+    "expected_memory_weight": {
+      "10": 0.1627680270712652,
+      "2": 1.0000000000000007,
+      "3": 0.4924731000089835,
+      "5": 0.29098549556833275
+    },
+    "last_training_season": "2018-2019",
+    "level": "memory",
+    "target_season": "2019-2020",
+    "timescale_weights": [
+      0.16362431457934987,
+      0.16327169009247622,
+      0.15793364876229413,
+      0.15008177398300096,
+      0.1440221742974756,
+      0.1274938690510297,
+      0.09357252923437416
+    ],
+    "timescales": [
+      0.25,
+      0.5,
+      1.0,
+      2.0,
+      4.0,
+      8.0,
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-championship->eng-premier-league": {
+        "attack": {
+          "coefficient_sd": [
+            0.065114453483563,
+            0.22912280228065152,
+            0.18899035386003074
+          ],
+          "coefficients": [
+            -0.31012967163437666,
+            0.38625922350527025,
+            -0.06417922114657815
+          ],
+          "residual_sd": 0.06405051577955814,
+          "residual_sd_interval_05_95": [
+            0.0019314793151586074,
+            0.10467504862598137
+          ]
+        },
+        "cohorts": 24,
+        "defense": {
+          "coefficient_sd": [
+            0.07210234877203033,
+            0.21759811641293492,
+            0.33753815715187074
+          ],
+          "coefficients": [
+            -0.14842475612874506,
+            -0.05967265328382816,
+            -0.1145319003509073
+          ],
+          "residual_sd": 0.1180214056544236,
+          "residual_sd_interval_05_95": [
+            0.02266594803888079,
+            0.1674574531435045
+          ]
+        },
+        "features": [
+          "source",
+          "memory"
+        ],
+        "residual_correlation": -0.05139708384826574
+      }
+    },
+    "treatment": "memory"
+  },
+  {
+    "as_of": "2020-09-12",
+    "cohorts": 27,
+    "competition_id": "eng-premier-league",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2019-2020",
+    "level": "transition",
+    "target_season": "2020-2021",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-championship->eng-premier-league": {
+        "attack": {
+          "coefficient_sd": [
+            0.03237567425968285
+          ],
+          "coefficients": [
+            -0.2236342047079517
+          ],
+          "residual_sd": 0.07131691316398474,
+          "residual_sd_interval_05_95": [
+            0.0021968582759956884,
+            0.11523761306835506
+          ]
+        },
+        "cohorts": 27,
+        "defense": {
+          "coefficient_sd": [
+            0.03584062753152721
+          ],
+          "coefficients": [
+            -0.16014644266067835
+          ],
+          "residual_sd": 0.13640226489761906,
+          "residual_sd_interval_05_95": [
+            0.053128651199595756,
+            0.1790685164988474
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.01943486216327548
+      }
+    },
+    "treatment": "transition"
+  },
+  {
+    "as_of": "2020-09-12",
+    "cohorts": 27,
+    "competition_id": "eng-premier-league",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2019-2020",
+    "level": "source",
+    "target_season": "2020-2021",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-championship->eng-premier-league": {
+        "attack": {
+          "coefficient_sd": [
+            0.061512308408057256,
+            0.21854276244131607
+          ],
+          "coefficients": [
+            -0.2906581888283356,
+            0.2793587686249339
+          ],
+          "residual_sd": 0.06510500705439883,
+          "residual_sd_interval_05_95": [
+            0.0019314793151586074,
+            0.10485631035050913
+          ]
+        },
+        "cohorts": 27,
+        "defense": {
+          "coefficient_sd": [
+            0.06475346227923762,
+            0.20564507673231194
+          ],
+          "coefficients": [
+            -0.18402166420601435,
+            0.09222646542550898
+          ],
+          "residual_sd": 0.13494017971293237,
+          "residual_sd_interval_05_95": [
+            0.048801432823876154,
+            0.17950138546053437
+          ]
+        },
+        "features": [
+          "source"
+        ],
+        "residual_correlation": 0.020197644785054647
+      }
+    },
+    "treatment": "source"
+  },
+  {
+    "as_of": "2020-09-12",
+    "cohorts": 27,
+    "competition_id": "eng-premier-league",
+    "expected_memory_weight": {
+      "10": 0.1843607219917491,
+      "2": 1.0000000000000004,
+      "3": 0.5236266160300829,
+      "5": 0.32251502735606863
+    },
+    "last_training_season": "2019-2020",
+    "level": "memory",
+    "target_season": "2020-2021",
+    "timescale_weights": [
+      0.15045431942422968,
+      0.14942258092242333,
+      0.14215601089911173,
+      0.14451505415271104,
+      0.15985497698826281,
+      0.1480175629353505,
+      0.10557949467791138
+    ],
+    "timescales": [
+      0.25,
+      0.5,
+      1.0,
+      2.0,
+      4.0,
+      8.0,
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-championship->eng-premier-league": {
+        "attack": {
+          "coefficient_sd": [
+            0.06446351408285211,
+            0.22064671086074913,
+            0.18236505886496224
+          ],
+          "coefficients": [
+            -0.29463443980255766,
+            0.2803335000742648,
+            -0.032249007924935194
+          ],
+          "residual_sd": 0.06833272437356472,
+          "residual_sd_interval_05_95": [
+            0.0019314793151586074,
+            0.11058591731054815
+          ]
+        },
+        "cohorts": 27,
+        "defense": {
+          "coefficient_sd": [
+            0.070039586765956,
+            0.2052572200281211,
+            0.30385108398220384
+          ],
+          "coefficients": [
+            -0.16025898457875953,
+            0.06639061392688679,
+            0.23717139131829015
+          ],
+          "residual_sd": 0.129023587171854,
+          "residual_sd_interval_05_95": [
+            0.03637631306115814,
+            0.1764806149243111
+          ]
+        },
+        "features": [
+          "source",
+          "memory"
+        ],
+        "residual_correlation": 0.03751330847043747
+      }
+    },
+    "treatment": "memory"
+  },
+  {
+    "as_of": "2021-08-13",
+    "cohorts": 30,
+    "competition_id": "eng-premier-league",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2020-2021",
+    "level": "transition",
+    "target_season": "2021-2022",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-championship->eng-premier-league": {
+        "attack": {
+          "coefficient_sd": [
+            0.03564504858666483
+          ],
+          "coefficients": [
+            -0.21827292213295282
+          ],
+          "residual_sd": 0.12002876158219378,
+          "residual_sd_interval_05_95": [
+            0.023355474084561262,
+            0.16882537738700995
+          ]
+        },
+        "cohorts": 30,
+        "defense": {
+          "coefficient_sd": [
+            0.03363772784160154
+          ],
+          "coefficients": [
+            -0.16225087710812536
+          ],
+          "residual_sd": 0.1337078769066475,
+          "residual_sd_interval_05_95": [
+            0.05435891945643745,
+            0.1744979707291881
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.02794498150764512
+      }
+    },
+    "treatment": "transition"
+  },
+  {
+    "as_of": "2021-08-13",
+    "cohorts": 30,
+    "competition_id": "eng-premier-league",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2020-2021",
+    "level": "source",
+    "target_season": "2021-2022",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-championship->eng-premier-league": {
+        "attack": {
+          "coefficient_sd": [
+            0.06373787719659588,
+            0.23195341050051158
+          ],
+          "coefficients": [
+            -0.29058388559618875,
+            0.31670938493657785
+          ],
+          "residual_sd": 0.10340217516907915,
+          "residual_sd_interval_05_95": [
+            0.008993261608073158,
+            0.14698041791379463
+          ]
+        },
+        "cohorts": 30,
+        "defense": {
+          "coefficient_sd": [
+            0.06256685807533746,
+            0.19736203486575135
+          ],
+          "coefficients": [
+            -0.18884071151990295,
+            0.100320187135374
+          ],
+          "residual_sd": 0.13169240923353112,
+          "residual_sd_interval_05_95": [
+            0.049695745990844545,
+            0.1744104921190541
+          ]
+        },
+        "features": [
+          "source"
+        ],
+        "residual_correlation": 0.023661274351941434
+      }
+    },
+    "treatment": "source"
+  },
+  {
+    "as_of": "2021-08-13",
+    "cohorts": 30,
+    "competition_id": "eng-premier-league",
+    "expected_memory_weight": {
+      "10": 0.19028131610183974,
+      "2": 1.0000000000000002,
+      "3": 0.5062946183617928,
+      "5": 0.3155054242150246
+    },
+    "last_training_season": "2020-2021",
+    "level": "memory",
+    "target_season": "2021-2022",
+    "timescale_weights": [
+      0.16588181602988591,
+      0.16182299893621055,
+      0.14591619817097992,
+      0.13225212736954942,
+      0.1374871428956939,
+      0.13832252495046235,
+      0.1183171916472183
+    ],
+    "timescales": [
+      0.25,
+      0.5,
+      1.0,
+      2.0,
+      4.0,
+      8.0,
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-championship->eng-premier-league": {
+        "attack": {
+          "coefficient_sd": [
+            0.06738311436678582,
+            0.23535648262009867,
+            0.19565598775627702
+          ],
+          "coefficients": [
+            -0.2887553864491378,
+            0.3142437219110613,
+            0.02081473329742757
+          ],
+          "residual_sd": 0.10790718156695674,
+          "residual_sd_interval_05_95": [
+            0.0104400239576604,
+            0.1572373215766941
+          ]
+        },
+        "cohorts": 30,
+        "defense": {
+          "coefficient_sd": [
+            0.06354736377862812,
+            0.19556147688586828,
+            0.2787789307535746
+          ],
+          "coefficients": [
+            -0.19978549181730554,
+            0.1091907492367237,
+            -0.2057929056364694
+          ],
+          "residual_sd": 0.1279405184170774,
+          "residual_sd_interval_05_95": [
+            0.043529001036220004,
+            0.17220342778697278
+          ]
+        },
+        "features": [
+          "source",
+          "memory"
+        ],
+        "residual_correlation": 0.030942333755608724
+      }
+    },
+    "treatment": "memory"
+  },
+  {
+    "as_of": "2022-08-05",
+    "cohorts": 33,
+    "competition_id": "eng-premier-league",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2021-2022",
+    "level": "transition",
+    "target_season": "2022-2023",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-championship->eng-premier-league": {
+        "attack": {
+          "coefficient_sd": [
+            0.035458418349234716
+          ],
+          "coefficients": [
+            -0.2291034504578341
+          ],
+          "residual_sd": 0.131954802938817,
+          "residual_sd_interval_05_95": [
+            0.03906771148104355,
+            0.1780404799655295
+          ]
+        },
+        "cohorts": 33,
+        "defense": {
+          "coefficient_sd": [
+            0.03277515038752635
+          ],
+          "coefficients": [
+            -0.17642888504506582
+          ],
+          "residual_sd": 0.14001482900619128,
+          "residual_sd_interval_05_95": [
+            0.06785914897382604,
+            0.17771735314958487
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.13096074666709687
+      }
+    },
+    "treatment": "transition"
+  },
+  {
+    "as_of": "2022-08-05",
+    "cohorts": 33,
+    "competition_id": "eng-premier-league",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2021-2022",
+    "level": "source",
+    "target_season": "2022-2023",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-championship->eng-premier-league": {
+        "attack": {
+          "coefficient_sd": [
+            0.06464222262595598,
+            0.23110570755793094
+          ],
+          "coefficients": [
+            -0.297359438598617,
+            0.2918939414009152
+          ],
+          "residual_sd": 0.116876984746683,
+          "residual_sd_interval_05_95": [
+            0.01744504151713287,
+            0.16664112158845623
+          ]
+        },
+        "cohorts": 33,
+        "defense": {
+          "coefficient_sd": [
+            0.06277745775499258,
+            0.1942917356602395
+          ],
+          "coefficients": [
+            -0.1767268374740558,
+            0.002477655138248784
+          ],
+          "residual_sd": 0.14030386524073296,
+          "residual_sd_interval_05_95": [
+            0.06397555097677045,
+            0.1789856533813398
+          ]
+        },
+        "features": [
+          "source"
+        ],
+        "residual_correlation": 0.13989304111588996
+      }
+    },
+    "treatment": "source"
+  },
+  {
+    "as_of": "2022-08-05",
+    "cohorts": 33,
+    "competition_id": "eng-premier-league",
+    "expected_memory_weight": {
+      "10": 0.2921688553756011,
+      "2": 0.9999999999999993,
+      "3": 0.6871021729966216,
+      "5": 0.4787279203759514
+    },
+    "last_training_season": "2021-2022",
+    "level": "memory",
+    "target_season": "2022-2023",
+    "timescale_weights": [
+      0.06591973735744477,
+      0.06919595485199828,
+      0.08568924861182498,
+      0.14218180973399736,
+      0.2257756929456059,
+      0.2408670630323455,
+      0.17037049346678257
+    ],
+    "timescales": [
+      0.25,
+      0.5,
+      1.0,
+      2.0,
+      4.0,
+      8.0,
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-championship->eng-premier-league": {
+        "attack": {
+          "coefficient_sd": [
+            0.06717475024863372,
+            0.22724157559504335,
+            0.17043643223906155
+          ],
+          "coefficients": [
+            -0.26526417722018136,
+            0.30871375630800424,
+            0.2535603948658246
+          ],
+          "residual_sd": 0.10581985254281097,
+          "residual_sd_interval_05_95": [
+            0.009750445031028091,
+            0.152033769854612
+          ]
+        },
+        "cohorts": 33,
+        "defense": {
+          "coefficient_sd": [
+            0.06643749362976684,
+            0.18849041098416436,
+            0.21699198723105145
+          ],
+          "coefficients": [
+            -0.13790487848188582,
+            -0.025039082474845292,
+            0.29878631592342153
+          ],
+          "residual_sd": 0.12714086257393267,
+          "residual_sd_interval_05_95": [
+            0.046231962879839585,
+            0.16920549364694934
+          ]
+        },
+        "features": [
+          "source",
+          "memory"
+        ],
+        "residual_correlation": 0.08933102375554788
+      }
+    },
+    "treatment": "memory"
+  },
+  {
+    "as_of": "2023-08-11",
+    "cohorts": 36,
+    "competition_id": "eng-premier-league",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2022-2023",
+    "level": "transition",
+    "target_season": "2023-2024",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-championship->eng-premier-league": {
+        "attack": {
+          "coefficient_sd": [
+            0.03372960827400931
+          ],
+          "coefficients": [
+            -0.2228302473626625
+          ],
+          "residual_sd": 0.13062362371252004,
+          "residual_sd_interval_05_95": [
+            0.043359595736234276,
+            0.17486743716532416
+          ]
+        },
+        "cohorts": 36,
+        "defense": {
+          "coefficient_sd": [
+            0.030411532583494154
+          ],
+          "coefficients": [
+            -0.17710340124958224
+          ],
+          "residual_sd": 0.13227056149613103,
+          "residual_sd_interval_05_95": [
+            0.05962093543226502,
+            0.16776656717773256
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.1639341327077316
+      }
+    },
+    "treatment": "transition"
+  },
+  {
+    "as_of": "2023-08-11",
+    "cohorts": 36,
+    "competition_id": "eng-premier-league",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2022-2023",
+    "level": "source",
+    "target_season": "2023-2024",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-championship->eng-premier-league": {
+        "attack": {
+          "coefficient_sd": [
+            0.05991225919885877,
+            0.20310975931522016
+          ],
+          "coefficients": [
+            -0.31788541508482837,
+            0.3883875523941983
+          ],
+          "residual_sd": 0.1019734961892392,
+          "residual_sd_interval_05_95": [
+            0.009562974260510967,
+            0.14346618082983997
+          ]
+        },
+        "cohorts": 36,
+        "defense": {
+          "coefficient_sd": [
+            0.06039174635357362,
+            0.1883125376081459
+          ],
+          "coefficients": [
+            -0.17232191526995572,
+            -0.01603461708724082
+          ],
+          "residual_sd": 0.13219897512535803,
+          "residual_sd_interval_05_95": [
+            0.05677455409507608,
+            0.1695161631429119
+          ]
+        },
+        "features": [
+          "source"
+        ],
+        "residual_correlation": 0.16558143246817725
+      }
+    },
+    "treatment": "source"
+  },
+  {
+    "as_of": "2023-08-11",
+    "cohorts": 36,
+    "competition_id": "eng-premier-league",
+    "expected_memory_weight": {
+      "10": 0.31631217099988146,
+      "2": 1.0000000000000004,
+      "3": 0.7104554445491899,
+      "5": 0.5061346601890128
+    },
+    "last_training_season": "2022-2023",
+    "level": "memory",
+    "target_season": "2023-2024",
+    "timescale_weights": [
+      0.05714824525342341,
+      0.0604593118879261,
+      0.07612358849168706,
+      0.13335915683172497,
+      0.22868302731708032,
+      0.2552226483069867,
+      0.18900402191117185
+    ],
+    "timescales": [
+      0.25,
+      0.5,
+      1.0,
+      2.0,
+      4.0,
+      8.0,
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-championship->eng-premier-league": {
+        "attack": {
+          "coefficient_sd": [
+            0.06153180883845051,
+            0.20656162693030783,
+            0.15683650093370885
+          ],
+          "coefficients": [
+            -0.30206495794846233,
+            0.42774462439538197,
+            0.17166133107922166
+          ],
+          "residual_sd": 0.09674108616352003,
+          "residual_sd_interval_05_95": [
+            0.007080154321849297,
+            0.14134578482515578
+          ]
+        },
+        "cohorts": 36,
+        "defense": {
+          "coefficient_sd": [
+            0.06311886919627392,
+            0.1811562484910615,
+            0.2059305243284367
+          ],
+          "coefficients": [
+            -0.13280608308841363,
+            -0.04281035370570428,
+            0.3163389098722432
+          ],
+          "residual_sd": 0.11657394320296477,
+          "residual_sd_interval_05_95": [
+            0.03352176285416913,
+            0.14742788296267922
+          ]
+        },
+        "features": [
+          "source",
+          "memory"
+        ],
+        "residual_correlation": 0.14029742804071937
+      }
+    },
+    "treatment": "memory"
+  },
+  {
+    "as_of": "2024-08-16",
+    "cohorts": 39,
+    "competition_id": "eng-premier-league",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2023-2024",
+    "level": "transition",
+    "target_season": "2024-2025",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-championship->eng-premier-league": {
+        "attack": {
+          "coefficient_sd": [
+            0.03203806602457054
+          ],
+          "coefficients": [
+            -0.22937561976519313
+          ],
+          "residual_sd": 0.1279514555641331,
+          "residual_sd_interval_05_95": [
+            0.04464200284717333,
+            0.1699875721133549
+          ]
+        },
+        "cohorts": 39,
+        "defense": {
+          "coefficient_sd": [
+            0.02988255491257817
+          ],
+          "coefficients": [
+            -0.19286214491917564
+          ],
+          "residual_sd": 0.13921503172429922,
+          "residual_sd_interval_05_95": [
+            0.07448717262829015,
+            0.17329325398222742
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.19311568150368363
+      }
+    },
+    "treatment": "transition"
+  },
+  {
+    "as_of": "2024-08-16",
+    "cohorts": 39,
+    "competition_id": "eng-premier-league",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2023-2024",
+    "level": "source",
+    "target_season": "2024-2025",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-championship->eng-premier-league": {
+        "attack": {
+          "coefficient_sd": [
+            0.05770167087547549,
+            0.19559011591696818
+          ],
+          "coefficients": [
+            -0.3000755485481747,
+            0.28839955748431806
+          ],
+          "residual_sd": 0.11250389991630273,
+          "residual_sd_interval_05_95": [
+            0.019594296364634386,
+            0.15077828611411534
+          ]
+        },
+        "cohorts": 39,
+        "defense": {
+          "coefficient_sd": [
+            0.06160415198152309,
+            0.1902605141440559
+          ],
+          "coefficients": [
+            -0.17910562978652794,
+            -0.04747199493709722
+          ],
+          "residual_sd": 0.1385036821387258,
+          "residual_sd_interval_05_95": [
+            0.07311738819938066,
+            0.17389086166360931
+          ]
+        },
+        "features": [
+          "source"
+        ],
+        "residual_correlation": 0.19169000111951326
+      }
+    },
+    "treatment": "source"
+  },
+  {
+    "as_of": "2024-08-16",
+    "cohorts": 39,
+    "competition_id": "eng-premier-league",
+    "expected_memory_weight": {
+      "10": 0.36995059709348344,
+      "2": 1.0000000000000009,
+      "3": 0.7747615045226586,
+      "5": 0.5743004740154996
+    },
+    "last_training_season": "2023-2024",
+    "level": "memory",
+    "target_season": "2024-2025",
+    "timescale_weights": [
+      0.028148608211255494,
+      0.03278149588986646,
+      0.05199977970895936,
+      0.1203182169165088,
+      0.24600368648622906,
+      0.2947408439166057,
+      0.2260073688705761
+    ],
+    "timescales": [
+      0.25,
+      0.5,
+      1.0,
+      2.0,
+      4.0,
+      8.0,
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-championship->eng-premier-league": {
+        "attack": {
+          "coefficient_sd": [
+            0.05748853662649124,
+            0.19586497716231036,
+            0.14120505241393935
+          ],
+          "coefficients": [
+            -0.2774112007757261,
+            0.36660913429219233,
+            0.24945342199819154
+          ],
+          "residual_sd": 0.09504828575763777,
+          "residual_sd_interval_05_95": [
+            0.007470312932983321,
+            0.1388938666760052
+          ]
+        },
+        "cohorts": 39,
+        "defense": {
+          "coefficient_sd": [
+            0.06471647610216635,
+            0.18453032004496459,
+            0.20844529660562816
+          ],
+          "coefficients": [
+            -0.13926355620861053,
+            -0.07830880671126468,
+            0.3157758086872875
+          ],
+          "residual_sd": 0.12457196658963605,
+          "residual_sd_interval_05_95": [
+            0.04923358725578128,
+            0.1578960810422787
+          ]
+        },
+        "features": [
+          "source",
+          "memory"
+        ],
+        "residual_correlation": 0.17525504671383202
+      }
+    },
+    "treatment": "memory"
+  },
+  {
+    "as_of": "2025-08-15",
+    "cohorts": 42,
+    "competition_id": "eng-premier-league",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2024-2025",
+    "level": "transition",
+    "target_season": "2025-2026",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-championship->eng-premier-league": {
+        "attack": {
+          "coefficient_sd": [
+            0.031807391851911324
+          ],
+          "coefficients": [
+            -0.24647480828922913
+          ],
+          "residual_sd": 0.13624038638529753,
+          "residual_sd_interval_05_95": [
+            0.05473183118955091,
+            0.17611604305129924
+          ]
+        },
+        "cohorts": 42,
+        "defense": {
+          "coefficient_sd": [
+            0.02875992979702053
+          ],
+          "coefficients": [
+            -0.20840247849587595
+          ],
+          "residual_sd": 0.1397513540790657,
+          "residual_sd_interval_05_95": [
+            0.07542270282675984,
+            0.17238695951832067
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.25071977185400224
+      }
+    },
+    "treatment": "transition"
+  },
+  {
+    "as_of": "2025-08-15",
+    "cohorts": 42,
+    "competition_id": "eng-premier-league",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2024-2025",
+    "level": "source",
+    "target_season": "2025-2026",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-championship->eng-premier-league": {
+        "attack": {
+          "coefficient_sd": [
+            0.06003365927305312,
+            0.19886488197722918
+          ],
+          "coefficients": [
+            -0.29552994709212077,
+            0.19173385097176615
+          ],
+          "residual_sd": 0.13028103468054644,
+          "residual_sd_interval_05_95": [
+            0.04676523562364693,
+            0.17234527804862132
+          ]
+        },
+        "cohorts": 42,
+        "defense": {
+          "coefficient_sd": [
+            0.0552456085308308,
+            0.17431854707263628
+          ],
+          "coefficients": [
+            -0.22513794999611558,
+            0.06301780439780647
+          ],
+          "residual_sd": 0.1392571593725306,
+          "residual_sd_interval_05_95": [
+            0.07447685014147552,
+            0.173056507063871
+          ]
+        },
+        "features": [
+          "source"
+        ],
+        "residual_correlation": 0.25154088696974
+      }
+    },
+    "treatment": "source"
+  },
+  {
+    "as_of": "2025-08-15",
+    "cohorts": 42,
+    "competition_id": "eng-premier-league",
+    "expected_memory_weight": {
+      "10": 0.29521087785356426,
+      "2": 1.0000000000000002,
+      "3": 0.7288494758278009,
+      "5": 0.5051721971544442
+    },
+    "last_training_season": "2024-2025",
+    "level": "memory",
+    "target_season": "2025-2026",
+    "timescale_weights": [
+      0.03588588469488138,
+      0.04323905212160501,
+      0.07228948667852991,
+      0.16037961800117342,
+      0.2667676486173205,
+      0.2614884383427473,
+      0.1599498715437427
+    ],
+    "timescales": [
+      0.25,
+      0.5,
+      1.0,
+      2.0,
+      4.0,
+      8.0,
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-championship->eng-premier-league": {
+        "attack": {
+          "coefficient_sd": [
+            0.06024388454511829,
+            0.19909351972565212,
+            0.1500751336945314
+          ],
+          "coefficients": [
+            -0.27565811079310093,
+            0.24701456221787335,
+            0.22084352537010887
+          ],
+          "residual_sd": 0.11949371871800943,
+          "residual_sd_interval_05_95": [
+            0.027919970206768358,
+            0.16135176972035695
+          ]
+        },
+        "cohorts": 42,
+        "defense": {
+          "coefficient_sd": [
+            0.05845187896095919,
+            0.16854710969308964,
+            0.21387890331481874
+          ],
+          "coefficients": [
+            -0.18354496063898024,
+            0.03281816643586062,
+            0.3583519043214414
+          ],
+          "residual_sd": 0.12472090548245691,
+          "residual_sd_interval_05_95": [
+            0.051534892409612926,
+            0.15334995939687826
+          ]
+        },
+        "features": [
+          "source",
+          "memory"
+        ],
+        "residual_correlation": 0.2183490078480599
+      }
+    },
+    "treatment": "memory"
+  },
+  {
+    "as_of": "2016-08-05",
+    "cohorts": 30,
+    "competition_id": "eng-championship",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2015-2016",
+    "level": "transition",
+    "target_season": "2016-2017",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-premier-league->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.04465975056745786
+          ],
+          "coefficients": [
+            0.1348221642335231
+          ],
+          "residual_sd": 0.12519767221557995,
+          "residual_sd_interval_05_95": [
+            0.020978994473442078,
+            0.18213600111992578
+          ]
+        },
+        "cohorts": 15,
+        "defense": {
+          "coefficient_sd": [
+            0.05227377498433059
+          ],
+          "coefficients": [
+            0.07121295643216571
+          ],
+          "residual_sd": 0.15297889422869632,
+          "residual_sd_interval_05_95": [
+            0.04236666688232006,
+            0.21977886288474965
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.23547112030424378
+      },
+      "outside->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.06273065083765106
+          ],
+          "coefficients": [
+            -0.029225142044231517
+          ],
+          "residual_sd": 0.20645573364355171,
+          "residual_sd_interval_05_95": [
+            0.09772597425995212,
+            0.27773908542628917
+          ]
+        },
+        "cohorts": 15,
+        "defense": {
+          "coefficient_sd": [
+            0.04291988601383503
+          ],
+          "coefficients": [
+            -0.07272254126893926
+          ],
+          "residual_sd": 0.11189176954352097,
+          "residual_sd_interval_05_95": [
+            0.009586746042685544,
+            0.17267621436477879
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.19458486072407655
+      }
+    },
+    "treatment": "transition"
+  },
+  {
+    "as_of": "2016-08-05",
+    "cohorts": 30,
+    "competition_id": "eng-championship",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2015-2016",
+    "level": "source",
+    "target_season": "2016-2017",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-premier-league->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.06738867438483256,
+            0.2187750635817898
+          ],
+          "coefficients": [
+            0.09742282402669199,
+            -0.15929636024157223
+          ],
+          "residual_sd": 0.11925548920294231,
+          "residual_sd_interval_05_95": [
+            0.012019191728374788,
+            0.18059992013214834
+          ]
+        },
+        "cohorts": 15,
+        "defense": {
+          "coefficient_sd": [
+            0.09508282900391199,
+            0.2761147596417883
+          ],
+          "coefficients": [
+            0.3051637416683332,
+            0.7986243101166146
+          ],
+          "residual_sd": 0.06498746771468823,
+          "residual_sd_interval_05_95": [
+            0.0019314793151586074,
+            0.10953382367761189
+          ]
+        },
+        "features": [
+          "source"
+        ],
+        "residual_correlation": 0.09189124424100387
+      },
+      "outside->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.06273065083765106
+          ],
+          "coefficients": [
+            -0.029225142044231517
+          ],
+          "residual_sd": 0.20645573364355171,
+          "residual_sd_interval_05_95": [
+            0.09772597425995212,
+            0.27773908542628917
+          ]
+        },
+        "cohorts": 15,
+        "defense": {
+          "coefficient_sd": [
+            0.04291988601383503
+          ],
+          "coefficients": [
+            -0.07272254126893926
+          ],
+          "residual_sd": 0.11189176954352097,
+          "residual_sd_interval_05_95": [
+            0.009586746042685544,
+            0.17267621436477879
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.19458486072407655
+      }
+    },
+    "treatment": "source"
+  },
+  {
+    "as_of": "2016-08-05",
+    "cohorts": 30,
+    "competition_id": "eng-championship",
+    "expected_memory_weight": {
+      "10": 0.21390335019641543,
+      "2": 0.9999999999999998,
+      "3": 0.5563478603502147,
+      "5": 0.3525709550031398
+    },
+    "last_training_season": "2015-2016",
+    "level": "memory",
+    "target_season": "2016-2017",
+    "timescale_weights": [
+      0.12329014494194326,
+      0.13239092674115388,
+      0.14998462253243322,
+      0.15800812257938399,
+      0.1533639668355715,
+      0.1467422149405949,
+      0.136220001428919
+    ],
+    "timescales": [
+      0.25,
+      0.5,
+      1.0,
+      2.0,
+      4.0,
+      8.0,
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-premier-league->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.0682964504698852,
+            0.23294560509438278,
+            0.41918719060222015
+          ],
+          "coefficients": [
+            0.09815035630573704,
+            -0.1505113945554506,
+            0.046994188230801884
+          ],
+          "residual_sd": 0.12088874365375236,
+          "residual_sd_interval_05_95": [
+            0.012104324991501894,
+            0.18251248625279182
+          ]
+        },
+        "cohorts": 15,
+        "defense": {
+          "coefficient_sd": [
+            0.1067712029653967,
+            0.28429147421752754,
+            0.2600158590107126
+          ],
+          "coefficients": [
+            0.27573495818639726,
+            0.757542775684144,
+            0.15399389470458458
+          ],
+          "residual_sd": 0.0675142310563955,
+          "residual_sd_interval_05_95": [
+            0.0019314793151586074,
+            0.11641483616763287
+          ]
+        },
+        "features": [
+          "source",
+          "memory"
+        ],
+        "residual_correlation": 0.10170935830187205
+      },
+      "outside->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.06316973355720269,
+            0.4412716751721949
+          ],
+          "coefficients": [
+            -0.02241000574484822,
+            0.2294799287192891
+          ],
+          "residual_sd": 0.20180666739448266,
+          "residual_sd_interval_05_95": [
+            0.08986538304931169,
+            0.2743462643154735
+          ]
+        },
+        "cohorts": 15,
+        "defense": {
+          "coefficient_sd": [
+            0.04558982079228445,
+            0.34890130311450285
+          ],
+          "coefficients": [
+            -0.06504942219133958,
+            0.17983437781535433
+          ],
+          "residual_sd": 0.11295707241402869,
+          "residual_sd_interval_05_95": [
+            0.009528474408492868,
+            0.17456971135134258
+          ]
+        },
+        "features": [
+          "memory"
+        ],
+        "residual_correlation": 0.18914924758588939
+      }
+    },
+    "treatment": "memory"
+  },
+  {
+    "as_of": "2017-08-04",
+    "cohorts": 36,
+    "competition_id": "eng-championship",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2016-2017",
+    "level": "transition",
+    "target_season": "2017-2018",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-premier-league->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.04604693812594043
+          ],
+          "coefficients": [
+            0.1421051082931039
+          ],
+          "residual_sd": 0.15483667871964027,
+          "residual_sd_interval_05_95": [
+            0.059457842518279125,
+            0.20978519180081512
+          ]
+        },
+        "cohorts": 18,
+        "defense": {
+          "coefficient_sd": [
+            0.0491175279182197
+          ],
+          "coefficients": [
+            0.07869512106407031
+          ],
+          "residual_sd": 0.16032025994889276,
+          "residual_sd_interval_05_95": [
+            0.058937872082449286,
+            0.22025301236044284
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.13013415283343938
+      },
+      "outside->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.05621526268837997
+          ],
+          "coefficients": [
+            -0.0469288678534876
+          ],
+          "residual_sd": 0.20009862154601074,
+          "residual_sd_interval_05_95": [
+            0.10207931539024576,
+            0.2627120186742255
+          ]
+        },
+        "cohorts": 18,
+        "defense": {
+          "coefficient_sd": [
+            0.03607651919558645
+          ],
+          "coefficients": [
+            -0.0701005507929004
+          ],
+          "residual_sd": 0.091281426329148,
+          "residual_sd_interval_05_95": [
+            0.0053897267300862675,
+            0.14003541265268246
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.14273392477553315
+      }
+    },
+    "treatment": "transition"
+  },
+  {
+    "as_of": "2017-08-04",
+    "cohorts": 36,
+    "competition_id": "eng-championship",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2016-2017",
+    "level": "source",
+    "target_season": "2017-2018",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-premier-league->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.07148783698039332,
+            0.22658382790069637
+          ],
+          "coefficients": [
+            0.1524227217881069,
+            0.04496977176061916
+          ],
+          "residual_sd": 0.1558992280606442,
+          "residual_sd_interval_05_95": [
+            0.054770739661217704,
+            0.21507084981246566
+          ]
+        },
+        "cohorts": 18,
+        "defense": {
+          "coefficient_sd": [
+            0.09273804358345428,
+            0.2746296561585209
+          ],
+          "coefficients": [
+            0.3010576097771167,
+            0.7625440211139549
+          ],
+          "residual_sd": 0.07313144306179671,
+          "residual_sd_interval_05_95": [
+            0.0019314793151586074,
+            0.1259002845515574
+          ]
+        },
+        "features": [
+          "source"
+        ],
+        "residual_correlation": -0.04097206991078645
+      },
+      "outside->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.05621526268837997
+          ],
+          "coefficients": [
+            -0.0469288678534876
+          ],
+          "residual_sd": 0.20009862154601074,
+          "residual_sd_interval_05_95": [
+            0.10207931539024576,
+            0.2627120186742255
+          ]
+        },
+        "cohorts": 18,
+        "defense": {
+          "coefficient_sd": [
+            0.03607651919558645
+          ],
+          "coefficients": [
+            -0.0701005507929004
+          ],
+          "residual_sd": 0.091281426329148,
+          "residual_sd_interval_05_95": [
+            0.0053897267300862675,
+            0.14003541265268246
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.14273392477553315
+      }
+    },
+    "treatment": "source"
+  },
+  {
+    "as_of": "2017-08-04",
+    "cohorts": 36,
+    "competition_id": "eng-championship",
+    "expected_memory_weight": {
+      "10": 0.21922475685937862,
+      "2": 1.0,
+      "3": 0.5502173886834418,
+      "5": 0.353856505411263
+    },
+    "last_training_season": "2016-2017",
+    "level": "memory",
+    "target_season": "2017-2018",
+    "timescale_weights": [
+      0.13668552353297997,
+      0.1366103252843951,
+      0.1414103785817141,
+      0.147152993353313,
+      0.1486103500481221,
+      0.14737782091241042,
+      0.14215260828706555
+    ],
+    "timescales": [
+      0.25,
+      0.5,
+      1.0,
+      2.0,
+      4.0,
+      8.0,
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-premier-league->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.06879744037063194,
+            0.22545519725829963,
+            0.33611452064761205
+          ],
+          "coefficients": [
+            0.14530094390861006,
+            0.1172344510475434,
+            0.40730359352082723
+          ],
+          "residual_sd": 0.1395304839889226,
+          "residual_sd_interval_05_95": [
+            0.030970752273179844,
+            0.19493792258697829
+          ]
+        },
+        "cohorts": 18,
+        "defense": {
+          "coefficient_sd": [
+            0.10670438830933297,
+            0.28846412710010083,
+            0.24461344984499622
+          ],
+          "coefficients": [
+            0.29499622260815267,
+            0.7495359369724937,
+            0.024164039749279873
+          ],
+          "residual_sd": 0.0768945896904642,
+          "residual_sd_interval_05_95": [
+            0.0019758324828333773,
+            0.13207830748556385
+          ]
+        },
+        "features": [
+          "source",
+          "memory"
+        ],
+        "residual_correlation": -0.00131708163043482
+      },
+      "outside->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.05804806617272951,
+            0.35871258356975416
+          ],
+          "coefficients": [
+            -0.0260261418292654,
+            0.3505934873357348
+          ],
+          "residual_sd": 0.1892980490327958,
+          "residual_sd_interval_05_95": [
+            0.08571382099149408,
+            0.2479293873800398
+          ]
+        },
+        "cohorts": 18,
+        "defense": {
+          "coefficient_sd": [
+            0.039851660915999114,
+            0.3029499818667078
+          ],
+          "coefficients": [
+            -0.060157380189306095,
+            0.18596386292853895
+          ],
+          "residual_sd": 0.09183886013313558,
+          "residual_sd_interval_05_95": [
+            0.005273883449781209,
+            0.14095843743789527
+          ]
+        },
+        "features": [
+          "memory"
+        ],
+        "residual_correlation": 0.1637143167819021
+      }
+    },
+    "treatment": "memory"
+  },
+  {
+    "as_of": "2018-08-03",
+    "cohorts": 42,
+    "competition_id": "eng-championship",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2017-2018",
+    "level": "transition",
+    "target_season": "2018-2019",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-premier-league->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.040596134987987226
+          ],
+          "coefficients": [
+            0.13604178334525996
+          ],
+          "residual_sd": 0.14217403037632476,
+          "residual_sd_interval_05_95": [
+            0.05315736466350043,
+            0.18596453481264025
+          ]
+        },
+        "cohorts": 21,
+        "defense": {
+          "coefficient_sd": [
+            0.04936555202593651
+          ],
+          "coefficients": [
+            0.05227603710914892
+          ],
+          "residual_sd": 0.18417132516492674,
+          "residual_sd_interval_05_95": [
+            0.08892006259433097,
+            0.23430168920900687
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.16768002409682536
+      },
+      "outside->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.05041927529566748
+          ],
+          "coefficients": [
+            -0.05330618117175652
+          ],
+          "residual_sd": 0.19039614295482327,
+          "residual_sd_interval_05_95": [
+            0.09716160364094253,
+            0.23758621465015256
+          ]
+        },
+        "cohorts": 21,
+        "defense": {
+          "coefficient_sd": [
+            0.03492256321219978
+          ],
+          "coefficients": [
+            -0.061144142267988706
+          ],
+          "residual_sd": 0.10108917764362171,
+          "residual_sd_interval_05_95": [
+            0.009935120620357518,
+            0.14403725723027488
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.19227421020320984
+      }
+    },
+    "treatment": "transition"
+  },
+  {
+    "as_of": "2018-08-03",
+    "cohorts": 42,
+    "competition_id": "eng-championship",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2017-2018",
+    "level": "source",
+    "target_season": "2018-2019",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-premier-league->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.06662499543887945,
+            0.19582023469543527
+          ],
+          "coefficients": [
+            0.1604616450271869,
+            0.09188521455790163
+          ],
+          "residual_sd": 0.14135855381220122,
+          "residual_sd_interval_05_95": [
+            0.04861483693992859,
+            0.18700911020884664
+          ]
+        },
+        "cohorts": 21,
+        "defense": {
+          "coefficient_sd": [
+            0.08512896465804788,
+            0.25704972470297216
+          ],
+          "coefficients": [
+            0.259737241492515,
+            0.7415469708468378
+          ],
+          "residual_sd": 0.09203724489168806,
+          "residual_sd_interval_05_95": [
+            0.003898651181348412,
+            0.1444396310343914
+          ]
+        },
+        "features": [
+          "source"
+        ],
+        "residual_correlation": 0.046465844527063524
+      },
+      "outside->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.05041927529566748
+          ],
+          "coefficients": [
+            -0.05330618117175652
+          ],
+          "residual_sd": 0.19039614295482327,
+          "residual_sd_interval_05_95": [
+            0.09716160364094253,
+            0.23758621465015256
+          ]
+        },
+        "cohorts": 21,
+        "defense": {
+          "coefficient_sd": [
+            0.03492256321219978
+          ],
+          "coefficients": [
+            -0.061144142267988706
+          ],
+          "residual_sd": 0.10108917764362171,
+          "residual_sd_interval_05_95": [
+            0.009935120620357518,
+            0.14403725723027488
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.19227421020320984
+      }
+    },
+    "treatment": "source"
+  },
+  {
+    "as_of": "2018-08-03",
+    "cohorts": 42,
+    "competition_id": "eng-championship",
+    "expected_memory_weight": {
+      "10": 0.13990434811379837,
+      "2": 0.9999999999999999,
+      "3": 0.4612855343222578,
+      "5": 0.2595114037205619
+    },
+    "last_training_season": "2017-2018",
+    "level": "memory",
+    "target_season": "2018-2019",
+    "timescale_weights": [
+      0.17757030424826006,
+      0.17813127898795944,
+      0.17093822322471292,
+      0.15351920700204874,
+      0.13118631628845923,
+      0.10974745913110882,
+      0.07890721111745072
+    ],
+    "timescales": [
+      0.25,
+      0.5,
+      1.0,
+      2.0,
+      4.0,
+      8.0,
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-premier-league->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.06673586116149803,
+            0.1946187861043505,
+            0.31215358198096355
+          ],
+          "coefficients": [
+            0.1483111332690791,
+            0.11678668346647786,
+            0.33038769434511256
+          ],
+          "residual_sd": 0.13463361149621073,
+          "residual_sd_interval_05_95": [
+            0.0375144032131142,
+            0.1840260740561077
+          ]
+        },
+        "cohorts": 21,
+        "defense": {
+          "coefficient_sd": [
+            0.09468583186219781,
+            0.26486257046593864,
+            0.22136446798205534
+          ],
+          "coefficients": [
+            0.26856258277742345,
+            0.7459940524025725,
+            -0.058461994790090135
+          ],
+          "residual_sd": 0.09602967677373078,
+          "residual_sd_interval_05_95": [
+            0.004290035207367385,
+            0.15311904834096243
+          ]
+        },
+        "features": [
+          "source",
+          "memory"
+        ],
+        "residual_correlation": 0.08989592123949754
+      },
+      "outside->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.0491673304289799,
+            0.34542597599478586
+          ],
+          "coefficients": [
+            -0.022581276847807023,
+            0.5387881010258451
+          ],
+          "residual_sd": 0.16422391930461017,
+          "residual_sd_interval_05_95": [
+            0.07342689892509056,
+            0.2201613770494613
+          ]
+        },
+        "cohorts": 21,
+        "defense": {
+          "coefficient_sd": [
+            0.03673883486965433,
+            0.2776583181684697
+          ],
+          "coefficients": [
+            -0.04899145631557937,
+            0.274538361742507
+          ],
+          "residual_sd": 0.09761169445186921,
+          "residual_sd_interval_05_95": [
+            0.00804923786106815,
+            0.1425668144138148
+          ]
+        },
+        "features": [
+          "memory"
+        ],
+        "residual_correlation": 0.17669595515772268
+      }
+    },
+    "treatment": "memory"
+  },
+  {
+    "as_of": "2019-08-02",
+    "cohorts": 48,
+    "competition_id": "eng-championship",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2018-2019",
+    "level": "transition",
+    "target_season": "2019-2020",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-premier-league->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.040594950210396934
+          ],
+          "coefficients": [
+            0.12847234959469953
+          ],
+          "residual_sd": 0.1583668661325422,
+          "residual_sd_interval_05_95": [
+            0.07635521719150644,
+            0.20022779006183403
+          ]
+        },
+        "cohorts": 24,
+        "defense": {
+          "coefficient_sd": [
+            0.04326622354775426
+          ],
+          "coefficients": [
+            0.04751368705324516
+          ],
+          "residual_sd": 0.1664930064049039,
+          "residual_sd_interval_05_95": [
+            0.07908479035866246,
+            0.21604729363129435
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.10578368559514661
+      },
+      "outside->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.04446825131563823
+          ],
+          "coefficients": [
+            -0.05260513396759087
+          ],
+          "residual_sd": 0.17395148190951865,
+          "residual_sd_interval_05_95": [
+            0.08479376316616219,
+            0.22359222995061423
+          ]
+        },
+        "cohorts": 24,
+        "defense": {
+          "coefficient_sd": [
+            0.03213179753620377
+          ],
+          "coefficients": [
+            -0.07542426567917593
+          ],
+          "residual_sd": 0.09801087634188146,
+          "residual_sd_interval_05_95": [
+            0.010786758729790975,
+            0.14016582926613128
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.18780144257974485
+      }
+    },
+    "treatment": "transition"
+  },
+  {
+    "as_of": "2019-08-02",
+    "cohorts": 48,
+    "competition_id": "eng-championship",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2018-2019",
+    "level": "source",
+    "target_season": "2019-2020",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-premier-league->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.07023608115834877,
+            0.2006655986785264
+          ],
+          "coefficients": [
+            0.14567596144129816,
+            0.061698626854524485
+          ],
+          "residual_sd": 0.1588147123036996,
+          "residual_sd_interval_05_95": [
+            0.07470702122473288,
+            0.20523114067203796
+          ]
+        },
+        "cohorts": 24,
+        "defense": {
+          "coefficient_sd": [
+            0.07494047241920893,
+            0.23684543124087556
+          ],
+          "coefficients": [
+            0.20933647213908635,
+            0.6101279476382404
+          ],
+          "residual_sd": 0.10004557446482018,
+          "residual_sd_interval_05_95": [
+            0.006559380557224813,
+            0.14922195601364976
+          ]
+        },
+        "features": [
+          "source"
+        ],
+        "residual_correlation": -0.016207483879273035
+      },
+      "outside->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.04446825131563823
+          ],
+          "coefficients": [
+            -0.05260513396759087
+          ],
+          "residual_sd": 0.17395148190951865,
+          "residual_sd_interval_05_95": [
+            0.08479376316616219,
+            0.22359222995061423
+          ]
+        },
+        "cohorts": 24,
+        "defense": {
+          "coefficient_sd": [
+            0.03213179753620377
+          ],
+          "coefficients": [
+            -0.07542426567917593
+          ],
+          "residual_sd": 0.09801087634188146,
+          "residual_sd_interval_05_95": [
+            0.010786758729790975,
+            0.14016582926613128
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.18780144257974485
+      }
+    },
+    "treatment": "source"
+  },
+  {
+    "as_of": "2019-08-02",
+    "cohorts": 48,
+    "competition_id": "eng-championship",
+    "expected_memory_weight": {
+      "10": 0.09960263797238751,
+      "2": 0.9999999999999996,
+      "3": 0.4280613894199763,
+      "5": 0.2159181386165411
+    },
+    "last_training_season": "2018-2019",
+    "level": "memory",
+    "target_season": "2019-2020",
+    "timescale_weights": [
+      0.182023163254498,
+      0.19049778228463443,
+      0.19452062451622906,
+      0.17027602402274264,
+      0.1267990112540472,
+      0.08957963162530552,
+      0.046303763042542585
+    ],
+    "timescales": [
+      0.25,
+      0.5,
+      1.0,
+      2.0,
+      4.0,
+      8.0,
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-premier-league->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.07046855534951979,
+            0.19971550990011236,
+            0.32405040796026807
+          ],
+          "coefficients": [
+            0.13370620123763838,
+            0.08234817879346779,
+            0.33941774126227037
+          ],
+          "residual_sd": 0.1535301806036842,
+          "residual_sd_interval_05_95": [
+            0.06601394146937253,
+            0.1973778540979508
+          ]
+        },
+        "cohorts": 24,
+        "defense": {
+          "coefficient_sd": [
+            0.08247222383699794,
+            0.24271141187435916,
+            0.2110968316255328
+          ],
+          "coefficients": [
+            0.20265904109079555,
+            0.5971931038632432,
+            0.03461859141859041
+          ],
+          "residual_sd": 0.1058333189133185,
+          "residual_sd_interval_05_95": [
+            0.007937574440858474,
+            0.16083645680270334
+          ]
+        },
+        "features": [
+          "source",
+          "memory"
+        ],
+        "residual_correlation": 0.010659993789093242
+      },
+      "outside->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.04728798312347204,
+            0.27996165356765723
+          ],
+          "coefficients": [
+            -0.01270761118764228,
+            0.4553502905378881
+          ],
+          "residual_sd": 0.15331399306799615,
+          "residual_sd_interval_05_95": [
+            0.0642056005383524,
+            0.19813248545615395
+          ]
+        },
+        "cohorts": 24,
+        "defense": {
+          "coefficient_sd": [
+            0.03355907536718109,
+            0.20504317265156338
+          ],
+          "coefficients": [
+            -0.04815595307197287,
+            0.3919121854303369
+          ],
+          "residual_sd": 0.07963391403390276,
+          "residual_sd_interval_05_95": [
+            0.0040770267906502355,
+            0.12449203521370103
+          ]
+        },
+        "features": [
+          "memory"
+        ],
+        "residual_correlation": 0.1479741105152671
+      }
+    },
+    "treatment": "memory"
+  },
+  {
+    "as_of": "2020-09-11",
+    "cohorts": 54,
+    "competition_id": "eng-championship",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2019-2020",
+    "level": "transition",
+    "target_season": "2020-2021",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-premier-league->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.03734681842115339
+          ],
+          "coefficients": [
+            0.11679681587482263
+          ],
+          "residual_sd": 0.15186327019502183,
+          "residual_sd_interval_05_95": [
+            0.0754127773514425,
+            0.18699572790977792
+          ]
+        },
+        "cohorts": 27,
+        "defense": {
+          "coefficient_sd": [
+            0.03944694202095766
+          ],
+          "coefficients": [
+            0.04296378576760701
+          ],
+          "residual_sd": 0.1576738454103076,
+          "residual_sd_interval_05_95": [
+            0.07653417170818438,
+            0.1950703823791957
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.13293553778327402
+      },
+      "outside->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.04016387605051458
+          ],
+          "coefficients": [
+            -0.0623426555899341
+          ],
+          "residual_sd": 0.1619186634759766,
+          "residual_sd_interval_05_95": [
+            0.07954564873922497,
+            0.20251705123798233
+          ]
+        },
+        "cohorts": 27,
+        "defense": {
+          "coefficient_sd": [
+            0.029768251818092725
+          ],
+          "coefficients": [
+            -0.08826347064663304
+          ],
+          "residual_sd": 0.09451154493280706,
+          "residual_sd_interval_05_95": [
+            0.010938125096042188,
+            0.1360154639300009
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.19452977386270562
+      }
+    },
+    "treatment": "transition"
+  },
+  {
+    "as_of": "2020-09-11",
+    "cohorts": 54,
+    "competition_id": "eng-championship",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2019-2020",
+    "level": "source",
+    "target_season": "2020-2021",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-premier-league->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.06557492293633174,
+            0.17665461017741202
+          ],
+          "coefficients": [
+            0.16179519632598516,
+            0.1466362346717927
+          ],
+          "residual_sd": 0.1470678697975013,
+          "residual_sd_interval_05_95": [
+            0.06510374181923001,
+            0.18585512153829278
+          ]
+        },
+        "cohorts": 27,
+        "defense": {
+          "coefficient_sd": [
+            0.07362527302724353,
+            0.22922611662282458
+          ],
+          "coefficients": [
+            0.20047909531106747,
+            0.5728735535107075
+          ],
+          "residual_sd": 0.10022663811168288,
+          "residual_sd_interval_05_95": [
+            0.007924444971728126,
+            0.1443193382250153
+          ]
+        },
+        "features": [
+          "source"
+        ],
+        "residual_correlation": 0.003103613182351817
+      },
+      "outside->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.04016387605051458
+          ],
+          "coefficients": [
+            -0.0623426555899341
+          ],
+          "residual_sd": 0.1619186634759766,
+          "residual_sd_interval_05_95": [
+            0.07954564873922497,
+            0.20251705123798233
+          ]
+        },
+        "cohorts": 27,
+        "defense": {
+          "coefficient_sd": [
+            0.029768251818092725
+          ],
+          "coefficients": [
+            -0.08826347064663304
+          ],
+          "residual_sd": 0.09451154493280706,
+          "residual_sd_interval_05_95": [
+            0.010938125096042188,
+            0.1360154639300009
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.19452977386270562
+      }
+    },
+    "treatment": "source"
+  },
+  {
+    "as_of": "2020-09-11",
+    "cohorts": 54,
+    "competition_id": "eng-championship",
+    "expected_memory_weight": {
+      "10": 0.10661860455204557,
+      "2": 0.9999999999999987,
+      "3": 0.4443400183056479,
+      "5": 0.22876640017865496
+    },
+    "last_training_season": "2019-2020",
+    "level": "memory",
+    "target_season": "2020-2021",
+    "timescale_weights": [
+      0.17249333127015695,
+      0.17933832948227643,
+      0.19038685409950512,
+      0.17758750798315276,
+      0.13484289163893243,
+      0.0953900289870474,
+      0.04996105653892772
+    ],
+    "timescales": [
+      0.25,
+      0.5,
+      1.0,
+      2.0,
+      4.0,
+      8.0,
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-premier-league->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.06689965844245513,
+            0.17637404917872032,
+            0.28844707815688325
+          ],
+          "coefficients": [
+            0.14681939369761104,
+            0.15972219130801674,
+            0.2975376745813834
+          ],
+          "residual_sd": 0.14375749439347443,
+          "residual_sd_interval_05_95": [
+            0.05874966624576926,
+            0.1845787670753015
+          ]
+        },
+        "cohorts": 27,
+        "defense": {
+          "coefficient_sd": [
+            0.08082753917629641,
+            0.23386282136540623,
+            0.19829340327043263
+          ],
+          "coefficients": [
+            0.1877102316327254,
+            0.5570560471001751,
+            0.07425361751943968
+          ],
+          "residual_sd": 0.10484309777216864,
+          "residual_sd_interval_05_95": [
+            0.009297704326109895,
+            0.15238968791226556
+          ]
+        },
+        "features": [
+          "source",
+          "memory"
+        ],
+        "residual_correlation": 0.011053362379229853
+      },
+      "outside->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.04315900383406457,
+            0.26935036569780746
+          ],
+          "coefficients": [
+            -0.0230594038599971,
+            0.4605585952536253
+          ],
+          "residual_sd": 0.14223713477787783,
+          "residual_sd_interval_05_95": [
+            0.056838704776614415,
+            0.18381026681451076
+          ]
+        },
+        "cohorts": 27,
+        "defense": {
+          "coefficient_sd": [
+            0.032107997390156,
+            0.20026620599193717
+          ],
+          "coefficients": [
+            -0.06325936729845705,
+            0.3509544498728474
+          ],
+          "residual_sd": 0.0820248067822265,
+          "residual_sd_interval_05_95": [
+            0.005407759119781646,
+            0.12438620722099118
+          ]
+        },
+        "features": [
+          "memory"
+        ],
+        "residual_correlation": 0.16399522275267242
+      }
+    },
+    "treatment": "memory"
+  },
+  {
+    "as_of": "2021-08-06",
+    "cohorts": 60,
+    "competition_id": "eng-championship",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2020-2021",
+    "level": "transition",
+    "target_season": "2021-2022",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-premier-league->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.03492382341696249
+          ],
+          "coefficients": [
+            0.134170833745564
+          ],
+          "residual_sd": 0.1485790636416536,
+          "residual_sd_interval_05_95": [
+            0.07528578111329318,
+            0.18409887954745036
+          ]
+        },
+        "cohorts": 30,
+        "defense": {
+          "coefficient_sd": [
+            0.03935283159104586
+          ],
+          "coefficients": [
+            0.06693131127667246
+          ],
+          "residual_sd": 0.16905730387768306,
+          "residual_sd_interval_05_95": [
+            0.08567118107182271,
+            0.2121131035461808
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.17423003373860835
+      },
+      "outside->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.03702186026015556
+          ],
+          "coefficients": [
+            -0.06946882124190065
+          ],
+          "residual_sd": 0.15295207322991902,
+          "residual_sd_interval_05_95": [
+            0.07657704896411492,
+            0.18673820632317406
+          ]
+        },
+        "cohorts": 30,
+        "defense": {
+          "coefficient_sd": [
+            0.027234784102052545
+          ],
+          "coefficients": [
+            -0.09829564339719701
+          ],
+          "residual_sd": 0.08537682683126598,
+          "residual_sd_interval_05_95": [
+            0.007616982431948415,
+            0.12550290134861358
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.21927229263651477
+      }
+    },
+    "treatment": "transition"
+  },
+  {
+    "as_of": "2021-08-06",
+    "cohorts": 60,
+    "competition_id": "eng-championship",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2020-2021",
+    "level": "source",
+    "target_season": "2021-2022",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-premier-league->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.06312915137536798,
+            0.16951663694855473
+          ],
+          "coefficients": [
+            0.1683278826274855,
+            0.11039391179477868
+          ],
+          "residual_sd": 0.14641068899760884,
+          "residual_sd_interval_05_95": [
+            0.07133777283679842,
+            0.18389912646812764
+          ]
+        },
+        "cohorts": 30,
+        "defense": {
+          "coefficient_sd": [
+            0.07527435569083202,
+            0.2373531423727602
+          ],
+          "coefficients": [
+            0.22036683021201442,
+            0.5621053695998655
+          ],
+          "residual_sd": 0.11802959603047078,
+          "residual_sd_interval_05_95": [
+            0.01883104012523764,
+            0.16831491849863406
+          ]
+        },
+        "features": [
+          "source"
+        ],
+        "residual_correlation": 0.08038710817266506
+      },
+      "outside->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.03702186026015556
+          ],
+          "coefficients": [
+            -0.06946882124190065
+          ],
+          "residual_sd": 0.15295207322991902,
+          "residual_sd_interval_05_95": [
+            0.07657704896411492,
+            0.18673820632317406
+          ]
+        },
+        "cohorts": 30,
+        "defense": {
+          "coefficient_sd": [
+            0.027234784102052545
+          ],
+          "coefficients": [
+            -0.09829564339719701
+          ],
+          "residual_sd": 0.08537682683126598,
+          "residual_sd_interval_05_95": [
+            0.007616982431948415,
+            0.12550290134861358
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.21927229263651477
+      }
+    },
+    "treatment": "source"
+  },
+  {
+    "as_of": "2021-08-06",
+    "cohorts": 60,
+    "competition_id": "eng-championship",
+    "expected_memory_weight": {
+      "10": 0.14876894592001383,
+      "2": 0.9999999999999976,
+      "3": 0.5097538935778729,
+      "5": 0.2954826078695826
+    },
+    "last_training_season": "2020-2021",
+    "level": "memory",
+    "target_season": "2021-2022",
+    "timescale_weights": [
+      0.15005354344076677,
+      0.14896690198102408,
+      0.14997587146297725,
+      0.16138233468008387,
+      0.1736829346164558,
+      0.148201232136749,
+      0.06773718168194083
+    ],
+    "timescales": [
+      0.25,
+      0.5,
+      1.0,
+      2.0,
+      4.0,
+      8.0,
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-premier-league->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.060224334298322954,
+            0.16405112731106783,
+            0.24229611324274739
+          ],
+          "coefficients": [
+            0.14758699365978445,
+            0.18278413257525505,
+            0.5043310514145867
+          ],
+          "residual_sd": 0.12301406047361704,
+          "residual_sd_interval_05_95": [
+            0.0381993786516091,
+            0.1656684427144928
+          ]
+        },
+        "cohorts": 30,
+        "defense": {
+          "coefficient_sd": [
+            0.08571377642857256,
+            0.2455070433740074,
+            0.20016218065233668
+          ],
+          "coefficients": [
+            0.20917473877382425,
+            0.5434689768169947,
+            0.0505834943596569
+          ],
+          "residual_sd": 0.12297554777858145,
+          "residual_sd_interval_05_95": [
+            0.02282605703681574,
+            0.17399228168198577
+          ]
+        },
+        "features": [
+          "source",
+          "memory"
+        ],
+        "residual_correlation": 0.06840973134695419
+      },
+      "outside->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.042944112993684794,
+            0.2553144479872589
+          ],
+          "coefficients": [
+            -0.030022467037226455,
+            0.3943244086481022
+          ],
+          "residual_sd": 0.1390528932206006,
+          "residual_sd_interval_05_95": [
+            0.05728250842655988,
+            0.18007796276940757
+          ]
+        },
+        "cohorts": 30,
+        "defense": {
+          "coefficient_sd": [
+            0.03209412690078123,
+            0.17999026937459794
+          ],
+          "coefficients": [
+            -0.07560722427318795,
+            0.23552987163179612
+          ],
+          "residual_sd": 0.08025817261282311,
+          "residual_sd_interval_05_95": [
+            0.00546824651779276,
+            0.11917079741668163
+          ]
+        },
+        "features": [
+          "memory"
+        ],
+        "residual_correlation": 0.19969615358372494
+      }
+    },
+    "treatment": "memory"
+  },
+  {
+    "as_of": "2022-07-29",
+    "cohorts": 66,
+    "competition_id": "eng-championship",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2021-2022",
+    "level": "transition",
+    "target_season": "2022-2023",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-premier-league->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.03654656002738608
+          ],
+          "coefficients": [
+            0.14125622877753422
+          ],
+          "residual_sd": 0.17226881493161916,
+          "residual_sd_interval_05_95": [
+            0.1026021747390258,
+            0.20787548227581615
+          ]
+        },
+        "cohorts": 33,
+        "defense": {
+          "coefficient_sd": [
+            0.036792629897811374
+          ],
+          "coefficients": [
+            0.07915500746651052
+          ],
+          "residual_sd": 0.16289362122190001,
+          "residual_sd_interval_05_95": [
+            0.0833607118161211,
+            0.19420654463043935
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.17452707375276577
+      },
+      "outside->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.03486743581323168
+          ],
+          "coefficients": [
+            -0.07942990070264366
+          ],
+          "residual_sd": 0.14887954291528369,
+          "residual_sd_interval_05_95": [
+            0.07605156421143214,
+            0.18353718959842752
+          ]
+        },
+        "cohorts": 33,
+        "defense": {
+          "coefficient_sd": [
+            0.027775883623426586
+          ],
+          "coefficients": [
+            -0.10192863732301694
+          ],
+          "residual_sd": 0.1021837922172762,
+          "residual_sd_interval_05_95": [
+            0.02512320447937829,
+            0.13767084558588089
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.21756303263099738
+      }
+    },
+    "treatment": "transition"
+  },
+  {
+    "as_of": "2022-07-29",
+    "cohorts": 66,
+    "competition_id": "eng-championship",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2021-2022",
+    "level": "source",
+    "target_season": "2022-2023",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-premier-league->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.06683390140732329,
+            0.16783412840368783
+          ],
+          "coefficients": [
+            0.1473976265775133,
+            0.019336187726494238
+          ],
+          "residual_sd": 0.17345570415609238,
+          "residual_sd_interval_05_95": [
+            0.10059965897980107,
+            0.21208125437706762
+          ]
+        },
+        "cohorts": 33,
+        "defense": {
+          "coefficient_sd": [
+            0.069214564669,
+            0.2215830894449534
+          ],
+          "coefficients": [
+            0.2263796779050184,
+            0.5513856291234693
+          ],
+          "residual_sd": 0.11310634443789327,
+          "residual_sd_interval_05_95": [
+            0.018244140789850066,
+            0.1566982531162143
+          ]
+        },
+        "features": [
+          "source"
+        ],
+        "residual_correlation": 0.05054381237231904
+      },
+      "outside->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.03486743581323168
+          ],
+          "coefficients": [
+            -0.07942990070264366
+          ],
+          "residual_sd": 0.14887954291528369,
+          "residual_sd_interval_05_95": [
+            0.07605156421143214,
+            0.18353718959842752
+          ]
+        },
+        "cohorts": 33,
+        "defense": {
+          "coefficient_sd": [
+            0.027775883623426586
+          ],
+          "coefficients": [
+            -0.10192863732301694
+          ],
+          "residual_sd": 0.1021837922172762,
+          "residual_sd_interval_05_95": [
+            0.02512320447937829,
+            0.13767084558588089
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.21756303263099738
+      }
+    },
+    "treatment": "source"
+  },
+  {
+    "as_of": "2022-07-29",
+    "cohorts": 66,
+    "competition_id": "eng-championship",
+    "expected_memory_weight": {
+      "10": 0.1265277382547248,
+      "2": 1.0000000000000004,
+      "3": 0.4627146650832772,
+      "5": 0.2553384868037613
+    },
+    "last_training_season": "2021-2022",
+    "level": "memory",
+    "target_season": "2022-2023",
+    "timescale_weights": [
+      0.17875696732350507,
+      0.17320476029227383,
+      0.16320329598263125,
+      0.15771478450561877,
+      0.14856460172156138,
+      0.1187705390413856,
+      0.05978505113302448
+    ],
+    "timescales": [
+      0.25,
+      0.5,
+      1.0,
+      2.0,
+      4.0,
+      8.0,
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-premier-league->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.06773283734349145,
+            0.16767855260150863,
+            0.2616667907642285
+          ],
+          "coefficients": [
+            0.13703023268818804,
+            0.038504472802455385,
+            0.22697429511902595
+          ],
+          "residual_sd": 0.17061672795054592,
+          "residual_sd_interval_05_95": [
+            0.09290430204537714,
+            0.20903952827744607
+          ]
+        },
+        "cohorts": 33,
+        "defense": {
+          "coefficient_sd": [
+            0.0739449381255575,
+            0.22482716465344812,
+            0.19518993767429824
+          ],
+          "coefficients": [
+            0.22628805648071681,
+            0.5481427736983193,
+            -0.004000104065974152
+          ],
+          "residual_sd": 0.11700466056681517,
+          "residual_sd_interval_05_95": [
+            0.020982504152356144,
+            0.1638895810804427
+          ]
+        },
+        "features": [
+          "source",
+          "memory"
+        ],
+        "residual_correlation": 0.041683744020579304
+      },
+      "outside->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.03662836190452774,
+            0.2555643001541268
+          ],
+          "coefficients": [
+            -0.04992639101078794,
+            0.4365010753646114
+          ],
+          "residual_sd": 0.13299090860074128,
+          "residual_sd_interval_05_95": [
+            0.05479534523414764,
+            0.1729059105724693
+          ]
+        },
+        "cohorts": 33,
+        "defense": {
+          "coefficient_sd": [
+            0.030650607769460457,
+            0.18483932523853175
+          ],
+          "coefficients": [
+            -0.08984221243574558,
+            0.17487427927195265
+          ],
+          "residual_sd": 0.10187428312139452,
+          "residual_sd_interval_05_95": [
+            0.02350612265107481,
+            0.13784011200114604
+          ]
+        },
+        "features": [
+          "memory"
+        ],
+        "residual_correlation": 0.20084371719495447
+      }
+    },
+    "treatment": "memory"
+  },
+  {
+    "as_of": "2023-08-04",
+    "cohorts": 72,
+    "competition_id": "eng-championship",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2022-2023",
+    "level": "transition",
+    "target_season": "2023-2024",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-premier-league->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.034908631270789046
+          ],
+          "coefficients": [
+            0.14417473424211735
+          ],
+          "residual_sd": 0.1715562225136387,
+          "residual_sd_interval_05_95": [
+            0.10672718840750173,
+            0.2017501100613598
+          ]
+        },
+        "cohorts": 36,
+        "defense": {
+          "coefficient_sd": [
+            0.034842881481492165
+          ],
+          "coefficients": [
+            0.08375841741514163
+          ],
+          "residual_sd": 0.15932564535709254,
+          "residual_sd_interval_05_95": [
+            0.0823074157936319,
+            0.1879504408419725
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.22015263457482173
+      },
+      "outside->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.033823652117534825
+          ],
+          "coefficients": [
+            -0.07801675554356663
+          ],
+          "residual_sd": 0.1521940801090873,
+          "residual_sd_interval_05_95": [
+            0.07881221851258803,
+            0.18430844974907643
+          ]
+        },
+        "cohorts": 36,
+        "defense": {
+          "coefficient_sd": [
+            0.0255690574210465
+          ],
+          "coefficients": [
+            -0.10103216315661967
+          ],
+          "residual_sd": 0.09199923711966704,
+          "residual_sd_interval_05_95": [
+            0.015764148556709587,
+            0.12789776047726636
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.23548207814047975
+      }
+    },
+    "treatment": "transition"
+  },
+  {
+    "as_of": "2023-08-04",
+    "cohorts": 72,
+    "competition_id": "eng-championship",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2022-2023",
+    "level": "source",
+    "target_season": "2023-2024",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-premier-league->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.06558924375148999,
+            0.16088671014116204
+          ],
+          "coefficients": [
+            0.15528234324477308,
+            0.0329944494670702
+          ],
+          "residual_sd": 0.17249086378205628,
+          "residual_sd_interval_05_95": [
+            0.10562160614088482,
+            0.2063308547814853
+          ]
+        },
+        "cohorts": 36,
+        "defense": {
+          "coefficient_sd": [
+            0.06401101042308927,
+            0.20210229139471492
+          ],
+          "coefficients": [
+            0.24356233474488848,
+            0.5945551776924385
+          ],
+          "residual_sd": 0.099584494831612,
+          "residual_sd_interval_05_95": [
+            0.010371783917547825,
+            0.140680829425178
+          ]
+        },
+        "features": [
+          "source"
+        ],
+        "residual_correlation": 0.06306745113251853
+      },
+      "outside->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.033823652117534825
+          ],
+          "coefficients": [
+            -0.07801675554356663
+          ],
+          "residual_sd": 0.1521940801090873,
+          "residual_sd_interval_05_95": [
+            0.07881221851258803,
+            0.18430844974907643
+          ]
+        },
+        "cohorts": 36,
+        "defense": {
+          "coefficient_sd": [
+            0.0255690574210465
+          ],
+          "coefficients": [
+            -0.10103216315661967
+          ],
+          "residual_sd": 0.09199923711966704,
+          "residual_sd_interval_05_95": [
+            0.015764148556709587,
+            0.12789776047726636
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.23548207814047975
+      }
+    },
+    "treatment": "source"
+  },
+  {
+    "as_of": "2023-08-04",
+    "cohorts": 72,
+    "competition_id": "eng-championship",
+    "expected_memory_weight": {
+      "10": 0.15764138349984394,
+      "2": 0.9999999999999983,
+      "3": 0.4799630584196941,
+      "5": 0.2816449168556824
+    },
+    "last_training_season": "2022-2023",
+    "level": "memory",
+    "target_season": "2023-2024",
+    "timescale_weights": [
+      0.17281304028129776,
+      0.1706036023990524,
+      0.1603122880007347,
+      0.14390865659518176,
+      0.13589959139432298,
+      0.12640472355181373,
+      0.09005809777759502
+    ],
+    "timescales": [
+      0.25,
+      0.5,
+      1.0,
+      2.0,
+      4.0,
+      8.0,
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-premier-league->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.06673689309524716,
+            0.1641237060547933,
+            0.24970511705128906
+          ],
+          "coefficients": [
+            0.15067148639775876,
+            0.04922853449279366,
+            0.12369334285207126
+          ],
+          "residual_sd": 0.17305906370745758,
+          "residual_sd_interval_05_95": [
+            0.10386314740669654,
+            0.20883544032946158
+          ]
+        },
+        "cohorts": 36,
+        "defense": {
+          "coefficient_sd": [
+            0.06690382598020062,
+            0.20512774655914343,
+            0.17081236020762872
+          ],
+          "coefficients": [
+            0.24332436617587444,
+            0.5923677407912795,
+            -0.00016926468697957004
+          ],
+          "residual_sd": 0.10341757462041538,
+          "residual_sd_interval_05_95": [
+            0.011897276471765453,
+            0.14302045305066816
+          ]
+        },
+        "features": [
+          "source",
+          "memory"
+        ],
+        "residual_correlation": 0.05881944319227236
+      },
+      "outside->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.03584524901836968,
+            0.25552784473822143
+          ],
+          "coefficients": [
+            -0.04925592071210162,
+            0.43467418419638126
+          ],
+          "residual_sd": 0.1381552245220504,
+          "residual_sd_interval_05_95": [
+            0.06438343212342622,
+            0.17601953237477966
+          ]
+        },
+        "cohorts": 36,
+        "defense": {
+          "coefficient_sd": [
+            0.028242990072356634,
+            0.17665550458327528
+          ],
+          "coefficients": [
+            -0.08933457331548686,
+            0.17479357488030706
+          ],
+          "residual_sd": 0.09151528380936268,
+          "residual_sd_interval_05_95": [
+            0.014665613189342532,
+            0.1279564038568266
+          ]
+        },
+        "features": [
+          "memory"
+        ],
+        "residual_correlation": 0.22032174014717076
+      }
+    },
+    "treatment": "memory"
+  },
+  {
+    "as_of": "2024-08-09",
+    "cohorts": 78,
+    "competition_id": "eng-championship",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2023-2024",
+    "level": "transition",
+    "target_season": "2024-2025",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-premier-league->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.03317446882497376
+          ],
+          "coefficients": [
+            0.16042753771336554
+          ],
+          "residual_sd": 0.16940231096019379,
+          "residual_sd_interval_05_95": [
+            0.10673652971457956,
+            0.19063425685378785
+          ]
+        },
+        "cohorts": 39,
+        "defense": {
+          "coefficient_sd": [
+            0.033652204631460333
+          ],
+          "coefficients": [
+            0.0923482026894715
+          ],
+          "residual_sd": 0.1605621308857042,
+          "residual_sd_interval_05_95": [
+            0.08509724261700087,
+            0.18760128642433266
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.23240343768142627
+      },
+      "outside->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.0348553123950486
+          ],
+          "coefficients": [
+            -0.06843823092731785
+          ],
+          "residual_sd": 0.17201820487948113,
+          "residual_sd_interval_05_95": [
+            0.10687306443823526,
+            0.20157562766217937
+          ]
+        },
+        "cohorts": 39,
+        "defense": {
+          "coefficient_sd": [
+            0.023791757115620742
+          ],
+          "coefficients": [
+            -0.0991194818828286
+          ],
+          "residual_sd": 0.08401091743561817,
+          "residual_sd_interval_05_95": [
+            0.011136955544647907,
+            0.11235352467679556
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.25581391437914036
+      }
+    },
+    "treatment": "transition"
+  },
+  {
+    "as_of": "2024-08-09",
+    "cohorts": 78,
+    "competition_id": "eng-championship",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2023-2024",
+    "level": "source",
+    "target_season": "2024-2025",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-premier-league->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.05916367477262247,
+            0.1500657373395603
+          ],
+          "coefficients": [
+            0.19061634453520507,
+            0.09290457478294616
+          ],
+          "residual_sd": 0.16854955498691773,
+          "residual_sd_interval_05_95": [
+            0.10117652667591055,
+            0.1919894894226963
+          ]
+        },
+        "cohorts": 39,
+        "defense": {
+          "coefficient_sd": [
+            0.0646331847799257,
+            0.2046215396802386
+          ],
+          "coefficients": [
+            0.24779379954202158,
+            0.5724113661713474
+          ],
+          "residual_sd": 0.10869163000257061,
+          "residual_sd_interval_05_95": [
+            0.01875619702743111,
+            0.14385442435227885
+          ]
+        },
+        "features": [
+          "source"
+        ],
+        "residual_correlation": 0.09097686537477638
+      },
+      "outside->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.0348553123950486
+          ],
+          "coefficients": [
+            -0.06843823092731785
+          ],
+          "residual_sd": 0.17201820487948113,
+          "residual_sd_interval_05_95": [
+            0.10687306443823526,
+            0.20157562766217937
+          ]
+        },
+        "cohorts": 39,
+        "defense": {
+          "coefficient_sd": [
+            0.023791757115620742
+          ],
+          "coefficients": [
+            -0.0991194818828286
+          ],
+          "residual_sd": 0.08401091743561817,
+          "residual_sd_interval_05_95": [
+            0.011136955544647907,
+            0.11235352467679556
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.25581391437914036
+      }
+    },
+    "treatment": "source"
+  },
+  {
+    "as_of": "2024-08-09",
+    "cohorts": 78,
+    "competition_id": "eng-championship",
+    "expected_memory_weight": {
+      "10": 0.27405141742544836,
+      "2": 1.0000000000000002,
+      "3": 0.5265079112213075,
+      "5": 0.36522383809086045
+    },
+    "last_training_season": "2023-2024",
+    "level": "memory",
+    "target_season": "2024-2025",
+    "timescale_weights": [
+      0.1601730579404841,
+      0.16804623599152063,
+      0.15630225900194353,
+      0.10532758670140749,
+      0.0832906093073142,
+      0.10450947280780688,
+      0.2223507782495236
+    ],
+    "timescales": [
+      0.25,
+      0.5,
+      1.0,
+      2.0,
+      4.0,
+      8.0,
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-premier-league->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.05987008896278303,
+            0.1444896680760199,
+            0.1917998867383503
+          ],
+          "coefficients": [
+            0.14400385895667284,
+            0.13585095911432948,
+            0.4185822528886003
+          ],
+          "residual_sd": 0.14851809594431192,
+          "residual_sd_interval_05_95": [
+            0.07733462153936778,
+            0.18193824601557942
+          ]
+        },
+        "cohorts": 39,
+        "defense": {
+          "coefficient_sd": [
+            0.07714810436249506,
+            0.2090369686762473,
+            0.15726369692151265
+          ],
+          "coefficients": [
+            0.2017973412418452,
+            0.5240899444093614,
+            0.16841562258580026
+          ],
+          "residual_sd": 0.10852001342618951,
+          "residual_sd_interval_05_95": [
+            0.018006128022507954,
+            0.1440285515117424
+          ]
+        },
+        "features": [
+          "source",
+          "memory"
+        ],
+        "residual_correlation": 0.08844647963506667
+      },
+      "outside->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.04445961409951702,
+            0.20645722114330683
+          ],
+          "coefficients": [
+            -0.07062388913562985,
+            -0.015964583056901762
+          ],
+          "residual_sd": 0.17328111251632142,
+          "residual_sd_interval_05_95": [
+            0.10682186349626935,
+            0.2062894263679644
+          ]
+        },
+        "cohorts": 39,
+        "defense": {
+          "coefficient_sd": [
+            0.03122043327737206,
+            0.1487924020417065
+          ],
+          "coefficients": [
+            -0.09251994402348704,
+            0.04786196519029328
+          ],
+          "residual_sd": 0.08574270228620158,
+          "residual_sd_interval_05_95": [
+            0.01159497918964324,
+            0.1175369674041194
+          ]
+        },
+        "features": [
+          "memory"
+        ],
+        "residual_correlation": 0.2399879601133553
+      }
+    },
+    "treatment": "memory"
+  },
+  {
+    "as_of": "2025-08-08",
+    "cohorts": 84,
+    "competition_id": "eng-championship",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2024-2025",
+    "level": "transition",
+    "target_season": "2025-2026",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-premier-league->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.03183617829958122
+          ],
+          "coefficients": [
+            0.1525525235973475
+          ],
+          "residual_sd": 0.16787730781254823,
+          "residual_sd_interval_05_95": [
+            0.10688461939063099,
+            0.18856494047636074
+          ]
+        },
+        "cohorts": 42,
+        "defense": {
+          "coefficient_sd": [
+            0.03711345095225233
+          ],
+          "coefficients": [
+            0.10945037662617926
+          ],
+          "residual_sd": 0.1969136065407438,
+          "residual_sd_interval_05_95": [
+            0.11530298109422686,
+            0.23239920146398094
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.23671205683462368
+      },
+      "outside->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.032590827956900624
+          ],
+          "coefficients": [
+            -0.06732118847835011
+          ],
+          "residual_sd": 0.1636589563986018,
+          "residual_sd_interval_05_95": [
+            0.09473845818002957,
+            0.187469161260996
+          ]
+        },
+        "cohorts": 42,
+        "defense": {
+          "coefficient_sd": [
+            0.022514694502042853
+          ],
+          "coefficients": [
+            -0.10397705275759292
+          ],
+          "residual_sd": 0.07929622525459291,
+          "residual_sd_interval_05_95": [
+            0.009112241665687842,
+            0.10499023235381787
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.2363001234616425
+      }
+    },
+    "treatment": "transition"
+  },
+  {
+    "as_of": "2025-08-08",
+    "cohorts": 84,
+    "competition_id": "eng-championship",
+    "expected_memory_weight": {
+      "10": 1.0,
+      "2": 1.0,
+      "3": 1.0,
+      "5": 1.0
+    },
+    "last_training_season": "2024-2025",
+    "level": "source",
+    "target_season": "2025-2026",
+    "timescale_weights": [
+      1.0
+    ],
+    "timescales": [
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-premier-league->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.05772936665887133,
+            0.14728858340652726
+          ],
+          "coefficients": [
+            0.17254681688259774,
+            0.06189493395756275
+          ],
+          "residual_sd": 0.16808198623333143,
+          "residual_sd_interval_05_95": [
+            0.10570006755473575,
+            0.189005195257563
+          ]
+        },
+        "cohorts": 42,
+        "defense": {
+          "coefficient_sd": [
+            0.07317127036574593,
+            0.2281494374340418
+          ],
+          "coefficients": [
+            0.24450822854577559,
+            0.48671740564331334
+          ],
+          "residual_sd": 0.1669903986143089,
+          "residual_sd_interval_05_95": [
+            0.08311004876315618,
+            0.2067953260814114
+          ]
+        },
+        "features": [
+          "source"
+        ],
+        "residual_correlation": 0.1440532380880169
+      },
+      "outside->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.032590827956900624
+          ],
+          "coefficients": [
+            -0.06732118847835011
+          ],
+          "residual_sd": 0.1636589563986018,
+          "residual_sd_interval_05_95": [
+            0.09473845818002957,
+            0.187469161260996
+          ]
+        },
+        "cohorts": 42,
+        "defense": {
+          "coefficient_sd": [
+            0.022514694502042853
+          ],
+          "coefficients": [
+            -0.10397705275759292
+          ],
+          "residual_sd": 0.07929622525459291,
+          "residual_sd_interval_05_95": [
+            0.009112241665687842,
+            0.10499023235381787
+          ]
+        },
+        "features": [],
+        "residual_correlation": 0.2363001234616425
+      }
+    },
+    "treatment": "source"
+  },
+  {
+    "as_of": "2025-08-08",
+    "cohorts": 84,
+    "competition_id": "eng-championship",
+    "expected_memory_weight": {
+      "10": 0.33764787413920627,
+      "2": 1.0000000000000018,
+      "3": 0.5932025556068287,
+      "5": 0.43502801347782816
+    },
+    "last_training_season": "2024-2025",
+    "level": "memory",
+    "target_season": "2025-2026",
+    "timescale_weights": [
+      0.12306540210031709,
+      0.1373162391506307,
+      0.14423747394260608,
+      0.10761422052403564,
+      0.0902054506390329,
+      0.11728893107140881,
+      0.2802722825719706
+    ],
+    "timescales": [
+      0.25,
+      0.5,
+      1.0,
+      2.0,
+      4.0,
+      8.0,
+      null
+    ],
+    "training_label": "season",
+    "transitions": {
+      "eng-premier-league->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.058393648080649195,
+            0.14237667832478892,
+            0.18278837499154824
+          ],
+          "coefficients": [
+            0.12732022445215832,
+            0.11465424764851725,
+            0.4129885873122167
+          ],
+          "residual_sd": 0.1483826290826567,
+          "residual_sd_interval_05_95": [
+            0.0783399960010191,
+            0.18089765053876442
+          ]
+        },
+        "cohorts": 42,
+        "defense": {
+          "coefficient_sd": [
+            0.08611304781621755,
+            0.22919464446404064,
+            0.17691148791621106
+          ],
+          "coefficients": [
+            0.17988146035862074,
+            0.4352466141068678,
+            0.24369062817085924
+          ],
+          "residual_sd": 0.1611550076226883,
+          "residual_sd_interval_05_95": [
+            0.07802890981113884,
+            0.1969979225023371
+          ]
+        },
+        "features": [
+          "source",
+          "memory"
+        ],
+        "residual_correlation": 0.13650219793084772
+      },
+      "outside->eng-championship": {
+        "attack": {
+          "coefficient_sd": [
+            0.041930274651177976,
+            0.19894514448049924
+          ],
+          "coefficients": [
+            -0.06970031554082037,
+            -0.017433890833479387
+          ],
+          "residual_sd": 0.16472530138768046,
+          "residual_sd_interval_05_95": [
+            0.0945085081481154,
+            0.18816394809325585
+          ]
+        },
+        "cohorts": 42,
+        "defense": {
+          "coefficient_sd": [
+            0.028664842274301282,
+            0.14164550921236407
+          ],
+          "coefficients": [
+            -0.10021101279760569,
+            0.02891865068208553
+          ],
+          "residual_sd": 0.08117304410761675,
+          "residual_sd_interval_05_95": [
+            0.009734196691624484,
+            0.1060167660413661
+          ]
+        },
+        "features": [
+          "memory"
+        ],
+        "residual_correlation": 0.2240855700996105
+      }
+    },
+    "treatment": "memory"
+  }
+]
