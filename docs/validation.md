@@ -13,7 +13,62 @@ All historical forecasts on this page were made by code commit `fc94353` with th
 
 Every archive must pass the checks in the [product contract](mvp.md) before publication. A failed check stops the publication. These checks do not measure skill. They show that each forecast is internally consistent: probabilities, event totals, rules, sanctions, playoff conditioning and provenance.
 
-<!-- SEASON PANELS -->
+## Season panels
+
+Each panel forecasts complete historical seasons from five origins and scores the final table. M2 and M7 use the same fixtures, origins, seeds and 10,000 season paths. The tables show M7 − M2 with a season-clustered 95% interval. A negative difference is in favour of M7.
+
+| Division | Seasons | Rank RPS lower for M7 | Rank RPS interval below zero | Event Brier intervals that favour M7 / M2 |
+| --- | ---: | --- | --- | --- |
+| Premier League | 11 | 4 of 5 origins | 0 of 5 origins | 3 / 0 of 20 |
+| Championship | 11 | 5 of 5 origins | 3 of 5 origins | 4 / 0 of 25 |
+| League One | 9 | 5 of 5 origins | 5 of 5 origins | 7 / 0 of 25 |
+| League Two | 9 | 5 of 5 origins | 1 of 5 origins | 4 / 0 of 25 |
+
+M7 is better than M2 in every division, but the size of the gain changes. The gain is largest where M2 has the least information: early in the season, and in the lower divisions. M2's 90% points intervals are too narrow early in the season in every division. M7's intervals are closer to 90%.
+
+In the Premier League, no interval on rank RPS or points CRPS excludes zero. There, the evidence for M7 is the consistent direction, the better interval coverage and three event Brier scores. The Premier League result is weaker than the panel of 8 September 2026 on the research branch. That panel used an earlier M7 entry rule.
+
+### Premier League
+
+| Origin | Rank RPS M2 | Rank RPS M7 | M7 − M2 [95% interval] | Points CRPS M2 | Points CRPS M7 | M7 − M2 [95% interval] | 90% points coverage M2 / M7 |
+| --- | ---: | ---: | --- | ---: | ---: | --- | ---: |
+| preseason | 0.1105 | 0.1065 | −0.0040 [−0.0144, +0.0048] | 6.76 | 6.60 | −0.16 [−0.78, +0.36] | 73.6% / 81.8% |
+| MW6 | 0.0946 | 0.0916 | −0.0030 [−0.0104, +0.0039] | 5.68 | 5.48 | −0.20 [−0.66, +0.20] | 74.5% / 82.7% |
+| MW12 | 0.0781 | 0.0769 | −0.0012 [−0.0078, +0.0046] | 4.67 | 4.56 | −0.11 [−0.50, +0.24] | 80.0% / 86.8% |
+| MW19 | 0.0589 | 0.0586 | −0.0003 [−0.0024, +0.0016] | 3.46 | 3.39 | −0.06 [−0.17, +0.04] | 86.4% / 90.0% |
+| MW30 | 0.0412 | 0.0415 | +0.0004 [−0.0005, +0.0012] | 2.19 | 2.17 | −0.03 [−0.09, +0.03] | 90.0% / 91.4% |
+
+### Championship
+
+| Origin | Rank RPS M2 | Rank RPS M7 | M7 − M2 [95% interval] | Points CRPS M2 | Points CRPS M7 | M7 − M2 [95% interval] | 90% points coverage M2 / M7 |
+| --- | ---: | ---: | --- | ---: | ---: | --- | ---: |
+| preseason | 0.1632 | 0.1460 | −0.0172 [−0.0258, −0.0086] | 8.30 | 7.55 | −0.74 [−1.22, −0.24] | 73.1% / 86.4% |
+| MW6 | 0.1415 | 0.1319 | −0.0096 [−0.0142, −0.0055] | 7.25 | 6.89 | −0.36 [−0.59, −0.12] | 74.2% / 86.7% |
+| MW12 | 0.1238 | 0.1163 | −0.0075 [−0.0116, −0.0030] | 6.31 | 6.05 | −0.26 [−0.44, −0.07] | 76.9% / 86.0% |
+| MW19 | 0.0991 | 0.0962 | −0.0029 [−0.0061, +0.0002] | 4.99 | 4.90 | −0.09 [−0.22, +0.06] | 81.1% / 87.9% |
+| MW30 | 0.0634 | 0.0625 | −0.0009 [−0.0020, +0.0004] | 3.35 | 3.31 | −0.04 [−0.11, +0.03] | 84.8% / 88.3% |
+
+### League One
+
+| Origin | Rank RPS M2 | Rank RPS M7 | M7 − M2 [95% interval] | Points CRPS M2 | Points CRPS M7 | M7 − M2 [95% interval] | 90% points coverage M2 / M7 |
+| --- | ---: | ---: | --- | ---: | ---: | --- | ---: |
+| preseason | 0.1715 | 0.1518 | −0.0197 [−0.0312, −0.0087] | 9.46 | 8.49 | −0.96 [−1.55, −0.44] | 64.8% / 83.8% |
+| MW6 | 0.1364 | 0.1255 | −0.0109 [−0.0167, −0.0042] | 7.49 | 7.13 | −0.36 [−0.75, +0.04] | 67.6% / 83.8% |
+| MW12 | 0.1162 | 0.1084 | −0.0078 [−0.0116, −0.0043] | 6.62 | 6.25 | −0.37 [−0.61, −0.16] | 70.8% / 85.2% |
+| MW19 | 0.0951 | 0.0910 | −0.0041 [−0.0075, −0.0006] | 5.21 | 5.13 | −0.08 [−0.26, +0.10] | 77.3% / 87.5% |
+| MW30 | 0.0646 | 0.0623 | −0.0023 [−0.0043, −0.0007] | 3.49 | 3.44 | −0.05 [−0.12, +0.03] | 82.9% / 85.6% |
+
+### League Two
+
+| Origin | Rank RPS M2 | Rank RPS M7 | M7 − M2 [95% interval] | Points CRPS M2 | Points CRPS M7 | M7 − M2 [95% interval] | 90% points coverage M2 / M7 |
+| --- | ---: | ---: | --- | ---: | ---: | --- | ---: |
+| preseason | 0.1719 | 0.1609 | −0.0110 [−0.0261, +0.0035] | 8.03 | 7.58 | −0.46 [−0.95, +0.04] | 69.4% / 89.4% |
+| MW6 | 0.1471 | 0.1348 | −0.0123 [−0.0186, −0.0052] | 6.91 | 6.44 | −0.48 [−0.76, −0.15] | 74.5% / 90.3% |
+| MW12 | 0.1138 | 0.1089 | −0.0049 [−0.0121, +0.0018] | 5.48 | 5.24 | −0.24 [−0.51, +0.05] | 79.6% / 88.9% |
+| MW19 | 0.0966 | 0.0942 | −0.0024 [−0.0056, +0.0009] | 4.73 | 4.61 | −0.13 [−0.29, +0.04] | 82.9% / 90.3% |
+| MW30 | 0.0687 | 0.0679 | −0.0008 [−0.0026, +0.0009] | 3.42 | 3.38 | −0.04 [−0.15, +0.06] | 86.1% / 89.8% |
+
+Each file `evidence/season_panels/<division>/paired_comparisons.csv` holds every comparison, including each event Brier score. Each `summary.csv` holds the 50%, 80%, 90% and 95% coverage and width of the points and rank intervals.
 
 ## Match scoreboard
 
