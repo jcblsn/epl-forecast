@@ -1,3 +1,0 @@
-matches,log_loss,brier,classwise_ece,score_matches,score_nll,model_id,season_id
-380,0.9869862583049838,0.5869275107960752,0.05042870203047511,0,,discovery:regularized-multinomial-scout,2024-2025
-380,1.0448175120668275,0.6292358553719724,0.058164762455428426,0,,discovery:regularized-multinomial-scout,2025-2026
