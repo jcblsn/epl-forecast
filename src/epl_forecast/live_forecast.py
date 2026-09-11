@@ -12,6 +12,11 @@ from epl_forecast.schema import Match
 from epl_forecast.simulation import EuropeScenario, simulate_season
 from epl_forecast.storage import file_hash, write_json
 
+UNSCHEDULED_PLACEHOLDER = (
+    "Postponed or undated fixtures are simulated on the model cutoff day until the provider "
+    "re-dates them; re-dating moves only the date their latent states are evolved to."
+)
+
 
 def flatten_rows(rows):
     nested = {key for row in rows for key, value in row.items() if isinstance(value, (dict, list))}
@@ -259,7 +264,7 @@ def export_forecast(
         row["match_id"] for row in live.details.values() if row["status"] == "unscheduled"
     ]
     simulation = None
-    if not in_progress and not unscheduled:
+    if not in_progress:
         horizon = live.observed_at + timedelta(days=impact_horizon_days)
         impact_fixtures = {
             row["match_id"]
@@ -285,6 +290,8 @@ def export_forecast(
         table = current_table(live, adjustments)
         for row in simulation["teams"]:
             row.update(table[row["team_id"]])
+        if unscheduled:
+            simulation["assumptions"].append(UNSCHEDULED_PLACEHOLDER)
     matches = []
     market_quotes = market_quotes or []
     selected_quotes = {}
@@ -411,11 +418,11 @@ def export_forecast(
             "Season projection awaits full-time results for in-progress or overdue fixtures; "
             "this model does not forecast games in play."
             if in_progress
-            else "Season projection awaits fixture dates required for future state evolution."
-            if unscheduled
             else None
         ),
         "fixtures_awaiting_results": in_progress,
+        "unscheduled_fixtures": unscheduled,
+        "unscheduled_placeholder": UNSCHEDULED_PLACEHOLDER if unscheduled else None,
         "results_crosschecked": live.results_crosschecked,
         "competition_id": live.competition_id,
         "competition_name": competition(live.competition_id).name,

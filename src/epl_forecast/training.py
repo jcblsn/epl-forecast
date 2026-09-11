@@ -10,6 +10,9 @@ def training_matches(matches: list[Match], config: dict, spec: dict, as_of: date
         raise ValueError("Training window must be nonnegative integer days")
     earliest = as_of - timedelta(days=days) if days else date.min
     competitions = spec.get("train_competitions", [config["competition_id"]])
+    if isinstance(competitions, dict):
+        # A per-division table lets each forecast division see only the evidence validated for it.
+        competitions = competitions.get(config["competition_id"], [])
     if not competitions or config["competition_id"] not in competitions:
         raise ValueError("Training competitions must include the forecast competition")
     training = sorted(

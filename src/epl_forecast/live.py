@@ -65,7 +65,9 @@ def load_live_season(root=Path("data"), cutoff=None, competition="eng-premier-le
             if finished:
                 played.append(matches[key])
             else:
-                day = r["match_date"] or cutoff.astimezone(LONDON).date()
+                # A postponed or undated fixture is placed on the cutoff day until re-dated.
+                undated = r["kickoff_time"] is None or r["status"] == "postponed"
+                day = cutoff.astimezone(LONDON).date() if undated else r["match_date"]
                 remaining.append(
                     Fixture(key, competition, season, day, r["home_team_id"], r["away_team_id"])
                 )

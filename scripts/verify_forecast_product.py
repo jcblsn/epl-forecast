@@ -118,6 +118,15 @@ def verify(archive: Path, data: Path) -> dict:
         ):
             break
 
+    unscheduled = [m for m in forecast["matches"] if m["status"] == "unscheduled"]
+    checks.check(
+        "postponed or undated fixtures are disclosed and placed on the cutoff day",
+        sorted(m["match_id"] for m in unscheduled)
+        == sorted(forecast.get("unscheduled_fixtures", []))
+        and all(m["model_forecast_date"] == forecast["model_results_cutoff"] for m in unscheduled),
+        [m["match_id"] for m in unscheduled],
+    )
+
     simulation = forecast["simulation"]
     if not checks.check(
         "a season projection is published",
