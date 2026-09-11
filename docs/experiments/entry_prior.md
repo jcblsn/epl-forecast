@@ -64,17 +64,22 @@ backfill was added for this pass.
 Coefficients are fitted on the club's whole-season division-relative target
 strength — a smoothed retrospective state, used only to discover the mapping.
 The first-ten-match label the earlier bridges trained on is retained as an
-evaluation diagnostic and as a switch, but it is too noisy to train on: its own
-measurement SD averages about 0.26 against a cohort spread near 0.22, so the
-errors-in-variables fit attributes nearly all of the observed spread to
-measurement noise and returns a residual SD around 0.08. Training on the season
-label roughly doubles the learned residual SD — 0.076 to 0.128 for Championship
-into the Premier League in attack, 0.078 to 0.164 for the reverse — while
-leaving the intercepts unchanged. That is the dispersion correction; the earlier
-relegation bridge's overconfidence was a label problem, not a mean problem.
+evaluation diagnostic and as a switch, but it is too noisy to train on. Across
+the 90 evaluated entrants its own measurement SD runs 0.24 to 0.31 by transition
+and dimension, against a within-cohort spread of 0.24 to 0.34 — the noise is as
+large as the signal it is meant to resolve — so the errors-in-variables fit
+attributes almost all of the observed spread to measurement error. The season
+label's measurement SD runs 0.12 to 0.16 against a spread of 0.14 to 0.28, which
+identifies the decomposition.
+
+At the 2025/26 cutoff, switching from the entry label to the season label raises
+the fitted residual SD from 0.082 to 0.136 for Championship into the Premier
+League in attack and from 0.083 to 0.168 for the reverse, while the intercepts
+move by 0.01 to 0.04. That is the dispersion correction: the earlier relegation
+bridge's overconfidence was a label problem, not a mean problem.
 
 Every entry prior uses only transitions whose target season finished and was
-available before the forecast cutoff. Training cohorts grow from 12 to 42 per
+available before the forecast cutoff. Training cohorts grow from 15 to 42 per
 transition. No evaluated season's own label enters its own prior.
 
 ## The learned translation
