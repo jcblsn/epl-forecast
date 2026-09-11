@@ -95,10 +95,8 @@ def test_canonical_observations_and_factory(small_history):
     }
     model = make_model(spec).fit(small_history, small_history[-1].available_on)
     assert model.fit_diagnostics["xg_matches"] == len(small_history)
-    control = make_model(
-        {"kind": "centered_quality_tilt", "parameters": {"independent_poisson": True}}
-    )
-    assert control.dispersion is None
+    with pytest.raises(ValueError, match="Unknown model kind"):
+        make_model({"kind": "centered_quality_tilt"})
 
 
 def test_zero_weight_mixture_likelihood_is_silent():

@@ -6,31 +6,19 @@ import pytest
 from scipy.optimize import check_grad
 
 from epl_forecast.evaluation import individual_metrics, metrics, rolling_predictions
-from epl_forecast.models.baselines import (
-    AttackDefensePoisson,
-    LeagueFrequency,
-    LeaguePoisson,
-    poisson_objective,
-)
-from epl_forecast.models.elo import EloOrderedLogit
+from epl_forecast.models.baselines import AttackDefensePoisson, poisson_objective
 from epl_forecast.models.poisson import IndependentPoisson
 from epl_forecast.schema import Fixture, fixture_id
 
 
-@pytest.mark.parametrize(
-    "model_type", [LeagueFrequency, LeaguePoisson, AttackDefensePoisson, EloOrderedLogit]
-)
-def test_fit_rejects_same_day_and_future_results(small_history, model_type):
+def test_fit_rejects_same_day_and_future_results(small_history):
     with pytest.raises(ValueError, match="unavailable"):
-        model_type().fit(small_history, date(2020, 8, 12))
+        AttackDefensePoisson().fit(small_history, date(2020, 8, 12))
 
 
-@pytest.mark.parametrize(
-    "model_type", [LeagueFrequency, LeaguePoisson, AttackDefensePoisson, EloOrderedLogit]
-)
-def test_predictions_for_unseen_teams_are_valid(small_history, model_type):
+def test_predictions_for_unseen_teams_are_valid(small_history):
     day = date(2020, 8, 20)
-    model = model_type().fit(small_history, day)
+    model = AttackDefensePoisson().fit(small_history, day)
     fixture = Fixture(
         fixture_id("eng-premier-league", "2020-2021", "new", "other"),
         "eng-premier-league",
@@ -61,10 +49,8 @@ def test_same_day_and_future_labels_cannot_change_forecasts(small_history):
         "train_window_days": 365,
         "min_train_matches": 3,
         "models": [
-            {"id": "m0", "kind": "league_frequency"},
-            {"id": "m1", "kind": "league_poisson"},
             {"id": "m2", "kind": "attack_defense_poisson"},
-            {"id": "m3", "kind": "elo_ordered_logit"},
+            {"id": "m7", "kind": "bayesian_xg_quality_tilt"},
         ],
     }
     cutoff = date(2020, 8, 8)
@@ -84,7 +70,7 @@ def test_same_day_and_future_labels_cannot_change_forecasts(small_history):
     assert [{k: row[k] for k in fields} for row in original] == [
         {k: row[k] for k in fields} for row in altered
     ]
-    assert len(original) == 8
+    assert len(original) == 4
     assert all(row["train_date_max"] < str(cutoff) for row in original)
 
 

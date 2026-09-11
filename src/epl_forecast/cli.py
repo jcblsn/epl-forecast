@@ -14,8 +14,7 @@ from epl_forecast.live import LONDON, load_live_season
 from epl_forecast.live_forecast import check_freshness, export_forecast
 from epl_forecast.models import make_model
 from epl_forecast.sanctions import load_sanctions
-from epl_forecast.schema import Fixture, fixture_id
-from epl_forecast.simulation import EuropeScenario, simulate_season
+from epl_forecast.simulation import EuropeScenario
 from epl_forecast.storage import file_hash, write_json
 from epl_forecast.training import training_matches
 
@@ -84,137 +83,6 @@ def evaluate_command(args) -> None:
     print(report)
 
 
-def simulate_command(args) -> None:
-    config = load_config(args.config)
-    matches, _, manifest = load_dataset(args.data)
-    model, spec, training = fitted_model(matches, config, args.model, args.as_of)
-    season_matches = [
-        m
-        for m in matches
-        if m.fixture.season_id == args.season
-        and m.fixture.competition_id == config["competition_id"]
-    ]
-    if not season_matches:
-        raise ValueError(f"No matches for {args.season} in selected competition")
-    teams = sorted(
-        {team for m in season_matches for team in (m.fixture.home_team_id, m.fixture.away_team_id)}
-    )
-    played = [m for m in season_matches if m.available_on <= args.as_of]
-    remaining = [m.fixture for m in season_matches if m.available_on > args.as_of]
-    europe = (
-        None
-        if args.europe_scenario is None
-        else EuropeScenario(**json.loads(args.europe_scenario.read_text()))
-    )
-    adjustments = (
-        load_sanctions(args.data).known_adjustments(
-            config["competition_id"], args.season, args.as_of
-        )
-        if args.adjustments is None
-        else json.loads(args.adjustments.read_text())
-    )
-    new_run_directory(args.output)
-    result = simulate_season(
-        model,
-        played,
-        remaining,
-        teams,
-        args.as_of,
-        args.simulations,
-        args.seed,
-        adjustments,
-        europe,
-    )
-    write_json(args.output / "simulation.json", result)
-    rows = []
-    for team in sorted(result["teams"], key=lambda t: t["mean_position"]):
-        row = {key: value for key, value in team.items() if not isinstance(value, (dict, list))}
-        row.update(team.get("conditional_europe_probabilities", {}))
-        rows.append(row)
-    save_rows(args.output / "table.csv", rows)
-    if hasattr(model, "team_summary"):
-        save_rows(
-            args.output / "team_strengths.csv",
-            [model.team_summary(team, args.season) for team in teams],
-        )
-    elif hasattr(model, "team_index"):
-        save_rows(
-            args.output / "team_strengths.csv",
-            [
-                {
-                    "team_id": team,
-                    "attack_log_rate": float(model.attack[index]),
-                    "defense_log_rate": float(model.defense[index]),
-                }
-                for team, index in model.team_index.items()
-            ],
-        )
-    write_json(
-        args.output / "run.json",
-        {
-            **provenance(config, manifest),
-            "model": spec,
-            "as_of": str(args.as_of),
-            "season_id": args.season,
-            "seed": args.seed,
-            "simulations": args.simulations,
-            "training_matches": len(training),
-            "europe_scenario": result["europe_scenario"],
-            "adjustments": adjustments,
-        },
-    )
-    print(
-        f"Simulated {len(remaining)} remaining fixtures {args.simulations:,} times; "
-        f"saved {args.output / 'simulation.json'}"
-    )
-
-
-def predict_command(args) -> None:
-    config = load_config(args.config)
-    matches, _, manifest = load_dataset(args.data)
-    as_of = args.as_of or args.date
-    model, spec, training = fitted_model(matches, config, args.model, as_of)
-    fixture = Fixture(
-        fixture_id(config["competition_id"], args.season, args.home, args.away),
-        config["competition_id"],
-        args.season,
-        args.date,
-        args.home,
-        args.away,
-    )
-    known_ids = {team for m in matches for team in (m.fixture.home_team_id, m.fixture.away_team_id)}
-    if args.home not in known_ids or args.away not in known_ids:
-        raise ValueError("Use canonical team IDs from the normalized data")
-    forecast = model.predict_match(fixture)
-    output = {
-        "model": spec,
-        "match_id": fixture.match_id,
-        "as_of": str(as_of),
-        "match_date": str(args.date),
-        "training_matches": len(training),
-        "p_home": forecast.probabilities[0],
-        "p_draw": forecast.probabilities[1],
-        "p_away": forecast.probabilities[2],
-        "provenance": provenance(config, manifest),
-    }
-    if forecast.scores is not None and hasattr(forecast.scores, "grid"):
-        grid, tail = forecast.scores.grid(args.max_goals)
-        output["score_distribution"] = {
-            "home_rate": forecast.scores.home_rate,
-            "away_rate": forecast.scores.away_rate,
-            "grid_home_rows_away_columns": grid.tolist(),
-            "omitted_probability": tail,
-        }
-    if hasattr(model, "team_summary"):
-        output["team_states"] = [model.team_summary(t, args.season) for t in (args.home, args.away)]
-        output["fit_diagnostics"] = model.fit_diagnostics
-    if args.output:
-        write_json(args.output, output)
-        print(f"Saved {args.output}")
-    else:
-        print(json.dumps(output, indent=2, allow_nan=False))
-
-
 def forecast_command(args) -> None:
     live = load_live_season(args.data, args.cutoff, args.competition, args.season)
     check_freshness(live, args.max_snapshot_age_hours)
@@ -234,14 +102,6 @@ def forecast_command(args) -> None:
     ] + live.played
     as_of = live.observed_at.astimezone(LONDON).date()
     model, spec, training = fitted_model(history, config, args.model, as_of)
-    if spec["kind"] not in {
-        "attack_defense_poisson",
-        "dynamic_attack_defense",
-        "bayesian_quality_tilt",
-        "bayesian_xg_quality_tilt",
-        "bayesian_process_quality_tilt",
-    }:
-        raise ValueError("The live strength export currently requires an attack/defense model")
     europe = (
         EuropeScenario(**json.loads(args.europe_scenario.read_text()))
         if args.europe_scenario
@@ -388,32 +248,16 @@ def parser() -> argparse.ArgumentParser:
     operate.add_argument("--no-collect", action="store_true")
     operate.add_argument("--install-launch-agent", action="store_true")
     operate.set_defaults(func=operate_command)
-    for name in ("evaluate", "simulate", "predict"):
-        command = commands.add_parser(name)
-        command.add_argument("--config", type=Path, default=Path("configs/baselines.toml"))
-        command.add_argument("--data", type=Path, default=Path("data"))
-        command.add_argument("--output", type=Path, required=name != "predict")
-        if name == "evaluate":
-            command.add_argument(
-                "--split", choices=["development", "validation", "holdout"], required=True
-            )
-            command.set_defaults(func=evaluate_command)
-        else:
-            command.add_argument("--model", default="M2-attack-defense-v1")
-            command.add_argument("--season", required=True, help="Season ID, e.g. 2024-2025")
-            command.add_argument("--as-of", type=date.fromisoformat, required=name == "simulate")
-        if name == "simulate":
-            command.add_argument("--simulations", type=int, default=10000)
-            command.add_argument("--seed", type=int, default=20260905)
-            command.add_argument("--adjustments", type=Path)
-            command.add_argument("--europe-scenario", type=Path)
-            command.set_defaults(func=simulate_command)
-        if name == "predict":
-            command.add_argument("--home", required=True)
-            command.add_argument("--away", required=True)
-            command.add_argument("--date", required=True, type=date.fromisoformat)
-            command.add_argument("--max-goals", type=int, default=10)
-            command.set_defaults(func=predict_command)
+    evaluate = commands.add_parser(
+        "evaluate", help="Score rolling historical match forecasts for M7 and M2"
+    )
+    evaluate.add_argument("--config", type=Path, default=Path("configs/xg_quality_tilt.toml"))
+    evaluate.add_argument("--data", type=Path, default=Path("data"))
+    evaluate.add_argument("--output", type=Path, required=True)
+    evaluate.add_argument(
+        "--split", choices=["development", "validation", "holdout"], required=True
+    )
+    evaluate.set_defaults(func=evaluate_command)
     return root
 
 

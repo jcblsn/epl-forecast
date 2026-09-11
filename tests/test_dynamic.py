@@ -212,8 +212,8 @@ def test_shared_training_blocks_same_day_and_future_in_both_divisions(bridge_his
     )
     champ = season_matches(2020, CHAMPIONSHIP, [f"c{i}" for i in range(24)], 6)
     spec = {
-        "id": "M4",
-        "kind": "dynamic_attack_defense",
+        "id": "M7",
+        "kind": "bayesian_xg_quality_tilt",
         "train_window_days": 0,
         "train_competitions": [PL, CHAMPIONSHIP],
     }
@@ -231,7 +231,7 @@ def test_shared_training_blocks_same_day_and_future_in_both_divisions(bridge_his
         assert [a[k] for k in ("p_home", "p_draw", "p_away")] == [
             b[k] for k in ("p_home", "p_draw", "p_away")
         ]
-    model, _, training = fitted_model(history, config, "M4", cutoff)
+    model, _, training = fitted_model(history, config, "M7", cutoff)
     assert {m.fixture.competition_id for m in training} == {PL, CHAMPIONSHIP}
     assert all(m.available_on <= cutoff for m in training)
     predicted = {r["match_id"]: r for r in original}[current[0].fixture.match_id]
@@ -240,7 +240,7 @@ def test_shared_training_blocks_same_day_and_future_in_both_divisions(bridge_his
     )
 
 
-def test_dynamic_factory_can_forecast_championship(small_history):
+def test_product_factory_can_forecast_championship(small_history):
     from dataclasses import replace
 
     from epl_forecast.models import make_model
@@ -259,8 +259,8 @@ def test_dynamic_factory_can_forecast_championship(small_history):
     cutoff = games[-1].available_on
     model = make_model(
         {
-            "kind": "bayesian_quality_tilt",
-            "parameters": {"competition_id": "eng-championship", "independent_poisson": True},
+            "kind": "bayesian_xg_quality_tilt",
+            "parameters": {"competition_id": "eng-championship"},
         }
     ).fit(games, cutoff)
     fixture = replace(games[-1].fixture, match_date=cutoff)

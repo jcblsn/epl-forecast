@@ -22,26 +22,6 @@ half_life_days = 365.0
 ridge = 5.0
 
 [[models]]
-id = "M5-quality-tilt-poisson"
-kind = "bayesian_quality_tilt"
-train_window_days = 0
-train_competitions = ["eng-premier-league", "eng-championship"]
-[models.parameters]
-independent_poisson = true
-
-[[models]]
-id = "M5-centered-poisson-control"
-kind = "centered_quality_tilt"
-train_window_days = 0
-train_competitions = ["eng-premier-league", "eng-championship"]
-[models.parameters]
-quality_retention = 0.85
-quality_sd = 0.09
-tilt_retention = 0.5
-tilt_sd = 0.07
-independent_poisson = true
-
-[[models]]
 id = "M7-xg-v1"
 kind = "bayesian_xg_quality_tilt"
 train_window_days = 0

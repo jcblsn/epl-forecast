@@ -168,7 +168,7 @@ def test_future_score_mutation_cannot_change_a_simulated_remainder(full_season):
         "competition_id": "eng-premier-league",
         "train_window_days": 365,
         "min_train_matches": 1,
-        "models": [{"id": "poisson", "kind": "league_poisson"}],
+        "models": [{"id": "poisson", "kind": "attack_defense_poisson"}],
     }
 
     def simulate(matches):

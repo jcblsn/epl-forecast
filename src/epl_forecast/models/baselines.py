@@ -6,7 +6,7 @@ from scipy.optimize import minimize
 
 from epl_forecast.models.base import Forecast
 from epl_forecast.models.poisson import IndependentPoisson
-from epl_forecast.schema import OUTCOMES, Fixture, Match, validate_training
+from epl_forecast.schema import Fixture, Match, validate_training
 
 
 def time_weights(matches: list[Match], as_of: date, half_life_days: float | None) -> np.ndarray:
@@ -35,45 +35,6 @@ class BaseModel:
             raise ValueError("Fixture predates the model's training cutoff")
         if fixture.competition_id != self.competition_id:
             raise ValueError("Fixture competition differs from model training")
-
-
-class LeagueFrequency(BaseModel):
-    def __init__(self, alpha: float = 1.0) -> None:
-        super().__init__()
-        if not np.isfinite(alpha) or alpha <= 0:
-            raise ValueError("alpha must be positive")
-        self.alpha = alpha
-
-    def fit(self, matches: list[Match], as_of: date) -> Self:
-        self.record_fit(matches, as_of)
-        counts = np.array([sum(m.outcome == outcome for m in matches) for outcome in OUTCOMES])
-        self.probabilities = tuple((counts + self.alpha) / (len(matches) + 3 * self.alpha))
-        return self
-
-    def predict_match(self, fixture: Fixture) -> Forecast:
-        self.validate_fixture(fixture)
-        return Forecast(self.probabilities)
-
-
-class LeaguePoisson(BaseModel):
-    def __init__(self, half_life_days: float | None = 365.0) -> None:
-        super().__init__()
-        self.half_life_days = half_life_days
-
-    def fit(self, matches: list[Match], as_of: date) -> Self:
-        self.record_fit(matches, as_of)
-        weights = time_weights(matches, as_of, self.half_life_days)
-        home = np.array([match.home_goals for match in matches])
-        away = np.array([match.away_goals for match in matches])
-        self.distribution = IndependentPoisson(
-            float((weights @ home + 1) / (weights.sum() + 1)),
-            float((weights @ away + 1) / (weights.sum() + 1)),
-        )
-        return self
-
-    def predict_match(self, fixture: Fixture) -> Forecast:
-        self.validate_fixture(fixture)
-        return Forecast(self.distribution.outcome_probabilities(), self.distribution)
 
 
 def poisson_objective(
