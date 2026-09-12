@@ -5,7 +5,7 @@ import pytest
 from test_publication import sample_forecast, sample_run
 
 from epl_forecast.live import LiveSeason
-from epl_forecast.live_forecast import completed_slate, weekly_window
+from epl_forecast.live_forecast import started_slate, weekly_window
 from epl_forecast.models.base import Forecast
 from epl_forecast.publication import (
     IMPACT_MOVEMENT_FLOOR,
@@ -314,19 +314,21 @@ def detail(match_id, status, kickoff, home_goals=None, away_goals=None):
     }
 
 
-def test_a_matchday_afternoon_keeps_the_results_of_that_day():
+def test_a_matchday_afternoon_keeps_the_matches_that_started():
     observed = datetime(2026, 9, 12, 15, 30, tzinfo=UTC)
     details = {
         "yesterday": detail("yesterday", "finished", "2026-09-11T19:00:00+00:00", 1, 0),
         "lunchtime": detail("lunchtime", "finished", "2026-09-12T11:30:00+00:00", 2, 2),
+        "in-play": detail("in-play", "in_progress", "2026-09-12T14:00:00+00:00"),
         "afternoon": detail("afternoon", "scheduled", "2026-09-12T16:30:00+00:00"),
         "next-week": detail("next-week", "scheduled", "2026-09-19T14:00:00+00:00"),
     }
     live = LiveSeason("2026-2027", observed, {}, [], [], details, {})
     start, _ = weekly_window(observed, 7)
-    slate = completed_slate(live, start)
-    assert [row["match_id"] for row in slate] == ["lunchtime"]
-    assert slate[0]["outcome"] == "D"
+    slate = started_slate(live, start)
+    assert [row["match_id"] for row in slate] == ["lunchtime", "in-play"]
+    assert (slate[0]["status"], slate[0]["outcome"]) == ("finished", "D")
+    assert (slate[1]["status"], slate[1]["outcome"]) == ("in_progress", None)
 
 
 def impact_block(coverage=EVERY_TEAM, movement=0.05):
@@ -375,24 +377,25 @@ def scheduled_forecast(generated, coverage=EVERY_TEAM, movement=0.05):
         "horizon_days": 7,
         "window_start": "2026-09-11T23:00:00+00:00",
         "window_end": "2026-09-18T12:00:00+00:00",
-        "completed": [],
+        "started": [],
     }
     return forecast
 
 
-def played_forecast(generated):
-    """The same season once the fixture has kicked off and settled."""
+def played_forecast(generated, status="finished", outcome="H"):
+    """The same season once the fixture has kicked off."""
     forecast = scheduled_forecast(generated)
-    forecast["matches"][0]["status"] = "finished"
+    forecast["matches"][0]["status"] = status
     forecast["simulation"]["match_impacts"]["fixtures"] = []
-    forecast["impact_window"]["completed"] = [
+    forecast["impact_window"]["started"] = [
         {
             "match_id": MATCH,
             "home_team_id": "arsenal",
             "away_team_id": "chelsea",
             "kickoff_time": KICKOFF,
             "match_date": "2026-09-12",
-            "outcome": "H",
+            "status": status,
+            "outcome": outcome,
         }
     ]
     return forecast
@@ -404,9 +407,19 @@ def publish(site, generated, snapshot, **kwargs):
     return document
 
 
-def carried(site, generated="2026-09-12T18:00:00+00:00", snapshot="2026-09-12T180000Z"):
-    document = derive_forecast(played_forecast(generated), sample_run(), snapshot)
+def carried(site, generated="2026-09-12T18:00:00+00:00", snapshot="2026-09-12T180000Z", **kwargs):
+    document = derive_forecast(played_forecast(generated, **kwargs), sample_run(), snapshot)
     return carry_forward_impacts(site, document)
+
+
+def test_a_match_in_play_shows_its_last_pre_kickoff_impact(tmp_path):
+    publish(tmp_path, "2026-09-12T09:00:00+00:00", "2026-09-12T090000Z", movement=0.07)
+    document = carried(tmp_path, status="in_progress", outcome=None)
+    check_publishable(document, load_policy())
+    fixture = document["impact"]["fixtures"][0]
+    assert fixture["status"] == "in_progress" and fixture["outcome"] is None
+    assert fixture["carried_from"]["snapshot_id"] == "2026-09-12T090000Z"
+    assert fixture["impacts"]["title_probability"]["rms_movement"] == [0.07, 0.07]
 
 
 def test_a_finished_fixture_shows_its_last_pre_kickoff_impact(tmp_path):

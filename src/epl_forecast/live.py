@@ -65,9 +65,12 @@ def load_live_season(root=Path("data"), cutoff=None, competition="eng-premier-le
             if finished:
                 played.append(matches[key])
             else:
-                # A postponed or undated fixture is placed on the cutoff day until re-dated.
+                # A fixture without a usable date waits on the cutoff day until it is re-dated.
+                # A fixture that started without a result waits there too, because its latent
+                # states are evolved to now, not to a kickoff that has already passed.
                 undated = r["kickoff_time"] is None or r["status"] == "postponed"
-                day = cutoff.astimezone(LONDON).date() if undated else r["match_date"]
+                started = r["kickoff_time"] is not None and r["kickoff_time"] <= cutoff
+                day = cutoff.astimezone(LONDON).date() if undated or started else r["match_date"]
                 remaining.append(
                     Fixture(key, competition, season, day, r["home_team_id"], r["away_team_id"])
                 )

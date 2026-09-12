@@ -25,6 +25,7 @@ Each M7 archive contains:
 - for the Championship, League One and League Two: title, automatic promotion, playoff qualification, playoff promotion, promotion and relegation probabilities, under the places of that division and season;
 - conditional season events of every club, for each match in the impact window of a week;
 - a list of postponed or undated fixtures and the day the simulation used;
+- a list of the matches that started without a full-time result, with the assumption that applies to them;
 - the data cutoff, the generation time, the input provenance and the seed.
 
 ## Checks on each archive
@@ -41,7 +42,7 @@ Each M7 archive contains:
 8. The playoff bracket is the reviewed edition for the season and uses the latent states of each path. Promotion equals automatic promotion plus playoff promotion.
 9. The conditional impacts divide the paths completely, measure every club and return the published season events. The impact window opens on the London day of the observation and closes at the horizon.
 10. The simulated match frequencies agree with the published match model within the Monte Carlo tolerance.
-11. Each postponed or undated fixture is listed and placed on the cutoff day.
+11. Each postponed or undated fixture is listed and placed on the cutoff day. Each match that started without a result is listed, is placed on the cutoff day, and gets no match forecast.
 12. The provenance records the data manifest, the model specification, the seed and the source hashes.
 
 ## Why M7
@@ -50,7 +51,7 @@ M7 has the best retained match score and the best season distributions against M
 
 ## Out of scope
 
-- In-play forecasts.
+- In-play forecasts. A match that is in play is simulated as a match that is not played. The product does not use the current score, and it says so in each forecast that contains such a match.
 - Lineup, injury and transfer effects.
 - Betting advice or automation.
 - Forecasts for cups or European competitions.

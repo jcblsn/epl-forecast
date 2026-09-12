@@ -52,7 +52,7 @@ For historical scoring, the realized final table includes every sanction in forc
 ## Fixtures without a usable date
 
 - A postponed or undated fixture is simulated on the cutoff day. When the provider gives a new date, only the date of its state evolution changes. The archive and the public forecast list each such fixture with the day that the simulation used.
-- A match in progress, or a result that is overdue, stops the season projection. The match forecasts stay available.
+- A match that started without a full-time result is simulated on the cutoff day, as a match that is not played. The forecast does not use the current score. It gives no match probabilities for that match, and it lists the match with the assumption that applies to it. The projection of the two clubs is a pre-match projection that is one match behind the live table.
 
 ## Conditional impacts
 

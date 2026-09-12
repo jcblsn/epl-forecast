@@ -99,6 +99,8 @@ allowed_keys = [
   "unscheduled_assumption",
   "unscheduled_fixtures",
   "unsettled",
+  "unsettled_assumption",
+  "unsettled_fixtures",
   "verification",
   "window_end",
   "window_start",

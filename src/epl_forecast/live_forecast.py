@@ -16,6 +16,13 @@ UNSCHEDULED_PLACEHOLDER = (
     "Postponed or undated fixtures are simulated on the model cutoff day until the provider "
     "re-dates them; re-dating moves only the date their latent states are evolved to."
 )
+STARTED_WITHOUT_RESULT = ("in_progress", "awaiting_result")
+UNSETTLED_PLACEHOLDER = (
+    "A match that started without a full-time result is simulated on the cutoff day as a match "
+    "that is not played. The forecast does not use the current score, and it does not forecast "
+    "a match in play. The projection of that match, and of the clubs in it, is a pre-match "
+    "projection that is one match behind the live table."
+)
 
 
 def flatten_rows(rows):
@@ -36,30 +43,32 @@ def weekly_window(observed_at: datetime, horizon_days: int) -> tuple[datetime, d
     return start, observed_at + timedelta(days=horizon_days)
 
 
-def completed_slate(live: LiveSeason, window_start: datetime) -> list[dict]:
-    """Fixtures of the current London day that already have a full-time result."""
-    completed = []
+def started_slate(live: LiveSeason, window_start: datetime) -> list[dict]:
+    """Fixtures of the current London day that started, with the result when there is one."""
+    started = []
     for row in live.details.values():
-        if row["status"] != "finished" or not row["kickoff_time"]:
+        if row["status"] not in ("finished", *STARTED_WITHOUT_RESULT) or not row["kickoff_time"]:
             continue
         kickoff = timestamp(row["kickoff_time"])
         if not window_start <= kickoff <= live.observed_at:
             continue
         home, away = row["home_goals"], row["away_goals"]
-        if home is None or away is None:
-            continue
-        completed.append(
+        settled = row["status"] == "finished" and home is not None and away is not None
+        started.append(
             {
                 "match_id": row["match_id"],
                 "home_team_id": row["home_team_id"],
                 "away_team_id": row["away_team_id"],
                 "kickoff_time": row["kickoff_time"],
                 "match_date": row["match_date"],
-                "outcome": "H" if home > away else "A" if away > home else "D",
+                "status": row["status"],
+                "outcome": ("H" if home > away else "A" if away > home else "D")
+                if settled
+                else None,
             }
         )
-    completed.sort(key=lambda row: (row["kickoff_time"], row["match_id"]))
-    return completed
+    started.sort(key=lambda row: (row["kickoff_time"], row["match_id"]))
+    return started
 
 
 def check_freshness(live: LiveSeason, max_age_hours: float) -> None:
@@ -286,11 +295,21 @@ def export_forecast(
     impact_horizon_days: int = 7,
 ) -> dict:
     new_run_directory(output)
-    in_progress = [
-        row["match_id"]
+    # A match that started without a result is simulated as a match that is not played, so one
+    # unsettled result no longer stops the projection of a whole division.
+    unsettled_details = [
+        {
+            "match_id": row["match_id"],
+            "home_team_id": row["home_team_id"],
+            "away_team_id": row["away_team_id"],
+            "match_date": row["match_date"],
+            "kickoff_time": row["kickoff_time"],
+            "status": row["status"],
+        }
         for row in live.details.values()
-        if row["status"] in {"in_progress", "awaiting_result"}
+        if row["status"] in STARTED_WITHOUT_RESULT
     ]
+    unsettled = [row["match_id"] for row in unsettled_details]
     unscheduled = [
         row["match_id"] for row in live.details.values() if row["status"] == "unscheduled"
     ]
@@ -299,37 +318,37 @@ def export_forecast(
         "horizon_days": impact_horizon_days,
         "window_start": window_start.isoformat(),
         "window_end": window_end.isoformat(),
-        "completed": completed_slate(live, window_start),
+        "started": started_slate(live, window_start),
     }
-    simulation = None
-    if not in_progress:
-        impact_fixtures = {
-            row["match_id"]
-            for row in live.details.values()
-            if row["status"] == "scheduled"
-            and row["kickoff_time"]
-            and live.observed_at < timestamp(row["kickoff_time"]) <= window_end
-        }
-        simulation = simulate_season(
-            model,
-            live.played,
-            live.remaining,
-            list(live.teams),
-            model.as_of,
-            simulations,
-            seed,
-            adjustments,
-            europe,
-            results_observed_at=live.observed_at,
-            impact_fixtures=impact_fixtures,
-            impact_horizon_days=impact_horizon_days,
-            impact_window=(window_start, window_end),
-        )
-        table = current_table(live, adjustments)
-        for row in simulation["teams"]:
-            row.update(table[row["team_id"]])
-        if unscheduled:
-            simulation["assumptions"].append(UNSCHEDULED_PLACEHOLDER)
+    impact_fixtures = {
+        row["match_id"]
+        for row in live.details.values()
+        if row["status"] == "scheduled"
+        and row["kickoff_time"]
+        and live.observed_at < timestamp(row["kickoff_time"]) <= window_end
+    }
+    simulation = simulate_season(
+        model,
+        live.played,
+        live.remaining,
+        list(live.teams),
+        model.as_of,
+        simulations,
+        seed,
+        adjustments,
+        europe,
+        results_observed_at=live.observed_at,
+        impact_fixtures=impact_fixtures,
+        impact_horizon_days=impact_horizon_days,
+        impact_window=(window_start, window_end),
+    )
+    table = current_table(live, adjustments)
+    for row in simulation["teams"]:
+        row.update(table[row["team_id"]])
+    if unscheduled:
+        simulation["assumptions"].append(UNSCHEDULED_PLACEHOLDER)
+    if unsettled:
+        simulation["assumptions"].append(UNSETTLED_PLACEHOLDER)
     matches = []
     market_quotes = market_quotes or []
     selected_quotes = {}
@@ -341,7 +360,8 @@ def export_forecast(
                 raise ValueError(f"Duplicate current market quote: {quote['match_id']}")
             selected_quotes[quote["match_id"]] = quote
     for fixture in live.remaining:
-        if fixture.match_id in in_progress:
+        # A match in play gets no published match forecast; its pre-match numbers are stale.
+        if fixture.match_id in unsettled:
             continue
         prediction = model.predict_match(fixture)
         grid, tail = prediction.scores.grid(max_goals)
@@ -448,13 +468,10 @@ def export_forecast(
         },
         "simulation": simulation,
         "impact_window": window,
-        "simulation_unavailable_reason": (
-            "Season projection awaits full-time results for in-progress or overdue fixtures; "
-            "this model does not forecast games in play."
-            if in_progress
-            else None
-        ),
-        "fixtures_awaiting_results": in_progress,
+        "simulation_unavailable_reason": None,
+        "fixtures_awaiting_results": unsettled,
+        "unsettled_fixtures": unsettled_details,
+        "unsettled_placeholder": UNSETTLED_PLACEHOLDER if unsettled else None,
         "unscheduled_fixtures": unscheduled,
         "unscheduled_placeholder": UNSCHEDULED_PLACEHOLDER if unscheduled else None,
         "results_crosschecked": live.results_crosschecked,

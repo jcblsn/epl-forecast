@@ -127,6 +127,15 @@ def verify(archive: Path, data: Path) -> dict:
         [m["match_id"] for m in unscheduled],
     )
 
+    unsettled = forecast.get("unsettled_fixtures", [])
+    forecast_ids = {row["match_id"] for row in forecast["matches"]}
+    checks.check(
+        "a match that started without a result is disclosed and gets no match forecast",
+        all(row["match_id"] not in forecast_ids for row in unsettled)
+        and bool(forecast.get("unsettled_placeholder")) == bool(unsettled),
+        [row["match_id"] for row in unsettled],
+    )
+
     simulation = forecast["simulation"]
     if not checks.check(
         "a season projection is published",

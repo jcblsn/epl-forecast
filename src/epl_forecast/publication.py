@@ -187,7 +187,7 @@ def derive_impact(simulation: dict, kickoffs: dict, window: dict | None = None) 
                 "impacts": columns,
             }
         )
-    for row in window.get("completed", []):
+    for row in window.get("started", []):
         published.append(
             {
                 "match_id": row["match_id"],
@@ -195,7 +195,7 @@ def derive_impact(simulation: dict, kickoffs: dict, window: dict | None = None) 
                 "kickoff_time": row["kickoff_time"],
                 "home_team_id": row["home_team_id"],
                 "away_team_id": row["away_team_id"],
-                "status": "finished",
+                "status": row["status"],
                 "outcome": row["outcome"],
                 "carried_from": None,
                 "unavailable_reason": UNAVAILABLE_IMPACT,
@@ -277,14 +277,14 @@ def carry_forward_impacts(site: Path, document: dict) -> dict:
     if not impact:
         return document
     wanted = {
-        fixture["match_id"] for fixture in impact["fixtures"] if fixture["status"] == "finished"
+        fixture["match_id"] for fixture in impact["fixtures"] if fixture["status"] != "scheduled"
     }
     if not wanted:
         return document
     archived = last_pre_kickoff(site, _all_team_impacts(document["competition_id"], wanted))
     fixtures = []
     for fixture in impact["fixtures"]:
-        record = archived.get(fixture["match_id"]) if fixture["status"] == "finished" else None
+        record = archived.get(fixture["match_id"]) if fixture["status"] != "scheduled" else None
         if record:
             fixture = {
                 **{key: value for key, value in fixture.items() if key != "unavailable_reason"},
@@ -399,6 +399,21 @@ def derive_forecast(
         "matches": matches,
         "unscheduled_fixtures": unscheduled,
         "unscheduled_assumption": forecast.get("unscheduled_placeholder") if unscheduled else None,
+        "unsettled_fixtures": [
+            {
+                key: row[key]
+                for key in (
+                    "match_id",
+                    "home_team_id",
+                    "away_team_id",
+                    "match_date",
+                    "kickoff_time",
+                    "status",
+                )
+            }
+            for row in forecast.get("unsettled_fixtures", [])
+        ],
+        "unsettled_assumption": forecast.get("unsettled_placeholder"),
         "impact": derive_impact(
             simulation,
             {row["match_id"]: row["kickoff_time"] for row in matches},

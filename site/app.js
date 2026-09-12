@@ -92,7 +92,7 @@ function render() {
     button.setAttribute("aria-current", String(button.dataset.view === state.view));
   });
   panel.replaceChildren();
-  if (state.view !== "ledger") panel.append(...unscheduledNote());
+  if (state.view !== "ledger") panel.append(...unscheduledNote(), ...unsettledNote());
   const views = { table: tableView, positions: positionsView, teams: teamsView, fixtures: fixturesView, impact: impactView, ledger: ledgerView };
   views[state.view]();
 }
@@ -107,6 +107,15 @@ function unscheduledNote() {
       (f.match_date ? ` (was ${f.match_date}, simulated on ${f.simulated_on})` : ` (no date, simulated on ${f.simulated_on})`))
     .join("; ");
   return [element("p", { className: "note", textContent: `Postponed or undated: ${listed}. ${state.document.unscheduled_assumption ?? ""}` })];
+}
+
+function unsettledNote() {
+  // Snapshots published before the in-play policy changed carry no such fixture.
+  const fixtures = state.document.unsettled_fixtures ?? [];
+  if (!fixtures.length) return [];
+  const names = teamNames();
+  const listed = fixtures.map((f) => `${names(f.home_team_id)} v ${names(f.away_team_id)}`).join("; ");
+  return [element("p", { className: "note", textContent: `Started, no result yet: ${listed}. ${state.document.unsettled_assumption ?? ""}` })];
 }
 
 function tableView() {
@@ -380,6 +389,7 @@ function impactRow(fixture, row, names, { fixtureOnly = false } = {}) {
 
 function impactStatus(fixture, row) {
   const marks = [];
+  if (fixture.status === "in_progress" || fixture.status === "awaiting_result") marks.push("in play");
   if (fixture.outcome) marks.push(`result ${fixture.outcome}`);
   if (fixture.carried_from) marks.push("before kickoff");
   if (fixture.unavailable_reason) marks.push("no record before kickoff");

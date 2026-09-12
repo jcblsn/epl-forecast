@@ -203,7 +203,8 @@ def operate(
                 ),
             )
         )
-    if failures or len(documents) != len(LEAGUES):
+    # A division that fails holds back only itself. The snapshot carries the divisions that pass.
+    if not documents:
         result.update(status="failed", failures=failures, attempt=str(attempt))
         write_immutable(attempt / "pipeline.json", json_bytes(result))
         return result
@@ -213,11 +214,15 @@ def operate(
     index = rebuild_index(site, policy)
     ledger = build_ledger(site, outcomes, policy)
     result.update(
+        status="partial" if failures else "ok",
+        failures=failures,
         attempt=str(attempt),
         snapshot_id=snapshot,
         snapshots=len(index["snapshots"]),
         scored_matches=ledger["summary"].get("overall", {}).get("scored", 0),
     )
     write_immutable(attempt / "pipeline.json", json_bytes(result))
-    write_json(state_path, {"fingerprint": fingerprint, "published_at": now.isoformat()})
+    # A partial snapshot leaves the state alone, so the next run retries the division that failed.
+    if not failures:
+        write_json(state_path, {"fingerprint": fingerprint, "published_at": now.isoformat()})
     return result

@@ -76,7 +76,7 @@ Private:
 
 ## Snapshot archive
 
-The pipeline writes each snapshot once, to `site/data/forecasts/<snapshot>/<competition>.json`. It never rewrites a snapshot. `site/data/index.json` lists every snapshot, newest first. These snapshots are the public record of the product. Do not change or delete them.
+The pipeline writes each snapshot once, to `site/data/forecasts/<snapshot>/<competition>.json`. It never rewrites a snapshot. `site/data/index.json` lists every snapshot, newest first. These snapshots are the public record of the product. Do not change or delete them. Each division publishes on its own: if one division fails, the snapshot holds the divisions that pass, the pipeline reports `partial`, and the next run tries the division that failed again.
 
 Each document measures every match of the week against every club. The impact rows are grouped by event, as parallel arrays of club IDs and probabilities. A record for each club and each event makes that block approximately four times larger. In the measured snapshot of 2026-09-11, the block holds 857 Premier League rows in 112 KiB and 1,728 League Two rows in 219 KiB. The documents are 223 KiB and 366 KiB. A club whose expected movement is less than 0.005 percentage points has no row; its event probability stays with the club in the same document.
 
