@@ -10,9 +10,13 @@ import json
 from datetime import UTC, datetime
 from pathlib import Path
 
-from epl_forecast.datasets import timestamp
 from epl_forecast.evaluation import metrics
-from epl_forecast.publication import check_publishable, published_documents, write_derived
+from epl_forecast.publication import (
+    check_publishable,
+    last_pre_kickoff,
+    published_documents,
+    write_derived,
+)
 
 
 def realized_outcomes(fixtures) -> dict:
@@ -26,28 +30,25 @@ def realized_outcomes(fixtures) -> dict:
 
 
 def pre_kickoff_forecasts(site: Path) -> dict:
-    latest = {}
-    for document in published_documents(site):
-        generated = timestamp(document["generated_at"])
+    """The last H/D/A forecast published for each match before that match kicked off."""
+
+    def extract(document):
         for match in document["matches"]:
-            kickoff = timestamp(match["kickoff_time"])
-            if generated >= kickoff:
-                continue
-            current = latest.get(match["match_id"])
-            if current and timestamp(current["generated_at"]) >= generated:
-                continue
-            latest[match["match_id"]] = {
-                "match_id": match["match_id"],
-                "competition_id": document["competition_id"],
-                "season_id": document["season_id"],
-                "snapshot_id": document["snapshot_id"],
-                "generated_at": document["generated_at"],
-                "kickoff_time": match["kickoff_time"],
-                "p_home": match["p_home"],
-                "p_draw": match["p_draw"],
-                "p_away": match["p_away"],
-            }
-    return latest
+            yield (
+                match["match_id"],
+                match["kickoff_time"],
+                {
+                    "match_id": match["match_id"],
+                    "competition_id": document["competition_id"],
+                    "season_id": document["season_id"],
+                    "kickoff_time": match["kickoff_time"],
+                    "p_home": match["p_home"],
+                    "p_draw": match["p_draw"],
+                    "p_away": match["p_away"],
+                },
+            )
+
+    return last_pre_kickoff(site, extract)
 
 
 def _renormalize(row: dict) -> dict:

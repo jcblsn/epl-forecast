@@ -191,72 +191,83 @@ def validate_schedule(
 
 OUTCOME_NAMES = ("home", "draw", "away")
 MINIMUM_CONDITIONAL_SAMPLES = 100
+EVERY_TEAM = "every_team"
 
 
 def conditional_impacts(
     outcomes: dict,
     event_paths: dict,
-    team_index: dict,
+    teams: list[str],
     simulations: int,
     horizon_days: int,
+    window: tuple[datetime, datetime] | None = None,
 ) -> dict:
     """Condition published season events on each fixture outcome, over the same paths.
 
     Every conditional is the mean of a team-event indicator over the subset of season
     paths where the fixture ended that way. Because those subsets partition the paths,
     the outcome-weighted conditionals must return the baseline exactly; that identity
-    and the per-cell path counts are the checks reported here. These are conditional
-    forecasts on one simulation, not causal effects of a result.
+    and the per-cell path counts are the checks reported here. Every club is measured
+    against every fixture, from the same paths, because a result also moves clubs that
+    do not play in it. These are conditional forecasts on one simulation, not causal
+    effects of a result.
     """
+    baselines = {event: values.mean(axis=0) for event, values in event_paths.items()}
+    squares = {event: values * values for event, values in event_paths.items()}
+    path = np.arange(simulations)
     fixtures, smallest = [], simulations
     for match_id, (fixture, codes) in sorted(outcomes.items()):
-        masks = [codes == index for index in range(3)]
-        counts = [int(mask.sum()) for mask in masks]
+        counts = np.bincount(codes, minlength=3).astype(float)
+        weights = (counts / simulations)[:, None]
+        reached = (counts > 0)[:, None]
+        divisor = np.where(counts > 0, counts, 1.0)[:, None]
+        # One row per outcome, so a matrix product totals each outcome's paths at once.
+        membership = np.zeros((3, simulations))
+        membership[codes, path] = 1.0
         impacts = []
-        for team in (fixture.home_team_id, fixture.away_team_id):
-            column = team_index[team]
-            for event, values in event_paths.items():
-                indicators = values[:, column].astype(float)
-                baseline = float(indicators.mean())
-                conditional, error = {}, {}
-                movement = 0.0
-                for name, mask, count in zip(OUTCOME_NAMES, masks, counts, strict=True):
-                    if not count:
-                        conditional[name], error[name] = None, None
-                        continue
-                    subset = indicators[mask]
-                    conditional[name] = float(subset.mean())
-                    error[name] = float(np.sqrt(subset.var() / count))
-                    movement += count / simulations * (conditional[name] - baseline) ** 2
-                present = [value for value in conditional.values() if value is not None]
-                recovered = sum(
-                    count / simulations * conditional[name]
-                    for name, count in zip(OUTCOME_NAMES, counts, strict=True)
-                    if count
-                )
-                if abs(recovered - baseline) > 1e-9:
-                    raise RuntimeError(f"Conditional impacts do not total the baseline: {match_id}")
+        for event, values in event_paths.items():
+            baseline = baselines[event]
+            conditional = (membership @ values) / divisor
+            variance = np.maximum((membership @ squares[event]) / divisor - conditional**2, 0.0)
+            error = np.sqrt(variance / divisor)
+            movement = np.sqrt(
+                (weights * np.where(reached, conditional - baseline, 0.0) ** 2).sum(axis=0)
+            )
+            spread = np.where(reached, conditional, np.nan)
+            swing = np.nanmax(spread, axis=0) - np.nanmin(spread, axis=0)
+            recovered = (weights * np.where(reached, conditional, 0.0)).sum(axis=0)
+            if np.max(np.abs(recovered - baseline)) > 1e-9:
+                raise RuntimeError(f"Conditional impacts do not total the baseline: {match_id}")
+            for index, team in enumerate(teams):
                 impacts.append(
                     {
                         "team_id": team,
                         "event": event,
-                        "baseline": baseline,
-                        "conditional": conditional,
-                        "standard_error": error,
-                        "rms_movement": float(np.sqrt(movement)),
-                        "swing": float(max(present) - min(present)),
-                        "sufficient_sample": min(counts) >= MINIMUM_CONDITIONAL_SAMPLES,
+                        "baseline": float(baseline[index]),
+                        "conditional": {
+                            name: float(conditional[outcome, index]) if counts[outcome] else None
+                            for outcome, name in enumerate(OUTCOME_NAMES)
+                        },
+                        "standard_error": {
+                            name: float(error[outcome, index]) if counts[outcome] else None
+                            for outcome, name in enumerate(OUTCOME_NAMES)
+                        },
+                        "rms_movement": float(movement[index]),
+                        "swing": float(swing[index]),
+                        "sufficient_sample": bool(counts.min() >= MINIMUM_CONDITIONAL_SAMPLES),
                     }
                 )
         impacts.sort(key=lambda row: row["rms_movement"], reverse=True)
-        smallest = min(smallest, *counts)
+        smallest = min(smallest, int(counts.min()))
         fixtures.append(
             {
                 "match_id": match_id,
                 "match_date": str(fixture.match_date),
                 "home_team_id": fixture.home_team_id,
                 "away_team_id": fixture.away_team_id,
-                "outcome_counts": dict(zip(OUTCOME_NAMES, counts, strict=True)),
+                "outcome_counts": {
+                    name: int(counts[outcome]) for outcome, name in enumerate(OUTCOME_NAMES)
+                },
                 "impacts": impacts,
                 "top_rms_movement": impacts[0]["rms_movement"] if impacts else 0.0,
             }
@@ -267,6 +278,9 @@ def conditional_impacts(
         "simulations": simulations,
         "minimum_conditional_samples": MINIMUM_CONDITIONAL_SAMPLES,
         "smallest_outcome_count": int(smallest) if outcomes else 0,
+        "coverage": EVERY_TEAM,
+        "window_start": window[0].isoformat() if window else None,
+        "window_end": window[1].isoformat() if window else None,
         "fixtures": fixtures,
         "basis": "Conditional forecasts aggregated from one season simulation, not causal effects of a result.",
     }
@@ -287,6 +301,7 @@ def simulate_season(
     playoff_conditioning: str = "path",
     impact_fixtures: set[str] | None = None,
     impact_horizon_days: int = 7,
+    impact_window: tuple[datetime, datetime] | None = None,
 ) -> dict:
     if type(simulations) is not int or simulations < 1:
         raise ValueError("simulations must be a positive integer")
@@ -581,7 +596,12 @@ def simulate_season(
             raise RuntimeError(f"Per-path event indicators disagree with the published {event}")
     impacts = (
         conditional_impacts(
-            impact_outcomes, event_paths, team_index, simulations, impact_horizon_days
+            impact_outcomes,
+            event_paths,
+            teams,
+            simulations,
+            impact_horizon_days,
+            impact_window,
         )
         if impact_outcomes
         else None

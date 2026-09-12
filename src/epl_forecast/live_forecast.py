@@ -1,11 +1,11 @@
 import math
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime, time, timedelta
 from html import escape
 from pathlib import Path
 
 from epl_forecast.artifacts import new_run_directory, write_csv
 from epl_forecast.competitions import competition
-from epl_forecast.live import LiveSeason, timestamp
+from epl_forecast.live import LONDON, LiveSeason, timestamp
 from epl_forecast.market import market_assisted_probabilities
 from epl_forecast.models.base import ForecastModel
 from epl_forecast.schema import Match
@@ -22,6 +22,44 @@ def flatten_rows(rows):
     nested = {key for row in rows for key, value in row.items() if isinstance(value, (dict, list))}
     flat = [{key: value for key, value in row.items() if key not in nested} for row in rows]
     return flat, list(dict.fromkeys(key for row in flat for key in row))
+
+
+def weekly_window(observed_at: datetime, horizon_days: int) -> tuple[datetime, datetime]:
+    """The impact slate: the London day of the observation, then the next horizon days.
+
+    The window starts at midnight in Europe/London so that a refresh during a matchday
+    keeps the fixtures that already finished on that day. It ends at the horizon, which
+    the observation time measures, so the slate is the same for every division.
+    """
+    day = observed_at.astimezone(LONDON).date()
+    start = datetime.combine(day, time.min, tzinfo=LONDON).astimezone(UTC)
+    return start, observed_at + timedelta(days=horizon_days)
+
+
+def completed_slate(live: LiveSeason, window_start: datetime) -> list[dict]:
+    """Fixtures of the current London day that already have a full-time result."""
+    completed = []
+    for row in live.details.values():
+        if row["status"] != "finished" or not row["kickoff_time"]:
+            continue
+        kickoff = timestamp(row["kickoff_time"])
+        if not window_start <= kickoff <= live.observed_at:
+            continue
+        home, away = row["home_goals"], row["away_goals"]
+        if home is None or away is None:
+            continue
+        completed.append(
+            {
+                "match_id": row["match_id"],
+                "home_team_id": row["home_team_id"],
+                "away_team_id": row["away_team_id"],
+                "kickoff_time": row["kickoff_time"],
+                "match_date": row["match_date"],
+                "outcome": "H" if home > away else "A" if away > home else "D",
+            }
+        )
+    completed.sort(key=lambda row: (row["kickoff_time"], row["match_id"]))
+    return completed
 
 
 def check_freshness(live: LiveSeason, max_age_hours: float) -> None:
@@ -256,15 +294,21 @@ def export_forecast(
     unscheduled = [
         row["match_id"] for row in live.details.values() if row["status"] == "unscheduled"
     ]
+    window_start, window_end = weekly_window(live.observed_at, impact_horizon_days)
+    window = {
+        "horizon_days": impact_horizon_days,
+        "window_start": window_start.isoformat(),
+        "window_end": window_end.isoformat(),
+        "completed": completed_slate(live, window_start),
+    }
     simulation = None
     if not in_progress:
-        horizon = live.observed_at + timedelta(days=impact_horizon_days)
         impact_fixtures = {
             row["match_id"]
             for row in live.details.values()
             if row["status"] == "scheduled"
             and row["kickoff_time"]
-            and live.observed_at < timestamp(row["kickoff_time"]) <= horizon
+            and live.observed_at < timestamp(row["kickoff_time"]) <= window_end
         }
         simulation = simulate_season(
             model,
@@ -279,6 +323,7 @@ def export_forecast(
             results_observed_at=live.observed_at,
             impact_fixtures=impact_fixtures,
             impact_horizon_days=impact_horizon_days,
+            impact_window=(window_start, window_end),
         )
         table = current_table(live, adjustments)
         for row in simulation["teams"]:
@@ -402,6 +447,7 @@ def export_forecast(
             "season_simulation_uses_market": False,
         },
         "simulation": simulation,
+        "impact_window": window,
         "simulation_unavailable_reason": (
             "Season projection awaits full-time results for in-progress or overdue fixtures; "
             "this model does not forecast games in play."

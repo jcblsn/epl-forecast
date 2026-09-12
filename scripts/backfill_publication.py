@@ -15,6 +15,7 @@ from epl_forecast.datasets import Dataset
 from epl_forecast.ledger import build_ledger, realized_outcomes
 from epl_forecast.pipeline import verify_archive
 from epl_forecast.publication import (
+    carry_forward_impacts,
     derive_forecast,
     load_policy,
     publish_document,
@@ -56,11 +57,14 @@ def main():
             continue
         report = json.loads((report_directory / "verification.json").read_text())
         try:
-            document = derive_forecast(
-                json.loads((archive / "forecast.json").read_text()),
-                json.loads((archive / "run.json").read_text()),
-                snapshot_id(args.source / attempt),
-                report["archives"][str(archive)],
+            document = carry_forward_impacts(
+                args.site,
+                derive_forecast(
+                    json.loads((archive / "forecast.json").read_text()),
+                    json.loads((archive / "run.json").read_text()),
+                    snapshot_id(args.source / attempt),
+                    report["archives"][str(archive)],
+                ),
             )
             publish_document(args.site, document, policy)
         except ValueError as error:

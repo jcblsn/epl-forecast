@@ -64,7 +64,7 @@ Published:
 - H/D/A probabilities and the market-assisted probability;
 - exact-score grids for each club's next fixture;
 - points and position distributions, with their intervals;
-- event probabilities and conditional impacts;
+- event probabilities, and the conditional impact of each match of the week on every club;
 - the list of postponed or undated fixtures;
 - timestamps, model identity and the verification result.
 
@@ -98,7 +98,7 @@ It verifies each archive under `runs/product/` as it is and publishes the ones t
 uv run python -m http.server -d site 8000
 ```
 
-It shows each division's table, the position matrix, club distributions, upcoming fixtures, conditional impacts and the ledger. It shows a note for each postponed or undated fixture.
+It shows each division's table, the position matrix, club distributions, upcoming fixtures, conditional impacts and the ledger. The club page also ranks the matches of the week by their effect on that club. It shows a note for each postponed or undated fixture.
 
 ## Hosting
 

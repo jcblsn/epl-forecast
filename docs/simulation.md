@@ -56,13 +56,15 @@ For historical scoring, the realized final table includes every sanction in forc
 
 ## Conditional impacts
 
-For each remaining fixture in the next seven days, the simulator divides its own paths by the result of that fixture. It then reads each club's season events in each group. It does not run a new simulation. The movement of an event is
+The impact window is the slate of a week. It opens at the start of the current day in Europe/London and closes seven days after the observation. For each match in the window that is not played, the simulator divides its own paths by the result of that match. It then reads the season events of every club in each group. A club that does not play in the match is included, because a result also moves the clubs around it. The simulator does not run a new simulation. The movement of an event is
 
 ```text
 sqrt( sum over results r of P(r) × (P(event | r) − P(event))² )
 ```
 
-These numbers are conditional forecasts. They are not causal effects. The verifier checks that the groups cover all paths and that the weighted conditionals return the published event probability. A result with fewer than 100 paths is marked as a thin sample.
+These numbers are conditional forecasts. They are not causal effects. The verifier checks that the groups cover all paths, that the weighted conditionals return the published event probability, and that every club is measured against every match. A result with fewer than 100 paths is marked as a thin sample.
+
+A match of the current day that already has a result is not measured again. After the result is known, the current paths cannot give an honest statement about the other results. The published forecast carries the record of the last snapshot that was made before the kickoff. The record names that snapshot and holds the baseline of that snapshot and the result of the match. If no snapshot from before the kickoff measures every club, the match shows no numbers and says why.
 
 ## European places
 

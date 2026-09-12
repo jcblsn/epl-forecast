@@ -16,10 +16,23 @@ from pathlib import Path
 
 from epl_forecast.competitions import COMPETITION_IDS
 from epl_forecast.datasets import timestamp
+from epl_forecast.simulation import EVERY_TEAM, OUTCOME_NAMES
 from epl_forecast.storage import json_bytes, write_immutable, write_json
 
 POLICY_PATH = Path("configs/publication.toml")
 MINIMUM_SIMULATIONS = 1000
+# Expected movement below this is under a tenth of the smallest number the viewer shows.
+IMPACT_MOVEMENT_FLOOR = 5e-5
+CARRIED_FIELDS = (
+    "outcome_counts",
+    "sufficient_sample",
+    "max_standard_error",
+    "top_rms_movement",
+    "impacts",
+)
+UNAVAILABLE_IMPACT = (
+    "No published forecast before this kickoff covers every club, so no impact is shown."
+)
 DIGEST = re.compile(r"\b[0-9a-f]{32,}\b")
 TEAM_FIELDS = (
     "team_id",
@@ -80,7 +93,14 @@ def check_publishable(document, policy: dict) -> None:
 
 def _is_open_map(trail: str) -> bool:
     return trail.endswith(
-        (".points_distribution", ".events", ".summary", ".points_intervals", ".position_intervals")
+        (
+            ".points_distribution",
+            ".events",
+            ".impacts",
+            ".summary",
+            ".points_intervals",
+            ".position_intervals",
+        )
     )
 
 
@@ -105,17 +125,51 @@ def _distribution(mapping: dict) -> dict:
     return {key: kept[key] for key in sorted(kept, key=int)}
 
 
-def derive_impact(simulation: dict, kickoffs: dict) -> dict | None:
-    """Publish every fixture in the horizon with both participants on every event.
+def _impact_columns(fixture: dict, floor: float) -> tuple[dict, float]:
+    """Group a fixture's rows by event, as parallel arrays in movement order.
 
-    The viewer ranks by one chosen event at a time, so it needs the whole week rather
-    than a precomputed leaderboard. These are aggregates only: no path-level data.
+    One array of club IDs and one array for each result carries the same rows as a list
+    of records, without repeating a key on every club. A club whose expected movement is
+    below the floor is left out; its event probability is unchanged by this fixture and
+    is published with the club itself.
+    """
+    columns, worst_error = {}, 0.0
+    for row in fixture["impacts"]:
+        errors = [value for value in row["standard_error"].values() if value is not None]
+        if errors:
+            worst_error = max(worst_error, max(errors))
+        if row["rms_movement"] < floor:
+            continue
+        block = columns.setdefault(
+            row["event"],
+            {"team_id": [], **{name: [] for name in OUTCOME_NAMES}, "rms_movement": []},
+        )
+        block["team_id"].append(row["team_id"])
+        for name in OUTCOME_NAMES:
+            value = row["conditional"][name]
+            block[name].append(None if value is None else probability(value))
+        block["rms_movement"].append(probability(row["rms_movement"]))
+    return columns, probability(worst_error)
+
+
+def derive_impact(simulation: dict, kickoffs: dict, window: dict | None = None) -> dict | None:
+    """Publish the weekly slate: every club's movement against every fixture in it.
+
+    The viewer ranks one club and one event at a time, so it needs each fixture measured
+    against each club rather than a precomputed leaderboard. The baseline of a fixture
+    that is still to be played is the club's own event probability in this document, so
+    it is not repeated here. A fixture that already finished carries no numbers yet;
+    `carry_forward_impacts` fills it from the last forecast made before its kickoff.
+    These are aggregates only: no path-level data.
     """
     impacts = simulation.get("match_impacts")
     if not impacts:
         return None
+    window = window or {}
     published = []
     for fixture in impacts["fixtures"]:
+        columns, worst_error = _impact_columns(fixture, IMPACT_MOVEMENT_FLOOR)
+        counts = fixture["outcome_counts"]
         published.append(
             {
                 "match_id": fixture["match_id"],
@@ -123,36 +177,125 @@ def derive_impact(simulation: dict, kickoffs: dict) -> dict | None:
                 "kickoff_time": kickoffs.get(fixture["match_id"]),
                 "home_team_id": fixture["home_team_id"],
                 "away_team_id": fixture["away_team_id"],
-                "outcome_counts": fixture["outcome_counts"],
+                "status": "scheduled",
+                "outcome": None,
+                "outcome_counts": counts,
+                "sufficient_sample": min(counts.values()) >= impacts["minimum_conditional_samples"],
+                "max_standard_error": worst_error,
                 "top_rms_movement": probability(fixture["top_rms_movement"]),
-                "impacts": [
-                    {
-                        "team_id": row["team_id"],
-                        "event": row["event"],
-                        "baseline": probability(row["baseline"]),
-                        "conditional": {
-                            key: None if value is None else probability(value)
-                            for key, value in row["conditional"].items()
-                        },
-                        "standard_error": {
-                            key: None if value is None else probability(value)
-                            for key, value in row["standard_error"].items()
-                        },
-                        "rms_movement": probability(row["rms_movement"]),
-                        "swing": probability(row["swing"]),
-                        "sufficient_sample": row["sufficient_sample"],
-                    }
-                    for row in fixture["impacts"]
-                ],
+                "carried_from": None,
+                "impacts": columns,
             }
         )
+    for row in window.get("completed", []):
+        published.append(
+            {
+                "match_id": row["match_id"],
+                "match_date": row["match_date"],
+                "kickoff_time": row["kickoff_time"],
+                "home_team_id": row["home_team_id"],
+                "away_team_id": row["away_team_id"],
+                "status": "finished",
+                "outcome": row["outcome"],
+                "carried_from": None,
+                "unavailable_reason": UNAVAILABLE_IMPACT,
+                "impacts": {},
+            }
+        )
+    published.sort(key=lambda row: (row["kickoff_time"] or "9999", row["match_id"]))
     return {
         "horizon_days": impacts["horizon_days"],
+        "window_start": window.get("window_start") or impacts.get("window_start"),
+        "window_end": window.get("window_end") or impacts.get("window_end"),
+        "coverage": impacts.get("coverage", "participants"),
         "minimum_conditional_samples": impacts["minimum_conditional_samples"],
         "smallest_outcome_count": impacts["smallest_outcome_count"],
+        "movement_floor": IMPACT_MOVEMENT_FLOOR,
         "basis": impacts["basis"],
         "fixtures": published,
     }
+
+
+def last_pre_kickoff(site: Path, extract) -> dict:
+    """The last record published for each match before that match kicked off.
+
+    One cutoff rule serves the prospective ledger and the carried-forward impacts: a
+    snapshot counts for a match only when it was generated strictly before the kickoff.
+    `extract` reads the records of interest out of one published document.
+    """
+    latest = {}
+    for document in published_documents(site):
+        generated = timestamp(document["generated_at"])
+        for match_id, kickoff, record in extract(document):
+            if not kickoff or generated >= timestamp(kickoff):
+                continue
+            current = latest.get(match_id)
+            if current and timestamp(current["generated_at"]) >= generated:
+                continue
+            latest[match_id] = {
+                "snapshot_id": document["snapshot_id"],
+                "generated_at": document["generated_at"],
+                **record,
+            }
+    return latest
+
+
+def _all_team_impacts(competition_id: str, wanted: set[str]):
+    """Read all-club impact records for the wanted matches out of one published document."""
+
+    def extract(document):
+        impact = document.get("impact") or {}
+        if document["competition_id"] != competition_id or impact.get("coverage") != EVERY_TEAM:
+            return
+        events = {team["team_id"]: team["events"] for team in document["teams"]}
+        for fixture in impact["fixtures"]:
+            if fixture["match_id"] not in wanted or fixture.get("carried_from"):
+                continue
+            record = {key: fixture[key] for key in CARRIED_FIELDS}
+            # The baseline of a carried record is the one that stood before the kickoff.
+            record["impacts"] = {
+                event: {
+                    **block,
+                    "baseline": [events.get(team, {}).get(event) for team in block["team_id"]],
+                }
+                for event, block in fixture["impacts"].items()
+            }
+            yield fixture["match_id"], fixture["kickoff_time"], record
+
+    return extract
+
+
+def carry_forward_impacts(site: Path, document: dict) -> dict:
+    """Fill each finished fixture of the slate from its last pre-kickoff all-club record.
+
+    A finished match is not measured again on the current paths. Once the result is
+    known, conditioning those paths on another result is no longer a pre-match
+    statement. The carried record names the snapshot it comes from. A fixture with no
+    eligible record keeps its disclosure instead of a number.
+    """
+    impact = document.get("impact")
+    if not impact:
+        return document
+    wanted = {
+        fixture["match_id"] for fixture in impact["fixtures"] if fixture["status"] == "finished"
+    }
+    if not wanted:
+        return document
+    archived = last_pre_kickoff(site, _all_team_impacts(document["competition_id"], wanted))
+    fixtures = []
+    for fixture in impact["fixtures"]:
+        record = archived.get(fixture["match_id"]) if fixture["status"] == "finished" else None
+        if record:
+            fixture = {
+                **{key: value for key, value in fixture.items() if key != "unavailable_reason"},
+                **{key: record[key] for key in CARRIED_FIELDS},
+                "carried_from": {
+                    "snapshot_id": record["snapshot_id"],
+                    "generated_at": record["generated_at"],
+                },
+            }
+        fixtures.append(fixture)
+    return {**document, "impact": {**impact, "fixtures": fixtures}}
 
 
 def derive_forecast(
@@ -234,7 +377,7 @@ def derive_forecast(
         if row["status"] == "unscheduled"
     ]
     document = {
-        "schema_version": 1,
+        "schema_version": 2,
         "snapshot_id": snapshot_id,
         "competition_id": forecast["competition_id"],
         "competition_name": forecast["competition_name"],
@@ -257,7 +400,9 @@ def derive_forecast(
         "unscheduled_fixtures": unscheduled,
         "unscheduled_assumption": forecast.get("unscheduled_placeholder") if unscheduled else None,
         "impact": derive_impact(
-            simulation, {row["match_id"]: row["kickoff_time"] for row in matches}
+            simulation,
+            {row["match_id"]: row["kickoff_time"] for row in matches},
+            forecast.get("impact_window"),
         ),
         "verification": None
         if verification is None

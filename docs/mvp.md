@@ -23,7 +23,7 @@ Each M7 archive contains:
 - expected and median points and rank, with central 50%, 80% and 90% intervals;
 - for the Premier League: title, top-four, top-five and relegation probabilities;
 - for the Championship, League One and League Two: title, automatic promotion, playoff qualification, playoff promotion, promotion and relegation probabilities, under the places of that division and season;
-- conditional season events for each fixture in the next seven days;
+- conditional season events of every club, for each match in the impact window of a week;
 - a list of postponed or undated fixtures and the day the simulation used;
 - the data cutoff, the generation time, the input provenance and the seed.
 
@@ -39,7 +39,7 @@ Each M7 archive contains:
 6. The simulation used the ranking rules of that division and season.
 7. The simulation applied the sanctions in force at the cutoff.
 8. The playoff bracket is the reviewed edition for the season and uses the latent states of each path. Promotion equals automatic promotion plus playoff promotion.
-9. The conditional impacts divide the paths completely and return the published season events.
+9. The conditional impacts divide the paths completely, measure every club and return the published season events. The impact window opens on the London day of the observation and closes at the horizon.
 10. The simulated match frequencies agree with the published match model within the Monte Carlo tolerance.
 11. Each postponed or undated fixture is listed and placed on the cutoff day.
 12. The provenance records the data manifest, the model specification, the seed and the source hashes.

@@ -189,8 +189,90 @@ function teamsView() {
         element("h2", { textContent: "Event probabilities" }),
         table(["Event", "%"], Object.entries(chosen.events).map(([key, p]) => element("tr", {}, [element("td", { className: "name", textContent: label(key) }), cell(pct(p))]))),
       ]),
-    ])
+    ]),
+    ...weeklyImpact(chosen)
   );
+}
+
+function weeklyImpact(chosen) {
+  const heading = element("h2", { textContent: "Matches that matter this week" });
+  const impact = state.document.impact;
+  if (!impact || !impact.fixtures.length) {
+    return [heading, element("p", { className: "muted", textContent: "No matches are inside the impact window." })];
+  }
+  const names = teamNames();
+  const slate = impactSlate(impact);
+  const mine = (rows) => rows.filter((row) => row.team_id === chosen.team_id);
+  const available = EVENT_ORDER.filter((event) =>
+    slate.some(({ rows }) => mine(rows).some((row) => row.event === event))
+  );
+  if (!available.length) {
+    return [heading, element("p", { className: "muted", textContent: `No match in the window moves ${chosen.name} by more than ${pct(impact.movement_floor ?? 0)}%.` })];
+  }
+  if (!available.includes(state.event)) {
+    state.event = available.reduce(
+      (best, event) => (clubPeak(slate, chosen.team_id, event) > clubPeak(slate, chosen.team_id, best) ? event : best),
+      available[0]
+    );
+  }
+  const own = [];
+  const others = [];
+  const quiet = [];
+  const missing = [];
+  for (const { fixture, rows } of slate) {
+    const plays = fixture.home_team_id === chosen.team_id || fixture.away_team_id === chosen.team_id;
+    const row = mine(rows).find((row) => row.event === state.event);
+    if (row) {
+      (plays ? own : others).push([row.rms, impactRow(fixture, row, names, { fixtureOnly: true })]);
+    } else if (fixture.unavailable_reason) {
+      missing.push(fixture);
+    } else if (plays) {
+      own.push([0, impactRow(fixture, null, names, { fixtureOnly: true })]);
+    } else {
+      quiet.push(fixture);
+    }
+  }
+  others.sort((a, b) => b[0] - a[0]);
+  const headers = ["Kickoff (UTC)", "Match", "Now", "If home win", "If draw", "If away win", "RMS", "Swing", ""];
+  const nodes = [
+    heading,
+    element("select", { onchange: (event) => { state.event = event.target.value; render(); } },
+      available.map((event) => element("option", { value: event, textContent: label(event), selected: event === state.event }))
+    ),
+    element("p", { className: "muted", textContent:
+      `Each row shows the ${label(state.event)} chance of ${chosen.name} after each result of that match. ` +
+      `RMS is the expected movement of that chance. The list has ${others.length} matches that ${chosen.name} does not play. ` +
+      `${impact.basis}` }),
+  ];
+  if (own.length) {
+    nodes.push(
+      element("h2", { textContent: `${chosen.name} play` }),
+      table(headers, own.map(([, row]) => row))
+    );
+  }
+  nodes.push(
+    element("h2", { textContent: "Other matches" }),
+    others.length
+      ? table(headers, others.map(([, row]) => row))
+      : element("p", { className: "muted", textContent: "No other match in the window moves this chance." })
+  );
+  if (quiet.length) {
+    nodes.push(element("p", { className: "muted", textContent:
+      `${quiet.length} more matches move this chance by less than ${pct(impact.movement_floor ?? 0)}%. They are not listed.` }));
+  }
+  if (missing.length) {
+    nodes.push(element("p", { className: "note", textContent:
+      `${missing.length} finished matches have no forecast from before their kickoff: ` +
+      `${missing.map((fixture) => `${names(fixture.home_team_id)} v ${names(fixture.away_team_id)}`).join("; ")}. ` +
+      `${missing[0].unavailable_reason}` }));
+  }
+  return nodes;
+}
+
+function clubPeak(slate, team, event) {
+  return Math.max(0, ...slate.flatMap(({ rows }) =>
+    rows.filter((row) => row.team_id === team && row.event === event).map((row) => row.rms)
+  ));
 }
 
 function fixturesView() {
@@ -221,67 +303,120 @@ function topScores(scores) {
     .join("  ");
 }
 
+function teamNames() {
+  const names = Object.fromEntries(state.document.teams.map((team) => [team.team_id, team.name]));
+  return (id) => names[id] ?? id;
+}
+
+function impactSlate(impact) {
+  const baselines = Object.fromEntries(state.document.teams.map((team) => [team.team_id, team.events]));
+  return impact.fixtures.map((fixture) => ({ fixture, rows: impactRows(fixture, baselines) }));
+}
+
+// A snapshot published before the all-club impact holds one record for each club and event.
+function impactRows(fixture, baselines) {
+  const blocks = fixture.impacts ?? {};
+  if (Array.isArray(blocks)) {
+    return blocks.map((row) => ({
+      team_id: row.team_id,
+      event: row.event,
+      baseline: row.baseline,
+      conditional: row.conditional,
+      rms: row.rms_movement,
+      swing: row.swing,
+      sufficient: row.sufficient_sample,
+    }));
+  }
+  const rows = [];
+  for (const [event, block] of Object.entries(blocks)) {
+    block.team_id.forEach((team, index) => {
+      const conditional = { home: block.home[index], draw: block.draw[index], away: block.away[index] };
+      const reached = Object.values(conditional).filter((p) => p !== null && p !== undefined);
+      rows.push({
+        team_id: team,
+        event,
+        // A finished match keeps the baseline of its own snapshot; a coming match uses this one.
+        baseline: block.baseline ? block.baseline[index] : baselines[team]?.[event],
+        conditional,
+        rms: block.rms_movement[index],
+        swing: reached.length ? Math.max(...reached) - Math.min(...reached) : 0,
+        sufficient: fixture.sufficient_sample !== false,
+      });
+    });
+  }
+  return rows;
+}
+
+function impactRow(fixture, row, names, { fixtureOnly = false } = {}) {
+  const cells = [
+    cell(when(fixture.kickoff_time) || fixture.match_date),
+    element("td", { className: "name", textContent: `${names(fixture.home_team_id)} v ${names(fixture.away_team_id)}` }),
+  ];
+  if (!fixtureOnly) {
+    cells.push(
+      element("td", { className: "name", textContent: names(row.team_id) }),
+      cell(fixture.home_team_id === row.team_id ? "H" : fixture.away_team_id === row.team_id ? "A" : "", { className: "muted" })
+    );
+  }
+  cells.push(
+    cell(row ? pct(row.baseline) : ""),
+    cell(row ? pct(row.conditional.home) : ""),
+    cell(row ? pct(row.conditional.draw) : ""),
+    cell(row ? pct(row.conditional.away) : ""),
+    cell(row ? pct(row.rms) : ""),
+    cell(row ? pct(row.swing) : ""),
+    cell(impactStatus(fixture, row), { className: "muted" })
+  );
+  return element("tr", {}, cells);
+}
+
+function impactStatus(fixture, row) {
+  const marks = [];
+  if (fixture.outcome) marks.push(`result ${fixture.outcome}`);
+  if (fixture.carried_from) marks.push("before kickoff");
+  if (fixture.unavailable_reason) marks.push("no record before kickoff");
+  if (row && !row.sufficient) marks.push("thin");
+  return marks.join(" · ");
+}
+
 function impactView() {
   const impact = state.document.impact;
   if (!impact || !impact.fixtures.length) {
-    panel.append(element("p", { className: "muted", textContent: "No fixtures inside the impact horizon." }));
+    panel.append(element("p", { className: "muted", textContent: "No matches are inside the impact window." }));
     return;
   }
-  const names = Object.fromEntries(state.document.teams.map((team) => [team.team_id, team.name]));
-  const name = (id) => names[id] ?? id;
-  const available = EVENT_ORDER.filter((event) =>
-    impact.fixtures.some((fixture) => fixture.impacts.some((row) => row.event === event))
-  );
+  const names = teamNames();
+  const slate = impactSlate(impact);
+  const available = EVENT_ORDER.filter((event) => slate.some(({ rows }) => rows.some((row) => row.event === event)));
   if (!available.includes(state.event)) {
-    state.event = available.reduce((best, event) => (eventPeak(impact, event) > eventPeak(impact, best) ? event : best), available[0]);
+    state.event = available.reduce((best, event) => (eventPeak(slate, event) > eventPeak(slate, best) ? event : best), available[0]);
   }
   const rows = [];
-  for (const fixture of impact.fixtures) {
-    const counts = fixture.outcome_counts;
-    const total = counts.home + counts.draw + counts.away;
-    for (const row of fixture.impacts.filter((row) => row.event === state.event)) {
-      const home = row.team_id === fixture.home_team_id;
-      const win = home ? row.conditional.home : row.conditional.away;
-      const loss = home ? row.conditional.away : row.conditional.home;
-      rows.push([
-        row.rms_movement,
-        element("tr", {}, [
-          cell(when(fixture.kickoff_time) || fixture.match_date),
-          element("td", { className: "name", textContent: `${name(fixture.home_team_id)} v ${name(fixture.away_team_id)}` }),
-          element("td", { className: "name", textContent: name(row.team_id) }),
-          cell(home ? "H" : "A", { className: "muted" }),
-          cell(pct(row.baseline)),
-          cell(pct(win)),
-          cell(pct(row.conditional.draw)),
-          cell(pct(loss)),
-          cell(pct(row.rms_movement)),
-          cell(pct(row.swing)),
-          cell(pct(counts[home ? "home" : "away"] / total), { className: "muted" }),
-          cell(row.sufficient_sample ? "" : "thin", { className: "muted" }),
-        ]),
-      ]);
+  for (const { fixture, rows: measured } of slate) {
+    for (const row of measured.filter((row) => row.event === state.event)) {
+      rows.push([row.rms, impactRow(fixture, row, names)]);
     }
   }
   rows.sort((a, b) => b[0] - a[0]);
+  const carried = slate.filter(({ fixture }) => fixture.carried_from).length;
   panel.append(
     element("select", { onchange: (event) => { state.event = event.target.value; render(); } },
       available.map((event) => element("option", { value: event, textContent: label(event), selected: event === state.event }))
     ),
-    element("p", { className: "muted", textContent: `${impact.basis} All ${impact.fixtures.length} fixtures in the next ${impact.horizon_days} days, ranked by how far each club's ${label(state.event)} probability moves with the result. ${state.document.simulations.toLocaleString()} season paths; smallest outcome sample ${impact.smallest_outcome_count}.` }),
+    element("p", { className: "muted", textContent:
+      `${impact.basis} The window holds ${impact.fixtures.length} matches of the next ${impact.horizon_days} days. ` +
+      `Each row is one club and one match, ranked by how far the result moves that club's ${label(state.event)} chance. ` +
+      `${state.document.simulations.toLocaleString()} season paths; smallest outcome sample ${impact.smallest_outcome_count}. ` +
+      (carried ? `${carried} matches have a result. Their numbers come from the last forecast before the kickoff.` : "") }),
     table(
-      ["Kickoff (UTC)", "Fixture", "Team", "", "Now", "If win", "If draw", "If loss", "RMS", "Swing", "P(win)", ""],
+      ["Kickoff (UTC)", "Match", "Club", "", "Now", "If home win", "If draw", "If away win", "RMS", "Swing", ""],
       rows.map(([, row]) => row)
     )
   );
 }
 
-function eventPeak(impact, event) {
-  return Math.max(
-    0,
-    ...impact.fixtures.flatMap((fixture) =>
-      fixture.impacts.filter((row) => row.event === event).map((row) => row.rms_movement)
-    )
-  );
+function eventPeak(slate, event) {
+  return Math.max(0, ...slate.flatMap(({ rows }) => rows.filter((row) => row.event === event).map((row) => row.rms)));
 }
 
 function ledgerView() {

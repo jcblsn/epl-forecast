@@ -19,6 +19,7 @@ from epl_forecast.data.collect import collect
 from epl_forecast.datasets import Dataset
 from epl_forecast.ledger import build_ledger, realized_outcomes
 from epl_forecast.publication import (
+    carry_forward_impacts,
     derive_forecast,
     load_policy,
     publish_document,
@@ -192,11 +193,14 @@ def operate(
             continue
         report = json.loads((reports / "verification.json").read_text())
         documents.append(
-            derive_forecast(
-                json.loads((archive / "forecast.json").read_text()),
-                json.loads((archive / "run.json").read_text()),
-                snapshot,
-                report["archives"][str(archive)],
+            carry_forward_impacts(
+                site,
+                derive_forecast(
+                    json.loads((archive / "forecast.json").read_text()),
+                    json.loads((archive / "run.json").read_text()),
+                    snapshot,
+                    report["archives"][str(archive)],
+                ),
             )
         )
     if failures or len(documents) != len(LEAGUES):

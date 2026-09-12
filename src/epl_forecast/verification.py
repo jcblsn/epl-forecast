@@ -12,7 +12,7 @@ fresh one, and it fails loudly rather than reporting a score.
 """
 
 import json
-from datetime import date
+from datetime import date, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -24,6 +24,7 @@ from epl_forecast.data.rules import league_rules, reviewed_rules_evidence
 from epl_forecast.datasets import Dataset, timestamp
 from epl_forecast.postseason import playoff_format
 from epl_forecast.sanctions import load_registry
+from epl_forecast.simulation import EVERY_TEAM
 from epl_forecast.storage import write_json
 
 LONDON = ZoneInfo("Europe/London")
@@ -218,6 +219,23 @@ def verify(archive: Path, data: Path) -> dict:
             for event, value in row.items()
             if event.endswith("_probability")
         }
+        clubs = {row["team_id"] for row in teams}
+        if impacts.get("window_start"):
+            opening = timestamp(impacts["window_start"]).astimezone(LONDON)
+            checks.check(
+                "the impact window opens on the London day of the observation",
+                opening.date() == observed.astimezone(LONDON).date()
+                and (opening.hour, opening.minute, opening.second) == (0, 0, 0),
+                impacts["window_start"],
+            )
+            checks.check(
+                "the impact window closes at the horizon",
+                timestamp(impacts["window_end"])
+                == observed + timedelta(days=impacts["horizon_days"]),
+                impacts["window_end"],
+            )
+        # Every club is measured against every fixture, so the rows are reported in
+        # aggregate: one worst case for each fixture rather than one check for each row.
         for fixture in impacts["fixtures"]:
             counts = fixture["outcome_counts"]
             checks.check(
@@ -225,35 +243,42 @@ def verify(archive: Path, data: Path) -> dict:
                 sum(counts.values()) == simulation["simulations"],
                 f"{sum(counts.values())} against {simulation['simulations']}",
             )
+            sufficient = min(counts.values()) >= impacts["minimum_conditional_samples"]
+            recovery_gap, published_gap, misreported, covered = 0.0, 0.0, 0, set()
             for row in fixture["impacts"]:
-                key = (row["team_id"], row["event"])
-                if not checks.check(
-                    f"conditioning leaves the season event unchanged in aggregate: {key}",
-                    abs(
-                        sum(
-                            counts[name] / simulation["simulations"] * row["conditional"][name]
-                            for name in ("home", "draw", "away")
-                            if counts[name]
-                        )
-                        - row["baseline"]
-                    )
-                    < 1e-6,
-                    f"baseline {row['baseline']:.6f}",
-                ):
-                    break
-                if not checks.check(
-                    f"the conditioned event is the published season event: {key}",
-                    abs(events[key] - row["baseline"]) < 1e-6,
-                    f"{events[key]:.6f} against {row['baseline']:.6f}",
-                ):
-                    break
-                if not checks.check(
-                    f"every conditional rests on enough paths: {key}",
-                    row["sufficient_sample"]
-                    == (min(counts.values()) >= impacts["minimum_conditional_samples"]),
-                    f"smallest outcome sample {min(counts.values())}",
-                ):
-                    break
+                recovered = sum(
+                    counts[name] / simulation["simulations"] * row["conditional"][name]
+                    for name in ("home", "draw", "away")
+                    if counts[name]
+                )
+                recovery_gap = max(recovery_gap, abs(recovered - row["baseline"]))
+                published_gap = max(
+                    published_gap, abs(events[(row["team_id"], row["event"])] - row["baseline"])
+                )
+                misreported += row["sufficient_sample"] != sufficient
+                covered.add(row["team_id"])
+            rows = len(fixture["impacts"])
+            checks.check(
+                f"conditioning returns every club's season event in aggregate: {fixture['match_id']}",
+                recovery_gap < 1e-6,
+                f"largest gap {recovery_gap:.9f} over {rows} rows",
+            )
+            checks.check(
+                f"every conditioned event is the published season event: {fixture['match_id']}",
+                published_gap < 1e-6,
+                f"largest gap {published_gap:.9f} over {rows} rows",
+            )
+            checks.check(
+                f"every conditional reports its sample sufficiency: {fixture['match_id']}",
+                not misreported,
+                f"{misreported} rows against the smallest outcome sample {min(counts.values())}",
+            )
+            if impacts.get("coverage") == EVERY_TEAM:
+                checks.check(
+                    f"every club is measured against the fixture: {fixture['match_id']}",
+                    covered == clubs,
+                    f"{len(covered)} of {len(clubs)} clubs",
+                )
 
     frequencies = {row["match_id"]: row for row in simulation["match_frequencies"]}
     published = {
