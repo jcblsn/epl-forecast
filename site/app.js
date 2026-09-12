@@ -19,6 +19,10 @@ const EVENT_ORDER = [
   "relegation_probability",
 ];
 
+// A club's page lists another club's match when the result moves it at least this much.
+// The published data holds every measured row; this cutoff only shortens the list.
+const DISPLAY_FLOOR = 0.005;
+
 const pct = (p) => (p === null || p === undefined ? "" : (100 * p).toFixed(1));
 const label = (key) => key.replace(/_probability$/, "").replace(/_/g, " ");
 const shade = (p, peak) => `rgba(68, 119, 204, ${Math.min(1, Math.sqrt(p / peak)).toFixed(3)})`;
@@ -214,7 +218,8 @@ function weeklyImpact(chosen) {
   const mine = (rows) => rows.filter((row) => row.team_id === chosen.team_id);
   // A snapshot from before this feature measures only the two clubs of each match.
   const everyClub = (impact.coverage ?? "participants") === "every_team";
-  const floorText = `${(100 * (impact.movement_floor ?? 0)).toFixed(3)}%`;
+  const floorText = `${(100 * (impact.movement_floor ?? 0)).toFixed(3)} percentage points`;
+  const listedText = `${(100 * DISPLAY_FLOOR).toFixed(1)} percentage points`;
   const available = EVENT_ORDER.filter((event) =>
     slate.some(({ rows }) => mine(rows).some((row) => row.event === event))
   );
@@ -237,7 +242,11 @@ function weeklyImpact(chosen) {
     const plays = fixture.home_team_id === chosen.team_id || fixture.away_team_id === chosen.team_id;
     const row = mine(rows).find((row) => row.event === state.event);
     if (row) {
-      (plays ? own : others).push([row.rms, impactRow(fixture, row, names, { fixtureOnly: true })]);
+      const entry = [row.rms, impactRow(fixture, row, names, { fixtureOnly: true })];
+      // The club's own match always shows; another club's match must clear the cutoff.
+      if (plays) own.push(entry);
+      else if (row.rms >= DISPLAY_FLOOR) others.push(entry);
+      else quiet.push(fixture);
     } else if (fixture.unavailable_reason) {
       missing.push(fixture);
     } else if (plays) {
@@ -270,12 +279,12 @@ function weeklyImpact(chosen) {
     others.length
       ? table(headers, others.map(([, row]) => row))
       : element("p", { className: "muted", textContent: everyClub
-          ? "No other match in the window moves this chance."
+          ? `No other match in the window moves this chance by ${listedText} or more.`
           : `This forecast measures only the two clubs of each match. It has no number for ${chosen.name} on the other ${quiet.length} matches of the window.` })
   );
   if (quiet.length && everyClub) {
     nodes.push(element("p", { className: "muted", textContent:
-      `${quiet.length} more matches move this chance by less than ${floorText}. They are not listed.` }));
+      `${quiet.length} more matches move this chance by less than ${listedText}. They are not listed.` }));
   }
   if (missing.length) {
     nodes.push(element("p", { className: "note", textContent:
