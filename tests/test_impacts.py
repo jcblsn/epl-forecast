@@ -454,6 +454,18 @@ def test_impacts_from_before_this_feature_are_not_carried_forward(tmp_path):
     assert fixture["unavailable_reason"] == UNAVAILABLE_IMPACT
 
 
+def test_a_record_that_holds_no_numbers_is_not_carried_forward(tmp_path):
+    """A snapshot from before the kickoff can hold the same match with no numbers of its own."""
+    publish_document(
+        tmp_path,
+        carried(tmp_path, "2026-09-12T13:00:00+00:00", "2026-09-12T130000Z"),
+        load_policy(),
+    )
+    fixture = carried(tmp_path)["impact"]["fixtures"][0]
+    assert fixture["carried_from"] is None
+    assert fixture["unavailable_reason"] == UNAVAILABLE_IMPACT
+
+
 def test_a_carried_record_is_not_carried_again(tmp_path):
     publish(tmp_path, "2026-09-12T09:00:00+00:00", "2026-09-12T090000Z", movement=0.07)
     first = carried(tmp_path)

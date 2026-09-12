@@ -249,7 +249,9 @@ def _all_team_impacts(competition_id: str, wanted: set[str]):
             return
         events = {team["team_id"]: team["events"] for team in document["teams"]}
         for fixture in impact["fixtures"]:
-            if fixture["match_id"] not in wanted or fixture.get("carried_from"):
+            # Only a snapshot that still had the match to play holds a pre-match record of it.
+            # A carried record, and a fixture that snapshot could not measure either, hold none.
+            if fixture["match_id"] not in wanted or fixture["status"] != "scheduled":
                 continue
             record = {key: fixture[key] for key in CARRIED_FIELDS}
             # The baseline of a carried record is the one that stood before the kickoff.
