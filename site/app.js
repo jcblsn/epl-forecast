@@ -203,11 +203,16 @@ function weeklyImpact(chosen) {
   const names = teamNames();
   const slate = impactSlate(impact);
   const mine = (rows) => rows.filter((row) => row.team_id === chosen.team_id);
+  // A snapshot from before this feature measures only the two clubs of each match.
+  const everyClub = (impact.coverage ?? "participants") === "every_team";
+  const floorText = `${(100 * (impact.movement_floor ?? 0)).toFixed(3)}%`;
   const available = EVENT_ORDER.filter((event) =>
     slate.some(({ rows }) => mine(rows).some((row) => row.event === event))
   );
   if (!available.length) {
-    return [heading, element("p", { className: "muted", textContent: `No match in the window moves ${chosen.name} by more than ${pct(impact.movement_floor ?? 0)}%.` })];
+    return [heading, element("p", { className: "muted", textContent: everyClub
+      ? `No match in the window moves ${chosen.name} by more than ${floorText}.`
+      : `This forecast measures only the two clubs of each match. ${chosen.name} has no match in the window.` })];
   }
   if (!available.includes(state.event)) {
     state.event = available.reduce(
@@ -241,7 +246,8 @@ function weeklyImpact(chosen) {
     ),
     element("p", { className: "muted", textContent:
       `Each row shows the ${label(state.event)} chance of ${chosen.name} after each result of that match. ` +
-      `RMS is the expected movement of that chance. The list has ${others.length} matches that ${chosen.name} does not play. ` +
+      `RMS is the expected movement of that chance. ` +
+      (everyClub ? `The list has ${others.length} matches that ${chosen.name} does not play. ` : "") +
       `${impact.basis}` }),
   ];
   if (own.length) {
@@ -254,11 +260,13 @@ function weeklyImpact(chosen) {
     element("h2", { textContent: "Other matches" }),
     others.length
       ? table(headers, others.map(([, row]) => row))
-      : element("p", { className: "muted", textContent: "No other match in the window moves this chance." })
+      : element("p", { className: "muted", textContent: everyClub
+          ? "No other match in the window moves this chance."
+          : `This forecast measures only the two clubs of each match. It has no number for ${chosen.name} on the other ${quiet.length} matches of the window.` })
   );
-  if (quiet.length) {
+  if (quiet.length && everyClub) {
     nodes.push(element("p", { className: "muted", textContent:
-      `${quiet.length} more matches move this chance by less than ${pct(impact.movement_floor ?? 0)}%. They are not listed.` }));
+      `${quiet.length} more matches move this chance by less than ${floorText}. They are not listed.` }));
   }
   if (missing.length) {
     nodes.push(element("p", { className: "note", textContent:
@@ -404,8 +412,9 @@ function impactView() {
       available.map((event) => element("option", { value: event, textContent: label(event), selected: event === state.event }))
     ),
     element("p", { className: "muted", textContent:
-      `${impact.basis} The window holds ${impact.fixtures.length} matches of the next ${impact.horizon_days} days. ` +
+      `${impact.basis} The window holds ${impact.fixtures.length} matches. It opens at the start of the day in London and closes ${impact.horizon_days} days after the forecast. ` +
       `Each row is one club and one match, ranked by how far the result moves that club's ${label(state.event)} chance. ` +
+      ((impact.coverage ?? "participants") === "every_team" ? "" : "This forecast measures only the two clubs of each match. ") +
       `${state.document.simulations.toLocaleString()} season paths; smallest outcome sample ${impact.smallest_outcome_count}. ` +
       (carried ? `${carried} matches have a result. Their numbers come from the last forecast before the kickoff.` : "") }),
     table(
